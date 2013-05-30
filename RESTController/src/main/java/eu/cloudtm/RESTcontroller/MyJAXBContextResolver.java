@@ -26,8 +26,8 @@ public class MyJAXBContextResolver implements ContextResolver<JAXBContext> {
         this.context = new JSONJAXBContext(
                 JSONConfiguration.mapped()
                         .rootUnwrapping(true)
-                        .arrays("configuration")
-                        .nonStrings("instances", "totalSize")
+                        //.arrays("configuration")
+                        .nonStrings("small", "medium","large")
                         .build(),
                 types);
 

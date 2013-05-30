@@ -17,10 +17,13 @@ public class ScaleInfo {
     public int medium;
     public int large;
 
-    public Tuning tuning;
+    public TuningType type;
+    public TuningMethod method;
+
 
     public ScaleInfo(){
-        tuning = new Tuning();
+        type = TuningType.AUTO;
+        method = TuningMethod.ANALYTICAL;
         small = 0;
         medium = 0;
         large = 0;

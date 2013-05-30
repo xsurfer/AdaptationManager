@@ -2,24 +2,47 @@
 <!DOCTYPE struts PUBLIC
 	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
 	"http://struts.apache.org/dtds/struts-2.3.dtd">
-<!-- 
-  - This file is included by the struts.xml file as an example
-  - of how to break up the configuration file into multiple files.
--->
+
 <struts>
-  <package name="example" namespace="/example" extends="struts-default">
-    <action name="HelloWorld" class="eu.cloudtm.example.HelloWorld">
-      <result>/example/HelloWorld.jsp</result>
+
+  <package name="webif" namespace="/" extends="struts-default">
+  
+    <!-- <default-action-ref name="myCloud" />  -->
+    
+    <action name="myCloud" class="eu.cloudtm.webif.MyCloud">
+      <result>/pages/myCloud.jsp</result>
+    </action>
+    
+    <action name="tuning" class="eu.cloudtm.webif.Tuning">
+      <result>/pages/tuning.jsp</result>
+    </action>
+    
+    <action name="whatIf">
+      <result>/pages/whatIf.jsp</result>
+    </action>
+    
+    <action name="workloadAnalysis">
+      <result>/pages/workloadAnalysis.jsp</result>
     </action>
 
-    <action name="Login_*" method="{1}" class="eu.cloudtm.example.Login">
-      <result name="input">/example/Login.jsp</result>
+<!-- 
+    <action name="Login_*" method="{1}" class="eu.cloudtm.Login">
+      <result name="input">/pages/Login.jsp</result>
       <result type="redirectAction">Menu</result>
     </action>
+ -->    
 
-    <action name="*" class="eu.cloudtm.example.ExampleSupport">
-      <result>/example/{1}.jsp</result>
+<!--
+    <action name="*">
+      <result>/errors/pageNotFound.jsp</result>
     </action>
+ -->
+ 
+<!-- 
+    <action name="*" class="eu.cloudtm.ExampleSupport">
+      <result>/data/{1}.jsp</result>
+    </action>
+-->
     
     <!-- Add additional "example" package actions here. -->
     
