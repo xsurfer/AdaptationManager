@@ -1,0 +1,73 @@
+.clc {
+	clear: both;
+}
+
+form.whatif fieldset {
+  height: 160px;
+  margin-bottom: 0px;
+  border:1px solid;
+  padding: 5px;
+  float: left;
+  margin-left: 10px;  
+  display : inline-block;
+  text-align: center;
+}
+form.whatif legend {
+  padding: 0 2px;
+  font-weight: bold;
+  text-align: left;
+}
+form.whatif label {
+  display: inline-block;
+  line-height: 1.8;
+  vertical-align: top;
+  text-align: left;
+}
+form.whatif fieldset ol {
+  margin: 0;
+  padding: 0;
+}
+form.whatif fieldset li {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+}
+form.whatif fieldset fieldset {
+  border: none;
+  margin: 3px 0 0;
+}
+form.whatif fieldset fieldset legend {
+  padding: 0 0 5px;
+  font-weight: normal;
+}
+form.whatif fieldset fieldset label {
+  display: block;
+  width: auto;
+}
+form.whatif em {
+  font-weight: bold;
+  font-style: normal;
+  color: #f00;
+}
+form.whatif label {
+  width: 140px; /* Width of labels */
+}
+
+form.whatif fieldset.action {
+  margin-top: 0px;
+  border:1px dashed;
+  padding: 0px;  
+  margin-left: 10px;  
+ 
+}
+
+form.whatif input[type=button] {
+    width: 200px;
+}
+
+/*
+form.whatif fieldset fieldset label {
+  margin-left: 123px; /* Width plus 3 (html space) */
+  
+}
+*/

@@ -34,8 +34,8 @@
 		    <tbody>
 		    	<tr>
 		        	<td>Scale</td>
-		            <td>status</td>
-		            <td><s:property value="small"/> S /<s:property value="medium"/> M / <s:property value="large"/> L</td>
+		            <td><s:property value="scale.printTuning()"/></td>
+		            <td><s:property value="scale.small"/> S /<s:property value="scale.medium"/> M / <s:property value="scale.large"/> L</td>
 		            <td>Conf</td>
 		        </tr>
 		        <tr>

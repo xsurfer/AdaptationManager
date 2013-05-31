@@ -29,6 +29,15 @@ public class ScaleInfo {
         large = 0;
     }
 
+    public String printTuning(){
+        String ret;
+        if(type.equals(TuningType.AUTO)){
+            ret = type + " + " + method;
+        } else {
+            ret = type.toString();
+        }
+        return ret;
+    }
 
 
 

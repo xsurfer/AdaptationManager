@@ -11,6 +11,12 @@
     <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/main-msie.css" /><![endif]-->
     <link href="${pageContext.request.contextPath}/assets/css/style.css" type="text/css" media="screen,projection" rel="stylesheet" />
     <link href="${pageContext.request.contextPath}/assets/css/print.css" type="text/css" media="print" rel="stylesheet" />
+    
+    <!-- PER PAGE HEADER -->
+    <decorator:head />
+    <!-- END PER PAGE HEADER -->
+    
+    
 </head>
 <body>
 

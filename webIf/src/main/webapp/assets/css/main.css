@@ -79,10 +79,10 @@ ul.ul-list span.date {padding-right:10px;}
 
     #ribbon {position:absolute; top:-5px; left:0; width:1px; height:1px; font-size:0; line-height:0; overflow:hidden; z-index:10;}
 
-    #col-browser {position:relative; float:left; width:5px; height:215px; }
+    #col-browser {position:relative; float:left; width:5px; height:215px;}
     #col-browser img {position:absolute; top:28px; left:10px;}
 
-    #col-text {float:left; width:750px; padding-top:15px; line-height:1.7;}
+    #col-text {float:left; width:900px; padding-top:15px; line-height:1.7;}
 
         #slogan {position:relative; width:289px; height:33px; overflow:hidden; margin:0; padding:0; font-size:180%;}
         #slogan span {display:block; position:absolute; top:0; left:0; z-index:1; width:100%; height:100%; margin:0; padding:0; background:url("/CloudTMSla/tmp/slogan.gif") 0 0 no-repeat;}

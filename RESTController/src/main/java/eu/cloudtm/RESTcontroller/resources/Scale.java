@@ -58,4 +58,6 @@ public class Scale {
         statusInfoBean.medium = medium;
         statusInfoBean.large = large;
     }
+
+
 }

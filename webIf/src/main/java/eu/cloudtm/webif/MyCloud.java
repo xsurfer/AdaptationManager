@@ -21,11 +21,10 @@
 
 package eu.cloudtm.webif;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -63,15 +62,13 @@ public class MyCloud extends ExampleSupport {
 		 */
 		log.info(output);
 
-		JSONObject jsonObject = JSONObject.fromObject(output);
-		ScaleInfo bean = (ScaleInfo) JSONObject.toBean(jsonObject, ScaleInfo.class);
+		//JSONObject jsonObject = JSONObject.fromObject(output);
+		//ScaleInfo bean = (ScaleInfo) JSONObject.toBean(jsonObject, ScaleInfo.class);
 		
-		setSmall(bean.small);
-		log.info(small);
-		setMedium(bean.medium);
-		log.info(medium);
-		setLarge(bean.large);
-		log.info(large);
+		Gson gson = new Gson();
+		ScaleInfo scaleInfoBean = gson.fromJson(output, ScaleInfo.class);   
+		setScale(scaleInfoBean);
+		
 
 		log.info("MyCloud execute()");
 
@@ -79,6 +76,12 @@ public class MyCloud extends ExampleSupport {
 		return SUCCESS;
 	}
 
+	
+	public ScaleInfo scale;
+	public ScaleInfo getScale(){ return scale; }
+	public void setScale(ScaleInfo value){ scale = value; }
+	
+	
 	/**
 	 * Provide default value for Message property.
 	 */
@@ -88,36 +91,6 @@ public class MyCloud extends ExampleSupport {
 	 * Field for Message property.
 	 */
 	private String message;
-
-	private int small;
-
-	public void setSmall(int value) {
-		small = value;
-	}
-
-	public int getSmall() {
-		return small;
-	}
-
-	private int medium;
-
-	public void setMedium(int value) {
-		medium = value;
-	}
-
-	public int getMedium() {
-		return medium;
-	}
-
-	private int large;
-
-	public void setLarge(int value) {
-		large = value;
-	}
-
-	public int getLarge() {
-		return large;
-	}
 
 	/**
 	 * Return Message property.
