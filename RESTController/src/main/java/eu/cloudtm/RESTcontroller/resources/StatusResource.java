@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 
 
 @Singleton
@@ -20,10 +21,19 @@ public class StatusResource {
 
     @GET
     @Produces("application/json")
-    public String getStatus() {
+    public Response getStatus() {
         String json = gson.toJson(State.getInstance());
         log.debug(json);
-        return json;
+
+        Response.ResponseBuilder builder = Response.ok(json);
+        builder.header("Access-Control-Allow-Origin", "*");
+        //builder.header("Access-Control-Max-Age", "3600");
+        //builder.header("Access-Control-Allow-Methods", "GET");
+        //builder.header("Access-Control-Allow-Headers", "X-Requested-With,Host,User-Agent,Accept,Accept-Language,Accept-Encoding,Accept-Charset,Keep-Alive,Connection,Referer,Origin");
+
+        return builder.build();
+
+        //return json;
     }
 
     @GET

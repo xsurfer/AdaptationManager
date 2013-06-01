@@ -3,7 +3,7 @@ package eu.cloudtm.webif;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class Error extends ExampleSupport {
+public class Error extends BaseAction {
 	
 	private static Log log = LogFactory.getLog(Error.class);
 	

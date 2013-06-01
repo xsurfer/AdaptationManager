@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * <code>Set welcome message.</code>
  */
-public class Tuning extends ExampleSupport {
+public class Tuning extends BaseAction {
 
 	private static Log log = LogFactory.getLog(Tuning.class);
 	

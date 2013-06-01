@@ -3,6 +3,63 @@
 <html>
 <head>
     <title><s:text name="MyCloud.message"/></title>
+    
+    <style type="text/css">
+    	p {
+    		display: inline;
+    	}
+    </style>
+    
+    <script type="text/javascript">
+    $(document).ready( 
+    		
+    		function(){
+    			Retrieve();    		    			
+    		}    		
+    );
+    
+    var Polling = function(){
+    	setTimeout(Retrieve, 5000);
+    }
+    
+    var Retrieve = function(){
+    	$.ajax({
+            type: 'GET',
+            crossDomain:true,
+            dataType: 'json',
+            url: 'http://localhost:9998/status',
+            success: function (data) {
+            	Update(data)
+            },
+            error: function (request, status, error) {
+                alert(status);
+            },
+            complete: Polling
+        });    	
+    }
+    
+    var Update = function(json) {
+    	console.log(json); 
+		//var obj = $.parseJSON('{"name":"John"}');
+		//alert(json.scale.small);						
+		
+		$("span#status").text(json.status);
+		
+		$("p#scale_tuning").text($.trim(json.scale.type) + " + " + $.trim(json.scale.method));
+		$("p#scale_conf").text( $.trim(json.scale.small) + "S");
+		
+		$("p#rep_degree_tuning").text( $.trim(json.replication.type) + " + " + $.trim(json.replication.method) );
+		$("p#rep_degree_conf").text( $.trim(json.replication.degree) );
+		
+		$("p#rep_prot_tuning").text( $.trim(json.replication.type) + " + " + $.trim(json.replication.method) );
+		$("p#rep_prot_conf").text( $.trim(json.replication.protocol) );
+		
+		$("p#placement_tuning").text( $.trim(json.placement.type) + " + " + $.trim(json.placement.method) );
+		
+	};
+
+    </script>
+    
 </head>
 
 <body>
@@ -18,6 +75,8 @@
   	<div id="col-text">
         
         <h2><s:property value="message"/></h2>
+        <h3>Status: <span style="display: inline;" id="status"></span></h3>
+        
         <!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
 	   				
 	   				
@@ -34,25 +93,25 @@
 		    <tbody>
 		    	<tr>
 		        	<td>Scale</td>
-		            <td><s:property value="scale.printTuning()"/></td>
-		            <td><s:property value="scale.small"/> S /<s:property value="scale.medium"/> M / <s:property value="scale.large"/> L</td>
-		            <td>Conf</td>
+		            <td><p id="scale_tuning"></p></td>
+		            <td><p id="scale_conf"></p></td>
+		            <td>OPT</td>
 		        </tr>
 		        <tr>
 		        	<td>Replication Degree</td>
-		            <td>status</td>
-		            <td>20</td>
-		            <td>30</td>
+		            <td><p id="rep_degree_tuning"></p></td>
+		            <td><p id="rep_degree_conf"></p></td>
+		            <td>OPT</td>
 		        </tr>
 		        <tr>
 		        	<td>Protocol Switching</td>
-		            <td>status</td>
-		            <td>2PC</td>
-		            <td>TO</td>
+		            <td><p id="rep_prot_tuning"></p></td>
+		            <td><p id="rep_prot_conf"></p></td>
+		            <td>OPT</td>
 		        </tr>
 		        <tr>
 		        	<td>Data Placement</td>
-		            <td>status</td>
+		            <td><p id="placement_tuning"></p></td>
 		            <td>--</td>
 		            <td>--</td>
 		        </tr>

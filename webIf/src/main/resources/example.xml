@@ -5,8 +5,18 @@
 
 <struts>
 
-  <package name="webif" namespace="/" extends="struts-default">
+  <package name="webif" namespace="/" extends="struts-default">	
+	<default-class-ref class="eu.cloudtm.webif.BaseAction" />
+
+    <global-results>
+      <result name="rest_error">/pages/errorREST.jsp</result>      
+    </global-results>
+    
+    <global-exception-mappings>
+    	<exception-mapping exception="eu.cloudtm.webif.exceptions.RESTControllerException" result="rest_error" />
+  	</global-exception-mappings>
   
+    
     <!-- <default-action-ref name="myCloud" />  -->
     
     <action name="myCloud" class="eu.cloudtm.webif.MyCloud">

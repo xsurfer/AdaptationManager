@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
+<%@ taglib prefix="sj" uri="/struts-jquery-tags"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -11,6 +12,8 @@
     <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/main-msie.css" /><![endif]-->
     <link href="${pageContext.request.contextPath}/assets/css/style.css" type="text/css" media="screen,projection" rel="stylesheet" />
     <link href="${pageContext.request.contextPath}/assets/css/print.css" type="text/css" media="print" rel="stylesheet" />
+    
+    <sj:head/>
     
     <!-- PER PAGE HEADER -->
     <decorator:head />

@@ -21,7 +21,7 @@
 
 package eu.cloudtm.webif;
 
-public class Login extends ExampleSupport {
+public class Login extends BaseAction {
 
     public String execute() throws Exception {
 
