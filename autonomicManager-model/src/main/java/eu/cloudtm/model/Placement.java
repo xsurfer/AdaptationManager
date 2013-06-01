@@ -1,7 +1,5 @@
 package eu.cloudtm.model;
 
-import eu.cloudtm.model.utils.ReplicationProtocol;
-
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com

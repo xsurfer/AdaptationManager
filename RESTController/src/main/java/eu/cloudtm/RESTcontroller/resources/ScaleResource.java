@@ -1,6 +1,8 @@
 package eu.cloudtm.RESTcontroller.resources;
 
+import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
+import eu.cloudtm.RESTcontroller.utils.Helper;
 import eu.cloudtm.model.Scale;
 import eu.cloudtm.model.State;
 import eu.cloudtm.model.utils.TuningMethod;
@@ -11,27 +13,27 @@ import org.apache.commons.logging.LogFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
-// The Java class will be hosted at the URI path "/myresource"
 @Singleton
 @Path("/scale")
 public class ScaleResource {
 
     private static Log log = LogFactory.getLog(ScaleResource.class);
 
-    int PUTreq = 0;
+    Gson gson = new Gson();
 
     @PUT
     @Consumes("application/x-www-form-urlencoded")
-    public synchronized void setStatus(
+    @Produces("application/json")
+    public synchronized Response setScale(
             @FormParam("tuningType") TuningType type,
             @DefaultValue("NONE") @FormParam("tuningMethod") TuningMethod method,
-            @FormParam("small") int small,
-            @FormParam("medium") int medium,
-            @FormParam("large") int large
+            @DefaultValue("-1") @FormParam("small") int small,
+            @DefaultValue("-1") @FormParam("medium") int medium,
+            @DefaultValue("-1") @FormParam("large") int large
     ) {
-        PUTreq++;
-        log.info("PUTreq: " + PUTreq);
-
+        if(type.equals(TuningType.AUTO) && method.equals(TuningMethod.NONE)){
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
         log.info("type: " + type);
         log.info("method: " + method);
 
@@ -41,19 +43,20 @@ public class ScaleResource {
 
         Scale newScale = new Scale();
         newScale.setType(type);
-        if(type.equals(TuningType.AUTO) && method.equals(TuningMethod.NONE)){
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
-        } else if(type.equals(TuningType.MANUAL)){
+
+        if(type.equals(TuningType.MANUAL)){
             newScale.setMethod(TuningMethod.NONE);
         } else {
             newScale.setMethod(method);
         }
 
-        newScale.setSmall(small);
-        newScale.setMedium(medium);
-        newScale.setLarge(large);
+        if(small>=0) newScale.setSmall(small);
+        if(medium>=0) newScale.setMedium(medium);
+        if(large>=0) newScale.setLarge(large);
+
         State.getInstance().updateScale(newScale);
+
+        String json = gson.toJson(State.getInstance().getScale());
+        return Helper.createResponse(json);
     }
-
-
 }

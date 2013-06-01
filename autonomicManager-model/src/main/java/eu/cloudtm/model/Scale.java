@@ -20,10 +20,13 @@ public class Scale extends AbstractTuned {
         large = 0;
     }
 
+    public int getSmall() { return small; }
     public void setSmall(int value){ small = value; }
+
+    public int getMedium() { return medium; }
     public void setMedium(int value){ medium = value; }
+
+    public int getLarge() { return large; }
     public void setLarge(int value){ large = value; }
-
-
 
 }

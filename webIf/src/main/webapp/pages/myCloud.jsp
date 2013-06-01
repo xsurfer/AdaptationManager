@@ -32,29 +32,56 @@
             	Update(data)
             },
             error: function (request, status, error) {
-                alert(status);
+            	document.location.reload(true);
             },
             complete: Polling
         });    	
     }
     
+/**
+{
+   "status":"WORKING",
+   "scale":{
+      "small":0,
+      "medium":0,
+      "large":0,
+      "type":"AUTO",
+      "method":"ANALYTICAL"
+   },
+   "replicationProtocol":{
+      "protocol":"TWOPC",
+      "type":"AUTO",
+      "method":"ANALYTICAL"
+   },
+   "replicationDegree":{
+      "degree":2,
+      "type":"AUTO",
+      "method":"ANALYTICAL"
+   },
+   "dataPlacement":{
+      "type":"AUTO",
+      "method":"ANALYTICAL"
+   }
+}
+*/
+    
     var Update = function(json) {
     	console.log(json); 
-		//var obj = $.parseJSON('{"name":"John"}');
-		//alert(json.scale.small);						
 		
 		$("span#status").text(json.status);
 		
+		
+		/* SCALE */
 		$("p#scale_tuning").text($.trim(json.scale.type) + " + " + $.trim(json.scale.method));
 		$("p#scale_conf").text( $.trim(json.scale.small) + "S");
 		
-		$("p#rep_degree_tuning").text( $.trim(json.replication.type) + " + " + $.trim(json.replication.method) );
-		$("p#rep_degree_conf").text( $.trim(json.replication.degree) );
+		$("p#rep_degree_tuning").text( $.trim(json.replicationDegree.type) + " + " + $.trim(json.replicationDegree.method) );
+		$("p#rep_degree_conf").text( $.trim(json.replicationDegree.degree) );
 		
-		$("p#rep_prot_tuning").text( $.trim(json.replication.type) + " + " + $.trim(json.replication.method) );
-		$("p#rep_prot_conf").text( $.trim(json.replication.protocol) );
+		$("p#rep_prot_tuning").text( $.trim(json.replicationProtocol.type) + " + " + $.trim(json.replicationProtocol.method) );
+		$("p#rep_prot_conf").text( $.trim(json.replicationProtocol.protocol) );
 		
-		$("p#placement_tuning").text( $.trim(json.placement.type) + " + " + $.trim(json.placement.method) );
+		$("p#placement_tuning").text( $.trim(json.dataPlacement.type) + " + " + $.trim(json.dataPlacement.method) );
 		
 	};
 

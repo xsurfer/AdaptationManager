@@ -18,7 +18,10 @@ public abstract class AbstractTuned {
         method = TuningMethod.ANALYTICAL;
     }
 
+    public TuningType getType(){ return type; }
     public void setType(TuningType value){ type = value; }
+
+    public TuningMethod getMethod(){ return method; }
     public void setMethod(TuningMethod value){ method = value; }
 
     public String printTuning(){
