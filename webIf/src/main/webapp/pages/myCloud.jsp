@@ -32,7 +32,9 @@
             	Update(data)
             },
             error: function (request, status, error) {
-            	document.location.reload(true);
+            	setTimeout(function(){
+            		document.location.reload(true);	
+            	}, 5000);            	
             },
             complete: Polling
         });    	
