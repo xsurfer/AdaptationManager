@@ -63,10 +63,10 @@ public class MyCloud extends ExampleSupport {
 		log.info(output);
 
 		//JSONObject jsonObject = JSONObject.fromObject(output);
-		//ScaleInfo bean = (ScaleInfo) JSONObject.toBean(jsonObject, ScaleInfo.class);
+		//Scale bean = (Scale) JSONObject.toBean(jsonObject, Scale.class);
 		
 		Gson gson = new Gson();
-		ScaleInfo scaleInfoBean = gson.fromJson(output, ScaleInfo.class);   
+		Scale scaleInfoBean = gson.fromJson(output, Scale.class);
 		setScale(scaleInfoBean);
 		
 
@@ -77,9 +77,9 @@ public class MyCloud extends ExampleSupport {
 	}
 
 	
-	public ScaleInfo scale;
-	public ScaleInfo getScale(){ return scale; }
-	public void setScale(ScaleInfo value){ scale = value; }
+	public Scale scale;
+	public Scale getScale(){ return scale; }
+	public void setScale(Scale value){ scale = value; }
 	
 	
 	/**

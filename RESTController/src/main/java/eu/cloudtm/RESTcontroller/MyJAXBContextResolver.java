@@ -2,8 +2,7 @@ package eu.cloudtm.RESTcontroller;
 
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
-import eu.cloudtm.model.Instance;
-import eu.cloudtm.model.ScaleInfo;
+import eu.cloudtm.model.Scale;
 
 
 import javax.ws.rs.ext.ContextResolver;
@@ -20,7 +19,7 @@ import javax.xml.bind.JAXBContext;
 public class MyJAXBContextResolver implements ContextResolver<JAXBContext> {
 
     private JAXBContext context;
-    private Class[] types = {ScaleInfo.class, Instance.class};
+    private Class[] types = {Scale.class};
 
     public MyJAXBContextResolver() throws Exception {
         this.context = new JSONJAXBContext(

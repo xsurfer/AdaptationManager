@@ -1,6 +1,8 @@
 package eu.cloudtm.RESTcontroller;
 
 import com.sun.jersey.api.container.grizzly2.GrizzlyWebContainerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +17,8 @@ import javax.ws.rs.core.UriBuilder;
  */
 
 public class Main {
+
+    private static Log log = LogFactory.getLog(Main.class);
 
     private static int getPort(int defaultPort) {
         //grab port from environment, otherwise fall back to default port 9998
@@ -37,16 +41,16 @@ public class Main {
     protected static HttpServer startServer() throws IOException {
         final Map<String, String> initParams = new HashMap<String, String>();
 
-        initParams.put("com.sun.jersey.config.property.packages", "eu.cloudtm");
+        initParams.put("com.sun.jersey.config.property.packages", "eu.cloudtm.RESTcontroller.resources");
 
-        System.out.println("Starting grizzly2...");
+        log.info("Starting grizzly2...");
         return GrizzlyWebContainerFactory.create(BASE_URI, initParams);
     }
 
     public static void main(String[] args) throws IOException {
         // Grizzly 2 initialization
         HttpServer httpServer = startServer();
-        System.out.println(String.format("Jersey app started with WADL available at "
+        log.info(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...",
                 BASE_URI));
         System.in.read();

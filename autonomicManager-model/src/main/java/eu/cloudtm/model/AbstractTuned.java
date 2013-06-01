@@ -1,33 +1,25 @@
 package eu.cloudtm.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import eu.cloudtm.model.utils.TuningMethod;
+import eu.cloudtm.model.utils.TuningType;
 
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
- * Date: 5/27/13
+ * Date: 6/1/13
  */
-@XmlRootElement
-public class ScaleInfo {
+public abstract class AbstractTuned {
 
-    public int small;
-    public int medium;
-    public int large;
+    private TuningType type;
+    private TuningMethod method;
 
-    public TuningType type;
-    public TuningMethod method;
-
-
-    public ScaleInfo(){
+    public AbstractTuned(){
         type = TuningType.AUTO;
         method = TuningMethod.ANALYTICAL;
-        small = 0;
-        medium = 0;
-        large = 0;
     }
+
+    public void setType(TuningType value){ type = value; }
+    public void setMethod(TuningMethod value){ method = value; }
 
     public String printTuning(){
         String ret;
@@ -38,7 +30,5 @@ public class ScaleInfo {
         }
         return ret;
     }
-
-
 
 }

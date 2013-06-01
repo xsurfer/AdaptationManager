@@ -1,16 +1,16 @@
-package eu.cloudtm.model;
+package eu.cloudtm.model.utils;
 
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
- * Date: 5/30/13
+ * Date: 6/1/13
  */
-public enum TuningType{
-    AUTO("auto"),MANUAL("manual");
+public enum Status {
+    WORKING("working"),PENDING("pending"),ERROR("error");
 
     private final String text;
 
-    private TuningType(final String text) {
+    private Status(final String text) {
         this.text = text;
     }
 
@@ -18,5 +18,4 @@ public enum TuningType{
     public String toString() {
         return text;
     }
-
 }

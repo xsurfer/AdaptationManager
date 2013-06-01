@@ -1,4 +1,4 @@
-package eu.cloudtm.model;
+package eu.cloudtm.model.utils;
 
 /**
  * Created by: Fabio Perfetti
