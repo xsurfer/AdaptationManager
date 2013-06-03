@@ -27,14 +27,16 @@
             type: 'GET',
             crossDomain:true,
             dataType: 'json',
-            url: 'http://localhost:9998/status',
+            url: 'http://46.252.152.83:9998/status',
             success: function (data) {
-            	Update(data)
+            	Update(data);
             },
             error: function (request, status, error) {
-            	setTimeout(function(){
-            		document.location.reload(true);	
-            	}, 5000);            	
+//            	setTimeout(function(){
+//            		document.location.reload(true);	
+//            	}, 5000);
+		console.log(status);
+		console.log(error);            	
             },
             complete: Polling
         });    	
