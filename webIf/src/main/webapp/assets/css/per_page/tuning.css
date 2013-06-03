@@ -1,0 +1,50 @@
+.clc {
+	clear: both;
+}
+
+fieldset.resource{
+	width: 100%;
+	margin-bottom: 0px;
+	border:1px solid;
+	padding: 5px;
+	margin-left: 10px;  
+	display : inline-block;	
+}
+
+fieldset.resource div.current{
+	border: 1px dashed;
+	float: left; 
+}
+
+fieldset.resource div.tuning{	
+	width: 300px;
+	border: 1px dashed;
+	float: right; 
+}
+
+
+div.tuning div.radio_tuning{
+	border: 1px dotted;
+	float: left;
+	display: inline;
+}
+
+/** TODO: eliminare margine al fieldset */
+
+div.tuning div.conf_tuning{
+	border: 1px dotted;
+	float: right;
+	display: inline;
+}
+
+fieldset.resource ol {
+	margin: 0;
+	padding: 0;
+}
+
+fieldset.resource li {
+	list-style: none;
+	padding: 5px;
+	margin: 0;
+}
+

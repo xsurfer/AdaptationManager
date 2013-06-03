@@ -149,9 +149,9 @@
 			   				
 	   				
 	   				
-	   				
+	   	<!-- 			
       	<a href="${pageContext.request.contextPath}/registration.jsp">Register</a>
-		
+		 -->
 
 	</div> <!-- /col-text -->
     
