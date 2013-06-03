@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
+import java.util.Scanner;
 
 /**
  * Created by: Fabio Perfetti
@@ -69,9 +70,14 @@ public class Main {
         // Grizzly 2 initialization
         HttpServer httpServer = startServer();
         log.info(String.format("Jersey app started with WADL available at "
-                + "%sapplication.wadl\nHit enter to stop it...",
+                + "%sapplication.wadl\nHit 1000 to stop it...",
                 getBaseURI()));
-        System.in.read();
+        //System.in.read();
+	int num=0;
+	while(num!=1000){
+	    Scanner in = new Scanner(System.in);
+	    num = in.nextInt();
+	}
         httpServer.stop();
     }
 }

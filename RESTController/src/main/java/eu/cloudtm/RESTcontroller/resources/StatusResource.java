@@ -23,6 +23,7 @@ public class StatusResource {
     @Produces("application/json")
     public Response getStatus() {
         String json = gson.toJson(State.getInstance());
+	log.info("new status req");
         return Helper.createResponse(json);
     }
 
