@@ -2,39 +2,86 @@
 	clear: both;
 }
 
-fieldset.resource{
-	width: 100%;
-	margin-bottom: 0px;
-	border:1px solid;
-	padding: 5px;
-	margin-left: 10px;  
-	display : inline-block;	
+div.resource {
+	/*border: 1px dashed;*/
+	width: 100%;				
+	text-align: justify;
 }
 
+fieldset.resource{	
+	width: 880px;
+	margin: 0 auto;	
+	border:1px solid;
+	padding: 5px;
+	
+}
+
+/** CURRENT, CONTROL and TUNING **/
+
 fieldset.resource div.current{
-	border: 1px dashed;
-	float: left; 
+	/*border: 1px dashed red;*/	
+	/*background-color: red;*/
+	display: inline-block;
+	vertical-align: middle;
 }
 
 fieldset.resource div.tuning{	
-	width: 300px;
-	border: 1px dashed;
-	float: right; 
+	/*border: 1px dashed;*/		
+	/*background-color: blue;*/
+	margin-left: 300px;
+	width: 270px;	
+	display: inline-block;
+	vertical-align: middle;
+}
+
+fieldset.resource div.control{
+	/*background-color: yellow;*/
+	/*margin-left: 10px;*/
+	/*border: 1px dashed;*/	
+	display: inline-block;
+	vertical-align: middle;
+	text-align: right;
+}
+
+/** END CURRENT, CONTROL and TUNING **/
+
+fieldset.resource div.control input[type=submit] {
+	width: 50px;
+	
+}
+
+fieldset.resource div.current label{
+	/*border: 1px dashed red;*/
+	width: 180px;
+	display: inline-block;	
+}
+
+div.tuning li {
+	/*border: 1px dashed;*/
 }
 
 
 div.tuning div.radio_tuning{
-	border: 1px dotted;
-	float: left;
-	display: inline;
+	/*border: 1px dotted blue;*/
+	display: inline-block;
+	width: 100px;	
 }
 
-/** TODO: eliminare margine al fieldset */
 
 div.tuning div.conf_tuning{
-	border: 1px dotted;
-	float: right;
-	display: inline;
+	/*border: 1px solid red;*/
+	margin-left: 10px;	
+	display: inline-block;
+	width: 135px;
+}
+
+div.tuning div.conf_tuning select.forecasting{
+	/*border: 1px solid blue;*/
+	/*width: 140px;*/
+}
+
+div.tuning div.conf_tuning fieldset{
+	margin: 0px;
 }
 
 fieldset.resource ol {
