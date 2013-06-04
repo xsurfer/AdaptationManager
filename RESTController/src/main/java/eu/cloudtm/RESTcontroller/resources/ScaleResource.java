@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 
 @Singleton
 @Path("/scale")
-public class ScaleResource {
+public class ScaleResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(ScaleResource.class);
 
@@ -63,24 +63,6 @@ public class ScaleResource {
         String json = gson.toJson(State.getInstance().getScale());
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
-
-    }
-
-    private String _corsHeaders;
-
-    private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
-        Response.ResponseBuilder rb = req.header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
-
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
-
-        return rb.build();
-    }
-
-    private Response makeCORS(Response.ResponseBuilder req) {
-        return makeCORS(req, _corsHeaders);
     }
 
 }

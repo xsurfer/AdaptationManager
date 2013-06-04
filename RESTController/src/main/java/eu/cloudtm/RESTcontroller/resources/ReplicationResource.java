@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 // The Java class will be hosted at the URI path "/myresource"
 @Singleton
 @Path("/replication")
-public class ReplicationResource {
+public class ReplicationResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(ReplicationResource.class);
 
@@ -61,7 +61,8 @@ public class ReplicationResource {
         State.getInstance().updateReplicationDegree(repDegreeConf);
 
         String json = gson.toJson(State.getInstance().getReplicationDegree());
-        return Helper.createResponse(json);
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
     }
 
     @PUT
@@ -97,7 +98,8 @@ public class ReplicationResource {
         State.getInstance().updateReplicationProtocol(repProtocolConf);
 
         String json = gson.toJson(State.getInstance().getReplicationProtocol());
-        return Helper.createResponse(json);
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
     }
 
 
