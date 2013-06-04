@@ -66,12 +66,6 @@ public class ScaleResource {
 
     }
 
-    @OPTIONS
-    public Response corsMyResource(@HeaderParam("Access-Control-Request-Headers") String requestH) {
-        _corsHeaders = requestH;
-        return makeCORS(Response.ok(), requestH);
-    }
-
     private String _corsHeaders;
 
     private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
@@ -88,4 +82,11 @@ public class ScaleResource {
     private Response makeCORS(Response.ResponseBuilder req) {
         return makeCORS(req, _corsHeaders);
     }
+
+    @OPTIONS
+    public Response corsMyResource(@HeaderParam("Access-Control-Request-Headers") String requestH) {
+        _corsHeaders = requestH;
+        return makeCORS(Response.ok(), requestH);
+    }
+
 }
