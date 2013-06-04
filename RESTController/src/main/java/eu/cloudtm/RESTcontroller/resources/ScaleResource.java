@@ -61,8 +61,9 @@ public class ScaleResource {
         State.getInstance().updateScale(newScale);
 
         String json = gson.toJson(State.getInstance().getScale());
-        //return makeCORS(myResponse);
-        return Helper.createResponsePUT(json);
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
+
     }
 
     @OPTIONS
@@ -75,7 +76,7 @@ public class ScaleResource {
 
     private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
         Response.ResponseBuilder rb = req.header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
 
         if (!"".equals(returnMethod)) {
             rb.header("Access-Control-Allow-Headers", returnMethod);
