@@ -26,6 +26,7 @@ public class ScaleResource {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setScale(
+            @HeaderParam("Access-Control-Request-Headers") String requestH,
             @FormParam("tuningType") TuningType tuning,
             @DefaultValue("NONE") @FormParam("tuningMethod") Forecasters forecaster,
             @DefaultValue("-1") @FormParam("size") int size,
@@ -61,9 +62,17 @@ public class ScaleResource {
         State.getInstance().updateScale(newScale);
 
         String json = gson.toJson(State.getInstance().getScale());
-        Response.ResponseBuilder builder = Response.ok(json);
-        return makeCORS(builder);
+        _corsHeaders = requestH;
+        //Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(Response.ok(json), requestH);
+        //return makeCORS(builder);
 
+    }
+
+    @OPTIONS
+    public Response corsMyResource(@HeaderParam("Access-Control-Request-Headers") String requestH) {
+        _corsHeaders = requestH;
+        return makeCORS(Response.ok(), requestH);
     }
 
     private String _corsHeaders;
@@ -81,12 +90,6 @@ public class ScaleResource {
 
     private Response makeCORS(Response.ResponseBuilder req) {
         return makeCORS(req, _corsHeaders);
-    }
-
-    @OPTIONS
-    public Response corsMyResource(@HeaderParam("Access-Control-Request-Headers") String requestH) {
-        _corsHeaders = requestH;
-        return makeCORS(Response.ok(), requestH);
     }
 
 }
