@@ -1,6 +1,6 @@
 package eu.cloudtm.model;
 
-import eu.cloudtm.model.utils.TuningMethod;
+import eu.cloudtm.model.utils.Forecasters;
 import eu.cloudtm.model.utils.TuningType;
 
 /**
@@ -10,26 +10,26 @@ import eu.cloudtm.model.utils.TuningType;
  */
 public abstract class AbstractTuned {
 
-    private TuningType type;
-    private TuningMethod method;
+    private TuningType tuning;  // self or manual
+    private Forecasters forecaster;
 
     public AbstractTuned(){
-        type = TuningType.AUTO;
-        method = TuningMethod.ANALYTICAL;
+        tuning = TuningType.SELF;
+        forecaster = Forecasters.ANALYTICAL;
     }
 
-    public TuningType getType(){ return type; }
-    public void setType(TuningType value){ type = value; }
+    public TuningType getTuning(){ return tuning; }
+    public void setTuning(TuningType value){ tuning = value; }
 
-    public TuningMethod getMethod(){ return method; }
-    public void setMethod(TuningMethod value){ method = value; }
+    public Forecasters getForecaster(){ return forecaster; }
+    public void setForecaster(Forecasters value){ forecaster = value; }
 
     public String printTuning(){
         String ret;
-        if(type.equals(TuningType.AUTO)){
-            ret = type + " + " + method;
+        if(tuning.equals(TuningType.SELF)){
+            ret = tuning + " + " + forecaster;
         } else {
-            ret = type.toString();
+            ret = tuning.toString();
         }
         return ret;
     }

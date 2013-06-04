@@ -21,8 +21,11 @@
 
 package eu.cloudtm.webif;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts2.util.ServletContextAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -36,11 +39,13 @@ import eu.cloudtm.webif.exceptions.RESTControllerException;
 /**
  * Base Action class for the Tutorial package.
  */
-public class BaseAction extends ActionSupport implements Preparable {
+public class BaseAction extends ActionSupport implements Preparable, ServletContextAware {
 	
 	private static Log log = LogFactory.getLog(BaseAction.class);
 	
 	protected static String REST_ERROR = "rest_error";
+	protected String restHost;
+	protected String restPort;
 
 	public void prepare() throws Exception {
 		Client client = Client.create();
@@ -60,5 +65,21 @@ public class BaseAction extends ActionSupport implements Preparable {
 		}
 		
 	}
+
+	public void setServletContext(ServletContext context) {
+		restHost = (String) context.getInitParameter("rest_host");	
+		log.info(restHost);
+		restPort = (String) context.getInitParameter("rest_port");	
+		log.info(restPort);
+	}
+	
+	public String getRestHost() {
+        return this.restHost;
+    }
+		
+	public String getRestPort() {
+        return this.restPort;
+    }
+	
 	
 }

@@ -5,7 +5,8 @@ import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.RESTcontroller.utils.Helper;
 import eu.cloudtm.model.Scale;
 import eu.cloudtm.model.State;
-import eu.cloudtm.model.utils.TuningMethod;
+import eu.cloudtm.model.utils.Forecasters;
+import eu.cloudtm.model.utils.InstanceConfigurations;
 import eu.cloudtm.model.utils.TuningType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,38 +26,41 @@ public class ScaleResource {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setScale(
-            @FormParam("tuningType") TuningType type,
-            @DefaultValue("NONE") @FormParam("tuningMethod") TuningMethod method,
-            @DefaultValue("-1") @FormParam("small") int small,
-            @DefaultValue("-1") @FormParam("medium") int medium,
-            @DefaultValue("-1") @FormParam("large") int large
+            @FormParam("tuningType") TuningType tuning,
+            @DefaultValue("NONE") @FormParam("tuningMethod") Forecasters forecaster,
+            @DefaultValue("-1") @FormParam("size") int size,
+            @FormParam("instance_type") InstanceConfigurations instanceType
     ) {
-        if(type.equals(TuningType.AUTO) && method.equals(TuningMethod.NONE)){
+        if(tuning.equals(TuningType.SELF) && forecaster.equals(Forecasters.NONE)){
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
-        log.info("type: " + type);
-        log.info("method: " + method);
 
-        log.info("small: " + small);
-        log.info("med: " + medium);
-        log.info("lar: " + large);
+        log.info("tuning: " + tuning);
+        log.info("forecaster: " + forecaster);
+
+        log.info("small: " + size);
+        log.info("instanceType: " + instanceType);
 
         Scale newScale = new Scale();
-        newScale.setType(type);
+        newScale.setTuning(tuning);
 
-        if(type.equals(TuningType.MANUAL)){
-            newScale.setMethod(TuningMethod.NONE);
+        if(tuning.equals(TuningType.MANUAL)){
+            newScale.setForecaster(Forecasters.NONE);
         } else {
-            newScale.setMethod(method);
+            newScale.setForecaster(forecaster);
         }
 
-        if(small>=0) newScale.setSmall(small);
-        if(medium>=0) newScale.setMedium(medium);
-        if(large>=0) newScale.setLarge(large);
+        if(size>=0) newScale.setSize(size);
+        else throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        
+        if(instanceType==null)
+        	throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        newScale.setInstanceType(instanceType);
 
+        /** UPDATING STATE **/
         State.getInstance().updateScale(newScale);
 
         String json = gson.toJson(State.getInstance().getScale());
-        return Helper.createResponse(json);
+        return Helper.createResponsePUT(json);
     }
 }

@@ -1,25 +1,80 @@
 var resources = ["scale","rep_degree","rep_protocol","data_placement"];
+var resourceToFeature = { "scale":"scale", 
+						"replicationDegree":"rep_degree", 
+						"replicationProtocol":"rep_protocol",
+						"dataPlacement":"data_placement"
+					  };
+var featureToField = { "scale":"size", 
+		"rep_protocol":"protocol", 
+		"rep_degree":"degree",
+		//"dataPlacement":"data_placement"
+	  };
+var REST_STATUS = 'http://' + REST_HOST + ':' + REST_PORT +'/status';
+var REST_SET_SCALE = 'http://' + REST_HOST + ':' + REST_PORT +'/scale';
 
 
 $(document).ready( 
     		
     		function(){
+    			console.log("REST_STATUS: " + REST_STATUS);
     			init(); 
     			$('.fancybox').fancybox();
-    			
+    			/*
+    			$('#scale').submit(function() { 
+                    sendScale(); 
+                    //return false;
+                });
+    			*/
     			$('#scale').ajaxForm(function() { 
                     alert("Thank you for your comment!"); 
-                }); 
+                });
+    			
+    			
     		}    
     		    		
 );
 
 function init(){
-
-	init_radio();
+	init_radioBtn();
+	initCurrentConfig();
 }
 
-function init_radio(){	
+/*
+{
+	"status":"WORKING",
+	"scale":{"size":0,"tuning":"AUTO","forecaster":"ANALYTICAL"},
+	"replicationProtocol":{"protocol":"TWOPC","tuning":"AUTO","forecaster":"ANALYTICAL"},
+	"replicationDegree":{"degree":2,"tuning":"AUTO","forecaster":"ANALYTICAL"},
+	"dataPlacement":{"tuning":"AUTO","forecaster":"ANALYTICAL"}
+}
+*/
+
+function initCurrentConfig(){
+	var current = 'current_';
+	var currentOpt = 'current_opt_';
+	console.log("======");
+	$.getJSON( REST_STATUS, function(data){
+				
+		var items = [];
+		$.each(data, function(key, val) {
+			var htmlField = resourceToFeature[key];
+			
+			if(htmlField){	
+				console.log("htmlField: " + htmlField);
+				console.log("val:" + val);
+				var field = featureToField[htmlField];
+				console.log("field:" + field);
+				console.log("valore:" + val[field]);
+				$('input:text[name=' + current + htmlField + ']').val(val[field]);
+				$('input:text[name=' + currentOpt + htmlField + ']').val("OPT");				
+			}						
+		});
+		//alert(items);
+	});
+	
+}
+
+function init_radioBtn(){	
 
 	var length = resources.length, element = null;
 	for (var i = 0; i < length; i++) {
@@ -64,3 +119,30 @@ function disableFieldset($radio){
 	$('fieldset[name="'+ enabled +'"]').children().removeAttr("disabled");
 
 }
+
+function sendScale() {
+	var dataToBeSent = $("form#scale").serialize();
+	$('#form#scale').ajaxForm();
+	//$.post(REST_SET_SCALE, dataToBeSent);
+	/*
+	console.log("DATA_TO_SENT" + dataToBeSent);
+	$.ajax({
+        type: 'PUT',
+        crossDomain: true,
+        data: {}
+        //dataType: 'json',
+        url: REST_SET_SCALE,
+        success: function (data) {
+        	alert("Thank you for your comment!");
+        },
+        error: function (request, status, error) {
+//        	setTimeout(function(){
+//        		document.location.reload(true);	
+//        	}, 5000);
+        console.log(status);
+        console.log(error);            	
+        }
+    });	
+    */
+}
+	

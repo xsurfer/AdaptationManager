@@ -1,5 +1,7 @@
 package eu.cloudtm.model;
 
+import eu.cloudtm.model.utils.InstanceConfigurations;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -10,23 +12,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Scale extends AbstractTuned {
 
-    private int small;
-    private int medium;
-    private int large;
+    private int size;
+    private InstanceConfigurations instanceType;
+
 
     public Scale(){
-        small = 0;
-        medium = 0;
-        large = 0;
+        size = 0;
+        instanceType = InstanceConfigurations.NONE;
     }
 
-    public int getSmall() { return small; }
-    public void setSmall(int value){ small = value; }
+    public int getSize() { return size; }
+    public void setSize(int value){ size = value; }
 
-    public int getMedium() { return medium; }
-    public void setMedium(int value){ medium = value; }
-
-    public int getLarge() { return large; }
-    public void setLarge(int value){ large = value; }
+    public InstanceConfigurations getInstanceType() { return instanceType; }
+    public void setInstanceType(InstanceConfigurations value){ instanceType = value; }
 
 }

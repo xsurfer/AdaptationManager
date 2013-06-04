@@ -65,6 +65,8 @@ public class Main {
             throw new RuntimeException(e);
         }
         hostname = cmd.getOptionValue("host");
+        if(hostname == null || hostname.length()<=0)
+            hostname="localhost";
         log.info("HOSTNAME: " + hostname);
 
         // Grizzly 2 initialization

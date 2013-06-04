@@ -47,36 +47,35 @@ public class State {
     /* UPDATE METHODS */
 
     public void updateScale(Scale newScale){
-        if( (newScale.getSmall()+newScale.getMedium()+newScale.getLarge())<0 )
+        if( (newScale.getSize())<0 )
             throw new IllegalArgumentException("Configuration not acceptable!");
-        if(newScale.getType()==null || newScale.getMethod()==null)
+        if(newScale.getTuning()==null || newScale.getForecaster()==null)
             throw new IllegalArgumentException("Non-null value must be provided!");
 
-        scale.setSmall(newScale.getSmall());
-        scale.setMedium(newScale.getMedium());
-        scale.setLarge(newScale.getLarge());
+        scale.setSize(newScale.getSize());
+        scale.setInstanceType(newScale.getInstanceType());
 
-        scale.setType(newScale.getType());
-        scale.setMethod(newScale.getMethod());
+        scale.setTuning(newScale.getTuning());
+        scale.setForecaster(newScale.getForecaster());
     }
 
     public void updateReplicationProtocol(ReplicationProtocol replicationProtocolConf){
         replicationProtocol.setProtocol(replicationProtocolConf.getProtocol());
 
-        replicationProtocol.setType(replicationProtocolConf.getType());
-        replicationProtocol.setMethod(replicationProtocolConf.getMethod());
+        replicationProtocol.setTuning(replicationProtocolConf.getTuning());
+        replicationProtocol.setForecaster(replicationProtocolConf.getForecaster());
     }
 
     public void updateReplicationDegree(ReplicationDegree replicationDegreeConf){
         replicationDegree.setDegree(replicationDegreeConf.getDegree());
 
-        replicationDegree.setType(replicationDegreeConf.getType());
-        replicationDegree.setMethod(replicationDegreeConf.getMethod());
+        replicationDegree.setTuning(replicationDegreeConf.getTuning());
+        replicationDegree.setForecaster(replicationDegreeConf.getForecaster());
     }
 
     public void updateDataPlacement(Placement dataPlacementConf){
-        dataPlacement.setType(dataPlacementConf.getType());
-        dataPlacement.setMethod(dataPlacementConf.getMethod());
+        dataPlacement.setTuning(dataPlacementConf.getTuning());
+        dataPlacement.setForecaster(dataPlacementConf.getForecaster());
     }
 
 }

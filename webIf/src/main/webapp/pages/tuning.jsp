@@ -8,7 +8,10 @@
 	type="text/css" media="screen" rel="stylesheet" />
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
-
+<script type="text/javascript">
+	var REST_HOST = '<s:property value="getRestHost()" />';
+	var REST_PORT = '<s:property value="getRestPort()" />';
+</script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/tuning.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/assets/fancybox/jquery.fancybox.pack.js"></script>
 <script src="http://malsup.github.com/jquery.form.js"></script>
@@ -31,7 +34,7 @@
 			<!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
 
 			<!-- SCALE FORM -->
-			<form id="scale" action="#" method="post">
+			<form id="scale" action="http://localhost:9998/scale" method="put">
 			
 				<!-- RESOURCE -->
 				<div class="resource">
@@ -41,13 +44,13 @@
 						<!-- CURRENT -->
 						<div class="current">
 							<ol>
-								<li><label for="current_scale">Current
+								<!-- <li><label for="current_scale">Current
 										configuration:</label> <input readonly="readonly" type="text"
 									name="current_scale" id="current_scale" size="3" value="4" /></li>
 								<li><label for="current_opt_scale">Current optimal
 										configuration:</label> <input readonly="readonly" type="text"
 									name="current_opt_scale" id="current_opt_scale" size="3"
-									value="5" /></li>
+									value="5" /></li> -->
 							</ol>
 						</div>						
 						
@@ -56,16 +59,16 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="scale_tuning" value="manual">
+										<input type="radio" name="tuningType" value="MANUAL">
 										Manual tuning
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="scale_tuning_manual">
-											<input type="text" name="scale_size" id=scale_conf size="3" />
-											<select name="scale_type">
-												<option value="analytical">Small</option>
-												<option value="simulator">Medium</option>
-												<option value="ml">Large</option>
+											<input type="text" name="size" id=scale_conf size="3" />
+											<select name="instance_type">
+												<option value="SMALL">Small</option>
+												<option value="MEDIUM">Medium</option>
+												<option value="LARGE">Large</option>
 											</select>
 										</fieldset>
 									</div>		
@@ -73,15 +76,15 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="scale_tuning" value="self">Self-tuning
+										<input type="radio" name="tuningType" value="SELF">Self-tuning
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="scale_tuning_self">
 											<!-- <label for="wr_tx_local_exec_time">Forecasting method:</label> -->
-											<select name="scale_forecasting" class="forecasting">
-												<option value="analytical">Analytical Method</option>
-												<option value="simulator">Simulator</option>
-												<option value="ml">Machine Learning</option>
+											<select name="tuningMethod" class="forecasting">
+												<option value="ANALYTICAL">Analytical Method</option>
+												<option value="SIMULATOR">Simulator</option>
+												<option value="MACHINELEARNING">Machine Learning</option>
 											</select>
 										</fieldset>										
 									</div>
@@ -109,10 +112,10 @@
 						<!-- CURRENT -->
 						<div class="current">
 							<ol>
-								<li><label for="current_scale">Current
+								<li><label for="current_rep_degree">Current
 										configuration:</label> <input readonly="readonly" type="text"
 									name="current_rep_degree" id="current_scale" size="3" value="4" /></li>
-								<li><label for="current_opt_scale">Current optimal
+								<li><label for="current_opt_rep_degree">Current optimal
 										configuration:</label> <input readonly="readonly" type="text"
 									name="current_opt_rep_degree" id="current_opt_scale" size="3"
 									value="5" /></li>
@@ -174,12 +177,12 @@
 						<div class="current">
 							<ol>
 								<li><label for="current_rep_protocol">Current
-										configuration:</label> <input readonly="readonly" type="text"
-									name="current_rep_protocol" id="current_scale" size="3" value="4" /></li>
+										configuration:</label> 
+										<input readonly="readonly" type="text" name="current_rep_protocol" id="current_rep_protocol" size="6" value="null" /></li>
 								<li><label for="current_opt_rep_protocol">Current optimal
 										configuration:</label> <input readonly="readonly" type="text"
-									name="current_opt_rep_protocol" id="current_opt_scale" size="3"
-									value="5" /></li>
+									name="current_opt_rep_protocol" id="current_opt_scale" size="6"
+									value="null" /></li>
 							</ol>
 						</div>						
 						
@@ -187,9 +190,9 @@
 						<div class="tuning">
 							<ol>
 								<li>
-									<div class="radio_tuning">
-										<input type="radio" name="rep_protocol_tuning" value="manual">
-										Manual tuning
+									<div class="radio_tuning">										
+										<input type="radio" id="rep_protocol_tuning_manual" name="rep_protocol_tuning" value="manual" />
+										<label for="rep_protocol_tuning_manual">Manual tuning</label>										
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="rep_protocol_tuning_manual">
@@ -201,7 +204,8 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_protocol_tuning" value="self">Self-tuning
+										<input type="radio" name="rep_protocol_tuning" id="rep_protocol_tuning_self" value="self" />
+										<label for="rep_protocol_tuning_self">Self-tuning</label>
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="rep_protocol_tuning_self">

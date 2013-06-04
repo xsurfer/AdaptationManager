@@ -23,12 +23,13 @@ fieldset.resource div.current{
 	/*background-color: red;*/
 	display: inline-block;
 	vertical-align: middle;
+	width: 300px;
 }
 
 fieldset.resource div.tuning{	
 	/*border: 1px dashed;*/		
 	/*background-color: blue;*/
-	margin-left: 300px;
+	margin-left: 220px;
 	width: 270px;	
 	display: inline-block;
 	vertical-align: middle;

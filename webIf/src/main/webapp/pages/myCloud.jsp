@@ -10,19 +10,37 @@
     	}
     </style>
     
-    <script type="text/javascript">
-    $(document).ready( 
-    		
-    		function(){
-    			Retrieve();    		    			
-    		}    		
-    );
+<script type="text/javascript">
+	var REST_HOST = '<s:property value="getRestHost()" />';
+	var REST_PORT = '<s:property value="getRestPort()" />';
+</script>
+    
+<script type="text/javascript">
+
+var REST_STATUS = 'http://' + REST_HOST + ':' + REST_PORT +'/status';
+
+$(document).ready(
+		function(){
+			Retrieve();
+		}    		
+);
     
     var Polling = function(){
     	setTimeout(Retrieve, 5000);
     }
     
     var Retrieve = function(){
+    	
+    	$.getJSON( REST_STATUS, function(data){Update(data)})
+    		.complete(function(){
+    			Polling();
+    		})
+    		.fail(function() { 
+    			setTimeout(function(){
+            		document.location.reload(true);	
+            	}, 5000);
+    		});
+    	/*
     	$.ajax({
             type: 'GET',
             crossDomain:true,
@@ -39,7 +57,8 @@
 		console.log(error);            	
             },
             complete: Polling
-        });    	
+        });  
+    	*/
     }
     
 /**
@@ -76,16 +95,19 @@
 		
 		
 		/* SCALE */
-		$("p#scale_tuning").text($.trim(json.scale.type) + " + " + $.trim(json.scale.method));
-		$("p#scale_conf").text( $.trim(json.scale.small) + "S");
+		$("p#scale_tuning").text($.trim(json.scale.tuning) + " + " + $.trim(json.scale.forecaster));
 		
-		$("p#rep_degree_tuning").text( $.trim(json.replicationDegree.type) + " + " + $.trim(json.replicationDegree.method) );
+		var instanceType = (json.scale.instanceType == "NONE") ? "" : json.scale.instanceType;
+		
+		$("p#scale_conf").text( $.trim(json.scale.size) + " " + $.trim(instanceType));
+		
+		$("p#rep_degree_tuning").text( $.trim(json.replicationDegree.tuning) + " + " + $.trim(json.replicationDegree.forecaster) );
 		$("p#rep_degree_conf").text( $.trim(json.replicationDegree.degree) );
 		
-		$("p#rep_prot_tuning").text( $.trim(json.replicationProtocol.type) + " + " + $.trim(json.replicationProtocol.method) );
+		$("p#rep_prot_tuning").text( $.trim(json.replicationProtocol.tuning) + " + " + $.trim(json.replicationProtocol.forecaster) );
 		$("p#rep_prot_conf").text( $.trim(json.replicationProtocol.protocol) );
 		
-		$("p#placement_tuning").text( $.trim(json.dataPlacement.type) + " + " + $.trim(json.dataPlacement.method) );
+		$("p#placement_tuning").text( $.trim(json.dataPlacement.tuning) + " + " + $.trim(json.dataPlacement.forecaster) );
 		
 	};
 

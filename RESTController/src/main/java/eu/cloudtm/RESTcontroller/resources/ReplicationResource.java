@@ -5,10 +5,9 @@ import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.RESTcontroller.utils.Helper;
 import eu.cloudtm.model.ReplicationDegree;
 import eu.cloudtm.model.ReplicationProtocol;
-import eu.cloudtm.model.Scale;
 import eu.cloudtm.model.State;
+import eu.cloudtm.model.utils.Forecasters;
 import eu.cloudtm.model.utils.ReplicationProtocols;
-import eu.cloudtm.model.utils.TuningMethod;
 import eu.cloudtm.model.utils.TuningType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,13 +30,13 @@ public class ReplicationResource {
     @Produces("application/json")
     public synchronized Response setDegree(
             @FormParam("tuningType") TuningType type,
-            @DefaultValue("NONE") @FormParam("tuningMethod") TuningMethod method,
+            @DefaultValue("NONE") @FormParam("tuningMethod") Forecasters method,
             @DefaultValue("0") @FormParam("degree") int degree
     ) {
         if(type==null)
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-        if(type.equals(TuningType.AUTO) && method.equals(TuningMethod.NONE)){
+        if(type.equals(TuningType.SELF) && method.equals(Forecasters.NONE)){
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
@@ -50,12 +49,12 @@ public class ReplicationResource {
         }
 
         ReplicationDegree repDegreeConf = new ReplicationDegree();
-        repDegreeConf.setType(type);
+        repDegreeConf.setTuning(type);
 
         if(type.equals(TuningType.MANUAL)){
-            repDegreeConf.setMethod(TuningMethod.NONE);
+            repDegreeConf.setForecaster(Forecasters.NONE);
         } else {
-            repDegreeConf.setMethod(method);
+            repDegreeConf.setForecaster(method);
         }
 
         repDegreeConf.setDegree(degree);
@@ -71,13 +70,13 @@ public class ReplicationResource {
     @Produces("application/json")
     public synchronized Response setProtocol(
             @FormParam("tuningType") TuningType type,
-            @DefaultValue("NONE") @FormParam("tuningMethod") TuningMethod method,
+            @DefaultValue("NONE") @FormParam("tuningMethod") Forecasters method,
             @FormParam("protocol") ReplicationProtocols protocol
     ) {
         if(type==null || protocol==null)
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-        if(type.equals(TuningType.AUTO) && method.equals(TuningMethod.NONE)){
+        if(type.equals(TuningType.SELF) && method.equals(Forecasters.NONE)){
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
@@ -86,12 +85,12 @@ public class ReplicationResource {
         log.info("protocol: " + protocol);
 
         ReplicationProtocol repProtocolConf = new ReplicationProtocol();
-        repProtocolConf.setType(type);
+        repProtocolConf.setTuning(type);
 
         if(type.equals(TuningType.MANUAL)){
-            repProtocolConf.setMethod(TuningMethod.NONE);
+            repProtocolConf.setForecaster(Forecasters.NONE);
         } else {
-            repProtocolConf.setMethod(method);
+            repProtocolConf.setForecaster(method);
         }
 
         repProtocolConf.setProtocol(protocol);
