@@ -29,9 +29,9 @@ public class ReplicationResource extends AbstractResource {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setDegree(
-            @FormParam("tuningType") TuningType type,
-            @DefaultValue("NONE") @FormParam("tuningMethod") Forecasters method,
-            @DefaultValue("0") @FormParam("degree") int degree
+            @FormParam("rep_degree_tuning") TuningType type,
+            @DefaultValue("NONE") @FormParam("rep_degree_forecasting") Forecasters method,
+            @DefaultValue("0") @FormParam("rep_degree_size") int degree
     ) {
         if(type==null)
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -70,9 +70,9 @@ public class ReplicationResource extends AbstractResource {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setProtocol(
-            @FormParam("tuningType") TuningType type,
-            @DefaultValue("NONE") @FormParam("tuningMethod") Forecasters method,
-            @FormParam("protocol") ReplicationProtocols protocol
+            @FormParam("rep_protocol_tuning") TuningType type,
+            @DefaultValue("NONE") @FormParam("rep_protocol_forecasting") Forecasters method,
+            @FormParam("rep_protocol") ReplicationProtocols protocol
     ) {
         if(type==null || protocol==null)
             throw new WebApplicationException(Response.Status.BAD_REQUEST);

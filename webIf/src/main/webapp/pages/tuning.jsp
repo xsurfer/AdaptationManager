@@ -34,7 +34,7 @@
 			<!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
 
 			<!-- SCALE FORM -->
-			<form id="scale" action="http://localhost:9998/scale" method="put">
+			<form id="scale">
 			
 				<!-- RESOURCE -->
 				<div class="resource">
@@ -59,12 +59,12 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="tuningType" value="MANUAL">
+										<input type="radio" name="scale_tuning" value="MANUAL">
 										Manual tuning
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="scale_tuning_manual">
-											<input type="text" name="size" id=scale_conf size="3" />
+											<input type="text" name="scale_size" id=scale_size size="3" />
 											<select name="instance_type">
 												<option value="SMALL">Small</option>
 												<option value="MEDIUM">Medium</option>
@@ -76,12 +76,12 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="tuningType" value="SELF">Self-tuning
+										<input type="radio" name="scale_tuning" value="SELF">Self-tuning
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="scale_tuning_self">
 											<!-- <label for="wr_tx_local_exec_time">Forecasting method:</label> -->
-											<select name="tuningMethod" class="forecasting">
+											<select name="scale_forecasting" class="forecasting">
 												<option value="ANALYTICAL">Analytical Method</option>
 												<option value="SIMULATOR">Simulator</option>
 												<option value="MACHINELEARNING">Machine Learning</option>
@@ -127,12 +127,12 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_degree_tuning" value="manual">
+										<input type="radio" name="rep_degree_tuning" value="MANUAL">
 										Manual tuning
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="rep_degree_tuning_manual">
-											<input type="text" name="rep_degree_size" id=scale_conf size="3" />											
+											<input type="text" name="rep_degree_size" id=degree_conf size="3" />											
 										</fieldset>
 									</div>	
 									
@@ -140,7 +140,7 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_degree_tuning" value="self">Self-tuning
+										<input type="radio" name="rep_degree_tuning" value="SELF">Self-tuning
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="rep_degree_tuning_self">
@@ -191,12 +191,16 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">										
-										<input type="radio" id="rep_protocol_tuning_manual" name="rep_protocol_tuning" value="manual" />
+										<input type="radio" id="rep_protocol_tuning_manual" name="rep_protocol_tuning" value="MANUAL" />
 										<label for="rep_protocol_tuning_manual">Manual tuning</label>										
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="rep_protocol_tuning_manual">
-											<input type="text" name="rep_degree_size" id=scale_conf size="3" />											
+											<select name="rep_protocol">
+												<option value="2PC">2PC</option>
+												<option value="TO">TO</option>
+												<option value="PB">PB</option>
+											</select>											
 										</fieldset>
 									</div>	
 									
@@ -204,7 +208,7 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_protocol_tuning" id="rep_protocol_tuning_self" value="self" />
+										<input type="radio" name="rep_protocol_tuning" id="rep_protocol_tuning_self" value="SELF" />
 										<label for="rep_protocol_tuning_self">Self-tuning</label>
 									</div>
 									<div class="conf_tuning">

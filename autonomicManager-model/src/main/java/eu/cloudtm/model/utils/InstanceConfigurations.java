@@ -6,7 +6,7 @@ package eu.cloudtm.model.utils;
  * Date: 5/27/13
  */
 public enum InstanceConfigurations {
-    NONE(""),SMALL("small"), MEDIUM("medium"), LARGE("large");
+    NONE("none"),SMALL("small"), MEDIUM("medium"), LARGE("large");
     
     private final String text;
 

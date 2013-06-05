@@ -1,13 +1,16 @@
 package eu.cloudtm.model;
 
+import org.apache.commons.logging.Log;
 import eu.cloudtm.model.utils.Status;
-
+import org.apache.commons.logging.LogFactory;
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
  * Date: 6/1/13
  */
 public class State {
+
+    private static Log log = LogFactory.getLog(State.class);
 
     private static State instance;
 
@@ -47,7 +50,7 @@ public class State {
     /* UPDATE METHODS */
 
     public void updateScale(Scale newScale){
-        if( (newScale.getSize())<0 )
+        if( newScale.getSize()<0 )
             throw new IllegalArgumentException("Configuration not acceptable!");
         if(newScale.getTuning()==null || newScale.getForecaster()==null)
             throw new IllegalArgumentException("Non-null value must be provided!");

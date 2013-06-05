@@ -19,15 +19,13 @@ $(document).ready(
     			console.log("REST_STATUS: " + REST_STATUS);
     			init(); 
     			$('.fancybox').fancybox();
-    			/*
+
     			$('#scale').submit(function() { 
                     sendScale(); 
-                    //return false;
+                    return false;
                 });
-    			*/
-    			$('#scale').ajaxForm(function() { 
-                    alert("Thank you for your comment!"); 
-                });
+
+
     			
     			
     		}    
@@ -84,7 +82,7 @@ function init_radioBtn(){
 				
 		// INIT		
 	    if($radios.is(':checked') === false) {
-	        $radios.filter('[value=manual]').prop('checked', true);
+	        $radios.filter('[value=MANUAL]').prop('checked', true);
 	        disableFieldset($radios);
 	    }
 	    
@@ -104,7 +102,7 @@ function disableFieldset($radio){
 	
 	var fieldsetName = $radio.attr("name") + '_';
 	var enabled = disabled = fieldsetName;
-	if($radio.attr("value")=="self"){
+	if($radio.attr("value")=="SELF"){
 		enabled += 'self';
 		disabled += 'manual';
 	} else {
@@ -123,6 +121,19 @@ function disableFieldset($radio){
 function sendScale() {
 	var dataToBeSent = $("form#scale").serialize();
 	$('#form#scale').ajaxForm();
+	
+	$.ajax({
+	    url: REST_SET_SCALE,
+	    type: 'PUT',
+	    crossDomain: true,
+	    data: dataToBeSent,
+	    dataType: 'json',
+	    success: function(data) {	        
+	        alert('ok!');
+	    }
+	});
+	
+	
 	//$.post(REST_SET_SCALE, dataToBeSent);
 	/*
 	console.log("DATA_TO_SENT" + dataToBeSent);
