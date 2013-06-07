@@ -24,13 +24,7 @@ package eu.cloudtm.webif;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.google.gson.Gson;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-
-import eu.cloudtm.model.*;
+import eu.cloudtm.controller.model.*;
 
 /**
  * <code>Set welcome message.</code>

@@ -16,11 +16,12 @@
     </properties>
 
     <dependencies>
+    	
     	<dependency>
-            <groupId>eu.cloudtm</groupId>
-            <artifactId>autonomicManager-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        	<groupId>eu.cloudtm</groupId>
+        	<artifactId>autonomicManager</artifactId>
+        	<version>1.0-SNAPSHOT</version>
+    	</dependency>
                 
         <dependency>
         	<groupId>com.jgeppert.struts2.jquery</groupId>

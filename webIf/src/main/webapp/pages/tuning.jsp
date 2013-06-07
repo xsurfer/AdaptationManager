@@ -44,13 +44,14 @@
 						<!-- CURRENT -->
 						<div class="current">
 							<ol>
-								<!-- <li><label for="current_scale">Current
-										configuration:</label> <input readonly="readonly" type="text"
-									name="current_scale" id="current_scale" size="3" value="4" /></li>
-								<li><label for="current_opt_scale">Current optimal
-										configuration:</label> <input readonly="readonly" type="text"
-									name="current_opt_scale" id="current_opt_scale" size="3"
-									value="5" /></li> -->
+								<li>
+									<p class="label">Current configuration:</p>
+									<p class="config"><span id="current_scale">5</span>instances</p>								
+								</li>
+								<li>
+									<p class="label">Current optimal configuration:</p>
+									<p class="config"><span id="current_opt_scale">7</span>instances</p>								
+								</li>
 							</ol>
 						</div>						
 						
@@ -95,7 +96,7 @@
 						
 						<!-- CONTROL -->
 						<div class="control">
-							<input type="submit" value="Set" />
+							<input class="submit" type="submit" value="Set" />
 						</div>
 					</fieldset>
 				</div>
@@ -112,15 +113,16 @@
 						<!-- CURRENT -->
 						<div class="current">
 							<ol>
-								<li><label for="current_rep_degree">Current
-										configuration:</label> <input readonly="readonly" type="text"
-									name="current_rep_degree" id="current_scale" size="3" value="4" /></li>
-								<li><label for="current_opt_rep_degree">Current optimal
-										configuration:</label> <input readonly="readonly" type="text"
-									name="current_opt_rep_degree" id="current_opt_scale" size="3"
-									value="5" /></li>
+								<li>
+									<p class="label">Current configuration:</p>
+									<p class="config"><span id="current_rep_degree">5</span>replicas per object</p>								
+								</li>
+								<li>
+									<p class="label">Current optimal configuration:</p>
+									<p class="config"><span id="current_opt_rep_degree">7</span>replicas per object</p>
+								</li>
 							</ol>
-						</div>						
+						</div>									
 						
 						<!-- TUNING -->
 						<div class="tuning">
@@ -159,7 +161,7 @@
 						
 						<!-- CONTROL -->
 						<div class="control">
-							<input type="submit" value="Set" />
+							<input class="submit" type="submit" value="Set" />
 						</div>
 					</fieldset>
 				</div>
@@ -176,15 +178,16 @@
 						<!-- CURRENT -->
 						<div class="current">
 							<ol>
-								<li><label for="current_rep_protocol">Current
-										configuration:</label> 
-										<input readonly="readonly" type="text" name="current_rep_protocol" id="current_rep_protocol" size="6" value="null" /></li>
-								<li><label for="current_opt_rep_protocol">Current optimal
-										configuration:</label> <input readonly="readonly" type="text"
-									name="current_opt_rep_protocol" id="current_opt_scale" size="6"
-									value="null" /></li>
+								<li>
+									<p class="label">Current configuration:</p>
+									<p class="config"><span id="current_rep_protocol">TO</span></p>								
+								</li>
+								<li>
+									<p class="label">Current optimal configuration:</p>
+									<p class="config"><span id="current_opt_rep_protocol">2PC</span></p>
+								</li>
 							</ol>
-						</div>						
+						</div>												
 						
 						<!-- TUNING -->
 						<div class="tuning">
@@ -228,7 +231,7 @@
 						
 						<!-- CONTROL -->
 						<div class="control">
-							<input type="submit" value="Set" />
+							<input class="submit" type="submit" value="Set" />
 						</div>
 					</fieldset>
 				</div>
@@ -241,17 +244,18 @@
 				<div class="resource">
 					<fieldset class="resource">
 						<legend>Data Placement:</legend>
-						
+												
 						<!-- CURRENT -->
 						<div class="current">
 							<ol>
-								<li><label for="current_data_placement">Current
-										configuration:</label> <input readonly="readonly" type="text"
-									name="current_data_placement" size="3" value="4" /></li>
-								<li><label for="current_opt_data_placement">Current optimal
-										configuration:</label> <input readonly="readonly" type="text"
-									name="current_opt_data_placement" size="3"
-									value="5" /></li>
+								<li>
+									<p class="label">AVG Remote OPS/TX [%]:</p>
+									<p class="config"><span id="current_data_placement">20</span></p>								
+								</li>
+								<li>
+									<p class="label">AVG Nodes involved in TX:</p>
+									<p class="config"><span id="current_opt_data_placement">30</span></p>
+								</li>
 							</ol>
 						</div>						
 						
@@ -271,7 +275,7 @@
 						
 						<!-- CONTROL -->
 						<div class="control">
-							<input type="submit" value="Set" />
+							<input class="submit" type="submit" value="Set" />
 						</div>
 					</fieldset>
 				</div>

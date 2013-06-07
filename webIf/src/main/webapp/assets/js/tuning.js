@@ -63,8 +63,8 @@ function initCurrentConfig(){
 				var field = featureToField[htmlField];
 				console.log("field:" + field);
 				console.log("valore:" + val[field]);
-				$('input:text[name=' + current + htmlField + ']').val(val[field]);
-				$('input:text[name=' + currentOpt + htmlField + ']').val("OPT");				
+				$('span#' + current + htmlField ).text(val[field]);
+				$('span#' + currentOpt + htmlField ).text("OPT");				
 			}						
 		});
 		//alert(items);

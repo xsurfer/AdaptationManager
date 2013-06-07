@@ -91,7 +91,7 @@ $(document).ready(
     var Update = function(json) {
     	console.log(json); 
 		
-		$("span#status").text(json.status);
+		$("span#status").text(json.platformState);
 		
 		
 		/* SCALE */
