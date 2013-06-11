@@ -19,8 +19,16 @@
             <artifactId>wpmconnector</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
-            <systemPath>/home/fabio/Desktop/work_space/AutonomicManager/autonomicManager/lib/WPMConnector.jar</systemPath>
+	        <systemPath>${basedir}/lib/WPMConnector.jar</systemPath>
+ <!--           <systemPath>/home/fabio/Desktop/work_space/AutonomicManager/autonomicManager/lib/WPMConnector.jar</systemPath> -->
         </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.collections</groupId>
+            <artifactId>collections-generic</artifactId>
+            <version>4.01</version>
+        </dependency>
+
 
     </dependencies>
 

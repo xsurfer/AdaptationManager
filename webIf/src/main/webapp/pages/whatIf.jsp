@@ -48,20 +48,20 @@
 										<input type="text" id="acf" name="acf" size="5" />
 									</div>
 									<div class="param">
-										<label for="wr_tx_per">Write Transactions Percentage:</label>
-										<input type="text" name="wr_tx_per" id="wr_tx_per" size="5" />
+										<label for="RetryWritePercentage">Write Transactions Percentage:</label>
+										<input type="text" name="RetryWritePercentage" id="RetryWritePercentage" size="5" />
 									</div>
 									<div class="param">
-										<label for="puts_per_wr_tx"># PUT per write transaction:</label>
-										<input type="text" name="puts_per_wr_tx" id="puts_per_wr_tx" size="5" />
+										<label for="SuxNumPuts"># PUT per write transaction:</label>
+										<input type="text" name="SuxNumPuts" id="SuxNumPuts" size="5" />
 									</div>
 									<div class="param">
-										<label for="get_per_wr_tx"># GET per write transaction:</label>
-										<input type="text" name="get_per_wr_tx" id="get_per_wr_tx" size="5" />
+										<label for="GetWriteTx"># GET per write transaction:</label>
+										<input type="text" name="GetWriteTx" id="GetWriteTx" size="5" />
 									</div>
 									<div class="param">
-										<label for="get_per_rd_only_tx"># GET per read only transaction:</label>
-										<input type="text" name="get_per_rd_only_tx" id="get_per_rd_only_tx" size="5" />
+										<label for="GetReadOnlyTx"># GET per read only transaction:</label>
+										<input type="text" name="GetReadOnlyTx" id="GetReadOnlyTx" size="5" />
 									</div>
 									<div class="param">
 									</div>							
@@ -73,12 +73,12 @@
 							<fieldset>
 								<legend>CPU Costs:</legend>
 									<div class="param">
-										<label for="wr_tx">Write transaction demand:</label>
-										<input type="text" name="wr_tx" id="wr_tx" size="5" />
+										<label for="LocalUpdateTxLocalServiceTime">Write transaction demand:</label>
+										<input type="text" name="LocalUpdateTxLocalServiceTime" id="LocalUpdateTxLocalServiceTime" size="5" />
 									</div>
 									<div class="param">
-										<label for="rd_only_tx">Read Only transaction demand:</label>
-										<input type="text" name="rd_only_tx" id="rd_only_tx" size="5" />																	
+										<label for="LocalReadOnlyTxLocalServiceTime">Read Only transaction demand:</label>
+										<input type="text" name="LocalReadOnlyTxLocalServiceTime" id="LocalReadOnlyTxLocalServiceTime" size="5" />																	
 									</div>
 									<div class="param">
 									</div>
@@ -92,20 +92,20 @@
 								<legend>NET Costs:</legend>
 									<div class="param">
 										<div class="line"></div>
-										<label for="size_prepare">Size of prepare message:</label>										
-										<input type="text" name="size_prepare" id="size_prepare" size="5" />
+										<label for="PrepareCommandBytes">Size of prepare message:</label>										
+										<input type="text" name="PrepareCommandBytes" id="PrepareCommandBytes" size="5" />
 									</div>
 									<div class="param">
-										<label for="prepare_lat">Prepare latency:</label>
-										<input type="text" name="prepare_lat" id="prepare_lat" size="5" />
+										<label for="RTT">Prepare latency:</label>
+										<input type="text" name="RTT" id="RTT" size="5" />
 									</div>
 									<div class="param">
-										<label for="commit_lat">Commit latency:</label>
-										<input type="text" name="commit_lat" id="commit_lat" size="5" />
+										<label for="CommitBroadcastWallClockTime">Commit latency:</label>
+										<input type="text" name="CommitBroadcastWallClockTime" id="CommitBroadcastWallClockTime" size="5" />
 									</div>
 									<div class="param">
-										<label for="remote_get_lat">Remote get latency:</label>
-										<input type="text" name="remote_get_lat" id="remote_get_lat" size="5" />
+										<label for="RemoteGetLatency">Remote get latency:</label>
+										<input type="text" name="RemoteGetLatency" id="RemoteGetLatency" size="5" />
 									</div>
 									<div class="param">
 									</div>

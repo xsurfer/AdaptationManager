@@ -28,7 +28,17 @@ $(document).ready(
 function retrieveValues(){
 	console.log(REST_GET_VALUES);
 	$.getJSON( REST_GET_VALUES, function(data){
-		alert("ricevuto");
+		
+		$.each(data, function(key, val) {
+			console.log("key: " + key);
+			console.log("val: " + val);
+			$('#' + key ).val(val);
+		});
+		
+		
+		
+		console.log(data);
+		//alert("ricevuto");
 		/*
 		var items = [];
 		$.each(data, function(key, val) {

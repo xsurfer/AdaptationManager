@@ -42,53 +42,55 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
         manager.newStatsAvailables();
 
-//        Set<String> ips = event.getIps();
-//        log.info("Received statistics from wpm instances " + ips.toString());
-//        /*
-//        if (!controller.canProcessNewData()) {
-//            log.trace("Masked interrupt. The Controller is still analyzing last data");
-//            controller.resetStateTimeWindow();
-//            return;
-//        }
-//        */
-//        Set<HashMap<String, PublishAttribute>> jmx = new HashSet<HashMap<String, PublishAttribute>>();
-//        Set<HashMap<String, PublishAttribute>> mem = new HashSet<HashMap<String, PublishAttribute>>();
-//        for (String ip : ips) {
-//            log.info("Parsing statistics relevant to " + ip);
-//
-//            log.info("Parsing JMX stats");
-//            int numResources = event.getNumResources(ResourceType.JMX, ip);
-//            if (numResources > 0) {
-//                if (numResources > 1) {
-//                    log.trace("The log file contains " + numResources + " JMX samples. I' going to consider only the first");
-//                }
-//                jmx.add(event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues());
-//            }
-//
-//            log.info("Parsing MEM stats");
-//            numResources = event.getNumResources(ResourceType.MEMORY, ip);
-//            if (numResources > 0) {
-//                if (numResources > 1) {
-//                    log.trace("The log file contains " + numResources + " MEM samples. I' going to consider only the first");
-//                }
-//                mem.add(event.getPublishMeasurement(ResourceType.MEMORY, 0, ip).getValues());
-//            }
-//        }
-//
-//        //lastJMX = jmx;
-//        //lastMEM = mem;
-//
-//        trace(jmx);
-//        trace(mem);
-//        /*
-//        try {
-//            this.controller.consumeStats(jmx, mem);
-//        } catch (PublishAttributeException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        } catch (Tas2Exception e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-//        */
+        Set<String> ips = event.getIps();
+        log.info("Received statistics from wpm instances " + ips.toString());
+        /*
+        if (!controller.canProcessNewData()) {
+            log.trace("Masked interrupt. The Controller is still analyzing last data");
+            controller.resetStateTimeWindow();
+            return;
+        }
+        */
+        Set<HashMap<String, PublishAttribute>> jmx = new HashSet<HashMap<String, PublishAttribute>>();
+        Set<HashMap<String, PublishAttribute>> mem = new HashSet<HashMap<String, PublishAttribute>>();
+        for (String ip : ips) {
+            log.info("Parsing statistics relevant to " + ip);
+
+            log.info("Parsing JMX stats");
+            int numResources = event.getNumResources(ResourceType.JMX, ip);
+            if (numResources > 0) {
+                if (numResources > 1) {
+                    log.trace("The log file contains " + numResources + " JMX samples. I' going to consider only the first");
+                }
+                jmx.add(event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues());
+            }
+
+            log.info("Parsing MEM stats");
+            numResources = event.getNumResources(ResourceType.MEMORY, ip);
+            if (numResources > 0) {
+                if (numResources > 1) {
+                    log.trace("The log file contains " + numResources + " MEM samples. I' going to consider only the first");
+                }
+                mem.add(event.getPublishMeasurement(ResourceType.MEMORY, 0, ip).getValues());
+            }
+        }
+
+        //lastJMX = jmx;
+        //lastMEM = mem;
+
+        trace(jmx);
+        trace(mem);
+
+        manager.addStatistic(jmx,mem);
+        /*
+        try {
+            this.controller.consumeStats(jmx, mem);
+        } catch (PublishAttributeException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Tas2Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        */
 
     }
 

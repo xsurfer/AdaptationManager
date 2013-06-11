@@ -9,11 +9,14 @@
     		display: inline;
     	}
     </style>
-    
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/jquery.flot.min.js" ></script>    
 <script type="text/javascript">
 	var REST_HOST = '<s:property value="getRestHost()" />';
 	var REST_PORT = '<s:property value="getRestPort()" />';
 </script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/myCloud.js"></script>
+
     
 <script type="text/javascript">
 
@@ -22,6 +25,8 @@ var REST_STATUS = 'http://' + REST_HOST + ':' + REST_PORT +'/status';
 $(document).ready(
 		function(){
 			Retrieve();
+			
+			//$.plot($("#placeholder"), [ [[0, 0], [1, 1]] ], { yaxis: { max: 1 } });
 		}    		
 );
     
@@ -128,7 +133,7 @@ $(document).ready(
   	<div id="col-text">
         
         <h2><s:property value="message"/></h2>
-        <h3>Status: <span style="display: inline;" id="status"></span></h3>
+        <h3>State: <span style="display: inline;" id="status"></span></h3>
         
         <!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
 	   				
@@ -170,8 +175,12 @@ $(document).ready(
 		        </tr>
 		    </tbody>
 		</table>
+		
+		<h3>Workload and Performance Monitor:</h3>
 			   				
-	   				
+	   	<div id="placeholderNumNodes" style="width:350px;height:250px; float: left;"></div>
+	   	<div id="placeholderResponseTime" style="width:350px;height:250px; float: left;"></div>
+	   	<div style="clear: both;"></div>			
 	   				
 	   	<!-- 			
       	<a href="${pageContext.request.contextPath}/registration.jsp">Register</a>

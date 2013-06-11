@@ -5,11 +5,13 @@ import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.LookupRegister;
 import eu.cloudtm.RESTServer.utils.Helper;
 import eu.cloudtm.controller.Controller;
+import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 
 @Singleton
