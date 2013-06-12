@@ -4,11 +4,9 @@ import eu.cloudtm.RESTServer.RESTServer;
 import eu.cloudtm.controller.Controller;
 import eu.cloudtm.controller.model.*;
 import eu.cloudtm.controller.model.utils.*;
-import eu.cloudtm.wpm.connector.WPMConnector;
-
-import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.PropertyConfigurator;
 import java.util.Scanner;
 
 /**
@@ -17,6 +15,8 @@ import java.util.Scanner;
  * Date: 6/5/13
  */
 public class Main {
+
+    private static Log log = LogFactory.getLog(Main.class);
 
     public static void main(String[] args) {
 

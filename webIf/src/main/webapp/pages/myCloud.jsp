@@ -13,8 +13,10 @@
     <link href="${pageContext.request.contextPath}/assets/css/per_page/myCloud.css" type="text/css" media="screen" rel="stylesheet" />
 
 
-<script type="text/javascript" src="http://packery.metafizzy.co/packery.pkgd.min.js" ></script>
-<script type="text/javascript" src="http://draggabilly.desandro.com/draggabilly.pkgd.min.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/packery.pkgd.min.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/draggabilly.js" ></script>
+<!-- <script type="text/javascript" src="http://packery.metafizzy.co/packery.pkgd.min.js" ></script> -->
+<!-- <script type="text/javascript" src="http://draggabilly.desandro.com/draggabilly.pkgd.min.js" ></script> -->
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/jquery.flot.min.js" ></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/curvedLines.js" ></script>    
@@ -218,11 +220,13 @@ $(document).ready(
 						<div class="column">
 							<input type="button" value="Add" />
 						</div>
-					</div>
+					</div>					
 				</div>		
 			</fieldset>				
 		</form>
 		
+		<div>Double click to delete</div>
+					</div>
 		<div id="container">
 			<div class="item">
 				<div class="plotTitle">Throughput</div>
@@ -238,8 +242,7 @@ $(document).ready(
 			</div>
 		</div>	   				
 	   	
-	   		   	
-	   	<div style="clear: both;"></div>			
+	   		   		   			
 	   				
 	   	<!-- 			
       	<a href="${pageContext.request.contextPath}/registration.jsp">Register</a>

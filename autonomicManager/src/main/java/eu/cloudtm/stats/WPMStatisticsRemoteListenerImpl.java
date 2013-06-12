@@ -22,7 +22,7 @@ import java.util.Set;
  */
 public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListener {
 
-    private final static Log log = LogFactory.getLog(StatsManager.class);
+    private final static Log log = LogFactory.getLog(WPMStatisticsRemoteListenerImpl.class);
 
     private StatsManager manager;
 
@@ -63,7 +63,7 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
                 jmx.add(event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues());
             }
 
-            log.info("Parsing MEM stats");
+            log.trace("Parsing MEM stats");
             numResources = event.getNumResources(ResourceType.MEMORY, ip);
             if (numResources > 0) {
                 if (numResources > 1) {
@@ -76,8 +76,8 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         //lastJMX = jmx;
         //lastMEM = mem;
 
-        trace(jmx);
-        trace(mem);
+        //trace(jmx);
+        //trace(mem);
 
         manager.addStatistic(jmx,mem);
         /*

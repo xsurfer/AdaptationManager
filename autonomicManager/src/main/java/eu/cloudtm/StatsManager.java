@@ -52,11 +52,11 @@ public class StatsManager
                              Set<HashMap<String, PublishAttribute>> mem){
         if(stack.size()>=MAX_SIZE){
             Statistic removed = stack.removeLast();
-            log.info("Ho eliminato la statistica: " + removed.getId());
+            //log.trace("Deleted stat: " + removed.getId());
         }
         Statistic newStat = new Statistic(counter.getAndIncrement(),jmx,mem);
         stack.push(newStat);
-        log.info("Aggiunta Statistica id: " + newStat.getId());
+        log.trace("New stas added: " + newStat.getId());
     }
 
     /**
@@ -138,7 +138,7 @@ public class StatsManager
             if (h == null) {
                 throw new RuntimeException("I had a null set of values");
             }
-            log.trace("Asking for " + attribute);
+            //log.trace("Asking for " + attribute);
             //the getName may give a nullPointerException, actually
             if ((actualValue = h.get(attribute).getValue()) == null) {
                 throw new RuntimeException(h.get(attribute).getName() + " is null");

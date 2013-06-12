@@ -79,10 +79,7 @@ $(function() {
 		console.log($target.parent().parent());
 		if ($target.hasClass('flot-overlay')) {
 			pckry.remove($target.parent().parent());
-		} else {
-			alert('off');
-		}
-		//pckry.remove( event.target );			
+		}				
 	});
 
 	// DENTRO

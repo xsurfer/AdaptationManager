@@ -47,9 +47,6 @@ public class WhatIfResource extends AbstractResource {
     @GET @Path("/values")
     @Produces("application/json")
     public synchronized Response updateValuesFromSystem() {
-
-        log.info("Creating JSON");
-
         StringBuffer json = new StringBuffer();
         json.append("{ ");
         for( Map.Entry<String,ResourceType> param : sampledParams.entrySet() ){
@@ -60,22 +57,16 @@ public class WhatIfResource extends AbstractResource {
         }
         json.append(" }");
 
-        log.info(json.toString());
-
         Response.ResponseBuilder builder = Response.ok(json.toString());
-
         return makeCORS(builder);
     }
 
 
     private String getJSON(String key, String val){
         StringBuffer strBuf = new StringBuffer();
-
         strBuf.append( gson.toJson( key ) );
         strBuf.append( ":" );
         strBuf.append( gson.toJson( val ) );
-
-        log.info(strBuf);
         return strBuf.toString();
     }
 
