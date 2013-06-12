@@ -1,6 +1,8 @@
 package eu.cloudtm;
 
+import com.google.gson.Gson;
 import eu.cloudtm.stats.Statistic;
+import eu.cloudtm.stats.StatisticDTO;
 import eu.cloudtm.stats.WPMViewChangeRemoteListenerImpl;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.events.*;
@@ -32,9 +34,6 @@ public class StatsManager
 
     private AtomicInteger counter = new AtomicInteger(0);
 
-//    private Set<HashMap<String, PublishAttribute>> lastJMX;
-//    private Set<HashMap<String, PublishAttribute>> lastMEM;
-
     public StatsManager(){
         try {
             connector = new WPMConnector();
@@ -49,11 +48,6 @@ public class StatsManager
         }
     }
 
-    public void newStatsAvailables(){
-        log.info("NEW STATS AVAILABLES");
-    }
-
-
     public void addStatistic(Set<HashMap<String, PublishAttribute>> jmx,
                              Set<HashMap<String, PublishAttribute>> mem){
         if(stack.size()>=MAX_SIZE){
@@ -65,21 +59,77 @@ public class StatsManager
         log.info("Aggiunta Statistica id: " + newStat.getId());
     }
 
-    public double getLastAvgAttribute(String attribute, ResourceType type) {
+    /**
+     * This method returns a StatisticDTO, useful to communicate to RESTInterface.
+     * It contains all the sample averages belong nodes
+     * @param param
+     * @param type
+     * @return
+     */
+    public StatisticDTO getAllAvgStatistic(String param, ResourceType type){
 
-        Statistic lastStat = stack.element();
+        StatisticDTO ret = new StatisticDTO(param);
+
+        Iterator<Statistic> iter;
+        for (iter = stack.descendingIterator(); iter.hasNext();  ) {
+            Statistic stat = iter.next();
+            double mean = getAvgAttribute(param, stat, type);
+            ret.addPoint(stat.getId(),mean);
+        }
+        return ret;
+    }
+
+    /**
+     * This method returns all samples related to a single stat
+     * @param param
+     * @param type
+     * @return
+     */
+    public StatisticDTO getLastAvgStatistic(String param, ResourceType type){
+        StatisticDTO ret = new StatisticDTO(param);
+        Statistic lastStat = stack.peek();
+        if(lastStat == null)
+            return ret;
+        double mean = getAvgAttribute(param, lastStat, type);
+        ret.addPoint(lastStat.getId(),mean);
+
+        return ret;
+    }
+
+    /**
+     * This method returns the last sample related to a single stat
+     * @param attribute
+     * @param type
+     * @return
+     */
+    public double getLastAvgAttribute(String attribute, ResourceType type) {
+        Statistic lastStat = stack.peek();
+        if(lastStat == null)
+            return -1;
+        return getAvgAttribute(attribute, lastStat, type);
+    }
+
+
+    /**
+     * this method evaluates de average of specific sample related to a single stat
+     * @param attribute
+     * @param stat
+     * @param type
+     * @return
+     */
+    private double getAvgAttribute(String attribute, Statistic stat, ResourceType type) {
+
         Set<HashMap<String, PublishAttribute>> values;
         switch (type){
             case JMX:
-                values = lastStat.getJmx();
+                values = stat.getJmx();
                 break;
             case MEMORY:
-                values = lastStat.getMem();
+                values = stat.getMem();
                 break;
             default:
                 throw new RuntimeException("No stats");
         }
-
 
         double num = values.size(), temp = 0;
         Object actualValue;
@@ -101,6 +151,8 @@ public class StatsManager
             }
         }
         return temp / num;
+
+
     }
 
     private double cast(Object o) throws ClassCastException {

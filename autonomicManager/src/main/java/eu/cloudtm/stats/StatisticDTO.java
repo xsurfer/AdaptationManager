@@ -17,13 +17,10 @@ public class StatisticDTO {
         this.param = _param;
     }
 
-    public void addPoint(int x, Object y){
+    public void addPoint(long x, Object y){
         Collection point = new ArrayList();
         point.add(x);
         point.add(y);
+        data.add(point);
     }
-
-
-
-
 }

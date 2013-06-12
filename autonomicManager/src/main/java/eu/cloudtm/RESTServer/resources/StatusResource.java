@@ -28,7 +28,7 @@ public class StatusResource {
     @Produces("application/json")
     public Response getStatus() {
         String json = gson.toJson(controller.getStateClone());
-	    log.info("new status req");
+	    //log.info("new status req");
         return Helper.createResponse(json);
     }
 

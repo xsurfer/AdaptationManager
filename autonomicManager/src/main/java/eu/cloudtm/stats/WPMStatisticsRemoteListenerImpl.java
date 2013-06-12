@@ -33,17 +33,15 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
     @Override
     public void onNewPerVMStatistics(PublishStatisticsEvent publishStatisticsEvent) throws RemoteException {
 
-        log.info("onNewPerVMStatistics");
+        log.trace("onNewPerVMStatistics");
 
     }
 
     @Override
     public void onNewPerSubscriptionStatistics(PublishStatisticsEvent event) throws RemoteException {
 
-        manager.newStatsAvailables();
-
         Set<String> ips = event.getIps();
-        log.info("Received statistics from wpm instances " + ips.toString());
+        log.trace("Received statistics from wpm instances " + ips.toString());
         /*
         if (!controller.canProcessNewData()) {
             log.trace("Masked interrupt. The Controller is still analyzing last data");
@@ -54,9 +52,9 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         Set<HashMap<String, PublishAttribute>> jmx = new HashSet<HashMap<String, PublishAttribute>>();
         Set<HashMap<String, PublishAttribute>> mem = new HashSet<HashMap<String, PublishAttribute>>();
         for (String ip : ips) {
-            log.info("Parsing statistics relevant to " + ip);
+            log.trace("Parsing statistics relevant to " + ip);
 
-            log.info("Parsing JMX stats");
+            log.trace("Parsing JMX stats");
             int numResources = event.getNumResources(ResourceType.JMX, ip);
             if (numResources > 0) {
                 if (numResources > 1) {
@@ -98,7 +96,7 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
     private void trace(Set<HashMap<String, PublishAttribute>> set) {
         int i = 0;
         for (HashMap<String, PublishAttribute> map : set) {
-            log.info("Map " + (++i));
+            log.trace("Map " + (++i));
             for (Map.Entry<String, PublishAttribute> e : map.entrySet()) {
                 log.trace(e.getKey() + " - " + e.getValue().getValue());
             }

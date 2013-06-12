@@ -9,6 +9,7 @@ var featureToField = { "scale":"size",
 		"rep_degree":"degree",
 		//"dataPlacement":"data_placement"
 	  };
+
 var REST_STATUS = 'http://' + REST_HOST + ':' + REST_PORT +'/status';
 var REST_SET_SCALE = 'http://' + REST_HOST + ':' + REST_PORT +'/scale';
 

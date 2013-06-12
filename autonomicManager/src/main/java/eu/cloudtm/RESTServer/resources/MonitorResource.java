@@ -5,13 +5,12 @@ import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.LookupRegister;
 import eu.cloudtm.StatsManager;
 import eu.cloudtm.controller.Controller;
+import eu.cloudtm.stats.StatisticDTO;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,50 +24,51 @@ public class MonitorResource extends AbstractResource {
     private StatsManager statsManager = LookupRegister.getStatsManager();
     private Controller controller = LookupRegister.getController();
 
+    private Map<String,String> param2key = new HashMap<String,String>(){{
+        put("throughput",                           "Throughput");
+        put("nodes",                                "NumNodes");
+        put("writePercentage",                      "RetryWritePercentage");
+
+    }};
+
     private Map<String,ResourceType> monitoredParams = new HashMap<String,ResourceType>(){{
         put("Throughput",                           ResourceType.JMX);
+        put("NumNodes",                             ResourceType.JMX);
+        put("RetryWritePercentage",                 ResourceType.JMX);
     }};
 
 
-
-    @GET @Path("/throughputs")
+    @GET @Path("/{param}")
     @Produces("application/json")
-    public synchronized Response getAllData() {
+    public synchronized Response getAllData(@PathParam("param") String param) {
 
-        String param = "throughput";
-        log.info("Creating JSON");
+        String paramKey = param2key.get(param);
+        if( paramKey==null || paramKey.length()<=0 )
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-        StringBuffer json = new StringBuffer();
-        json.append("{ ");
-        json.append(gson.toJson("param") + ":" + gson.toJson(param));
-        json.append("," + gson.toJson("da"))
-        for( Map.Entry<String,ResourceType> param : monitoredParams.entrySet() ){
-            if (json.length() > 3) {
-                json.append(" , ");
-            }
-            json.append( getJSON(param.getKey(), String.valueOf( statsManager.getLastAvgAttribute(param.getKey(), param.getValue()) ) ) );
-        }
-        json.append(" }");
+        ResourceType resourceType = monitoredParams.get(paramKey);
+        StatisticDTO statDTO = statsManager.getAllAvgStatistic(paramKey, resourceType);
 
-        log.info(json.toString());
-
-        Response.ResponseBuilder builder = Response.ok(json.toString());
-
+        String json = gson.toJson(statDTO);
+        Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }
 
+    @GET @Path("/{param}/last")
+    @Produces("application/json")
+    public synchronized Response getLastData(@PathParam("param") String param) {
 
+        String paramKey = param2key.get(param);
+        if( paramKey==null || paramKey.length()<=0 )
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
+        ResourceType resourceType = monitoredParams.get(paramKey);
 
-    private String getJSON(String key, String val){
-        StringBuffer strBuf = new StringBuffer();
+        StatisticDTO statDTO = statsManager.getLastAvgStatistic(paramKey, resourceType);
 
-        strBuf.append( gson.toJson( key ) );
-        strBuf.append( ":" );
-        strBuf.append( gson.toJson( val ) );
-
-        log.info(strBuf);
-        return strBuf.toString();
+        String json = gson.toJson(statDTO);
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
     }
 
 }

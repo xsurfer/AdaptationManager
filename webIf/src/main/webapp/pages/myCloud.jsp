@@ -9,8 +9,15 @@
     		display: inline;
     	}
     </style>
+    
+    <link href="${pageContext.request.contextPath}/assets/css/per_page/myCloud.css" type="text/css" media="screen" rel="stylesheet" />
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/jquery.flot.min.js" ></script>    
+
+<script type="text/javascript" src="http://packery.metafizzy.co/packery.pkgd.min.js" ></script>
+<script type="text/javascript" src="http://draggabilly.desandro.com/draggabilly.pkgd.min.js" ></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/jquery.flot.min.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/curvedLines.js" ></script>    
 <script type="text/javascript">
 	var REST_HOST = '<s:property value="getRestHost()" />';
 	var REST_PORT = '<s:property value="getRestPort()" />';
@@ -177,9 +184,61 @@ $(document).ready(
 		</table>
 		
 		<h3>Workload and Performance Monitor:</h3>
-			   				
-	   	<div id="placeholderNumNodes" style="width:350px;height:250px; float: left;"></div>
-	   	<div id="placeholderResponseTime" style="width:350px;height:250px; float: left;"></div>
+		
+		<form id="plot">	
+		<fieldset>		
+			<legend>Manage plots</legend>
+				<div class="table">
+					<div class="row">
+						<div class="column">Instance</div>
+						<div class="column">Category</div>
+						<div class="column">Attribute</div>
+						<div class="column">Title</div>
+						<div class="column">Action</div>
+					</div>
+					<div class="row">
+						<div class="column">
+							<select>
+								<option value="SMALL">Cluster</option>
+							</select>
+						</div>
+						<div class="column">
+							<select>
+								<option value="SMALL">CAT</option>
+							</select>
+						</div>
+						<div class="column">
+							<select>
+								<option value="SMALL">ATTR</option>
+							</select>
+						</div>
+						<div class="column">
+							<input type="text" size="30" />
+						</div>
+						<div class="column">
+							<input type="button" value="Add" />
+						</div>
+					</div>
+				</div>		
+			</fieldset>				
+		</form>
+		
+		<div id="container">
+			<div class="item">
+				<div class="plotTitle">Throughput</div>
+				<div id="placeholderThroughput" class="plot"></div>
+			</div>
+			<div class="item">
+				<div class="plotTitle">Nodes</div>
+				<div id="placeholderNodes" class="plot"></div>
+			</div>
+			<div class="item">
+				<div class="plotTitle">Write %</div>
+				<div id="placeholderWritePercentage" class="plot"></div>
+			</div>
+		</div>	   				
+	   	
+	   		   	
 	   	<div style="clear: both;"></div>			
 	   				
 	   	<!-- 			
