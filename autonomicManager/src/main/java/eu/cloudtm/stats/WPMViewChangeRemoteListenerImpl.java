@@ -6,6 +6,7 @@ import eu.cloudtm.wpm.logService.remote.events.PublishViewChangeEvent;
 import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
+import eu.cloudtm.wpm.logService.remote.observables.Handle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -23,6 +24,9 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
     private WPMConnector connector;
     private StatsManager manager;
+    private Handle lastVmHandle;
+
+    private String[] currentVMs;
 
     public WPMViewChangeRemoteListenerImpl(WPMConnector _connector, StatsManager _manager){
         connector = _connector;
@@ -33,26 +37,25 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
     public void onViewChange(PublishViewChangeEvent event)
             throws RemoteException {
 
-        /*
         if (lastVmHandle != null) {
-            log.info("Removing last handle");
+            log.trace("Removing last handle");
             connector.removeStatisticsRemoteListener(lastVmHandle);
             lastVmHandle = null;
         }
-        */
 
-        String[] VMs = event.getCurrentVMs();
 
-        if (VMs == null) {
+        currentVMs = event.getCurrentVMs();
+
+        if (currentVMs == null) {
             log.info("The set of VMs is empty. No-op");
             return;
         }
 
-        log.info("New set of VMs " + Arrays.toString(VMs));
+        log.info("New set of VMs " + Arrays.toString(currentVMs));
 
         WPMStatisticsRemoteListener listener = new WPMStatisticsRemoteListenerImpl(manager);
 
-        connector.registerStatisticsRemoteListener(new SubscribeEvent(VMs), listener);
+        lastVmHandle = connector.registerStatisticsRemoteListener(new SubscribeEvent(currentVMs), listener);
     }
 
 }

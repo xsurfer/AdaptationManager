@@ -5,13 +5,13 @@ package eu.cloudtm.controller.model.utils;
  * E-mail: perfabio87@gmail.com
  * Date: 6/1/13
  */
-public enum ReplicationProtocols {
+public enum ReplicationProtocol {
 
     TWOPC("2pc"),TOM("tom"),PB("pb");
 
     private final String text;
 
-    private ReplicationProtocols(final String text) {
+    private ReplicationProtocol(final String text) {
         this.text = text;
     }
 

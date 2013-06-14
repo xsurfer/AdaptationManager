@@ -4,10 +4,11 @@ import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.LookupRegister;
 import eu.cloudtm.controller.Controller;
-import eu.cloudtm.controller.model.Scale;
+import eu.cloudtm.controller.model.PlatformConfiguration;
+import eu.cloudtm.controller.model.Tuning;
 import eu.cloudtm.controller.model.utils.Forecaster;
-import eu.cloudtm.controller.model.utils.InstanceConfigurations;
-import eu.cloudtm.controller.model.utils.TuningType;
+import eu.cloudtm.controller.model.utils.InstanceConfig;
+import eu.cloudtm.controller.model.utils.TuningState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,38 +29,32 @@ public class ScaleResource extends AbstractResource {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setScale(
-            @FormParam("scale_tuning") TuningType tuning,
             @DefaultValue("NONE") @FormParam("scale_forecasting") Forecaster forecaster,
             @DefaultValue("-1") @FormParam("scale_size") int size,
-            @FormParam("instance_type") InstanceConfigurations instanceType
+            @FormParam("instance_type") InstanceConfig instanceType
     ) {
-        if( tuning==null || ( tuning.equals(TuningType.SELF) && forecaster.equals(Forecaster.NONE) ) ){
+
+        Tuning tuning = new Tuning(forecaster);
+
+        if(!(size>=0 && instanceType!=null))
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
-        }
 
+        log.info("tuningState: " + tuning.getState());
+        log.info("forecaster: " + forecaster);
+        log.info("size: " + size);
+        log.info("instanceType: " + instanceType);
 
-        if(tuning.equals(TuningType.MANUAL)){
-            forecaster = Forecaster.NONE;
-        }
-
-        if(tuning.equals(TuningType.MANUAL)) {
-            if(!(size>=0 && instanceType!=null))
-                throw new WebApplicationException(Response.Status.BAD_REQUEST);
-        } else if(tuning.equals(TuningType.SELF)) {
+        if(tuning.getState().equals(TuningState.SELF)) {
             // TODO: per ora metto un random
             Random rnd = new Random();
             size = rnd.nextInt(10);
-            instanceType = InstanceConfigurations.MEDIUM;
+            instanceType = InstanceConfig.MEDIUM;
         }
 
         /** UPDATING STATE **/
+        controller.updateScale(size, instanceType, tuning);
 
-        Scale newScale = new Scale(tuning,forecaster,size,instanceType);
-        controller.tuneScale(newScale);
-
-        //PlatformState.getInstance().updateScale(newScale);
-
-        String json = gson.toJson(controller.getStateClone().getScaleClone());
+        String json = gson.toJson(controller.getState());
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }

@@ -4,11 +4,11 @@ import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.LookupRegister;
 import eu.cloudtm.controller.Controller;
-import eu.cloudtm.controller.model.ReplicationDegree;
-import eu.cloudtm.controller.model.ReplicationProtocol;
+import eu.cloudtm.controller.model.PlatformConfiguration;
+import eu.cloudtm.controller.model.Tuning;
 import eu.cloudtm.controller.model.utils.Forecaster;
-import eu.cloudtm.controller.model.utils.ReplicationProtocols;
-import eu.cloudtm.controller.model.utils.TuningType;
+import eu.cloudtm.controller.model.utils.ReplicationProtocol;
+import eu.cloudtm.controller.model.utils.TuningState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,34 +29,23 @@ public class ReplicationResource extends AbstractResource {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setDegree(
-            @FormParam("rep_degree_tuning") TuningType type,
             @DefaultValue("NONE") @FormParam("rep_degree_forecasting") Forecaster forecaster,
             @DefaultValue("0") @FormParam("rep_degree_size") int degree
     ) {
-        if(type==null)
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-        if(type.equals(TuningType.SELF) && forecaster.equals(Forecaster.NONE)){
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
-        }
+        Tuning tuning = new Tuning(forecaster);
 
-        log.info("type: " + type);
+        log.info("tuningState: " + tuning.getState());
         log.info("forecaster: " + forecaster);
         log.info("degree: " + degree);
 
-        if( degree<=0 ){
+        if( degree<=0 && tuning.getState()==TuningState.MANUAL ){
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
-        if(type.equals(TuningType.MANUAL)){
-            forecaster = Forecaster.NONE;
-        }
+        controller.updateDegree(degree, tuning);
 
-        ReplicationDegree repDegreeConf = new ReplicationDegree(type, forecaster, degree);
-        controller.tuneReplicationDegree(repDegreeConf);
-
-
-        String json = gson.toJson(controller.getStateClone().getReplicationDegreeClone());
+        String json = gson.toJson(controller.getState());
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }
@@ -66,29 +55,19 @@ public class ReplicationResource extends AbstractResource {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setProtocol(
-            @FormParam("rep_protocol_tuning") TuningType type,
             @DefaultValue("NONE") @FormParam("rep_protocol_forecasting") Forecaster forecaster,
-            @FormParam("rep_protocol") ReplicationProtocols protocol
+            @FormParam("rep_protocol") ReplicationProtocol protocol
     ) {
-        if(type==null || protocol==null)
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-        if(type.equals(TuningType.SELF) && forecaster.equals(Forecaster.NONE)){
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
-        }
+        Tuning tuning = new Tuning(forecaster);
 
-        log.info("type: " + type);
+        log.info("type: " + tuning.getState());
         log.info("forecaster: " + forecaster);
         log.info("protocol: " + protocol);
 
-        if(type.equals(TuningType.MANUAL)){
-            forecaster = Forecaster.NONE;
-        }
+        controller.updateProtocol(protocol, tuning);
 
-        ReplicationProtocol repProtocolConf = new ReplicationProtocol(type, forecaster, protocol);
-        controller.tuneReplicationProtocol(repProtocolConf);
-
-        String json = gson.toJson(controller.getStateClone().getReplicationProtocolClone());
+        String json = gson.toJson(controller.getState());
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }

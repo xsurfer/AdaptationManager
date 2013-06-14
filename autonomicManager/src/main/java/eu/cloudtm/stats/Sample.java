@@ -7,17 +7,18 @@ import java.util.Set;
 import java.util.Stack;
 
 /**
+ * This class is a container for several statistics, organized in JMX, MEM
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
  * Date: 6/10/13
  */
-public class Statistic {
+public class Sample {
 
     private final long id;
     private final Set<HashMap<String, PublishAttribute>> jmxStack;
     private final Set<HashMap<String, PublishAttribute>> memStack;
 
-    public Statistic(long _id, Set<HashMap<String, PublishAttribute>> _jmx, Set<HashMap<String, PublishAttribute>> _mem){
+    public Sample(long _id, Set<HashMap<String, PublishAttribute>> _jmx, Set<HashMap<String, PublishAttribute>> _mem){
         this.id = _id;
         this.jmxStack = _jmx;
         this.memStack = _mem;

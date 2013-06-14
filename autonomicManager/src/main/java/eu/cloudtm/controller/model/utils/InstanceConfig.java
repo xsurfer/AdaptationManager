@@ -3,14 +3,14 @@ package eu.cloudtm.controller.model.utils;
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
- * Date: 5/30/13
+ * Date: 5/27/13
  */
-public enum TuningType{
-    SELF("self"),MANUAL("manual");
-
+public enum InstanceConfig {
+    NONE("none"),SMALL("small"), MEDIUM("medium"), LARGE("large");
+    
     private final String text;
 
-    private TuningType(final String text) {
+    private InstanceConfig(final String text) {
         this.text = text;
     }
 
@@ -18,5 +18,4 @@ public enum TuningType{
     public String toString() {
         return text;
     }
-
 }

@@ -60,7 +60,7 @@ public class BaseAction extends ActionSupport implements Preparable, ServletCont
 		}
 		
 		if (response.getStatus() != 200) {
-			//throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+			//throw new RuntimeException("Failed : HTTP error code : " + response.getState());
 			throw new RESTControllerException("Failed : HTTP error code : " + response.getStatus());
 		}
 		

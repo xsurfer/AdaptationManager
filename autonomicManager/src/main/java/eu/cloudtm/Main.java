@@ -3,10 +3,14 @@ package eu.cloudtm;
 import eu.cloudtm.RESTServer.RESTServer;
 import eu.cloudtm.controller.Controller;
 import eu.cloudtm.controller.model.*;
+import eu.cloudtm.controller.model.decorators.TuningDecorator;
 import eu.cloudtm.controller.model.utils.*;
+import eu.cloudtm.stats.WPMViewChangeRemoteListenerImpl;
+import eu.cloudtm.wpm.connector.WPMConnector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.PropertyConfigurator;
+
+import java.rmi.RemoteException;
 import java.util.Scanner;
 
 /**
@@ -20,28 +24,32 @@ public class Main {
 
     public static void main(String[] args) {
 
-
-        Scale scale = new Scale(TuningType.SELF, Forecaster.ANALYTICAL, 2, InstanceConfigurations.MEDIUM);
-        ReplicationProtocol repProtocol = new ReplicationProtocol(TuningType.SELF, Forecaster.ANALYTICAL, ReplicationProtocols.TWOPC);
-        ReplicationDegree repDegree = new ReplicationDegree(TuningType.SELF, Forecaster.ANALYTICAL, 2);
-        Placement placement = new Placement();
-
-        PlatformConfiguration state = new PlatformConfiguration(PlatformState.WORKING,
-                                            scale,
-                                            repProtocol,
-                                            repDegree,
-                                            placement
-                                            );
+        PlatformConfiguration state = new PlatformConfiguration(2, InstanceConfig.SMALL, ReplicationProtocol.TWOPC, 2, true);
 
         StatsManager statsManager = new StatsManager();
-        Controller controller = new Controller(state);
-        RESTServer restServer = new RESTServer();
-
-        LookupRegister.registerController(controller);
-        LookupRegister.registerRESTServer(restServer);
         LookupRegister.registerStatsManager(statsManager);
 
-        controller.start();
+        Controller controller = new Controller(state);
+        LookupRegister.registerController(controller);
+
+        RESTServer restServer = new RESTServer();
+        LookupRegister.registerRESTServer(restServer);
+
+        /* *** WPM CONNECTOR && LISTENER *** */
+        WPMConnector connector;
+        try {
+            connector = new WPMConnector();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            connector.registerViewChangeRemoteListener(new WPMViewChangeRemoteListenerImpl(connector,statsManager));
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        /* ***  END *** */
+
         restServer.startServer();
 
         int num = 0;

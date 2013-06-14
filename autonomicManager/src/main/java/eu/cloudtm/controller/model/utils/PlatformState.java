@@ -6,7 +6,7 @@ package eu.cloudtm.controller.model.utils;
  * Date: 6/1/13
  */
 public enum PlatformState {
-    WORKING("working"),PENDING("pending"),ERROR("error");
+    RECONFIGURING("reconfiguring"), RUNNING("running"),ERROR("error");
 
     private final String text;
 

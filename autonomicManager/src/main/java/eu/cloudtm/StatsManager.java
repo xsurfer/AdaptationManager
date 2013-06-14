@@ -1,7 +1,6 @@
 package eu.cloudtm;
 
-import com.google.gson.Gson;
-import eu.cloudtm.stats.Statistic;
+import eu.cloudtm.stats.Sample;
 import eu.cloudtm.stats.StatisticDTO;
 import eu.cloudtm.stats.WPMViewChangeRemoteListenerImpl;
 import eu.cloudtm.wpm.connector.WPMConnector;
@@ -16,47 +15,39 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * It contains a stack of samples. Each {@link Sample} is organized in categories
+ *
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
  * Date: 6/6/13
  */
-public class StatsManager
-        extends Observable {
+public class StatsManager {
 
     private final static Log log = LogFactory.getLog(StatsManager.class);
 
-    private WPMConnector connector;
+
     private Handle lastVmHandle;
 
     private final static int MAX_SIZE = 1000;
 
-    private Deque<Statistic> stack = new ArrayDeque<Statistic>(MAX_SIZE);
+    private Deque<Sample> stack = new ArrayDeque<Sample>(MAX_SIZE);
 
     private AtomicInteger counter = new AtomicInteger(0);
 
     public StatsManager(){
-        try {
-            connector = new WPMConnector();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
-        try {
-            connector.registerViewChangeRemoteListener(new WPMViewChangeRemoteListenerImpl(connector,this));
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    public void addStatistic(Set<HashMap<String, PublishAttribute>> jmx,
-                             Set<HashMap<String, PublishAttribute>> mem){
+    public Sample add(Set<HashMap<String, PublishAttribute>> jmx,
+                      Set<HashMap<String, PublishAttribute>> mem){
         if(stack.size()>=MAX_SIZE){
-            Statistic removed = stack.removeLast();
+            Sample removed = stack.removeLast();
             //log.trace("Deleted stat: " + removed.getId());
         }
-        Statistic newStat = new Statistic(counter.getAndIncrement(),jmx,mem);
+        Sample newStat = new Sample(counter.getAndIncrement(),jmx,mem);
         stack.push(newStat);
         log.trace("New stas added: " + newStat.getId());
+        return newStat;
     }
 
     /**
@@ -70,9 +61,9 @@ public class StatsManager
 
         StatisticDTO ret = new StatisticDTO(param);
 
-        Iterator<Statistic> iter;
+        Iterator<Sample> iter;
         for (iter = stack.descendingIterator(); iter.hasNext();  ) {
-            Statistic stat = iter.next();
+            Sample stat = iter.next();
             double mean = getAvgAttribute(param, stat, type);
             ret.addPoint(stat.getId(),mean);
         }
@@ -87,7 +78,7 @@ public class StatsManager
      */
     public StatisticDTO getLastAvgStatistic(String param, ResourceType type){
         StatisticDTO ret = new StatisticDTO(param);
-        Statistic lastStat = stack.peek();
+        Sample lastStat = stack.peek();
         if(lastStat == null)
             return ret;
         double mean = getAvgAttribute(param, lastStat, type);
@@ -103,12 +94,15 @@ public class StatsManager
      * @return
      */
     public double getLastAvgAttribute(String attribute, ResourceType type) {
-        Statistic lastStat = stack.peek();
+        Sample lastStat = stack.peek();
         if(lastStat == null)
             return -1;
         return getAvgAttribute(attribute, lastStat, type);
     }
 
+    public Sample getLastSample(){
+        return stack.peek();
+    }
 
     /**
      * this method evaluates de average of specific sample related to a single stat
@@ -117,7 +111,7 @@ public class StatsManager
      * @param type
      * @return
      */
-    private double getAvgAttribute(String attribute, Statistic stat, ResourceType type) {
+    public static double getAvgAttribute(String attribute, Sample stat, ResourceType type) {
 
         Set<HashMap<String, PublishAttribute>> values;
         switch (type){
@@ -151,11 +145,9 @@ public class StatsManager
             }
         }
         return temp / num;
-
-
     }
 
-    private double cast(Object o) throws ClassCastException {
+    private static double cast(Object o) throws ClassCastException {
         try {
             return (Long) o;
         } catch (ClassCastException c) {
@@ -168,8 +160,6 @@ public class StatsManager
     }
 
 
-
-    //LocalReadOnlyTxLocalServiceTime
 }
 
 

@@ -5,18 +5,16 @@ import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.LookupRegister;
 import eu.cloudtm.RESTServer.utils.Helper;
 import eu.cloudtm.controller.Controller;
-import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.Map;
 
 
 @Singleton
 @Path("/status")
-public class StatusResource {
+public class StatusResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(StatusResource.class);
 
@@ -26,38 +24,49 @@ public class StatusResource {
 
     @GET
     @Produces("application/json")
-    public Response getStatus() {
-        String json = gson.toJson(controller.getStateClone());
-	    //log.info("new status req");
-        return Helper.createResponse(json);
+    public Response getState() {
+        String json = gson.toJson(controller.getState());
+
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
     }
 
     @GET @Path("/replication/degree")
     @Produces("application/json")
     public Response getReplicationDegree() {
         String json = gson.toJson(controller.getStateClone().getReplicationDegreeClone());
-        return Helper.createResponse(json);
+
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
     }
 
     @GET @Path("/replication/protocol")
     @Produces("application/json")
     public Response getReplicationProtocol() {
         String json = gson.toJson(controller.getStateClone().getReplicationProtocolClone());
-        return Helper.createResponse(json);
+
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
+
     }
 
     @GET @Path("/placement")
     @Produces("application/json")
     public Response getDataPlacement() {
         String json = gson.toJson(controller.getStateClone().getDataPlacementClone());
-        return Helper.createResponse(json);
+
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
+
     }
 
     @GET @Path("/scale")
     @Produces("application/json")
     public Response getScale() {
         String json = gson.toJson(controller.getStateClone().getScaleClone());
-        return Helper.createResponse(json);
+
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
     }
 
 }

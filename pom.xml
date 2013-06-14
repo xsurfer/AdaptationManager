@@ -16,6 +16,7 @@
     <modules>
         <module>webIf</module>
         <module>autonomicManager</module>
+        <module>oracles/tas</module>
     </modules>
 
     <dependencies>

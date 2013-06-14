@@ -1,6 +1,8 @@
 package eu.cloudtm.stats;
 
+import eu.cloudtm.LookupRegister;
 import eu.cloudtm.StatsManager;
+import eu.cloudtm.controller.Controller;
 import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
 import eu.cloudtm.wpm.logService.remote.events.PublishMeasurement;
 import eu.cloudtm.wpm.logService.remote.events.PublishStatisticsEvent;
@@ -24,10 +26,10 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     private final static Log log = LogFactory.getLog(WPMStatisticsRemoteListenerImpl.class);
 
-    private StatsManager manager;
+    private StatsManager statsManager = LookupRegister.getStatsManager();
+    private Controller controller = LookupRegister.getController();
 
-    public WPMStatisticsRemoteListenerImpl(StatsManager _manager){
-        manager = _manager;
+    public WPMStatisticsRemoteListenerImpl(){
     }
 
     @Override
@@ -78,8 +80,10 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
         //trace(jmx);
         //trace(mem);
+        Sample newSample = statsManager.add(jmx,mem);
+        controller.doNotify(newSample);
 
-        manager.addStatistic(jmx,mem);
+
         /*
         try {
             this.controller.consumeStats(jmx, mem);
