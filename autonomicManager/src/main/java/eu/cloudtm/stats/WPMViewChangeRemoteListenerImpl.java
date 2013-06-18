@@ -53,7 +53,7 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
         log.info("New set of VMs " + Arrays.toString(currentVMs));
 
-        WPMStatisticsRemoteListener listener = new WPMStatisticsRemoteListenerImpl(manager);
+        WPMStatisticsRemoteListener listener = new WPMStatisticsRemoteListenerImpl();
 
         lastVmHandle = connector.registerStatisticsRemoteListener(new SubscribeEvent(currentVMs), listener);
     }

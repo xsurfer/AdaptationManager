@@ -46,12 +46,12 @@
   
   <context-param>
     <param-name>rest_host</param-name>
-    <param-value>46.252.152.83</param-value>   
+    <param-value>localhost</param-value>   
   </context-param>
   
   <context-param>
     <param-name>rest_port</param-name>
-    <param-value>1111</param-value>
+    <param-value>9998</param-value>
   </context-param>
 
 </web-app>

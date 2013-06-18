@@ -29,10 +29,6 @@ public class PlatformConfiguration {
     /* DATA PLACEMENT */
     private Boolean dataPlacement;
 
-    public PlatformConfiguration(){
-
-    }
-
     public PlatformConfiguration(int _numNodes,
                                  int _numThreads,
                                  InstanceConfig _nodeConfig,

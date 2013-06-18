@@ -1,11 +1,12 @@
 package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.LookupRegister;
 import eu.cloudtm.StatsManager;
 import eu.cloudtm.controller.Controller;
-import eu.cloudtm.stats.StatisticDTO;
+import eu.cloudtm.common.dto.StatisticDTO;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,7 +21,9 @@ import java.util.Map;
 public class MonitorResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(MonitorResource.class);
-    private Gson gson = new Gson();
+    private Gson gson = new GsonBuilder()
+            .serializeSpecialFloatingPointValues()
+            .create();
     private StatsManager statsManager = LookupRegister.getStatsManager();
     private Controller controller = LookupRegister.getController();
 

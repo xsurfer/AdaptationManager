@@ -3,7 +3,6 @@ package eu.cloudtm;
 import eu.cloudtm.RESTServer.RESTServer;
 import eu.cloudtm.controller.Controller;
 import eu.cloudtm.controller.model.*;
-import eu.cloudtm.controller.model.decorators.TuningDecorator;
 import eu.cloudtm.controller.model.utils.*;
 import eu.cloudtm.stats.WPMViewChangeRemoteListenerImpl;
 import eu.cloudtm.wpm.connector.WPMConnector;
@@ -24,7 +23,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        PlatformConfiguration state = new PlatformConfiguration(2, InstanceConfig.SMALL, ReplicationProtocol.TWOPC, 2, true);
+        PlatformConfiguration state = new PlatformConfiguration(2, 1, InstanceConfig.SMALL, ReplicationProtocol.TWOPC, 2, true);
 
         StatsManager statsManager = new StatsManager();
         LookupRegister.registerStatsManager(statsManager);

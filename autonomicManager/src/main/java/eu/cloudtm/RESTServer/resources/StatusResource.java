@@ -3,7 +3,6 @@ package eu.cloudtm.RESTServer.resources;
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.LookupRegister;
-import eu.cloudtm.RESTServer.utils.Helper;
 import eu.cloudtm.controller.Controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,16 +20,35 @@ public class StatusResource extends AbstractResource {
     private Gson gson = new Gson();
     private Controller controller = LookupRegister.getController();
 
-
+/*
+{
+   "state":"WORKING",
+   "scale":{
+      "nodes":3,
+      "configuration":"SMALL",
+      "forecaster":"SIMULATOR"
+   },
+   "replication_protocol":{
+      "protocol":"TWOPC",
+      "forecaster":"NONE"
+   },
+   "replication_degree":{
+      "degree":2,
+      "forecaster":"ANALYTIC"
+   },
+   "data_placement":"enabled"
+}
+*/
     @GET
     @Produces("application/json")
     public Response getState() {
-        String json = gson.toJson(controller.getState());
+        String json = controller.getJSONState();
 
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }
 
+    /*
     @GET @Path("/replication/degree")
     @Produces("application/json")
     public Response getReplicationDegree() {
@@ -68,5 +86,6 @@ public class StatusResource extends AbstractResource {
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }
+    */
 
 }

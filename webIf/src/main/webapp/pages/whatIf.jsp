@@ -12,6 +12,14 @@
 	var REST_PORT = '<s:property value="getRestPort()" />';
 </script>
 	
+	<!-- PACKERY + DRAGGABILLY -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/packery.pkgd.min.js" ></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/draggabilly.js" ></script>
+	
+	<!-- FLOT + SMOOTH -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/jquery.flot.min.js" ></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/curvedLines.js" ></script>    
+	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/whatif.js"></script>
 	<script src="http://malsup.github.com/jquery.form.js"></script>
 </head>
@@ -119,89 +127,24 @@
 								<input type="button" class="submit" value="Forecast" size="40" /> 																
 					</div>
 					
-				</div>
-			
-			
-			<!--
-				<div class="table">
-					<div class="row">
-						<div class="column">
-							<div class="table">
-								<div class="row">
-									
-									<div class="column immutable">
-										<fieldset>
-											<legend>Immutable:</legend>
-											<ol>
-												<li><label for="puts_per_tx">PUTs per TX:</label> <input
-													type="text" name="puts_per_tx" id="puts_per_tx" size="3" />
-												</li>
-												<li><label for="wr_tx_perc">WR TX Percentage:</label> <input
-													type="text" name="wr_tx_perc" id="wr_tx_perc" size="3" />
-												</li>
-												<li><label for="threads">Threads per node:</label> <input
-													type="text" name="threads" id="threads" size="3" /></li>
-												<li><label for="acf">ACF:</label> <input type="text"
-													name="acf" id="acf" size="3" /></li>
-											</ol>
-										</fieldset>
-									</div>
-
-
-									<div class="column mutable">
-										<fieldset>
-											<legend>Mutable:</legend>
-											<ol>
-												<li><label for="wr_tx_local_exec_time">WR TX
-														local exec time:</label> <input type="text"
-													name="wr_tx_local_exec_time" id="wr_tx_local_exec_time"
-													size="3" /> <input type="radio"
-													name="wr_tx_local_exec_time_forecast" value="fixed">Fixed
-													<input type="radio" name="wr_tx_local_exec_time_forecast"
-													value="forecast">Forecast</li>
-												<li><label for="rd_tx_exec_time">RD TX exec
-														time:</label> <input type="text" name="rd_tx_exec_time"
-													id="rd_tx_exec_time" size="3" /> <input type="radio"
-													name="rd_tx_exec_time_forecast" value="fixed">Fixed
-													<input type="radio" name="rd_tx_exec_time_forecast"
-													value="forecast">Forecast</li>
-												<li><label for="rtt">RTT:</label> <input type="text"
-													name="rtt" id="rtt" size="3" /> <input type="radio"
-													name="rtt_forecast" value="fixed">Fixed <input
-													type="radio" name="rtt_forecast" value="forecast">Forecast
-												</li>
-											</ol>
-										</fieldset>
-									</div>
-
-									<div class="column mutable">
-										<fieldset>
-											<legend>Forecasters:</legend>
-											<ol>
-												<li><input type="checkbox" name="vehicle" value="Bike">Analytical</li>
-												<li><input type="checkbox" name="vehicle" value="Car">Simulator</li>
-												<li><input type="checkbox" name="vehicle" value="Car">Machine
-													Learner</li>
-											</ol>
-										</fieldset>
-									</div>
-
-								</div>
-							</div>
-
-						</div>
-					</div>
-					<div class="row">
-						<div class="action">
-							<ol>
-								<li><input type="button" value="Forecast" size="40" /> <input
-									type="button" value="Update values from system" size="40" /></li>
-
-							</ol>
-						</div>
-					</div>
-				</div> -->
+				</div>				
 			</form>
+			
+			<div id="container">
+				<div class="item">
+					<div class="plotTitle">Throughput</div>
+					<div id="placeholderThroughput" class="plot"></div>
+				</div>
+				<div class="item">
+					<div class="plotTitle">Nodes</div>
+					<div id="placeholderResponseTime" class="plot"></div>
+				</div>
+				<div class="item">
+					<div class="plotTitle">Write %</div>
+					<div id="placeholderAbortRate" class="plot"></div>
+				</div>
+			</div>	   				
+			
 
 
 		</div>

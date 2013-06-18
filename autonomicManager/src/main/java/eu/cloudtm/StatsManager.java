@@ -1,18 +1,14 @@
 package eu.cloudtm;
 
 import eu.cloudtm.stats.Sample;
-import eu.cloudtm.stats.StatisticDTO;
-import eu.cloudtm.stats.WPMViewChangeRemoteListenerImpl;
-import eu.cloudtm.wpm.connector.WPMConnector;
+import eu.cloudtm.common.dto.StatisticDTO;
 import eu.cloudtm.wpm.logService.remote.events.*;
 import eu.cloudtm.wpm.logService.remote.observables.Handle;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * It contains a stack of samples. Each {@link Sample} is organized in categories
@@ -32,22 +28,21 @@ public class StatsManager {
 
     private Deque<Sample> stack = new ArrayDeque<Sample>(MAX_SIZE);
 
-    private AtomicInteger counter = new AtomicInteger(0);
+
 
     public StatsManager(){
 
     }
 
-    public Sample add(Set<HashMap<String, PublishAttribute>> jmx,
-                      Set<HashMap<String, PublishAttribute>> mem){
+    public Sample add(Sample _sample){
         if(stack.size()>=MAX_SIZE){
             Sample removed = stack.removeLast();
             //log.trace("Deleted stat: " + removed.getId());
         }
-        Sample newStat = new Sample(counter.getAndIncrement(),jmx,mem);
-        stack.push(newStat);
-        log.trace("New stas added: " + newStat.getId());
-        return newStat;
+
+        stack.push(_sample);
+        log.trace("New stas added: " + _sample.getId());
+        return _sample;
     }
 
     /**

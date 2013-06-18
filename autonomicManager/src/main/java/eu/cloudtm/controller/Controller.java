@@ -1,11 +1,14 @@
 package eu.cloudtm.controller;
 
+import com.google.gson.Gson;
+import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.controller.model.PlatformConfiguration;
 import eu.cloudtm.controller.model.Tuning;
 import eu.cloudtm.controller.model.utils.InstanceConfig;
 import eu.cloudtm.controller.model.utils.PlatformState;
 import eu.cloudtm.controller.model.utils.ReplicationProtocol;
 import eu.cloudtm.controller.model.utils.TuningState;
+import eu.cloudtm.controller.oracles.AbstractOracle;
 import eu.cloudtm.stats.Sample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by: Fabio Perfetti
@@ -24,104 +28,85 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Controller {
 
-    private Controller instance;
-
     private static Log log = LogFactory.getLog(Controller.class);
 
+    /* STATE */
     private PlatformState state =  PlatformState.RUNNING;
 
     private final PlatformConfiguration platformConfiguration;
 
-    private long transtitoryTime = 30;   //in sec
 
-    /**
-     * If true means that new sample is available
-     */
-    private AtomicBoolean newSample = new AtomicBoolean(false);
+    /* COMPONENTs */
+    private Gson gson = new Gson();
 
-    /**
-     * If true means that user want to change the configuration
-     */
-    private AtomicBoolean userAction = new AtomicBoolean(false);
+    private InputFilter inputFilter = new InputFilter();
 
-    private long lastInit;
+    private Optimizer optimizer = new Optimizer(this);
 
-    private final BlockingQueue userRequest = new LinkedBlockingQueue();
+    private OutputFilter outputFilter = new OutputFilter();
 
-    /* * TUNING INFO * */
-    private Tuning scaleTuning;
-    private Tuning repProtocolTuning;
-    private Tuning repDegreeTuning;
-    private Boolean dataPlacement;
+    private List<AbstractOracle> oracles = new ArrayList<AbstractOracle>(
+            Arrays.asList(AbstractOracle.getInstance("OracleTAS"))    );
 
 
-    private List<IOracle> oracles = new ArrayList<IOracle>(
-            Arrays.asList( getOracle("OracleTAS") ) );
+    private ExecutorService singleThreadExec = Executors.newSingleThreadExecutor();
 
-    {
-        long now = System.currentTimeMillis();
-        lastInit = now;
-    }
+
+    /* CONFIGURATION */
+    private static final int SAMPLE_WINDOW = 1;
+
+    private AtomicInteger samplesCounter = new AtomicInteger(0);
+
+
+    /* TUNING CONFIGURATION */
+    private Tuning scaleTuning = new Tuning();
+
+    private Tuning repProtocolTuning = new Tuning();
+
+    private Tuning repDegreeTuning = new Tuning();
+
+    private Boolean dataPlacement = true;
+
 
     public Controller(PlatformConfiguration _state) {
         platformConfiguration = _state;
     }
 
-
-    /**
-     * Questo metodo è eseguito quando una è ricevuta una nuova statistica
-     * Nel caso è state precedentemente ricevuta una nuova configurazione dall'utente
-     * ignoro la statistica e attendo
-     *
-     * @param sample
-     */
-    public synchronized void doNotify(Sample sample){
-        if(!userAction.get()){
-            newSample.set(true);
-        }
-
-        log.warn("CALL THE LOAD PREDICTOR");
-        double futureWorkload = 6000;
-
-        PlatformConfiguration nextConfig = null;
-        for(IOracle oracle : oracles){
-             nextConfig = oracle.minimizeCosts(sample, futureWorkload)
-                    .getPlatformConfiguration();
-
-        }
-
-        if(nextConfig!=null)
-            reconfigure();
+    public synchronized void onNewStat(Sample sample){
+        increment();
     }
 
-    /**
-     * Questo metodo è eseguito quando l'utete decide di cambiare manualmente la configurazione.
-     * Ha la priorità sulla riconfigurazione automatica
-     *
-     */
-    public synchronized void doNotify(){
-        userAction.set(true);
-        /* Creo un nuovo thread che si incarica di gestire il reconfigure  */
+    public void increment(){
+        if( !samplesCounter.compareAndSet(SAMPLE_WINDOW, 0) ){
+            samplesCounter.incrementAndGet();
+            return;
+        }
 
-        state = PlatformState.RECONFIGURING;
-
-        ExecutorService pool = Executors.newSingleThreadExecutor();
-        pool.execute(new Runnable() {
-
+        singleThreadExec.execute(new Runnable() {
             @Override
             public void run() {
-                reconfigure();
-
+                doControl();
             }
         });
     }
 
-    public synchronized void reconfigure(){
-        log.warn("TO IMPLEMENT: reconfigure");
-
-        state = PlatformState.RUNNING;
+    private void doControl(){
+        log.info("Starting...");
+        boolean toReconfigure = inputFilter.doFilter();
+        if(toReconfigure){
+            log.info("Reconf needed...");
+            PlatformConfiguration nextConf = optimizer.doOptimize();
+            outputFilter.doFilter(nextConf);
+        } else {
+            log.info("No reconf needed...");
+        }
     }
 
+    private synchronized void onUserAction(){
+        throw new RuntimeException("TO IMPLEMENT");
+    }
+
+    /* USER CONTROL */
     public synchronized void updateScale(int _size, InstanceConfig _instanceConf, Tuning tuning){
 
         if(state==PlatformState.RUNNING){
@@ -131,7 +116,7 @@ public class Controller {
             if(scaleTuning.getState() == TuningState.MANUAL)
                 platformConfiguration.setPlatformScale(_size, _instanceConf);
 
-            doNotify();
+            onUserAction();
         }
     }
 
@@ -144,7 +129,7 @@ public class Controller {
             if(repDegreeTuning.getState()== TuningState.MANUAL)
                 platformConfiguration.setRepDegree(_degree);
 
-            doNotify();
+            onUserAction();
         }
 
     }
@@ -158,29 +143,61 @@ public class Controller {
             if(repProtocolTuning.getState()== TuningState.MANUAL)
                 platformConfiguration.setRepProtocol(_protocol);
 
-            doNotify();
+            onUserAction();
         }
 
     }
 
+    /* *** WEB IF INTERACTION *** */
 
-    public static IOracle getOracle(String oracleName) {
-        if (oracleName.indexOf('.') < 0) {
-            oracleName = "eu.cloudtm.oracles." + oracleName;
-        }
-        try {
-            IOracle obj;
-            Constructor c = Class.forName(oracleName).getConstructor();
-            obj = (IOracle) c.newInstance();
-            return obj;
-        } catch (Exception e) {
-            String s = "Could not create oracle of type: " + oracleName;
-            log.error(s);
-            throw new RuntimeException(e);
-        }
+
+/*
+{
+   "state":"WORKING",
+   "scale":{
+      "nodes":3,
+      "configuration":"SMALL",
+      "forecaster":"SIMULATOR"
+   },
+   "replication_protocol":{
+      "protocol":"TWOPC",
+      "forecaster":"NONE"
+   },
+   "replication_degree":{
+      "degree":2,
+      "forecaster":"ANALYTIC"
+   },
+   "data_placement":"enabled"
+}
+*/
+
+    public String getJSONState(){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{");
+        sb.append(gson.toJson("state") + ":" + gson.toJson(getState()) + "," );
+        sb.append(gson.toJson("scale") + ":" );
+        sb.append("{");
+            sb.append(gson.toJson("nodes") + ":" + platformConfiguration.platformSize() + ",");
+            sb.append(gson.toJson("configuration") + ":" + gson.toJson( platformConfiguration.nodeConfiguration() ) +  ",");
+            sb.append(gson.toJson("forecaster") + ":" + gson.toJson( scaleTuning.getForecaster() ) );
+        sb.append("},");
+        sb.append(gson.toJson("replication_protocol") + ":");
+        sb.append("{");
+            sb.append(gson.toJson("protocol") + ":" + gson.toJson( platformConfiguration.replicationProtocol() ) + "," );
+            sb.append(gson.toJson("forecaster") + ":" + gson.toJson( repProtocolTuning.getForecaster() ) );
+        sb.append("},");
+        sb.append(gson.toJson("replication_degree") + ":" );
+        sb.append("{");
+            sb.append(gson.toJson("degree") + ":" + platformConfiguration.replicationDegree() + "," );
+            sb.append(gson.toJson("forecaster") + ":" + gson.toJson( repDegreeTuning.getForecaster() ) );
+        sb.append("},");
+        sb.append(gson.toJson("data_placement") + ":" + gson.toJson( (dataPlacement==true) ? "enabled" : "disabled") );
+        sb.append("}");
+        log.info(sb);
+        return sb.toString();
     }
 
-    /* *** GETTER *** */
     public PlatformState getState(){
         return state;
     }
@@ -189,49 +206,14 @@ public class Controller {
         return platformConfiguration;
     }
 
+    public List<AbstractOracle> getOracles(){
+        return this.oracles;
+    }
+
 
 }
 
 
-//    public synchronized void run() {
-//
-//        List<IOracle> oracles = new ArrayList<IOracle>();
-//        oracles.add( getOracle("OracleTAS") );
-//
-//
-//        while(true) {
-//            while (!newSample.getAndSet(false) && !userAction.getAndSet(false)) {
-//                try {
-//                    wait();
-//                } catch (InterruptedException e) {
-//                    log.warn("Unexpected interrupt");
-//                }
-//            }
-//
-//            log.info("CHi m'ha svegliato?");
-//            // utente, statsManager o tutti e due? utente ha priorità
-//
-//            if(userAction.compareAndSet(true,false)){
-//                manageUserInput();
-//            } else {
-//                manageNewStat();
-//            }
-//
-//
-//            for(IOracle oracle : oracles){
-//                oracle.minimizeCosts();
-//            }
-//
-//
-//            state = PlatformState.RUNNING;
-//
-//            try {
-//                log.info("simulating...");
-//                Thread.sleep(10000);
-//            } catch (InterruptedException e) {
-//                log.info("Interrupted");
-//            }
-//            log.info("restoring...");
-//            state = PlatformState.RECONFIGURING;
-//        }
-//    }
+//private AtomicBoolean newSample = new AtomicBoolean(false);
+
+//private AtomicBoolean userAction = new AtomicBoolean(false);

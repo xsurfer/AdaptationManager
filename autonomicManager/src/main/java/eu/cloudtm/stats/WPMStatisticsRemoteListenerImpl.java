@@ -44,13 +44,7 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
         Set<String> ips = event.getIps();
         log.trace("Received statistics from wpm instances " + ips.toString());
-        /*
-        if (!controller.canProcessNewData()) {
-            log.trace("Masked interrupt. The Controller is still analyzing last data");
-            controller.resetStateTimeWindow();
-            return;
-        }
-        */
+
         Set<HashMap<String, PublishAttribute>> jmx = new HashSet<HashMap<String, PublishAttribute>>();
         Set<HashMap<String, PublishAttribute>> mem = new HashSet<HashMap<String, PublishAttribute>>();
         for (String ip : ips) {
@@ -75,24 +69,12 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
             }
         }
 
-        //lastJMX = jmx;
-        //lastMEM = mem;
-
         //trace(jmx);
         //trace(mem);
-        Sample newSample = statsManager.add(jmx,mem);
-        controller.doNotify(newSample);
 
-
-        /*
-        try {
-            this.controller.consumeStats(jmx, mem);
-        } catch (PublishAttributeException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (Tas2Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        */
+        Sample newSample = Sample.getInstance(jmx,mem);
+        statsManager.add(newSample);
+        controller.onNewStat(newSample);
 
     }
 

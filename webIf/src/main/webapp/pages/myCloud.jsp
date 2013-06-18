@@ -105,23 +105,21 @@ $(document).ready(
     var Update = function(json) {
     	console.log(json); 
 		
-		$("span#status").text(json.platformState);
+		$("span#status").text(json.state);
 		
 		
 		/* SCALE */
-		$("p#scale_tuning").text($.trim(json.scale.tuning) + " + " + $.trim(json.scale.forecaster));
+		$("p#scale_tuning").text( (json.scale.forecaster == "NONE") ? "MANUAL" : json.scale.forecaster );			
 		
-		var instanceType = (json.scale.instanceType == "NONE") ? "" : json.scale.instanceType;
+		$("p#scale_conf").text( $.trim(json.scale.nodes) + " " + $.trim(json.scale.configuration));
 		
-		$("p#scale_conf").text( $.trim(json.scale.size) + " " + $.trim(instanceType));
+		$("p#rep_degree_tuning").text( (json.replication_degree.forecaster == "NONE") ? "MANUAL" : json.replication_degree.forecaster );	
+		$("p#rep_degree_conf").text( $.trim(json.replication_degree.degree) );
 		
-		$("p#rep_degree_tuning").text( $.trim(json.replicationDegree.tuning) + " + " + $.trim(json.replicationDegree.forecaster) );
-		$("p#rep_degree_conf").text( $.trim(json.replicationDegree.degree) );
+		$("p#rep_prot_tuning").text( (json.replication_protocol.forecaster == "NONE") ? "MANUAL" : json.replication_protocol.forecaster );		
+		$("p#rep_prot_conf").text( $.trim(json.replication_protocol.protocol) );
 		
-		$("p#rep_prot_tuning").text( $.trim(json.replicationProtocol.tuning) + " + " + $.trim(json.replicationProtocol.forecaster) );
-		$("p#rep_prot_conf").text( $.trim(json.replicationProtocol.protocol) );
-		
-		$("p#placement_tuning").text( $.trim(json.dataPlacement.tuning) + " + " + $.trim(json.dataPlacement.forecaster) );
+		$("p#placement_tuning").text( $.trim(json.data_placement) );
 		
 	};
 

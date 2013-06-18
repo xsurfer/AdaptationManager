@@ -71,7 +71,6 @@ $(function() {
 		pckry.bindDraggabillyEvents(draggie);
 	}
 
-	//pckry.on( 'removeComplete', function( pckryInstance, removedItems ) {alert();});
 
 	$('#container').bind('dblclick', function(eventObject) {
 
@@ -119,7 +118,7 @@ $(function() {
 
 			console.log(currPlot.getData());
 
-			//currPlot.setupGrid();
+			currPlot.setupGrid();
 			currPlot.draw();
 
 		});
@@ -226,11 +225,13 @@ $(function() {
 		}
 	}
 
+	drawPlots();
+	
 	getAllAndUpdate('throughput');
 	getAllAndUpdate('nodes');
 	getAllAndUpdate('writePercentage');
 
-	drawPlots();
+	
 	setInterval(function() {
 		update('throughput');
 		update('nodes');

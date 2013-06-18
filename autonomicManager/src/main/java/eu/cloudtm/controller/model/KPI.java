@@ -63,9 +63,9 @@ public class KPI implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        // Comparison based #nodes first, #thread later
-//        if (this.platformConfiguration.getScaleClone().getSize() == ((KPI) o).platformConfiguration.getScaleClone().getSize()) {
-//            return 0;
+        //Comparison based #nodes first, #thread later
+        if( this.platformConfiguration.platformSize() == ((KPI) o).platformConfiguration.platformSize() ) {
+            return 0;
 //            if (this.platformConfiguration.getNumThreads() == ((KPI) o).platformConfiguration.getNumThreads()) {
 //
 //            } else if (this.platformConfiguration.getNumThreads() > ((KPI) o).platformConfiguration.getNumThreads()) {
@@ -73,12 +73,12 @@ public class KPI implements Comparable {
 //            } else {
 //                return -1;
 //            }
-//        } else if (this.platformConfiguration.getNumNodes() > ((KPI) o).platformConfiguration.getNumNodes()) {
-//            return 1;
-//        } else {
-//            return -1;
-//        }
-        throw new RuntimeException("TO IMPLEMENT!");
+        } else if( this.platformConfiguration.platformSize() > ((KPI) o).platformConfiguration.platformSize() ) {
+            return 1;
+        } else {
+            return -1;
+        }
+        //throw new RuntimeException("TO IMPLEMENT!");
     }
 
     @Override
