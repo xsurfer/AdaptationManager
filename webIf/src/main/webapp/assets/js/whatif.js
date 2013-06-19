@@ -42,14 +42,28 @@ var series = {
 		} ]
 }
 
-var size = 10;
-
 $(document).ready( 
 
 		function(){
+			
+			$("body").on({
+			    // When ajaxStart is fired, add 'loading' to body class
+			    ajaxStart: function() { 			    	
+			        $(this).addClass("loading"); 
+			    },
+			    // When ajaxStop is fired, rmeove 'loading' from body class
+			    ajaxStop: function() {
+			        $(this).removeClass("loading"); 
+			    }    
+			});
 
 			$('#updateValues').click(function() { 
 				retrieveValues(); 
+				return false;
+			});
+
+			$('#forecastAction').click(function() { 
+				getAllAndUpdate(); 
 				return false;
 			});
 
@@ -96,9 +110,9 @@ $(document).ready(
 
 
 			drawPlots();
-			getAllAndUpdate();
-			//getAllAndUpdate('nodes');
-			//getAllAndUpdate('writePercentage');
+			//getAllAndUpdate();
+			// getAllAndUpdate('nodes');
+			// getAllAndUpdate('writePercentage');
 
 
 		}
@@ -109,44 +123,57 @@ $(document).ready(
 /* *********** */
 
 function getAllAndUpdate() {
-
+	var dataToBeSent = $("form#whatif").serialize();
+	console.log(dataToBeSent);
+	
 	var url = REST_GET_WHATIF;
 
-	$.getJSON(url, function(json) {
+	$.ajax({
+		url: url,
+		type: 'PUT',
+		crossDomain: true,
+		data: dataToBeSent,
+		dataType: 'json',
+		global: true,
+		success: function(json) {	        
 
-		console.log("risorse: " + resources.length);
-		for ( var resLen = 0; resLen < resources.length; resLen++) {
-			param = resources[resLen];
-			console.log("analizzando: " + param);
 
-			dataSize = json[param].length;
-			data = json[param];
-			console.log("size: " + dataSize);
+			console.log("risorse: " + resources.length);
+			for ( var resLen = 0; resLen < resources.length; resLen++) {
+				param = resources[resLen];
+				console.log("analizzando: " + param);
 
-			var nextData = [];
-			for ( var i = 0; i < size; i++)
-				nextData[i] = 0;
+				dataSize = json[param].length;
+				data = json[param];
+				console.log("size: " + dataSize);
 
-			for ( var i = 0; i < dataSize; i++) {
-				nextData = nextData.slice(1);
-				nextData.push(data[i][1]);
+				var nextData = [];
+
+//            [ 
+//				[2.0,398.6991260451597],[3.0,705.6247975269262],[4.0,903.0586480645841],[5.0,1210.3070778706026],[6.0,1411.2449155071085],[7.0,1706.4529070958245],[8.0,1888.042245499542],[9.0,2181.4290920243793],[10.0,2299.0031156528057]
+//            ]				
+				
+				for ( var i = 0; i < dataSize; i++) {					
+					nextData.push(data[i]);					
+				}
+				console.log(nextData);
+
+				//var res = [];
+				//for ( var i = 1; i < nextData.length; ++i) {
+//					res.push([ i, nextData[i] ]);
+				//}
+
+				var currSeries = series[param];
+				currSeries[0].data = nextData;
+
+				var currPlot = plots[param];
+				currPlot.setData(currSeries);
+
+				currPlot.setupGrid();
+				currPlot.draw();
 			}
 
-			var res = [];
-			for ( var i = 0; i < nextData.length; ++i) {
-				res.push([ i, nextData[i] ]);
-			}
-
-			var currSeries = series[param];
-			currSeries[0].data = res;
-
-			var currPlot = plots[param];
-			currPlot.setData(currSeries);
-
-			currPlot.setupGrid();
-			currPlot.draw();
 		}
-
 	});
 }
 
@@ -179,7 +206,7 @@ function drawPlots() {
 						markings : function(axes) {
 							var markings = [];
 							var xaxis = axes.xaxis;
-							for ( var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
+							for ( var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize) {
 								markings
 								.push({
 									xaxis : {
@@ -190,18 +217,22 @@ function drawPlots() {
 									color : "rgba(232, 232, 255, 0.2)"
 								});
 							}
+							console.log(markings);
 							return markings;
 						}
 					},
 					xaxis : {
-						tickFormatter : function() {
-							return "";
-						}
+						//min: 0,
+						//max: 5,
+						tickSize: 1,
+						//tickFormatter : function(val, axis) {
+							//return val+1;
+						//}
 					},
 					yaxis : {
 						min : 0,
 						autoscaleMargin : 0.02
-						//max : 10
+						// max : 10
 					},
 					legend : {
 						show : true
@@ -229,23 +260,18 @@ function retrieveValues(){
 
 
 		console.log(data);
-		//alert("ricevuto");
+		// alert("ricevuto");
 		/*
-		var items = [];
-		$.each(data, function(key, val) {
-			var htmlField = resourceToFeature[key];
-
-			if(htmlField){	
-				console.log("htmlField: " + htmlField);
-				console.log("val:" + val);
-				var field = featureToField[htmlField];
-				console.log("field:" + field);
-				console.log("valore:" + val[field]);
-				$('span#' + current + htmlField ).text(val[field]);
-				$('span#' + currentOpt + htmlField ).text("OPT");				
-			}						
-		});*/
-		//alert(items);
+		 * var items = []; $.each(data, function(key, val) { var htmlField =
+		 * resourceToFeature[key];
+		 * 
+		 * if(htmlField){ console.log("htmlField: " + htmlField);
+		 * console.log("val:" + val); var field = featureToField[htmlField];
+		 * console.log("field:" + field); console.log("valore:" + val[field]);
+		 * $('span#' + current + htmlField ).text(val[field]); $('span#' +
+		 * currentOpt + htmlField ).text("OPT"); } });
+		 */
+		// alert(items);
 	});
 }
 

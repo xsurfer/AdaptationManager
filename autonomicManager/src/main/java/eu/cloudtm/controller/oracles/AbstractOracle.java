@@ -22,6 +22,7 @@ public abstract class AbstractOracle implements IOracle {
 
     private static final int THREAD = 2;
 
+    private int imin = 1, imax = 10; // TODO: da rendere parametrizzabili
 
     public AbstractOracle() {
 
@@ -51,8 +52,6 @@ public abstract class AbstractOracle implements IOracle {
     }
 
     private KPI binarySearch(Sample sample, double arrivalRate, double abortRate, double responseTime) {
-        int imin = 2;
-        int imax = 10;
 
         double throughputForecasted;
 
@@ -112,7 +111,7 @@ public abstract class AbstractOracle implements IOracle {
 
     @Override
     public Set<KPI> whatIf(Sample sample, WhatIfCustomParamDTO customParam) {
-        int imin = 2, imax = 10;
+
         Set<KPI> ret = new TreeSet<KPI>();
 
         for(int i=imin;i<=imax;i++){

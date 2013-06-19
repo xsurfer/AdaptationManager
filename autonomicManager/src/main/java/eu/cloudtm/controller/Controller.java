@@ -35,6 +35,8 @@ public class Controller {
 
     private final PlatformConfiguration platformConfiguration;
 
+    public final static double TIME_WINDOW = 5D; // TODO: renderlo parametro
+
 
     /* COMPONENTs */
     private Gson gson = new Gson();

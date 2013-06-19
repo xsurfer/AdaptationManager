@@ -53,7 +53,7 @@
 								<legend>Data Access Pattern:</legend>
 									<div class="param">
 										<label for="acf">Application Contention Factor:</label>
-										<input type="text" id="acf" name="acf" size="5" />
+										<input type="text" id="ACF" name="ACF" size="5" />
 									</div>
 									<div class="param">
 										<label for="RetryWritePercentage">Write Transactions Percentage:</label>
@@ -124,7 +124,7 @@
 					</div>
 					<div class="action">
 								<input id="updateValues" type="submit" class="submit" value="Update values from system" size="40" />
-								<input type="button" class="submit" value="Forecast" size="40" /> 																
+								<input id="forecastAction" type="button" class="submit" value="Forecast" size="40" /> 																
 					</div>
 					
 				</div>				
@@ -136,11 +136,11 @@
 					<div id="placeholderThroughput" class="plot"></div>
 				</div>
 				<div class="item">
-					<div class="plotTitle">Nodes</div>
+					<div class="plotTitle">RTT</div>
 					<div id="placeholderResponseTime" class="plot"></div>
 				</div>
 				<div class="item">
-					<div class="plotTitle">Write %</div>
+					<div class="plotTitle">AbortRate %</div>
 					<div id="placeholderAbortRate" class="plot"></div>
 				</div>
 			</div>	   				
@@ -156,6 +156,7 @@
 
 	<hr class="noscreen">
 	<hr class="noscreen">
+	<div class="modal"></div>
 </body>
 </html>
 

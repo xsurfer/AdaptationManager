@@ -34,7 +34,9 @@ import Tas2.physicalModel.cpunet.cpu.CpuServiceTimes;
 import Tas2.physicalModel.cpunet.cpu.two.CpuServiceTimes2Impl;
 import Tas2.physicalModel.cpunet.net.queue.NetServiceTimes;
 import Tas2.physicalModel.cpunet.net.tas.FixedRttServiceTimes;
+import eu.cloudtm.StatsManager;
 import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.controller.model.ACF;
 import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
 import eu.cloudtm.wpm.logService.remote.events.PublishMeasurement;
 import org.apache.commons.logging.Log;
@@ -47,237 +49,177 @@ import java.util.Set;
 
 public class DSTMScenarioFactory {
 
-   private static final Log log = LogFactory.getLog(DSTMScenarioFactory.class);
-   private static double THREADS = 3.0D;
-   private static double TIME_WINDOW = 60D;
-   private static final double CLOSED_SYSTEM = 0D;
-   private static final boolean ROA = true;
+    private static final Log log = LogFactory.getLog(DSTMScenarioFactory.class);
 
 
-    public DSTMScenarioTas2 buildScenario(Set<HashMap<String, PublishAttribute>> jmx, Set<HashMap<String, PublishAttribute>> mem) throws PublishAttributeException, Tas2Exception {
-        CpuServiceTimes2Impl cpu = (CpuServiceTimes2Impl) buildCpuServiceTimes(jmx);
-        log.trace(cpu);
-        WorkParams workParams = buildWorkloadParams(jmx, mem);
-        log.trace(workParams);
-        NetServiceTimes net = buildNetServiceTimes(jmx);
-        log.trace(net);
-        log.info("Most important features: wrPerc = "+workParams.getWritePercentage()+", wrPerTx "+workParams.getWriteOpsPerTx()+ " updateTxS "+cpu.getUpdateTxLocalExecutionS()+ " readOnlyTxS "+cpu.getReadOnlyTxLocalExecutionS()+ " acf "+acf(jmx));
+    private static final double CLOSED_SYSTEM = 0D;
+    private static final boolean ROA = true;
+
+    private static CpuServiceTimes2Impl cpu;
+    private static WorkParams workParams;
+    private static NetServiceTimes net;
+
+    private DSTMScenarioFactory() {
+    }
+
+    public static DSTMScenarioTas2 buildScenario(Set<HashMap<String, PublishAttribute>> jmx,
+                                                 Set<HashMap<String, PublishAttribute>> mem,
+                                                 int nodes,
+                                                 int threads,
+                                                 double timeWindow)
+            throws PublishAttributeException, Tas2Exception {
+
+        buildBaseScenario(jmx, mem, nodes, threads, timeWindow);
+
+        log.info("Most important features: wrPerc = " + workParams.getWritePercentage() + ", " +
+                "wrPerTx " + workParams.getWriteOpsPerTx() +
+                " updateTxS " + cpu.getUpdateTxLocalExecutionS() +
+                " readOnlyTxS " + cpu.getReadOnlyTxLocalExecutionS() +
+                " acf " + workParams.getApplicationContentionFactor());
+
+
         return new DSTMScenarioTas2(cpu, net, workParams);
     }
 
-    public DSTMScenarioTas2 buildScenario(Set<HashMap<String, PublishAttribute>> jmx, Set<HashMap<String, PublishAttribute>> mem, WhatIfCustomParamDTO customParam) throws PublishAttributeException, Tas2Exception {
+    public static DSTMScenarioTas2 buildCustomScenario(Set<HashMap<String, PublishAttribute>> jmx,
+                                                Set<HashMap<String, PublishAttribute>> mem,
+                                                WhatIfCustomParamDTO customParam,
+                                                int nodes,
+                                                int threads,
+                                                double timeWindow)
+            throws PublishAttributeException, Tas2Exception {
 
-        CpuServiceTimes2Impl cpu = (CpuServiceTimes2Impl) buildCpuServiceTimes(jmx);
+        buildBaseScenario(jmx, mem, nodes, threads, timeWindow);
 
-        if( customParam.getLocalReadOnlyTxLocalServiceTime() != -1 )
-            cpu.setReadOnlyTxLocalExecutionS( getAvgAttribute("LocalReadOnlyTxLocalServiceTime",jmx) );
-        if( customParam.getLocalUpdateTxLocalServiceTime() != -1 )
-            cpu.setUpdateTxLocalExecutionS( getAvgAttribute("LocalUpdateTxLocalServiceTime", jmx) );
+        // customizing cpu params
+        if (customParam.getLocalReadOnlyTxLocalServiceTime() != -1)
+            cpu.setReadOnlyTxLocalExecutionS(StatsManager.getAvgAttribute("LocalReadOnlyTxLocalServiceTime", jmx));
+        if (customParam.getLocalUpdateTxLocalServiceTime() != -1)
+            cpu.setUpdateTxLocalExecutionS(StatsManager.getAvgAttribute("LocalUpdateTxLocalServiceTime", jmx));
 
         log.trace(cpu);
 
-        WorkParams workParams = buildWorkloadParams(jmx, mem);
-
-        if(customParam.getSuxNumPuts()!=-1)
+        // customizing work params
+        if (customParam.getSuxNumPuts() != -1)
             workParams.setWriteOpsPerTx(customParam.getSuxNumPuts());
-        if(customParam.getRetryWritePercentage()!=-1)
+        if (customParam.getRetryWritePercentage() != -1)
             workParams.setWritePercentage(customParam.getRetryWritePercentage());
-        if(customParam.getPrepareCommandBytes()!=-1)
+        if (customParam.getPrepareCommandBytes() != -1)
             workParams.setPrepareMessageSize(customParam.getPrepareCommandBytes());
 
         log.trace(workParams);
 
-        NetServiceTimes net = buildNetServiceTimes(jmx);
+        // customizing net params
         log.trace(net);
-        log.info("Most important features: wrPerc = "+workParams.getWritePercentage()+", wrPerTx "+workParams.getWriteOpsPerTx()+ " updateTxS "+cpu.getUpdateTxLocalExecutionS()+ " readOnlyTxS "+cpu.getReadOnlyTxLocalExecutionS()+ " acf "+acf(jmx));
+
+        log.info("Most important features: wrPerc = " + workParams.getWritePercentage() + ", " +
+                "wrPerTx " + workParams.getWriteOpsPerTx() +
+                " updateTxS " + cpu.getUpdateTxLocalExecutionS() +
+                " readOnlyTxS " + cpu.getReadOnlyTxLocalExecutionS() +
+                " acf " + workParams.getApplicationContentionFactor());
+
         return new DSTMScenarioTas2(cpu, net, workParams);
     }
 
 
-   public DSTMScenarioTas2 buildScenario(Set<HashMap<String, PublishAttribute>> jmx, Set<HashMap<String, PublishAttribute>> mem, double timeWindow, double threads) throws PublishAttributeException, Tas2Exception {
-      THREADS = threads;
-      TIME_WINDOW = timeWindow;
-      CpuServiceTimes2Impl cpu = (CpuServiceTimes2Impl) buildCpuServiceTimes(jmx);
-      log.trace(cpu);
-      WorkParams workParams = buildWorkloadParams(jmx, mem);
-      log.trace(workParams);
-      NetServiceTimes net = buildNetServiceTimes(jmx);
-      log.trace(net);
-      log.info("Most important features: wrPerc = "+workParams.getWritePercentage()+", wrPerTx "+workParams.getWriteOpsPerTx()+ " updateTxS "+cpu.getUpdateTxLocalExecutionS()+ " readOnlyTxS "+cpu.getReadOnlyTxLocalExecutionS()+ " acf "+acf(jmx));
-      return new DSTMScenarioTas2(cpu, net, workParams);
-   }
+    private static void buildBaseScenario(Set<HashMap<String, PublishAttribute>> jmx,
+                                          Set<HashMap<String, PublishAttribute>> mem,
+                                          int nodes,
+                                          int threads,
+                                          double timeWindow) throws PublishAttributeException {
+        cpu = (CpuServiceTimes2Impl) buildCpuServiceTimes(jmx);
+        log.trace(cpu);
+
+        workParams = buildWorkloadParams(jmx, mem, nodes, threads, timeWindow);
+        log.trace(workParams);
+
+        net = buildNetServiceTimes(jmx);
+        log.trace(net);
+        return;
+    }
+
+    private Set<HashMap<String, PublishAttribute>> toHashMapSet(Set<PublishMeasurement> measurements) {
+        Set<HashMap<String, PublishAttribute>> set = new HashSet<HashMap<String, PublishAttribute>>();
+        for (PublishMeasurement m : measurements) {
+            set.add(m.getValues());
+        }
+        return set;
+    }
+
+    private static CpuServiceTimes buildCpuServiceTimes(Set<HashMap<String, PublishAttribute>> values) throws PublishAttributeException {
+        //Local Update
+        double updateLocalTxLocalExec = StatsManager.getAvgAttribute("LocalUpdateTxLocalServiceTime", values);
+        double updateLocalTxPrepare = StatsManager.getAvgAttribute("LocalUpdateTxPrepareServiceTime", values);
+        double updateLocalTxCommit = StatsManager.getAvgAttribute("LocalUpdateTxCommitServiceTime", values);
+        double updateLocalTxLocalRollback = StatsManager.getAvgAttribute("LocalUpdateTxLocalRollbackResponseTime", values);
+        double updateLocalTxRemoteRollback = StatsManager.getAvgAttribute("LocalUpdateTxRemoteRollbackServiceTime", values);
+        //Local Read Only
+        //TODO this should be the service time. I only have the response time due to a bug. It's +/- the same if I don't vary the threads and keep the load low
+
+        // FABIO FABIO FABIO ---> questa è vecchia da sostituire con LocalReadOnlyTxLocalServiceTime
+        //double readOnlyTxLocalExec = getAvgAttribute("AvgLocalReadOnlyExecutionTime",values);//getAvgAttribute("LocalReadOnlyTxLocalResponseTime", values);
+        // FABIO FABIO FABIO
+        double readOnlyTxLocalExec = StatsManager.getAvgAttribute("LocalReadOnlyTxLocalServiceTime", values);
+        double readOnlyTxPrepare = StatsManager.getAvgAttribute("LocalReadOnlyTxPrepareServiceTime", values);//("ReadOnlyCommitCpuTime");
+        double readOnlyTxCommit = StatsManager.getAvgAttribute("LocalReadOnlyTxCommitServiceTime", values);
+        //Remote Update
+        double updateRemoteTxLocalExec = StatsManager.getAvgAttribute("RemoteUpdateTxPrepareServiceTime", values);
+        double updateRemoteTxCommit = StatsManager.getAvgAttribute("RemoteUpdateTxCommitServiceTime", values);
+        double updateRemoteTxRollback = StatsManager.getAvgAttribute("RemoteUpdateTxRollbackServiceTime", values);
+
+        CpuServiceTimes2Impl cpu = new CpuServiceTimes2Impl();
+        cpu.setUpdateTxLocalExecutionS(updateLocalTxLocalExec);
+        cpu.setUpdateTxPrepareS(updateLocalTxPrepare);
+        cpu.setUpdateTxCommitS(updateLocalTxCommit);
+        cpu.setUpdateTxLocalLocalRollbackS(updateLocalTxLocalRollback);
+        cpu.setUpdateTxLocalRemoteRollbackS(updateLocalTxRemoteRollback);
+
+        cpu.setReadOnlyTxLocalExecutionS(readOnlyTxLocalExec);
+        cpu.setReadOnlyTxPrepareS(readOnlyTxPrepare);
+        cpu.setReadOnlyTxCommitS(readOnlyTxCommit);
+
+        cpu.setUpdateTxRemoteExecutionS(updateRemoteTxLocalExec);
+        cpu.setUpdateTxRemoteCommitS(updateRemoteTxCommit);
+        cpu.setUpdateTxRemoteRollbackS(updateRemoteTxRollback);
 
 
-   private Set<HashMap<String, PublishAttribute>> toHashMapSet(Set<PublishMeasurement> measurements) {
-      Set<HashMap<String, PublishAttribute>> set = new HashSet<HashMap<String, PublishAttribute>>();
-      for (PublishMeasurement m : measurements) {
-         set.add(m.getValues());
-      }
-      return set;
-   }
+        return cpu;
+    }
+
+    private static WorkParams buildWorkloadParams(Set<HashMap<String, PublishAttribute>> JMXvalues,
+                                                  Set<HashMap<String, PublishAttribute>> MEMvalues,
+                                                  int nodes,
+                                                  int threads,
+                                                  double timeWindow)
+            throws PublishAttributeException {
+
+        //TODO: check
+        double wrOps = (double) ((int) StatsManager.getAvgAttribute("SuxNumPuts", JMXvalues));
+        boolean RoA = ROA;
+        double wrPer = StatsManager.getAvgAttribute("RetryWritePercentage", JMXvalues);
+        double lambda = CLOSED_SYSTEM;
+        double mexSize = StatsManager.getAvgAttribute("PrepareCommandBytes", JMXvalues);
 
 
-   private double getAvgAttribute(String attribute, Set<HashMap<String, PublishAttribute>> values) throws PublishAttributeException {
-      double num = values.size(), temp = 0;
-      Object actualValue;
-      for (HashMap<String, PublishAttribute> h : values) {
-         if (h == null) {
-            throw new PublishAttributeException("I had a null set of values");
-         }
-         log.trace("Asking for " + attribute);
-         //the getName may give a nullPointerException, actually
-         if ((actualValue = h.get(attribute).getValue()) == null) {
-            throw new PublishAttributeException(h.get(attribute).getName() + " is null");
-         }
-         try {
-            temp += cast(actualValue);
-         } catch (ClassCastException c) {
-            throw new PublishAttributeException(h.get(attribute).getName() + " is not a double/long/int and cannot be averaged. It appears to be " + actualValue.getClass());
+        double acf = ACF.evaluate(JMXvalues, threads, timeWindow);//rrp.getAcfFromInversePrepareProb(numThreads,wrOps);//rrp.getClosedAcf(numThreads);
 
-         }
-      }
-      return temp / num;
-   }
+        double mem = StatsManager.getAvgAttribute("MemoryInfo.used", MEMvalues);
 
-   private double cast(Object o) throws ClassCastException {
-      try {
-         return (Long) o;
-      } catch (ClassCastException c) {
-         try {
-            return (Double) o;
-         } catch (ClassCastException cc) {
-            return (Integer) o;
-         }
-      }
-   }
+        WorkParams workParams = new WorkParams();
+        workParams.setRetryOnAbort(RoA);
+        workParams.setWriteOpsPerTx(wrOps);
+        workParams.setWritePercentage(wrPer);
+        workParams.setLambda(lambda);
+        workParams.setPrepareMessageSize(mexSize);
+        workParams.setNumNodes(nodes);
+        workParams.setThreadsPerNode(threads);
+        workParams.setApplicationContentionFactor(acf);
+        workParams.setMem(mem);
 
+        return workParams;
+    }
 
-   private CpuServiceTimes buildCpuServiceTimes(Set<HashMap<String, PublishAttribute>> values) throws PublishAttributeException {
-       //Local Update
-      double updateLocalTxLocalExec = getAvgAttribute("LocalUpdateTxLocalServiceTime", values);
-      double updateLocalTxPrepare = getAvgAttribute("LocalUpdateTxPrepareServiceTime", values);
-      double updateLocalTxCommit = getAvgAttribute("LocalUpdateTxCommitServiceTime", values);
-      double updateLocalTxLocalRollback = getAvgAttribute("LocalUpdateTxLocalRollbackResponseTime", values);
-      double updateLocalTxRemoteRollback = getAvgAttribute("LocalUpdateTxRemoteRollbackServiceTime", values);
-      //Local Read Only
-      //TODO this should be the service time. I only have the response time due to a bug. It's +/- the same if I don't vary the threads and keep the load low
-
-      // FABIO FABIO FABIO ---> questa è vecchia da sostituire con LocalReadOnlyTxLocalServiceTime
-      //double readOnlyTxLocalExec = getAvgAttribute("AvgLocalReadOnlyExecutionTime",values);//getAvgAttribute("LocalReadOnlyTxLocalResponseTime", values);
-      // FABIO FABIO FABIO
-      double readOnlyTxLocalExec = getAvgAttribute("LocalReadOnlyTxLocalServiceTime",values);
-      double readOnlyTxPrepare = getAvgAttribute("LocalReadOnlyTxPrepareServiceTime", values);//("ReadOnlyCommitCpuTime");
-      double readOnlyTxCommit = getAvgAttribute("LocalReadOnlyTxCommitServiceTime", values);
-      //Remote Update
-      double updateRemoteTxLocalExec = getAvgAttribute("RemoteUpdateTxPrepareServiceTime", values);
-      double updateRemoteTxCommit = getAvgAttribute("RemoteUpdateTxCommitServiceTime", values);
-      double updateRemoteTxRollback = getAvgAttribute("RemoteUpdateTxRollbackServiceTime", values);
-
-      CpuServiceTimes2Impl cpu = new CpuServiceTimes2Impl();
-      cpu.setUpdateTxLocalExecutionS(updateLocalTxLocalExec);
-      cpu.setUpdateTxPrepareS(updateLocalTxPrepare);
-      cpu.setUpdateTxCommitS(updateLocalTxCommit);
-      cpu.setUpdateTxLocalLocalRollbackS(updateLocalTxLocalRollback);
-      cpu.setUpdateTxLocalRemoteRollbackS(updateLocalTxRemoteRollback);
-
-      cpu.setReadOnlyTxLocalExecutionS(readOnlyTxLocalExec);
-      cpu.setReadOnlyTxPrepareS(readOnlyTxPrepare);
-      cpu.setReadOnlyTxCommitS(readOnlyTxCommit);
-
-      cpu.setUpdateTxRemoteExecutionS(updateRemoteTxLocalExec);
-      cpu.setUpdateTxRemoteCommitS(updateRemoteTxCommit);
-      cpu.setUpdateTxRemoteRollbackS(updateRemoteTxRollback);
-
-
-      return cpu;
-   }
-
-   private WorkParams buildWorkloadParams(Set<HashMap<String, PublishAttribute>> JMXvalues, Set<HashMap<String, PublishAttribute>> MEMvalues) throws PublishAttributeException {
-      //TODO: check
-      double wrOps = (double)((int)getAvgAttribute("SuxNumPuts", JMXvalues));
-      boolean RoA = ROA;
-      double wrPer = getAvgAttribute("RetryWritePercentage", JMXvalues);
-      double lambda = CLOSED_SYSTEM;
-      double mexSize = getAvgAttribute("PrepareCommandBytes", JMXvalues);
-      double nodes = JMXvalues.size();
-      double numThreads = THREADS;
-      double acf = acf(JMXvalues);//rrp.getAcfFromInversePrepareProb(numThreads,wrOps);//rrp.getClosedAcf(numThreads);
-
-
-      double mem = getAvgAttribute("MemoryInfo.used", MEMvalues);
-
-      WorkParams workParams = new WorkParams();
-      workParams.setRetryOnAbort(RoA);
-      workParams.setWriteOpsPerTx(wrOps);
-      workParams.setWritePercentage(wrPer);
-      workParams.setLambda(lambda);
-      workParams.setPrepareMessageSize(mexSize);
-      workParams.setNumNodes(nodes);
-      workParams.setThreadsPerNode(numThreads);
-      workParams.setApplicationContentionFactor(acf);
-      workParams.setMem(mem);
-
-      return workParams;
-   }
-
-   private double acf(Set<HashMap<String, PublishAttribute>> JMXvalues) throws PublishAttributeException {
-      return closedAcf_Impl2(JMXvalues, THREADS, TIME_WINDOW);
-   }
-
-   private double getLocalAbortProb(Set<HashMap<String, PublishAttribute>> JMXvalues) throws PublishAttributeException {
-      double puts = getAvgAttribute("NumPuts", JMXvalues);
-      log.trace("Attempted put " + puts);
-      double okPuts = getAvgAttribute("PaoloLocalTakenLocks", JMXvalues);
-      log.trace("Ok put " + okPuts);
-      if (puts != 0) {
-         return (puts - okPuts) / puts;
-      }
-      return 0;
-   }
-
-   private double closedAcf_Impl2(Set<HashMap<String, PublishAttribute>> JMXvalues, double threads, double timeWindow) throws PublishAttributeException {
-
-      double otherThreads = threads - 1.0D;
-      double pCont = getLocalAbortProb(JMXvalues);
-      log.trace("pCont is " + pCont);
-      if (pCont == 0)
-         return 0D;
-      double otherThreadsFraction = otherThreads / threads;
-      double paoloLocalLocks = getAvgAttribute("PaoloLocalTakenLocks", JMXvalues);
-      double paoloRemoteLocks = getAvgAttribute("PaoloRemoteTakenLocks", JMXvalues);
-      double otherLocalLocks = paoloLocalLocks * otherThreadsFraction;
-      log.trace("OtherLocalLocks " + otherLocalLocks);
-      double ll = 1e-9 * otherLocalLocks / timeWindow;
-      log.trace("localLambda " + ll);
-      double rl = 1e-9 * paoloRemoteLocks / timeWindow;
-      log.trace("remoteLambda " + rl);
-      double lh = pLocalHoldTime(JMXvalues);
-      double rh = pRemoteHoldTime(JMXvalues);
-      double lm = ll * lh + rl * rh;
-      if (lm == 0)
-         return 0;
-
-      return pCont / (lm);
-   }
-
-   private double pLocalHoldTime(Set<HashMap<String, PublishAttribute>> JMXvalues) throws PublishAttributeException {
-      double pLocalHoldTime = getAvgAttribute("PaoloLocalTakenHoldTime", JMXvalues);
-      double pLocalLocks = getAvgAttribute("PaoloLocalTakenLocks", JMXvalues);
-      if (pLocalLocks == 0)
-         return 0;
-      return pLocalHoldTime / pLocalLocks;
-   }
-
-   public double pRemoteHoldTime(Set<HashMap<String, PublishAttribute>> JMXvalues) throws PublishAttributeException {
-      double pRemoteHoldTime = getAvgAttribute("PaoloRemoteTakenHoldTime", JMXvalues);
-      double pRemoteLocks = getAvgAttribute("PaoloRemoteTakenLocks", JMXvalues);
-      if (pRemoteLocks == 0)
-         return 0;
-      return pRemoteHoldTime / pRemoteLocks;
-
-   }
-
-   private NetServiceTimes buildNetServiceTimes(Set<HashMap<String, PublishAttribute>> JMXvalues) {
-      return new FixedRttServiceTimes(1, 1);
-   }
+    private static NetServiceTimes buildNetServiceTimes(Set<HashMap<String, PublishAttribute>> JMXvalues) {
+        return new FixedRttServiceTimes(1, 1);
+    }
 }

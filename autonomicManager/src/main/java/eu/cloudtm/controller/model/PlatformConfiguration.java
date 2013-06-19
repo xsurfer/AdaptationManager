@@ -17,7 +17,7 @@ public class PlatformConfiguration {
 
     /* SCALE */
     private int platformSize;
-    private int platformThread;
+    private int threadPerNode;
     private InstanceConfig nodesConfig;
 
     /* REP PROT */
@@ -36,7 +36,7 @@ public class PlatformConfiguration {
                                  int _replicationDegree,
                                  boolean _dataPlacement){
         platformSize = _numNodes;
-        platformThread = _numThreads;
+        threadPerNode = _numThreads;
         nodesConfig = _nodeConfig;
         replicationProtocol = _replicationProtocol;
         replicationDegree = _replicationDegree;
@@ -47,6 +47,10 @@ public class PlatformConfiguration {
 
     public int platformSize(){
         return this.platformSize;
+    }
+
+    public int threadPerNode(){
+        return this.threadPerNode;
     }
 
     public InstanceConfig nodeConfiguration(){

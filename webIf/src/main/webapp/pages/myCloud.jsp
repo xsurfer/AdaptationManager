@@ -224,7 +224,7 @@ $(document).ready(
 		</form>
 		
 		<div>Double click to delete</div>
-					</div>
+					
 		<div id="container">
 			<div class="item">
 				<div class="plotTitle">Throughput</div>
@@ -246,13 +246,15 @@ $(document).ready(
       	<a href="${pageContext.request.contextPath}/registration.jsp">Register</a>
 		 -->
 
-	</div> <!-- /col-text -->
-    
-    </div> <!-- /col -->
-    <div id="col-bottom"></div>
-    
-    <hr class="noscreen">
-    <hr class="noscreen">        
+		</div>
+		<!-- /col-text -->
+
+	</div>
+	<!-- /col -->
+	<div id="col-bottom"></div>
+
+	<hr class="noscreen">
+	<hr class="noscreen">       
 </body>
 </html>
 

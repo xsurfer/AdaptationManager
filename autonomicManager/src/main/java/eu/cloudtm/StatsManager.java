@@ -99,27 +99,7 @@ public class StatsManager {
         return stack.peek();
     }
 
-    /**
-     * this method evaluates de average of specific sample related to a single stat
-     * @param attribute
-     * @param stat
-     * @param type
-     * @return
-     */
-    public static double getAvgAttribute(String attribute, Sample stat, ResourceType type) {
-
-        Set<HashMap<String, PublishAttribute>> values;
-        switch (type){
-            case JMX:
-                values = stat.getJmx();
-                break;
-            case MEMORY:
-                values = stat.getMem();
-                break;
-            default:
-                throw new RuntimeException("No stats");
-        }
-
+    public static double getAvgAttribute(String attribute, Set<HashMap<String, PublishAttribute>> values){
         double num = values.size(), temp = 0;
         Object actualValue;
 
@@ -140,6 +120,30 @@ public class StatsManager {
             }
         }
         return temp / num;
+
+    }
+
+    /**
+     * this method evaluates de average of specific sample related to a single stat
+     * @param attribute
+     * @param stat
+     * @param type
+     * @return
+     */
+    public static double getAvgAttribute(String attribute, Sample stat, ResourceType type) {
+
+        Set<HashMap<String, PublishAttribute>> values;
+        switch (type){
+            case JMX:
+                values = stat.getJmx();
+                break;
+            case MEMORY:
+                values = stat.getMem();
+                break;
+            default:
+                throw new RuntimeException("No stats");
+        }
+        return getAvgAttribute(attribute, values);
     }
 
     private static double cast(Object o) throws ClassCastException {

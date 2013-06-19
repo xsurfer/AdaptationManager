@@ -7,8 +7,10 @@ import eu.cloudtm.StatsManager;
 import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.common.dto.WhatIfDTO;
 import eu.cloudtm.controller.Controller;
+import eu.cloudtm.controller.model.ACF;
 import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.controller.oracles.AbstractOracle;
+import eu.cloudtm.controller.oracles.common.PublishAttributeException;
 import eu.cloudtm.stats.Sample;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
@@ -32,10 +34,10 @@ public class WhatIfResource extends AbstractResource {
     private Sample lastSample;
 
     private Map<String,String> evaluatedParams = new HashMap<String,String>(){{
-        put("ACF",                                  "-1"); //1
-        put("GetWriteTx",                           "-1"); //4
-        put("GetReadOnlyTx",                        "-1"); //5
-        put("RemoteGetLatency",                     "-1"); //11
+        //put("ACF",                                  "-1"); //1
+        //put("GetWriteTx",                           "-1"); //4
+        //put("GetReadOnlyTx",                        "-1"); //5
+        //put("RemoteGetLatency",                     "-1"); //11
 
     }};
 
@@ -51,27 +53,38 @@ public class WhatIfResource extends AbstractResource {
     }};
 
 
-    @GET
+    @PUT
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-    public synchronized Response whatIf(){
+    public synchronized Response whatIf(
+            @DefaultValue("-1") @FormParam("acf") double acf,
+            @DefaultValue("-1") @FormParam("RetryWritePercentage") double retryWritePercentage,
+            @DefaultValue("-1") @FormParam("SuxNumPuts") double suxNumPuts,
+            @DefaultValue("-1") @FormParam("GetWriteTx") double getWriteTx,
+            @DefaultValue("-1") @FormParam("GetReadOnlyTx") double getReadOnlyTx,
+            @DefaultValue("-1") @FormParam("LocalUpdateTxLocalServiceTime") double localUpdateTxLocalServiceTime,
+            @DefaultValue("-1") @FormParam("LocalReadOnlyTxLocalServiceTime") double localReadOnlyTxLocalServiceTime,
+            @DefaultValue("-1") @FormParam("PrepareCommandBytes") double prepareCommandBytes,
+            @DefaultValue("-1") @FormParam("RTT") double rtt,
+            @DefaultValue("-1") @FormParam("CommitBroadcastWallClockTime") double commitBroadcastWallClockTime,
+            @DefaultValue("-1") @FormParam("RemoteGetLatency") double remoteGetLatency
+    ){
 
         if(lastSample==null)
             lastSample = statsManager.getLastSample();
 
-        double dumb = 0;
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
-        //customParam.setACF(dumb);
-        //customParam.setCommitBroadcastWallClockTime(dumb);
-        //customParam.setGetReadOnlyTx(dumb);
-        //customParam.setGetWriteTx(dumb);
-        //customParam.setLocalReadOnlyTxLocalServiceTime(dumb);
-        //customParam.setLocalUpdateTxLocalServiceTime(dumb);
-        //customParam.setPrepareCommandBytes(dumb);
-        //customParam.setSuxNumPuts(dumb);
-        //customParam.setRemoteGetLatency(dumb);
-        //customParam.setRetryWritePercentage(dumb);
-        //customParam.setRTT(dumb);
+        customParam.setACF(acf);
+        customParam.setCommitBroadcastWallClockTime(commitBroadcastWallClockTime);
+        customParam.setGetReadOnlyTx(getReadOnlyTx);
+        customParam.setGetWriteTx(getWriteTx);
+        customParam.setLocalReadOnlyTxLocalServiceTime(localReadOnlyTxLocalServiceTime);
+        customParam.setLocalUpdateTxLocalServiceTime(localUpdateTxLocalServiceTime);
+        customParam.setPrepareCommandBytes(prepareCommandBytes);
+        customParam.setSuxNumPuts(suxNumPuts);
+        customParam.setRemoteGetLatency(remoteGetLatency);
+        customParam.setRetryWritePercentage(retryWritePercentage);
+        customParam.setRTT(rtt);
 
         Set<KPI> result = null;
         for( AbstractOracle oracle : controller.getOracles() ){
@@ -107,6 +120,20 @@ public class WhatIfResource extends AbstractResource {
             }
             json.append( getJSON(param.getKey(), String.valueOf( statsManager.getAvgAttribute(param.getKey(), lastSample, param.getValue()) ) ) );
         }
+
+        if (json.length() > 3) {
+            json.append(" , ");
+        }
+
+        double acf;
+        try {
+            acf = ACF.evaluate(lastSample.getJmx(), controller.getCurrentConfiguration().threadPerNode(), Controller.TIME_WINDOW );
+        } catch (PublishAttributeException e) {
+            e.printStackTrace();
+            acf = -1;
+        }
+        json.append( getJSON("ACF", String.valueOf(acf) ) );
+
         json.append(" }");
 
         Response.ResponseBuilder builder = Response.ok(json.toString());

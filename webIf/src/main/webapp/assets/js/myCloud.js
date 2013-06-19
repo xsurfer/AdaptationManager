@@ -203,13 +203,27 @@ $(function() {
 									}
 								},
 								xaxis : {
-									tickFormatter : function() {
-										return "";
+									tickSize: 60,
+									tickFormatter : function(val, axis) {
+										var totSec = ((size*5) - (val*5));
+										var label;
+										var seconds;
+										var minutes;
+										
+										minutes = Math.floor(totSec/60);
+										seconds = totSec % 60;
+										
+										if(minutes>0)
+											label = minutes + "m "+ ((seconds>0)? (seconds+"s") : "");
+										else
+											label = seconds +"s";
+										
+										return label;								    									
 									}
 								},
 								yaxis : {
 									min : 0,
-									autoscaleMargin : 0.02
+									autoscaleMargin : 0.1
 								//max : 10
 								},
 								legend : {

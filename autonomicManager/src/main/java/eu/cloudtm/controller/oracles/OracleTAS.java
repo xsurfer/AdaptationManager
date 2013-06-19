@@ -5,6 +5,7 @@ import Tas2.core.Tas2;
 import Tas2.core.environment.DSTMScenarioTas2;
 import Tas2.exception.Tas2Exception;
 import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.controller.Controller;
 import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.controller.model.PlatformConfiguration;
 import eu.cloudtm.controller.model.utils.InstanceConfig;
@@ -25,16 +26,13 @@ import org.apache.commons.logging.LogFactory;
 public class OracleTAS extends AbstractOracle {
 
     private static Log log = LogFactory.getLog(OracleTAS.class);
-    private DSTMScenarioFactory factory = new DSTMScenarioFactory();
 
     @Override
     public KPI forecast(Sample sample, int numNodes, int numThreads) {
         DSTMScenarioTas2 scenario;
 
         try {
-            scenario = factory.buildScenario(sample.getJmx(), sample.getMem());
-            scenario.getWorkParams().setNumNodes( numNodes );
-            scenario.getWorkParams().setThreadsPerNode( numThreads );
+            scenario = DSTMScenarioFactory.buildScenario(sample.getJmx(), sample.getMem(), numNodes, numThreads, Controller.TIME_WINDOW);
         } catch (PublishAttributeException e) {
             throw new RuntimeException(e);
         } catch (Tas2Exception e) {
@@ -49,9 +47,13 @@ public class OracleTAS extends AbstractOracle {
         DSTMScenarioTas2 scenario;
 
         try {
-            scenario = factory.buildScenario(sample.getJmx(), sample.getMem(), customParam);
-            scenario.getWorkParams().setNumNodes( numNodes );
-            scenario.getWorkParams().setThreadsPerNode( numThreads );
+            scenario = DSTMScenarioFactory.buildCustomScenario(sample.getJmx(),
+                    sample.getMem(),
+                    customParam,
+                    numNodes,
+                    numThreads,
+                    Controller.TIME_WINDOW);
+
         } catch (PublishAttributeException e) {
             throw new RuntimeException(e);
         } catch (Tas2Exception e) {
