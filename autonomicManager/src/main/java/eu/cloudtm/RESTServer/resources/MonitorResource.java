@@ -3,7 +3,6 @@ package eu.cloudtm.RESTServer.resources;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.LookupRegister;
 import eu.cloudtm.StatsManager;
 import eu.cloudtm.controller.Controller;
 import eu.cloudtm.common.dto.StatisticDTO;
@@ -13,7 +12,11 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Singleton
@@ -24,13 +27,12 @@ public class MonitorResource extends AbstractResource {
     private Gson gson = new GsonBuilder()
             .serializeSpecialFloatingPointValues()
             .create();
-    private StatsManager statsManager = LookupRegister.getStatsManager();
-    private Controller controller = LookupRegister.getController();
 
     private Map<String,String> param2key = new HashMap<String,String>(){{
         put("throughput",                           "Throughput");
         put("nodes",                                "NumNodes");
         put("writePercentage",                      "RetryWritePercentage");
+        put("abortRate",                            "CommitProbability");
 
     }};
 
@@ -38,6 +40,11 @@ public class MonitorResource extends AbstractResource {
         put("Throughput",                           ResourceType.JMX);
         put("NumNodes",                             ResourceType.JMX);
         put("RetryWritePercentage",                 ResourceType.JMX);
+        put("CommitProbability",                    ResourceType.JMX);
+    }};
+
+    private Map<String,String> editParam = new HashMap<String,String>(){{
+        put("CommitProbability",                    "calculateAbortRate");
     }};
 
 
@@ -50,7 +57,36 @@ public class MonitorResource extends AbstractResource {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
         ResourceType resourceType = monitoredParams.get(paramKey);
-        StatisticDTO statDTO = statsManager.getAllAvgStatistic(paramKey, resourceType);
+        StatisticDTO statDTO = StatsManager.getInstance().getAllAvgStatistic(paramKey, resourceType);
+
+        if ( editParam.containsKey(paramKey) ){
+            log.info("To evaluate");
+
+            Class[] paramDouble = new Class[1];
+            paramDouble[0] = Double.class;
+            Class cls = this.getClass();
+            Object obj = this;
+            Method method = null;
+            try {
+                method = cls.getDeclaredMethod( editParam.get(paramKey), paramDouble);
+                for( List<Double> point : statDTO.getData() ) {
+                    Double toEdit = point.remove(1);
+                    //log.info("---");
+                    //log.info("CommitProbability:" + toEdit );
+                    Double abortRateEvaluated = (Double) method.invoke(obj, (Double) toEdit );
+                    //log.info("Valued evaluate:" + abortRateEvaluated );
+                    point.add(1, abortRateEvaluated);
+                    //log.info("Point updated:" + point.get(1) );
+                    //log.info("---");
+                }
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         String json = gson.toJson(statDTO);
         Response.ResponseBuilder builder = Response.ok(json);
@@ -66,12 +102,45 @@ public class MonitorResource extends AbstractResource {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
         ResourceType resourceType = monitoredParams.get(paramKey);
+        StatisticDTO statDTO = StatsManager.getInstance().getLastAvgStatistic(paramKey, resourceType);
 
-        StatisticDTO statDTO = statsManager.getLastAvgStatistic(paramKey, resourceType);
+        if ( editParam.containsKey(paramKey) ){
+            //log.info("To evaluate");
+
+            Class[] paramDouble = new Class[1];
+            paramDouble[0] = Double.class;
+            Class cls = this.getClass();
+            Object obj = this;
+            Method method = null;
+            try {
+                method = cls.getDeclaredMethod( editParam.get(paramKey), paramDouble);
+                for( List<Double> point : statDTO.getData() ) {
+                    Double toEdit = point.remove(1);
+                    //log.info("---");
+                    //log.info("CommitProbability:" + toEdit );
+                    Double abortRateEvaluated = (Double) method.invoke(obj, (Double) toEdit );
+                    //log.info("Valued evaluate:" + abortRateEvaluated );
+                    point.add(1, abortRateEvaluated);
+                    //log.info("Point updated:" + point.get(1) );
+                    //log.info("---");
+                }
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         String json = gson.toJson(statDTO);
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
+    }
+
+    public Double calculateAbortRate(Double commitProbability){
+        double val = (1 - commitProbability);
+        return new Double(val);
     }
 
 }

@@ -238,6 +238,10 @@ $(document).ready(
 				<div class="plotTitle">Write %</div>
 				<div id="placeholderWritePercentage" class="plot"></div>
 			</div>
+			<div class="item">
+				<div class="plotTitle">Abort Rate %</div>
+				<div id="placeholderAbortRate" class="plot"></div>
+			</div>
 		</div>	   				
 	   	
 	   		   		   			

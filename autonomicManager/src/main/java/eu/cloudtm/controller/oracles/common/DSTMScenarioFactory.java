@@ -106,6 +106,8 @@ public class DSTMScenarioFactory {
             workParams.setWritePercentage(customParam.getRetryWritePercentage());
         if (customParam.getPrepareCommandBytes() != -1)
             workParams.setPrepareMessageSize(customParam.getPrepareCommandBytes());
+        if(customParam.getACF() != -1)
+            workParams.setApplicationContentionFactor(customParam.getACF());
 
         log.trace(workParams);
 

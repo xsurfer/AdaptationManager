@@ -1,9 +1,10 @@
 package eu.cloudtm;
 
+import eu.cloudtm.common.SampleListener;
+import eu.cloudtm.controller.model.PlatformConfiguration;
 import eu.cloudtm.stats.Sample;
 import eu.cloudtm.common.dto.StatisticDTO;
 import eu.cloudtm.wpm.logService.remote.events.*;
-import eu.cloudtm.wpm.logService.remote.observables.Handle;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,32 +18,34 @@ import java.util.*;
  * E-mail: perfabio87@gmail.com
  * Date: 6/6/13
  */
-public class StatsManager {
+public class StatsManager implements SampleListener {
+
+    private static StatsManager instance;
 
     private final static Log log = LogFactory.getLog(StatsManager.class);
 
-
-    private Handle lastVmHandle;
-
     private final static int MAX_SIZE = 1000;
 
-    private Deque<Sample> stack = new ArrayDeque<Sample>(MAX_SIZE);
+    private final Deque<Sample> stack = new ArrayDeque<Sample>(MAX_SIZE);
 
-
-
-    public StatsManager(){
+    private StatsManager(){
 
     }
 
-    public Sample add(Sample _sample){
+    public static StatsManager getInstance(){
+        if(instance == null){
+            instance = new StatsManager();
+        }
+        return instance;
+    }
+
+    public void onNewSample(Sample _sample){
         if(stack.size()>=MAX_SIZE){
             Sample removed = stack.removeLast();
             //log.trace("Deleted stat: " + removed.getId());
         }
-
         stack.push(_sample);
         log.trace("New stas added: " + _sample.getId());
-        return _sample;
     }
 
     /**
@@ -97,6 +100,16 @@ public class StatsManager {
 
     public Sample getLastSample(){
         return stack.peek();
+    }
+
+    public List<Sample> getLastNSample(int n){
+        List<Sample> samples = new ArrayList<Sample>();
+        Queue<Sample> queue = Collections.asLifoQueue(new ArrayDeque<Sample>(stack));
+        for(int i=0; i<n; i++){
+            Sample sample = queue.remove();
+            samples.add( sample );
+        }
+        return samples;
     }
 
     public static double getAvgAttribute(String attribute, Set<HashMap<String, PublishAttribute>> values){
@@ -157,6 +170,7 @@ public class StatsManager {
             }
         }
     }
+
 
 
 }

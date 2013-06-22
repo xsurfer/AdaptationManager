@@ -1,6 +1,9 @@
 package eu.cloudtm.controller;
 
 import com.google.gson.Gson;
+import eu.cloudtm.StatsManager;
+import eu.cloudtm.common.SampleListener;
+import eu.cloudtm.controller.exceptions.ActuatorException;
 import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.controller.model.PlatformConfiguration;
 import eu.cloudtm.controller.model.Tuning;
@@ -26,38 +29,42 @@ import java.util.concurrent.atomic.AtomicInteger;
  * E-mail: perfabio87@gmail.com
  * Date: 6/5/13
  */
-public class Controller {
+public class Controller implements SampleListener {
 
     private static Log log = LogFactory.getLog(Controller.class);
 
+    private static Controller instance;
+
     /* STATE */
-    private PlatformState state =  PlatformState.RUNNING;
+    private volatile PlatformState state =  PlatformState.RUNNING;
 
     private final PlatformConfiguration platformConfiguration;
 
-    public final static double TIME_WINDOW = 5D; // TODO: renderlo parametro
+    public final static double TIME_WINDOW = 60D; // TODO: renderlo parametro
 
 
     /* COMPONENTs */
-    private Gson gson = new Gson();
 
-    private InputFilter inputFilter = new InputFilter();
 
-    private Optimizer optimizer = new Optimizer(this);
+    private StatsManager statsManager;
+
+    private InputFilter inputFilter;
 
     private OutputFilter outputFilter = new OutputFilter();
 
-    private List<AbstractOracle> oracles = new ArrayList<AbstractOracle>(
-            Arrays.asList(AbstractOracle.getInstance("OracleTAS"))    );
+    private List<String> oracles = new ArrayList<String>() {{
+        add("OracleTAS");
+    }};
+
 
 
     private ExecutorService singleThreadExec = Executors.newSingleThreadExecutor();
 
 
     /* CONFIGURATION */
-    private static final int SAMPLE_WINDOW = 1;
+    public static final int SAMPLE_WINDOW = 5;
 
-    private AtomicInteger samplesCounter = new AtomicInteger(0);
+    private AtomicInteger samplesCounter = new AtomicInteger(1);
 
 
     /* TUNING CONFIGURATION */
@@ -69,21 +76,33 @@ public class Controller {
 
     private Boolean dataPlacement = true;
 
+    /* *** CONSTRUCTOR && FACTORY METHOD *** */
 
-    public Controller(PlatformConfiguration _state) {
-        platformConfiguration = _state;
+    public static Controller getInstance(){
+        if(instance == null)
+            throw new RuntimeException("No Controller instance");
+        return instance;
     }
 
-    public synchronized void onNewStat(Sample sample){
-        increment();
+    public static Controller getInstance(PlatformConfiguration _configuration, StatsManager _statsManager){
+        if(instance == null)
+            instance = new Controller(_configuration, _statsManager);
+        return instance;
     }
 
-    public void increment(){
-        if( !samplesCounter.compareAndSet(SAMPLE_WINDOW, 0) ){
+    private Controller(PlatformConfiguration _configuration, StatsManager _statsManager) {
+        statsManager =  _statsManager;
+        platformConfiguration = _configuration;
+        inputFilter = new InputFilter(statsManager);
+    }
+
+
+    @Override
+    public void onNewSample(Sample sample) {
+        if( !samplesCounter.compareAndSet(SAMPLE_WINDOW, 1) ){
             samplesCounter.incrementAndGet();
             return;
         }
-
         singleThreadExec.execute(new Runnable() {
             @Override
             public void run() {
@@ -94,19 +113,44 @@ public class Controller {
 
     private void doControl(){
         log.info("Starting...");
-        boolean toReconfigure = inputFilter.doFilter();
-        if(toReconfigure){
-            log.info("Reconf needed...");
-            PlatformConfiguration nextConf = optimizer.doOptimize();
-            outputFilter.doFilter(nextConf);
-        } else {
+
+        if( !inputFilter.doFilter() ){
             log.info("No reconf needed...");
+            return;
         }
+        log.info("Reconf needed...");
+
+        this.state = PlatformState.RECONFIGURING;
+        PlatformConfiguration nextConf = new Optimizer(this, oracles, statsManager).doOptimize(inputFilter.getLastAvgArrivalRate(),
+                inputFilter.getLastAvgAbortRate(), inputFilter.getLastAvgResposeTime());
+        try {
+            if(nextConf != null){
+                outputFilter.doFilter(nextConf);
+            } else {
+                log.warn("Nessuna configurazione disponibile!!");
+                onError();
+            }
+
+
+        } catch (ActuatorException e) {
+            onError();
+        }
+
     }
+
 
     private synchronized void onUserAction(){
         throw new RuntimeException("TO IMPLEMENT");
     }
+
+    private void onWorking(){
+        this.state = PlatformState.RUNNING;
+    }
+
+    private void onError(){
+        this.state = PlatformState.ERROR;
+    }
+
 
     /* USER CONTROL */
     public synchronized void updateScale(int _size, InstanceConfig _instanceConf, Tuning tuning){
@@ -174,6 +218,7 @@ public class Controller {
 */
 
     public String getJSONState(){
+        Gson gson = new Gson();
         StringBuilder sb = new StringBuilder();
 
         sb.append("{");
@@ -196,7 +241,7 @@ public class Controller {
         sb.append("},");
         sb.append(gson.toJson("data_placement") + ":" + gson.toJson( (dataPlacement==true) ? "enabled" : "disabled") );
         sb.append("}");
-        log.info(sb);
+        //log.info(sb);
         return sb.toString();
     }
 
@@ -208,14 +253,8 @@ public class Controller {
         return platformConfiguration;
     }
 
-    public List<AbstractOracle> getOracles(){
+    public List<String> getOracles(){
         return this.oracles;
     }
 
-
 }
-
-
-//private AtomicBoolean newSample = new AtomicBoolean(false);
-
-//private AtomicBoolean userAction = new AtomicBoolean(false);

@@ -4,8 +4,11 @@ import eu.cloudtm.RESTServer.RESTServer;
 import eu.cloudtm.controller.Controller;
 import eu.cloudtm.controller.model.*;
 import eu.cloudtm.controller.model.utils.*;
+import eu.cloudtm.stats.WPMStatisticsRemoteListenerImpl;
 import eu.cloudtm.stats.WPMViewChangeRemoteListenerImpl;
 import eu.cloudtm.wpm.connector.WPMConnector;
+import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
+import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -23,16 +26,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        PlatformConfiguration state = new PlatformConfiguration(2, 1, InstanceConfig.SMALL, ReplicationProtocol.TWOPC, 2, true);
+        PlatformConfiguration configuration = new PlatformConfiguration(2, 2, InstanceConfig.SMALL, ReplicationProtocol.TWOPC, 2, true);
 
-        StatsManager statsManager = new StatsManager();
-        LookupRegister.registerStatsManager(statsManager);
-
-        Controller controller = new Controller(state);
-        LookupRegister.registerController(controller);
-
+        StatsManager statsManager = StatsManager.getInstance();
+        Controller controller = Controller.getInstance(configuration, statsManager);
         RESTServer restServer = new RESTServer();
-        LookupRegister.registerRESTServer(restServer);
 
         /* *** WPM CONNECTOR && LISTENER *** */
         WPMConnector connector;
@@ -43,7 +41,13 @@ public class Main {
         }
 
         try {
-            connector.registerViewChangeRemoteListener(new WPMViewChangeRemoteListenerImpl(connector,statsManager));
+            WPMStatisticsRemoteListenerImpl statisticsListener = new WPMStatisticsRemoteListenerImpl();
+            statisticsListener.addSampleListener(controller);
+            statisticsListener.addSampleListener(statsManager);
+
+            WPMViewChangeRemoteListenerImpl viewChangeListener = new WPMViewChangeRemoteListenerImpl(connector, statisticsListener);
+
+            connector.registerViewChangeRemoteListener( viewChangeListener );
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

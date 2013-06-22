@@ -1,6 +1,6 @@
 package eu.cloudtm.stats;
 
-import eu.cloudtm.StatsManager;
+import eu.cloudtm.common.SampleListener;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.events.PublishViewChangeEvent;
 import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
@@ -12,6 +12,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by: Fabio Perfetti
@@ -23,15 +25,17 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
     private final static Log log = LogFactory.getLog(WPMViewChangeRemoteListenerImpl.class);
 
     private WPMConnector connector;
-    private StatsManager manager;
     private Handle lastVmHandle;
 
     private String[] currentVMs;
 
-    public WPMViewChangeRemoteListenerImpl(WPMConnector _connector, StatsManager _manager){
+    private WPMStatisticsRemoteListener statisticsListener;
+
+    public WPMViewChangeRemoteListenerImpl(WPMConnector _connector, WPMStatisticsRemoteListener _statisticsListener){
         connector = _connector;
-        manager = _manager;
+        statisticsListener = _statisticsListener;
     }
+
 
     @Override
     public void onViewChange(PublishViewChangeEvent event)
@@ -39,6 +43,7 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
         if (lastVmHandle != null) {
             log.trace("Removing last handle");
+
             connector.removeStatisticsRemoteListener(lastVmHandle);
             lastVmHandle = null;
         }
@@ -53,9 +58,7 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
         log.info("New set of VMs " + Arrays.toString(currentVMs));
 
-        WPMStatisticsRemoteListener listener = new WPMStatisticsRemoteListenerImpl();
-
-        lastVmHandle = connector.registerStatisticsRemoteListener(new SubscribeEvent(currentVMs), listener);
+        lastVmHandle = connector.registerStatisticsRemoteListener(new SubscribeEvent(currentVMs), statisticsListener);
     }
 
 }

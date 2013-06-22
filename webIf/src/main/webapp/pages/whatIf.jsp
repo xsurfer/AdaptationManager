@@ -52,8 +52,8 @@
 							<fieldset>
 								<legend>Data Access Pattern:</legend>
 									<div class="param">
-										<label for="acf">Application Contention Factor:</label>
-										<input type="text" id="ACF" name="ACF" size="5" />
+										<label for="ACF">Application Contention Factor:</label>
+										<input type="text" id="ACF" name="acf" size="5" />
 									</div>
 									<div class="param">
 										<label for="RetryWritePercentage">Write Transactions Percentage:</label>

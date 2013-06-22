@@ -27,6 +27,10 @@ public class OracleTAS extends AbstractOracle {
 
     private static Log log = LogFactory.getLog(OracleTAS.class);
 
+    public OracleTAS(Controller _controller) {
+        super(_controller);
+    }
+
     @Override
     public KPI forecast(Sample sample, int numNodes, int numThreads) {
         DSTMScenarioTas2 scenario;
@@ -44,7 +48,7 @@ public class OracleTAS extends AbstractOracle {
 
     @Override
     public KPI forecastWithCustomParam(Sample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) {
-        DSTMScenarioTas2 scenario;
+        DSTMScenarioTas2 scenario = null;
 
         try {
             scenario = DSTMScenarioFactory.buildCustomScenario(sample.getJmx(),

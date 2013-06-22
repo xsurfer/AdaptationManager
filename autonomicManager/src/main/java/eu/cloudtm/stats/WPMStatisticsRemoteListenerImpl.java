@@ -1,11 +1,11 @@
 package eu.cloudtm.stats;
 
-import eu.cloudtm.LookupRegister;
 import eu.cloudtm.StatsManager;
-import eu.cloudtm.controller.Controller;
+import eu.cloudtm.common.SampleListener;
 import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
 import eu.cloudtm.wpm.logService.remote.events.PublishMeasurement;
 import eu.cloudtm.wpm.logService.remote.events.PublishStatisticsEvent;
+import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
@@ -26,17 +26,19 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     private final static Log log = LogFactory.getLog(WPMStatisticsRemoteListenerImpl.class);
 
-    private StatsManager statsManager = LookupRegister.getStatsManager();
-    private Controller controller = LookupRegister.getController();
+    private Set<SampleListener> listeners = new HashSet();
 
     public WPMStatisticsRemoteListenerImpl(){
+
+    }
+
+    public WPMStatisticsRemoteListenerImpl(Set<SampleListener> _listeners){
+        listeners.addAll(_listeners);
     }
 
     @Override
     public void onNewPerVMStatistics(PublishStatisticsEvent publishStatisticsEvent) throws RemoteException {
-
         log.trace("onNewPerVMStatistics");
-
     }
 
     @Override
@@ -73,9 +75,14 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         //trace(mem);
 
         Sample newSample = Sample.getInstance(jmx,mem);
-        statsManager.add(newSample);
-        controller.onNewStat(newSample);
+        notifyListeners(newSample);
+    }
 
+
+    private void notifyListeners(Sample sample){
+        for(SampleListener listener : listeners){
+            listener.onNewSample(sample);
+        }
     }
 
 
@@ -120,7 +127,12 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
     }
 
 
+    public boolean addSampleListener(SampleListener sampleListener){
+        return listeners.add(sampleListener);
+    }
 
-
+    public boolean removeSampleListener(SampleListener sampleListener){
+        return listeners.remove(sampleListener);
+    }
 
 }

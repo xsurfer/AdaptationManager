@@ -2,9 +2,7 @@ package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.LookupRegister;
 import eu.cloudtm.controller.Controller;
-import eu.cloudtm.controller.model.PlatformConfiguration;
 import eu.cloudtm.controller.model.Tuning;
 import eu.cloudtm.controller.model.utils.Forecaster;
 import eu.cloudtm.controller.model.utils.InstanceConfig;
@@ -22,7 +20,6 @@ public class ScaleResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(ScaleResource.class);
     private Gson gson = new Gson();
-    private Controller controller = LookupRegister.getController();
 
 
     @PUT
@@ -52,9 +49,9 @@ public class ScaleResource extends AbstractResource {
         }
 
         /** UPDATING STATE **/
-        controller.updateScale(size, instanceType, tuning);
+        Controller.getInstance().updateScale(size, instanceType, tuning);
 
-        String json = gson.toJson(controller.getState());
+        String json = gson.toJson(Controller.getInstance().getState());
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }

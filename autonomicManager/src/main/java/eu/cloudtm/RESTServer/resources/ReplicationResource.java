@@ -2,9 +2,7 @@ package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.LookupRegister;
 import eu.cloudtm.controller.Controller;
-import eu.cloudtm.controller.model.PlatformConfiguration;
 import eu.cloudtm.controller.model.Tuning;
 import eu.cloudtm.controller.model.utils.Forecaster;
 import eu.cloudtm.controller.model.utils.ReplicationProtocol;
@@ -21,7 +19,7 @@ import javax.ws.rs.core.Response;
 public class ReplicationResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(ReplicationResource.class);
-    private Controller controller = LookupRegister.getController();
+
     Gson gson = new Gson();
 
     @PUT
@@ -43,9 +41,9 @@ public class ReplicationResource extends AbstractResource {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
-        controller.updateDegree(degree, tuning);
+        Controller.getInstance().updateDegree(degree, tuning);
 
-        String json = gson.toJson(controller.getState());
+        String json = gson.toJson(Controller.getInstance().getState());
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }
@@ -65,9 +63,9 @@ public class ReplicationResource extends AbstractResource {
         log.info("forecaster: " + forecaster);
         log.info("protocol: " + protocol);
 
-        controller.updateProtocol(protocol, tuning);
+        Controller.getInstance().updateProtocol(protocol, tuning);
 
-        String json = gson.toJson(controller.getState());
+        String json = gson.toJson(Controller.getInstance().getState());
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }

@@ -1,17 +1,19 @@
 var REST_MONITOR = 'http://' + REST_HOST + ':' + REST_PORT + '/monitor/';
 
-var resources = [ 'throughput', 'nodes', 'writePercentage' ];
+var resources = [ 'throughput', 'nodes', 'writePercentage', 'abortRate' ];
 
 var containers = {
 	'throughput' : 'placeholderThroughput',
 	'nodes' : 'placeholderNodes',
-	'writePercentage' : 'placeholderWritePercentage'
+	'writePercentage' : 'placeholderWritePercentage',
+	'abortRate' : 'placeholderAbortRate'
 }
 
 var plots = {
 	'throughput' : null,
 	'nodes' : null,
-	'writePercentage' : null
+	'writePercentage' : null,
+	'abortRate' : null
 }
 
 var series = {
@@ -31,6 +33,15 @@ var series = {
 		}
 	} ],
 	"writePercentage" : [ {
+		data : [],
+		lines : {
+			fill : true
+		},
+		curvedLines: {
+			apply : true
+		}
+	} ],
+	"abortRate" : [ {
 		data : [],
 		lines : {
 			fill : true
@@ -244,12 +255,14 @@ $(function() {
 	getAllAndUpdate('throughput');
 	getAllAndUpdate('nodes');
 	getAllAndUpdate('writePercentage');
+	getAllAndUpdate('abortRate');
 
 	
 	setInterval(function() {
 		update('throughput');
 		update('nodes');
 		update('writePercentage');
+		update('abortRate');
 
 		//getAllAndUpdate('throughput');
 		//getAllAndUpdate('node');

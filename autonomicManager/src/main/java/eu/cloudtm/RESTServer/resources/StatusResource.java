@@ -2,7 +2,6 @@ package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.LookupRegister;
 import eu.cloudtm.controller.Controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +17,6 @@ public class StatusResource extends AbstractResource {
     private static Log log = LogFactory.getLog(StatusResource.class);
 
     private Gson gson = new Gson();
-    private Controller controller = LookupRegister.getController();
 
 /*
 {
@@ -42,7 +40,7 @@ public class StatusResource extends AbstractResource {
     @GET
     @Produces("application/json")
     public Response getState() {
-        String json = controller.getJSONState();
+        String json = Controller.getInstance().getJSONState();
 
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);

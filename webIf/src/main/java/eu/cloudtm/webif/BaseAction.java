@@ -48,21 +48,21 @@ public class BaseAction extends ActionSupport implements Preparable, ServletCont
 	protected String restPort;
 
 	public void prepare() throws Exception {
-		Client client = Client.create();
-
-		WebResource webResource = client.resource("http://46.252.152.83:9998/status");
-		ClientResponse response;
-		try{
-			response = webResource.accept("application/json").get(ClientResponse.class);					
-		} catch(ClientHandlerException e){
-			log.debug(e,e);
-			throw new RESTControllerException(e);				
-		}
-		
-		if (response.getStatus() != 200) {
-			//throw new RuntimeException("Failed : HTTP error code : " + response.getState());
-			throw new RESTControllerException("Failed : HTTP error code : " + response.getStatus());
-		}
+//		Client client = Client.create();
+//
+//		WebResource webResource = client.resource("http://46.252.152.83:9998/status");
+//		ClientResponse response;
+//		try{
+//			response = webResource.accept("application/json").get(ClientResponse.class);					
+//		} catch(ClientHandlerException e){
+//			log.debug(e,e);
+//			throw new RESTControllerException(e);				
+//		}
+//		
+//		if (response.getStatus() != 200) {
+//			//throw new RuntimeException("Failed : HTTP error code : " + response.getState());
+//			throw new RESTControllerException("Failed : HTTP error code : " + response.getStatus());
+//		}
 		
 	}
 

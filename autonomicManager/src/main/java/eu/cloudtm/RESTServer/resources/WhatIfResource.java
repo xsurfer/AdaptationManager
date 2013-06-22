@@ -2,11 +2,11 @@ package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.LookupRegister;
 import eu.cloudtm.StatsManager;
 import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.common.dto.WhatIfDTO;
 import eu.cloudtm.controller.Controller;
+import eu.cloudtm.controller.IOracle;
 import eu.cloudtm.controller.model.ACF;
 import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.controller.oracles.AbstractOracle;
@@ -28,8 +28,6 @@ public class WhatIfResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(WhatIfResource.class);
     private Gson gson = new Gson();
-    private StatsManager statsManager = LookupRegister.getStatsManager();
-    private Controller controller = LookupRegister.getController();
 
     private Sample lastSample;
 
@@ -71,23 +69,24 @@ public class WhatIfResource extends AbstractResource {
     ){
 
         if(lastSample==null)
-            lastSample = statsManager.getLastSample();
+            lastSample = StatsManager.getInstance().getLastSample();
 
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
-        customParam.setACF(acf);
-        customParam.setCommitBroadcastWallClockTime(commitBroadcastWallClockTime);
-        customParam.setGetReadOnlyTx(getReadOnlyTx);
-        customParam.setGetWriteTx(getWriteTx);
-        customParam.setLocalReadOnlyTxLocalServiceTime(localReadOnlyTxLocalServiceTime);
-        customParam.setLocalUpdateTxLocalServiceTime(localUpdateTxLocalServiceTime);
-        customParam.setPrepareCommandBytes(prepareCommandBytes);
-        customParam.setSuxNumPuts(suxNumPuts);
-        customParam.setRemoteGetLatency(remoteGetLatency);
-        customParam.setRetryWritePercentage(retryWritePercentage);
-        customParam.setRTT(rtt);
+        customParam.setACF( validateParam(acf) );
+        customParam.setCommitBroadcastWallClockTime( validateParam(commitBroadcastWallClockTime) );
+        customParam.setGetReadOnlyTx(validateParam(getReadOnlyTx));
+        customParam.setGetWriteTx(validateParam(getWriteTx));
+        customParam.setLocalReadOnlyTxLocalServiceTime(validateParam(localReadOnlyTxLocalServiceTime));
+        customParam.setLocalUpdateTxLocalServiceTime(validateParam(localUpdateTxLocalServiceTime));
+        customParam.setPrepareCommandBytes(validateParam(prepareCommandBytes));
+        customParam.setSuxNumPuts(validateParam(suxNumPuts));
+        customParam.setRemoteGetLatency(validateParam(remoteGetLatency));
+        customParam.setRetryWritePercentage(validateParam(retryWritePercentage));
+        customParam.setRTT( validateParam(rtt) );
 
         Set<KPI> result = null;
-        for( AbstractOracle oracle : controller.getOracles() ){
+        for( String oracleName : Controller.getInstance().getOracles() ){
+            IOracle oracle = AbstractOracle.getInstance(oracleName, Controller.getInstance());
             result = oracle.whatIf(lastSample, customParam);
         }
         lastSample = null;
@@ -106,10 +105,20 @@ public class WhatIfResource extends AbstractResource {
         return makeCORS(builder);
     }
 
+    private double validateParam(double val ){
+
+        double ret = val;
+        if( val < 0 ){
+            ret = -1;
+        }
+        log.info("valore ritornato --> " + ret);
+        return ret;
+    }
+
     @GET @Path("/values")
     @Produces("application/json")
     public synchronized Response updateValuesFromSystem() {
-        lastSample = statsManager.getLastSample();
+        lastSample = StatsManager.getInstance().getLastSample();
 
         StringBuffer json = new StringBuffer();
 
@@ -118,7 +127,7 @@ public class WhatIfResource extends AbstractResource {
             if (json.length() > 3) {
                 json.append(" , ");
             }
-            json.append( getJSON(param.getKey(), String.valueOf( statsManager.getAvgAttribute(param.getKey(), lastSample, param.getValue()) ) ) );
+            json.append( getJSON(param.getKey(), String.valueOf(StatsManager.getInstance().getAvgAttribute(param.getKey(), lastSample, param.getValue())) ) );
         }
 
         if (json.length() > 3) {
@@ -127,7 +136,8 @@ public class WhatIfResource extends AbstractResource {
 
         double acf;
         try {
-            acf = ACF.evaluate(lastSample.getJmx(), controller.getCurrentConfiguration().threadPerNode(), Controller.TIME_WINDOW );
+            acf = ACF.evaluate(lastSample.getJmx(), Controller.getInstance().getCurrentConfiguration().threadPerNode(), Controller.TIME_WINDOW );
+            log.info("********************************** ACF = " + acf + " ***************************");
         } catch (PublishAttributeException e) {
             e.printStackTrace();
             acf = -1;

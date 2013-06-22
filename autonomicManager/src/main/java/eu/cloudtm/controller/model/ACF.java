@@ -1,6 +1,5 @@
 package eu.cloudtm.controller.model;
 
-import eu.cloudtm.LookupRegister;
 import eu.cloudtm.StatsManager;
 import eu.cloudtm.controller.oracles.common.PublishAttributeException;
 import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
