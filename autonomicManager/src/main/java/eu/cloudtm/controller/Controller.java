@@ -4,27 +4,28 @@ import com.google.gson.Gson;
 import eu.cloudtm.StatsManager;
 import eu.cloudtm.common.SampleListener;
 import eu.cloudtm.controller.exceptions.ActuatorException;
-import eu.cloudtm.controller.model.KPI;
+import eu.cloudtm.controller.exceptions.OutputFilterException;
 import eu.cloudtm.controller.model.PlatformConfiguration;
+import eu.cloudtm.controller.model.State;
 import eu.cloudtm.controller.model.Tuning;
 import eu.cloudtm.controller.model.utils.InstanceConfig;
 import eu.cloudtm.controller.model.utils.PlatformState;
 import eu.cloudtm.controller.model.utils.ReplicationProtocol;
 import eu.cloudtm.controller.model.utils.TuningState;
-import eu.cloudtm.controller.oracles.AbstractOracle;
 import eu.cloudtm.stats.Sample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ *
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
  * Date: 6/5/13
@@ -36,7 +37,7 @@ public class Controller implements SampleListener {
     private static Controller instance;
 
     /* STATE */
-    private volatile PlatformState state =  PlatformState.RUNNING;
+    private State state = new State(PlatformState.RUNNING);
 
     private final PlatformConfiguration platformConfiguration;
 
@@ -44,7 +45,6 @@ public class Controller implements SampleListener {
 
 
     /* COMPONENTs */
-
 
     private StatsManager statsManager;
 
@@ -56,9 +56,12 @@ public class Controller implements SampleListener {
         add("OracleTAS");
     }};
 
-
-
-    private ExecutorService singleThreadExec = Executors.newSingleThreadExecutor();
+    private ExecutorService singleThreadExec = Executors.newSingleThreadExecutor(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            return new Thread(r,"singleDoController");  //To change body of implemented methods use File | Settings | File Templates.
+        }
+    });
 
 
     /* CONFIGURATION */
@@ -68,6 +71,7 @@ public class Controller implements SampleListener {
 
 
     /* TUNING CONFIGURATION */
+
     private Tuning scaleTuning = new Tuning();
 
     private Tuning repProtocolTuning = new Tuning();
@@ -75,6 +79,12 @@ public class Controller implements SampleListener {
     private Tuning repDegreeTuning = new Tuning();
 
     private Boolean dataPlacement = true;
+
+
+    /* MONITORs */
+
+    private Lock reconfigurationLock = new ReentrantLock();
+
 
     /* *** CONSTRUCTOR && FACTORY METHOD *** */
 
@@ -97,65 +107,72 @@ public class Controller implements SampleListener {
     }
 
 
+    /* METHODS */
+
     @Override
     public void onNewSample(Sample sample) {
-        if( !samplesCounter.compareAndSet(SAMPLE_WINDOW, 1) ){
+        ControllerLogger.log.info("New sample stats received (" + sample.getId() + ")");
+        if( !samplesCounter.compareAndSet(SAMPLE_WINDOW, 1) ){  // Num sample < SAMPLE_WINDOW
             samplesCounter.incrementAndGet();
-            return;
+        } else {
+            singleThreadExec.execute(new Runnable() {           // Analyzing
+                @Override
+                public void run() {
+                    doControl();
+                }
+            });
         }
-        singleThreadExec.execute(new Runnable() {
-            @Override
-            public void run() {
-                doControl();
-            }
-        });
     }
 
+    /**
+     * Solo
+     */
     private void doControl(){
-        log.info("Starting...");
-
+        ControllerLogger.log.info("Locking reconfiguration");
         if( !inputFilter.doFilter() ){
-            log.info("No reconf needed...");
-            return;
-        }
-        log.info("Reconf needed...");
+            ControllerLogger.log.info("No reconfiguration needed...");
 
-        this.state = PlatformState.RECONFIGURING;
-        PlatformConfiguration nextConf = new Optimizer(this, oracles, statsManager).doOptimize(inputFilter.getLastAvgArrivalRate(),
-                inputFilter.getLastAvgAbortRate(), inputFilter.getLastAvgResposeTime());
-        try {
+        } else {
+            state.update(PlatformState.RECONFIGURING);
+            ControllerLogger.log.info("Looking for an available configuration...");
+
+            PlatformConfiguration nextConf = new Optimizer(this, oracles, statsManager).doOptimize(inputFilter.getLastAvgArrivalRate(),
+                    inputFilter.getLastAvgAbortRate(), inputFilter.getLastAvgResposeTime());
+
             if(nextConf != null){
-                outputFilter.doFilter(nextConf);
+                ControllerLogger.log.info( "Time to reconfigure (" + nextConf.platformSize() + ", " + nextConf.threadPerNode() + ")" );
+                try {
+                    outputFilter.doFilter(nextConf);
+                    state.update(PlatformState.RUNNING);
+                } catch (OutputFilterException e) {
+                    ControllerLogger.log.warn(e, e);
+                    onError();
+                    ControllerLogger.log.info("No configuration available! Nothing to do...");
+                }
             } else {
-                log.warn("Nessuna configurazione disponibile!!");
-                onError();
+                ControllerLogger.log.info("No configuration available! Nothing to do...");
+                state.update(PlatformState.RUNNING);
             }
 
-
-        } catch (ActuatorException e) {
-            onError();
         }
-
-    }
-
-
-    private synchronized void onUserAction(){
-        throw new RuntimeException("TO IMPLEMENT");
-    }
-
-    private void onWorking(){
-        this.state = PlatformState.RUNNING;
     }
 
     private void onError(){
-        this.state = PlatformState.ERROR;
+        state.update(PlatformState.ERROR);
+    }
+
+    private synchronized void onUserAction(){
+        //reconfigurationLock.
+        throw new RuntimeException("TO IMPLEMENT");
     }
 
 
     /* USER CONTROL */
-    public synchronized void updateScale(int _size, InstanceConfig _instanceConf, Tuning tuning){
 
-        if(state==PlatformState.RUNNING){
+    public void updateScale(int _size, InstanceConfig _instanceConf, Tuning tuning){
+
+        if( state.isRunning() ){
+
             if(!scaleTuning.equals(tuning))
                 scaleTuning.set(tuning.getForecaster());
 
@@ -166,9 +183,9 @@ public class Controller implements SampleListener {
         }
     }
 
-    public synchronized void updateDegree(int _degree, Tuning tuning){
+    public void updateDegree(int _degree, Tuning tuning){
 
-        if(state==PlatformState.RUNNING){
+        if( state.isRunning() ){
             if(!repDegreeTuning.equals(tuning))
                 repDegreeTuning.set(tuning.getForecaster());
 
@@ -180,9 +197,9 @@ public class Controller implements SampleListener {
 
     }
 
-    public synchronized void updateProtocol(ReplicationProtocol _protocol, Tuning tuning){
+    public void updateProtocol(ReplicationProtocol _protocol, Tuning tuning){
 
-        if(state==PlatformState.RUNNING){
+        if( state.isRunning() ){
             if(!repProtocolTuning.equals(tuning))
                 repProtocolTuning.set(tuning.getForecaster());
 
@@ -194,30 +211,39 @@ public class Controller implements SampleListener {
 
     }
 
-    /* *** WEB IF INTERACTION *** */
+    public PlatformState getState(){
+        return state.current();
+    }
 
+    public PlatformConfiguration getCurrentConfiguration(){
+        return platformConfiguration;
+    }
 
-/*
-{
-   "state":"WORKING",
-   "scale":{
-      "nodes":3,
-      "configuration":"SMALL",
-      "forecaster":"SIMULATOR"
-   },
-   "replication_protocol":{
-      "protocol":"TWOPC",
-      "forecaster":"NONE"
-   },
-   "replication_degree":{
-      "degree":2,
-      "forecaster":"ANALYTIC"
-   },
-   "data_placement":"enabled"
-}
-*/
+    public List<String> getOracles(){
+        return new ArrayList<String>(this.oracles);
+    }
 
     public String getJSONState(){
+    /* stampa il seguente output:
+        {
+           "state":"WORKING",
+           "scale":{
+                "nodes":3,
+                "configuration":"SMALL",
+                "forecaster":"SIMULATOR"
+            },
+            "replication_protocol":{
+                "protocol":"TWOPC",
+                "forecaster":"NONE"
+            },
+            "replication_degree":{
+                "degree":2,
+                "forecaster":"ANALYTIC"
+            },
+            "data_placement":"enabled"
+        }
+    */
+
         Gson gson = new Gson();
         StringBuilder sb = new StringBuilder();
 
@@ -243,18 +269,6 @@ public class Controller implements SampleListener {
         sb.append("}");
         //log.info(sb);
         return sb.toString();
-    }
-
-    public PlatformState getState(){
-        return state;
-    }
-
-    public PlatformConfiguration getCurrentConfiguration(){
-        return platformConfiguration;
-    }
-
-    public List<String> getOracles(){
-        return this.oracles;
     }
 
 }

@@ -6,6 +6,7 @@ import Tas2.core.environment.DSTMScenarioTas2;
 import Tas2.exception.Tas2Exception;
 import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.controller.Controller;
+import eu.cloudtm.controller.exceptions.OracleException;
 import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.controller.model.PlatformConfiguration;
 import eu.cloudtm.controller.model.utils.InstanceConfig;
@@ -27,12 +28,16 @@ public class OracleTAS extends AbstractOracle {
 
     private static Log log = LogFactory.getLog(OracleTAS.class);
 
+    public OracleTAS(){
+
+    }
+
     public OracleTAS(Controller _controller) {
         super(_controller);
     }
 
     @Override
-    public KPI forecast(Sample sample, int numNodes, int numThreads) {
+    public KPI forecast(Sample sample, int numNodes, int numThreads) throws OracleException {
         DSTMScenarioTas2 scenario;
 
         try {
@@ -40,14 +45,18 @@ public class OracleTAS extends AbstractOracle {
         } catch (PublishAttributeException e) {
             throw new RuntimeException(e);
         } catch (Tas2Exception e) {
-            throw new RuntimeException(e);
+            throw new OracleException(e);
         }
 
-        return realForecast(scenario,numNodes, numThreads);
+        try {
+            return realForecast(scenario,numNodes, numThreads);
+        } catch (Tas2Exception e) {
+            throw new OracleException(e);
+        }
     }
 
     @Override
-    public KPI forecastWithCustomParam(Sample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) {
+    public KPI forecastWithCustomParam(Sample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) throws OracleException {
         DSTMScenarioTas2 scenario = null;
 
         try {
@@ -64,17 +73,21 @@ public class OracleTAS extends AbstractOracle {
             throw new RuntimeException(e);
         }
 
-        return realForecast(scenario,numNodes, numThreads);
+        try {
+            return realForecast(scenario,numNodes, numThreads);
+        } catch (Tas2Exception e) {
+            throw new OracleException(e);
+        }
     }
 
-    private KPI realForecast(DSTMScenarioTas2 scenario, int numNodes, int numThreads) {
+    private KPI realForecast(DSTMScenarioTas2 scenario, int numNodes, int numThreads) throws Tas2Exception {
         ModelResult result;
         try {
             log.info("calling tas");
             result = new Tas2().solve(scenario);
             log.info("called tas");
         } catch (Tas2Exception e) {
-            throw new RuntimeException(e);
+            throw e;
         }
 
         double throughput, abortP, rtt;
@@ -95,7 +108,7 @@ public class OracleTAS extends AbstractOracle {
 
     @Override
     public String toString(){
-        return "I'm OracleTAS";
+        return "OracleTAS";
     }
 
 }

@@ -2,6 +2,7 @@ package eu.cloudtm;
 
 import eu.cloudtm.RESTServer.RESTServer;
 import eu.cloudtm.controller.Controller;
+import eu.cloudtm.controller.ControllerLogger;
 import eu.cloudtm.controller.model.*;
 import eu.cloudtm.controller.model.utils.*;
 import eu.cloudtm.stats.WPMStatisticsRemoteListenerImpl;
@@ -25,6 +26,8 @@ public class Main {
     private static Log log = LogFactory.getLog(Main.class);
 
     public static void main(String[] args) {
+
+
 
         PlatformConfiguration configuration = new PlatformConfiguration(2, 2, InstanceConfig.SMALL, ReplicationProtocol.TWOPC, 2, true);
 
@@ -55,11 +58,13 @@ public class Main {
 
         restServer.startServer();
 
+        /*
         int num = 0;
         while (num != 1000) {
             Scanner in = new Scanner(System.in);
             num = in.nextInt();
         }
         restServer.stopServer();
+        */
     }
 }

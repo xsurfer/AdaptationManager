@@ -112,29 +112,39 @@ public class StatsManager implements SampleListener {
         return samples;
     }
 
-    public static double getAvgAttribute(String attribute, Set<HashMap<String, PublishAttribute>> values){
-        double num = values.size(), temp = 0;
-        Object actualValue;
 
-        for (HashMap<String, PublishAttribute> h : values) {
-            if (h == null) {
-                throw new RuntimeException("I had a null set of values");
-            }
-            //log.trace("Asking for " + attribute);
-            //the getName may give a nullPointerException, actually
-            if ((actualValue = h.get(attribute).getValue()) == null) {
-                throw new RuntimeException(h.get(attribute).getName() + " is null");
-            }
-            try {
-                temp += cast(actualValue);
-            } catch (ClassCastException c) {
-                throw new RuntimeException(h.get(attribute).getName() + " is not a double/long/int and cannot be averaged. It appears to be " + actualValue.getClass());
-
-            }
+    public static double getAvgAttribute(String attribute, HashMap<String, PublishAttribute> values){
+        double ret= -1.0;
+        if( values != null && !values.isEmpty() ){
+            ret = cast( values.get(attribute).getValue() );
         }
-        return temp / num;
-
+        return ret;
     }
+
+
+//    public static double getAvgAttribute(String attribute, HashMap<String, PublishAttribute> values){
+//        double num = values.size(), temp = 0;
+//        Object actualValue;
+//
+//
+//            if (h == null) {
+//                throw new RuntimeException("I had a null set of values");
+//            }
+//            //log.trace("Asking for " + attribute);
+//            //the getName may give a nullPointerException, actually
+//            if ((actualValue = h.get(attribute).getValue()) == null) {
+//                throw new RuntimeException(h.get(attribute).getName() + " is null");
+//            }
+//            try {
+//                temp += cast(actualValue);
+//            } catch (ClassCastException c) {
+//                throw new RuntimeException(h.get(attribute).getName() + " is not a double/long/int and cannot be averaged. It appears to be " + actualValue.getClass());
+//
+//            }
+//
+//        return temp / num;
+//
+//    }
 
     /**
      * this method evaluates de average of specific sample related to a single stat
@@ -145,7 +155,7 @@ public class StatsManager implements SampleListener {
      */
     public static double getAvgAttribute(String attribute, Sample stat, ResourceType type) {
 
-        Set<HashMap<String, PublishAttribute>> values;
+        HashMap<String, PublishAttribute> values;
         switch (type){
             case JMX:
                 values = stat.getJmx();

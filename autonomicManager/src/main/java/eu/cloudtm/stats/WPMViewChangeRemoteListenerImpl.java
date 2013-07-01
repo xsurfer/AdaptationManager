@@ -29,9 +29,9 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
     private String[] currentVMs;
 
-    private WPMStatisticsRemoteListener statisticsListener;
+    private WPMStatisticsRemoteListenerImpl statisticsListener;
 
-    public WPMViewChangeRemoteListenerImpl(WPMConnector _connector, WPMStatisticsRemoteListener _statisticsListener){
+    public WPMViewChangeRemoteListenerImpl(WPMConnector _connector, WPMStatisticsRemoteListenerImpl _statisticsListener){
         connector = _connector;
         statisticsListener = _statisticsListener;
     }
@@ -41,12 +41,14 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
     public void onViewChange(PublishViewChangeEvent event)
             throws RemoteException {
 
+        /*
         if (lastVmHandle != null) {
             log.trace("Removing last handle");
 
             connector.removeStatisticsRemoteListener(lastVmHandle);
             lastVmHandle = null;
         }
+        */
 
 
         currentVMs = event.getCurrentVMs();
@@ -58,7 +60,11 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
         log.info("New set of VMs " + Arrays.toString(currentVMs));
 
-        lastVmHandle = connector.registerStatisticsRemoteListener(new SubscribeEvent(currentVMs), statisticsListener);
+        WPMStatisticsRemoteListenerImpl listener = new WPMStatisticsRemoteListenerImpl(this.statisticsListener.getSampleListeners());
+        this.statisticsListener = listener;
+
+
+        lastVmHandle = connector.registerStatisticsRemoteListener(new SubscribeEvent(currentVMs), listener);
     }
 
 }

@@ -18,14 +18,14 @@ public class Sample {
     private static AtomicInteger counter = new AtomicInteger(0);
 
     private final long id;
-    private final Set<HashMap<String, PublishAttribute>> jmxStack;
-    private final Set<HashMap<String, PublishAttribute>> memStack;
+    private final HashMap<String, PublishAttribute> jmxStack;
+    private final HashMap<String, PublishAttribute> memStack;
 
-    public static Sample getInstance(Set<HashMap<String, PublishAttribute>> jmx, Set<HashMap<String, PublishAttribute>> mem){
+    public static Sample getInstance(HashMap<String, PublishAttribute> jmx, HashMap<String, PublishAttribute> mem){
         return new Sample(counter.getAndIncrement(),jmx,mem);
     }
 
-    private Sample(long _id, Set<HashMap<String, PublishAttribute>> _jmx, Set<HashMap<String, PublishAttribute>> _mem){
+    private Sample(long _id, HashMap<String, PublishAttribute> _jmx, HashMap<String, PublishAttribute> _mem){
         this.id = _id;
         this.jmxStack = _jmx;
         this.memStack = _mem;
@@ -33,11 +33,11 @@ public class Sample {
 
     public long getId(){ return id; }
 
-    public Set<HashMap<String, PublishAttribute>> getJmx(){
+    public HashMap<String, PublishAttribute> getJmx(){
         return jmxStack;
     }
 
-    public Set<HashMap<String, PublishAttribute>> getMem(){
+    public HashMap<String, PublishAttribute> getMem(){
         return memStack;
     }
 

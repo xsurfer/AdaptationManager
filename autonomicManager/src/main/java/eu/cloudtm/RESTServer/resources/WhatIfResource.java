@@ -7,6 +7,7 @@ import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.common.dto.WhatIfDTO;
 import eu.cloudtm.controller.Controller;
 import eu.cloudtm.controller.IOracle;
+import eu.cloudtm.controller.exceptions.OracleException;
 import eu.cloudtm.controller.model.ACF;
 import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.controller.oracles.AbstractOracle;
@@ -87,7 +88,12 @@ public class WhatIfResource extends AbstractResource {
         Set<KPI> result = null;
         for( String oracleName : Controller.getInstance().getOracles() ){
             IOracle oracle = AbstractOracle.getInstance(oracleName, Controller.getInstance());
-            result = oracle.whatIf(lastSample, customParam);
+            try {
+                result = oracle.whatIf(lastSample, customParam);
+            } catch (OracleException e) {
+                // da gestire, magari con segnalazione all'utente...
+                throw new RuntimeException(e);
+            }
         }
         lastSample = null;
 

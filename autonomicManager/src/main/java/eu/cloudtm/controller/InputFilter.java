@@ -59,21 +59,21 @@ public class InputFilter {
             abortSum += (1 - StatsManager.getAvgAttribute("CommitProbability", sample, ResourceType.JMX));
         }
         double currentAbortAvg =  abortSum / ((double) lastNSamples.size());
-        log.trace("currentAbortAvg: " + currentAbortAvg);
-        log.trace("lastAvgAbortRate: " + lastAvgAbortRate);
+        log.debug("currentAbortAvg: " + currentAbortAvg);
+        log.debug("lastAvgAbortRate: " + lastAvgAbortRate);
 
         if(lastAvgAbortRate == 0 || lastAvgAbortRate == Double.NaN){
-            log.info("Updating && Skipping lastAvgAbortRate");
+            log.debug("Updating && Skipping lastAvgAbortRate");
             lastAvgAbortRate = currentAbortAvg;
         } else {
             double rapporto = ( currentAbortAvg / lastAvgAbortRate ) * 100;
-            log.info("rapporto: " + rapporto );
+            log.debug("rapporto: " + rapporto );
 
             double variazione = Math.abs(rapporto - 100);
-            log.info("variazione: " + variazione );
+            log.debug("variazione: " + variazione );
 
             if( variazione >= DELTA_ABORT_RATE ){
-                log.info("Update the lastAvgAbortRate");
+                log.debug("Update the lastAvgAbortRate");
                 lastAvgAbortRate = currentAbortAvg;
                 log.trace("SOGLIA RAGGIUNTA x AbortRate");
                 return true;
@@ -93,7 +93,7 @@ public class InputFilter {
         }
         double currentThroughputAvg =  throughputSum / ((double) lastNSamples.size());
         log.trace("currentThroughputAvg: " + currentThroughputAvg);
-        log.trace("lastAvgAbortRate: " + lastAvgArrivalRate);
+        log.trace("lastAvgArrivalRate: " + lastAvgArrivalRate);
 
         if(lastAvgArrivalRate == 0 || lastAvgArrivalRate == Double.NaN){
             log.info("Updating && Skipping lastAvgArrivalRate");

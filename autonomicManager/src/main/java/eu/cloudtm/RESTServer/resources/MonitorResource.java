@@ -24,6 +24,7 @@ import java.util.Map;
 public class MonitorResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(MonitorResource.class);
+
     private Gson gson = new GsonBuilder()
             .serializeSpecialFloatingPointValues()
             .create();

@@ -2,20 +2,14 @@ package eu.cloudtm.stats;
 
 import eu.cloudtm.StatsManager;
 import eu.cloudtm.common.SampleListener;
-import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
-import eu.cloudtm.wpm.logService.remote.events.PublishMeasurement;
-import eu.cloudtm.wpm.logService.remote.events.PublishStatisticsEvent;
-import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
+import eu.cloudtm.wpm.logService.remote.events.*;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by: Fabio Perfetti
@@ -74,10 +68,25 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         //trace(jmx);
         //trace(mem);
 
+        //Sample newSample = Sample.getInstance(jmx,mem);
+        //notifyListeners(newSample);
+    }
+
+    @Override
+    public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
+
+        log.trace("Parsing JMX stats");
+        PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX);
+        HashMap<String, PublishAttribute> jmx = pm.getValues();
+
+        log.trace("Parsing MEM stats");
+        pm = event.getPublishMeasurement(ResourceType.MEMORY);
+        HashMap<String, PublishAttribute> mem = pm.getValues();
+
+
         Sample newSample = Sample.getInstance(jmx,mem);
         notifyListeners(newSample);
     }
-
 
     private void notifyListeners(Sample sample){
         for(SampleListener listener : listeners){
@@ -133,6 +142,10 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     public boolean removeSampleListener(SampleListener sampleListener){
         return listeners.remove(sampleListener);
+    }
+
+    public Set<SampleListener> getSampleListeners(){
+        return this.listeners;
     }
 
 }

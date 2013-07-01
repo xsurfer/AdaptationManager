@@ -2,6 +2,7 @@ package eu.cloudtm.controller;
 
 import eu.cloudtm.controller.actuators.DeltaCloudActuator;
 import eu.cloudtm.controller.exceptions.ActuatorException;
+import eu.cloudtm.controller.exceptions.OutputFilterException;
 import eu.cloudtm.controller.model.PlatformConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,21 +20,21 @@ public class OutputFilter {
 
     private final Log log = LogFactory.getLog(OutputFilter.class);
 
-    public void doFilter(PlatformConfiguration conf) throws ActuatorException {
+    public void doFilter(PlatformConfiguration conf) throws OutputFilterException {
 
         // se già sto riconfigurando aspetto (a meno che: riconf attuale >> riconf prec...)
         // x ora riconfigure se e solo se non sto già riconfigurando
 
-        log.info("AVVIANDO ATTUATORE");
         int numNodes = conf.platformSize();
         int numThreads = conf.threadPerNode();
         try {
             DeltaCloudActuator deltaCloudActuator = DeltaCloudActuator.getInstance(numNodes, numThreads);
             deltaCloudActuator.actuate();
+            ControllerLogger.log.info("Riconfigurazione terminata");
         } catch (MalformedURLException e) {
-            throw new ActuatorException(e);
+            throw new OutputFilterException(e);
         } catch (DeltaCloudClientException e) {
-            throw new ActuatorException(e);
+            throw new OutputFilterException(e);
         }
 
 

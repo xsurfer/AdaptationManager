@@ -3,6 +3,7 @@ package eu.cloudtm.controller.oracles;
 import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.controller.Controller;
 import eu.cloudtm.controller.IOracle;
+import eu.cloudtm.controller.exceptions.OracleException;
 import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.stats.Sample;
 import org.apache.commons.logging.Log;
@@ -25,6 +26,10 @@ public abstract class AbstractOracle implements IOracle {
 
     private Controller controller;
 
+    public AbstractOracle(){
+
+    }
+
     public AbstractOracle(Controller _controller) {
         controller = _controller;
     }
@@ -46,13 +51,21 @@ public abstract class AbstractOracle implements IOracle {
     }
 
     @Override
-    public KPI minimizeCosts(Sample sample, double arrivalRateToGuarantee, double abortRateToGuarantee, double responseTimeToGuarantee) {
-        KPI kpi = binarySearch(sample, arrivalRateToGuarantee, abortRateToGuarantee, responseTimeToGuarantee);
+    public KPI minimizeCosts(Sample sample,
+                             double arrivalRateToGuarantee,
+                             double abortRateToGuarantee,
+                             double responseTimeToGuarantee)
+            throws OracleException {
 
+        KPI kpi = binarySearch(sample, arrivalRateToGuarantee, abortRateToGuarantee, responseTimeToGuarantee);
         return kpi;
     }
 
-    private KPI binarySearch(Sample sample, double arrivalRateToGuarantee, double abortRateToGuarantee, double responseTimeToGuarantee) {
+    private KPI binarySearch(Sample sample,
+                             double arrivalRateToGuarantee,
+                             double abortRateToGuarantee,
+                             double responseTimeToGuarantee)
+            throws OracleException {
 
         double throughputForecasted;
 
@@ -96,7 +109,10 @@ public abstract class AbstractOracle implements IOracle {
         return subOptKPI;
     }
 
-    private boolean evaluateKPI(KPI kpi, double abortRateToGuarantee, double responseTimeToGuarantee ) {
+    private boolean evaluateKPI(KPI kpi,
+                                double abortRateToGuarantee,
+                                double responseTimeToGuarantee ) {
+
         if(kpi.getAbortProbability() < abortRateToGuarantee){
             return false;
         }
@@ -111,7 +127,7 @@ public abstract class AbstractOracle implements IOracle {
     }
 
     @Override
-    public Set<KPI> whatIf(Sample sample, WhatIfCustomParamDTO customParam) {
+    public Set<KPI> whatIf(Sample sample, WhatIfCustomParamDTO customParam) throws OracleException {
         Set<KPI> ret = new TreeSet<KPI>();
 
         for(int i=imin;i<=imax;i++){

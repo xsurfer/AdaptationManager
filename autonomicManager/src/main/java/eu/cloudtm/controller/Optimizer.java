@@ -1,6 +1,7 @@
 package eu.cloudtm.controller;
 
 import eu.cloudtm.StatsManager;
+import eu.cloudtm.controller.exceptions.OracleException;
 import eu.cloudtm.controller.model.KPI;
 import eu.cloudtm.controller.model.PlatformConfiguration;
 import eu.cloudtm.controller.model.SLAItem;
@@ -42,13 +43,13 @@ public class Optimizer {
         // TODO: Cercare una configurazione valida per ogni classe transazionale (Read, Write) cioè che rispetta gli SLAs
 
         double arrivalRateToGuarantee =  currentThroughput +  (currentThroughput * (ARRIVAL_RATE_GUARANTEE_PERC / 100));
-        log.info("arrivalRateToGuarantee:" + arrivalRateToGuarantee);
+        log.trace("arrivalRateToGuarantee:" + arrivalRateToGuarantee);
 
         double abortRateToGuarantee = currentAbortRate + (currentAbortRate * (ABORT_GUARANTEE_PERC / 100));
-        log.info("abortRateToGuarantee:" + abortRateToGuarantee);
+        log.trace("abortRateToGuarantee:" + abortRateToGuarantee);
 
         double responseTimeToGuarantee = currentResponseTime + (currentResponseTime * (RESPONSE_TIME_GUARANTEE_PERC / 100));
-        log.info("responseTimeToGuarantee:" + abortRateToGuarantee);
+        log.trace("responseTimeToGuarantee:" + abortRateToGuarantee);
 
 
         //SLAItem sla = slaManager.getReadSLA(arrivalRateToGuarantee);
@@ -58,13 +59,16 @@ public class Optimizer {
         for(String oracleName : oracles){
             IOracle oracle = AbstractOracle.getInstance(oracleName, controller);
             log.info( oracle );
-            KPI kpi = oracle.minimizeCosts(statsManager.getLastSample(), arrivalRateToGuarantee, abortRateToGuarantee, responseTimeToGuarantee );
+            KPI kpi = null;
+            try {
+                kpi = oracle.minimizeCosts(statsManager.getLastSample(), arrivalRateToGuarantee, abortRateToGuarantee, responseTimeToGuarantee );
+            } catch (OracleException e) {
+                log.warn(oracle + " had problem solving the current scenario!");
+            }
             if(kpi != null){
                 nextConfig = kpi.getPlatformConfiguration();
-                log.info( "Time to reconfigure (" + nextConfig.platformSize() + ", " + nextConfig.threadPerNode() + ")" );
             }
         }
-
 
         return nextConfig;
     }

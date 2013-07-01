@@ -7,6 +7,10 @@ package eu.cloudtm.controller.exceptions;
  */
 public class ActuatorException extends Exception {
 
+    public ActuatorException(String str){
+        super(str);
+    }
+
     public ActuatorException(Throwable t){
         super(t);
     }

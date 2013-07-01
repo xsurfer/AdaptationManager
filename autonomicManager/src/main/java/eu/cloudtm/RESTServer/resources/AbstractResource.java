@@ -1,5 +1,8 @@
 package eu.cloudtm.RESTServer.resources;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.core.Response;
@@ -10,6 +13,8 @@ import javax.ws.rs.core.Response;
  * Date: 6/5/13
  */
 public abstract class AbstractResource {
+
+    private Log log = LogFactory.getLog(AbstractResource.class);
 
     private String _corsHeaders;
 
