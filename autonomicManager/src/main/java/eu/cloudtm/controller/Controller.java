@@ -6,6 +6,7 @@ import eu.cloudtm.common.SampleListener;
 import eu.cloudtm.controller.exceptions.ActuatorException;
 import eu.cloudtm.controller.exceptions.OutputFilterException;
 import eu.cloudtm.controller.model.PlatformConfiguration;
+import eu.cloudtm.controller.model.PlatformTuning;
 import eu.cloudtm.controller.model.State;
 import eu.cloudtm.controller.model.Tuning;
 import eu.cloudtm.controller.model.utils.InstanceConfig;
@@ -41,6 +42,8 @@ public class Controller implements SampleListener {
 
     private final PlatformConfiguration platformConfiguration;
 
+    private PlatformTuning platformTuning;
+
     public final static double TIME_WINDOW = 60D; // TODO: renderlo parametro
 
 
@@ -67,21 +70,10 @@ public class Controller implements SampleListener {
     /* CONFIGURATION */
     public static final int SAMPLE_WINDOW = 5;
 
-    private AtomicInteger samplesCounter = new AtomicInteger(1);
-
-
-    /* TUNING CONFIGURATION */
-
-    private Tuning scaleTuning = new Tuning();
-
-    private Tuning repProtocolTuning = new Tuning();
-
-    private Tuning repDegreeTuning = new Tuning();
-
-    private Boolean dataPlacement = true;
-
 
     /* MONITORs */
+
+    private AtomicInteger samplesCounter = new AtomicInteger(1);
 
     private Lock reconfigurationLock = new ReentrantLock();
 
@@ -115,12 +107,20 @@ public class Controller implements SampleListener {
         if( !samplesCounter.compareAndSet(SAMPLE_WINDOW, 1) ){  // Num sample < SAMPLE_WINDOW
             samplesCounter.incrementAndGet();
         } else {
-            singleThreadExec.execute(new Runnable() {           // Analyzing
+            if( reconfigurationLock.tryLock() ){
+                try {
+                singleThreadExec.execute(new Runnable() {           // Analyzing
                 @Override
                 public void run() {
                     doControl();
                 }
             });
+                } finally {
+                    reconfigurationLock.unlock();
+                }
+            } else {
+                ControllerLogger.log.info("Controller is already working. Skipping...");
+            }
         }
     }
 
@@ -161,25 +161,34 @@ public class Controller implements SampleListener {
         state.update(PlatformState.ERROR);
     }
 
-    private synchronized void onUserAction(){
-        //reconfigurationLock.
-        throw new RuntimeException("TO IMPLEMENT");
+    private void onUserAction(){
+        try {
+            reconfigurationLock.lock();
+
+
+        } finally {
+            reconfigurationLock.unlock();
+        }
     }
 
 
     /* USER CONTROL */
 
     public void updateScale(int _size, InstanceConfig _instanceConf, Tuning tuning){
-
         if( state.isRunning() ){
 
-            if(!scaleTuning.equals(tuning))
+            if( !scaleTuning.equals(tuning) )
                 scaleTuning.set(tuning.getForecaster());
 
             if(scaleTuning.getState() == TuningState.MANUAL)
                 platformConfiguration.setPlatformScale(_size, _instanceConf);
 
-            onUserAction();
+            singleThreadExec.execute(new Runnable() {           // Analyzing
+                @Override
+                public void run() {
+                    onUserAction();
+                }
+            });
         }
     }
 

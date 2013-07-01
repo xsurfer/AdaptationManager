@@ -62,8 +62,8 @@ public class DSTMScenarioFactory {
     private DSTMScenarioFactory() {
     }
 
-    public static DSTMScenarioTas2 buildScenario(Set<HashMap<String, PublishAttribute>> jmx,
-                                                 Set<HashMap<String, PublishAttribute>> mem,
+    public static DSTMScenarioTas2 buildScenario(HashMap<String, PublishAttribute> jmx,
+                                                 HashMap<String, PublishAttribute> mem,
                                                  int nodes,
                                                  int threads,
                                                  double timeWindow)
@@ -81,8 +81,8 @@ public class DSTMScenarioFactory {
         return new DSTMScenarioTas2(cpu, net, workParams);
     }
 
-    public static DSTMScenarioTas2 buildCustomScenario(Set<HashMap<String, PublishAttribute>> jmx,
-                                                Set<HashMap<String, PublishAttribute>> mem,
+    public static DSTMScenarioTas2 buildCustomScenario(HashMap<String, PublishAttribute> jmx,
+                                                HashMap<String, PublishAttribute> mem,
                                                 WhatIfCustomParamDTO customParam,
                                                 int nodes,
                                                 int threads,
@@ -124,8 +124,8 @@ public class DSTMScenarioFactory {
     }
 
 
-    private static void buildBaseScenario(Set<HashMap<String, PublishAttribute>> jmx,
-                                          Set<HashMap<String, PublishAttribute>> mem,
+    private static void buildBaseScenario(HashMap<String, PublishAttribute> jmx,
+                                          HashMap<String, PublishAttribute> mem,
                                           int nodes,
                                           int threads,
                                           double timeWindow) throws PublishAttributeException {
@@ -148,7 +148,7 @@ public class DSTMScenarioFactory {
         return set;
     }
 
-    private static CpuServiceTimes buildCpuServiceTimes(Set<HashMap<String, PublishAttribute>> values) throws PublishAttributeException {
+    private static CpuServiceTimes buildCpuServiceTimes(HashMap<String, PublishAttribute> values) throws PublishAttributeException {
         //Local Update
         double updateLocalTxLocalExec = StatsManager.getAvgAttribute("LocalUpdateTxLocalServiceTime", values);
         double updateLocalTxPrepare = StatsManager.getAvgAttribute("LocalUpdateTxPrepareServiceTime", values);
@@ -188,8 +188,8 @@ public class DSTMScenarioFactory {
         return cpu;
     }
 
-    private static WorkParams buildWorkloadParams(Set<HashMap<String, PublishAttribute>> JMXvalues,
-                                                  Set<HashMap<String, PublishAttribute>> MEMvalues,
+    private static WorkParams buildWorkloadParams(HashMap<String, PublishAttribute> JMXvalues,
+                                                  HashMap<String, PublishAttribute> MEMvalues,
                                                   int nodes,
                                                   int threads,
                                                   double timeWindow)
@@ -221,7 +221,7 @@ public class DSTMScenarioFactory {
         return workParams;
     }
 
-    private static NetServiceTimes buildNetServiceTimes(Set<HashMap<String, PublishAttribute>> JMXvalues) {
+    private static NetServiceTimes buildNetServiceTimes(HashMap<String, PublishAttribute> JMXvalues) {
         return new FixedRttServiceTimes(1, 1);
     }
 }
