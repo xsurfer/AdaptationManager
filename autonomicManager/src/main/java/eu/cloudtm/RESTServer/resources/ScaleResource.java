@@ -2,11 +2,9 @@ package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.controller.Controller;
-import eu.cloudtm.controller.model.Tuning;
-import eu.cloudtm.controller.model.utils.Forecaster;
-import eu.cloudtm.controller.model.utils.InstanceConfig;
-import eu.cloudtm.controller.model.utils.TuningState;
+import eu.cloudtm.Controller;
+import eu.cloudtm.model.utils.Forecaster;
+import eu.cloudtm.model.utils.InstanceConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,17 +29,14 @@ public class ScaleResource extends AbstractResource {
             @FormParam("instance_type") InstanceConfig instanceType
     ) {
 
-        Tuning tuning = new Tuning(forecaster);
-
         if(!(size>=0 && instanceType!=null))
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-        log.info("tuningState: " + tuning.getState());
         log.info("forecaster: " + forecaster);
         log.info("size: " + size);
         log.info("instanceType: " + instanceType);
 
-        if(tuning.getState().equals(TuningState.SELF)) {
+        if(forecaster.isAutoTuning()) {
             // TODO: per ora metto un random
             Random rnd = new Random();
             size = rnd.nextInt(10);
@@ -49,7 +44,7 @@ public class ScaleResource extends AbstractResource {
         }
 
         /** UPDATING STATE **/
-        Controller.getInstance().updateScale(size, instanceType, tuning);
+        //Controller.getInstance().updateScale(size, instanceType, tuning);
 
         String json = gson.toJson(Controller.getInstance().getState());
         Response.ResponseBuilder builder = Response.ok(json);

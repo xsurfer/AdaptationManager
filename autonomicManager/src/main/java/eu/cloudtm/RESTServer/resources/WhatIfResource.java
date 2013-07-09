@@ -3,16 +3,16 @@ package eu.cloudtm.RESTServer.resources;
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.StatsManager;
+import eu.cloudtm.WhatIf;
 import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.common.dto.WhatIfDTO;
-import eu.cloudtm.controller.Controller;
-import eu.cloudtm.controller.IOracle;
-import eu.cloudtm.controller.exceptions.OracleException;
-import eu.cloudtm.controller.model.ACF;
-import eu.cloudtm.controller.model.KPI;
-import eu.cloudtm.controller.oracles.AbstractOracle;
-import eu.cloudtm.controller.oracles.common.PublishAttributeException;
-import eu.cloudtm.stats.Sample;
+import eu.cloudtm.Controller;
+import eu.cloudtm.IOracle;
+import eu.cloudtm.exceptions.OracleException;
+import eu.cloudtm.model.ACF;
+import eu.cloudtm.model.KPI;
+import eu.cloudtm.oracles.AbstractOracle;
+import eu.cloudtm.stats.WPMSample;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +30,7 @@ public class WhatIfResource extends AbstractResource {
     private static Log log = LogFactory.getLog(WhatIfResource.class);
     private Gson gson = new Gson();
 
-    private Sample lastSample;
+    private WPMSample lastSample;
 
     private Map<String,String> evaluatedParams = new HashMap<String,String>(){{
         //put("ACF",                                  "-1"); //1
@@ -124,6 +124,11 @@ public class WhatIfResource extends AbstractResource {
     @GET @Path("/values")
     @Produces("application/json")
     public synchronized Response updateValuesFromSystem() {
+
+
+
+        WhatIfCustomParamDTO currentParamDTO = WhatIf.retrieveCurrentValues();
+
         lastSample = StatsManager.getInstance().getLastSample();
 
         StringBuffer json = new StringBuffer();
@@ -141,13 +146,9 @@ public class WhatIfResource extends AbstractResource {
         }
 
         double acf;
-        try {
-            acf = ACF.evaluate(lastSample.getJmx(), Controller.getInstance().getCurrentConfiguration().threadPerNode(), Controller.TIME_WINDOW );
-            log.info("********************************** ACF = " + acf + " ***************************");
-        } catch (PublishAttributeException e) {
-            e.printStackTrace();
-            acf = -1;
-        }
+        acf = ACF.evaluate(lastSample.getJmx(), Controller.getInstance().getCurrentConfiguration().threadPerNode(), Controller.TIME_WINDOW );
+        log.info("********************************** ACF = " + acf + " ***************************");
+
         json.append( getJSON("ACF", String.valueOf(acf) ) );
 
         json.append(" }");

@@ -1,6 +1,5 @@
 package eu.cloudtm.stats;
 
-import eu.cloudtm.StatsManager;
 import eu.cloudtm.common.SampleListener;
 import eu.cloudtm.wpm.logService.remote.events.*;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
@@ -41,9 +40,11 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         Set<String> ips = event.getIps();
         log.trace("Received statistics from wpm instances " + ips.toString());
 
-        Set<HashMap<String, PublishAttribute>> jmx = new HashSet<HashMap<String, PublishAttribute>>();
-        Set<HashMap<String, PublishAttribute>> mem = new HashSet<HashMap<String, PublishAttribute>>();
+        Map<String, Map<WPMParam, Double>> ip2params = new HashMap<String, Map<WPMParam, Double>>();
+
         for (String ip : ips) {
+
+            Map<WPMParam, Double> nodeStats = new HashMap<WPMParam, Double>();       // conterra tutti i campionamenti per tale ip, perdendo l'organizzazione in JMX, MEM...
             log.trace("Parsing statistics relevant to " + ip);
 
             log.trace("Parsing JMX stats");
@@ -52,29 +53,44 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
                 if (numResources > 1) {
                     log.trace("The log file contains " + numResources + " JMX samples. I' going to consider only the first");
                 }
-                jmx.add(event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues());
+
+                for(Map.Entry<String, PublishAttribute> entry : event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues().entrySet()){
+                    WPMParam key = WPMParam.getByName(entry.getKey());
+                    double val = new Double(entry.getValue().getValue().toString());
+                    nodeStats.put(key, val);
+                }
+
             }
 
             log.trace("Parsing MEM stats");
             numResources = event.getNumResources(ResourceType.MEMORY, ip);
             if (numResources > 0) {
                 if (numResources > 1) {
-                    log.trace("The log file contains " + numResources + " MEM samples. I' going to consider only the first");
+                    log.trace("The log file contains " + numResources + " JMX samples. I' going to consider only the first");
                 }
-                mem.add(event.getPublishMeasurement(ResourceType.MEMORY, 0, ip).getValues());
+
+                for(Map.Entry<String, PublishAttribute> entry : event.getPublishMeasurement(ResourceType.MEMORY, 0, ip).getValues().entrySet()){
+                    WPMParam key = WPMParam.getByName(entry.getKey());
+                    double val = new Double(entry.getValue().getValue().toString());
+                    nodeStats.put(key, val);
+                }
             }
+
+
+            ip2params.put(ip, nodeStats);
         }
 
         //trace(jmx);
         //trace(mem);
 
-        //Sample newSample = Sample.getInstance(jmx,mem);
-        //notifyListeners(newSample);
+        WPMSample newSample = WPMSample.getInstance(ip2params);
+        notifyListeners(newSample);
+
     }
 
     @Override
     public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
-
+        /*
         log.trace("Parsing JMX stats");
         PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX);
         HashMap<String, PublishAttribute> jmx = pm.getValues();
@@ -84,11 +100,12 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         HashMap<String, PublishAttribute> mem = pm.getValues();
 
 
-        Sample newSample = Sample.getInstance(jmx,mem);
+        WPMSample newSample = WPMSample.getInstance(jmx, mem);
         notifyListeners(newSample);
+        */
     }
 
-    private void notifyListeners(Sample sample){
+    private void notifyListeners(WPMSample sample){
         for(SampleListener listener : listeners){
             listener.onNewSample(sample);
         }

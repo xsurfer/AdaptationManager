@@ -2,7 +2,7 @@ package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.controller.Controller;
+import eu.cloudtm.Controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

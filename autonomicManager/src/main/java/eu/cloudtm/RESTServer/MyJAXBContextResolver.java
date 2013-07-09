@@ -2,7 +2,7 @@
 //
 //import com.sun.jersey.api.json.JSONConfiguration;
 //import com.sun.jersey.api.json.JSONJAXBContext;
-//import eu.cloudtm.controller.model.Scale;
+//import eu.cloudtm.model.Scale;
 //
 //
 //import javax.ws.rs.ext.ContextResolver;

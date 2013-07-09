@@ -2,11 +2,9 @@ package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.controller.Controller;
-import eu.cloudtm.controller.model.Tuning;
-import eu.cloudtm.controller.model.utils.Forecaster;
-import eu.cloudtm.controller.model.utils.ReplicationProtocol;
-import eu.cloudtm.controller.model.utils.TuningState;
+import eu.cloudtm.Controller;
+import eu.cloudtm.model.utils.Forecaster;
+import eu.cloudtm.model.utils.ReplicationProtocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,17 +29,15 @@ public class ReplicationResource extends AbstractResource {
             @DefaultValue("0") @FormParam("rep_degree_size") int degree
     ) {
 
-        Tuning tuning = new Tuning(forecaster);
-
-        log.info("tuningState: " + tuning.getState());
         log.info("forecaster: " + forecaster);
         log.info("degree: " + degree);
 
-        if( degree<=0 && tuning.getState()==TuningState.MANUAL ){
+        if( degree<=0 && !forecaster.isAutoTuning() ){
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
-        Controller.getInstance().updateDegree(degree, tuning);
+        //Controller.getInstance().updateDegree(degree, tuning);
+
 
         String json = gson.toJson(Controller.getInstance().getState());
         Response.ResponseBuilder builder = Response.ok(json);
@@ -57,13 +53,10 @@ public class ReplicationResource extends AbstractResource {
             @FormParam("rep_protocol") ReplicationProtocol protocol
     ) {
 
-        Tuning tuning = new Tuning(forecaster);
-
-        log.info("type: " + tuning.getState());
         log.info("forecaster: " + forecaster);
         log.info("protocol: " + protocol);
 
-        Controller.getInstance().updateProtocol(protocol, tuning);
+        //Controller.getInstance().updateProtocol(protocol, tuning);
 
         String json = gson.toJson(Controller.getInstance().getState());
         Response.ResponseBuilder builder = Response.ok(json);
