@@ -1,17 +1,12 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.Controller;
 import eu.cloudtm.IOracle;
-import eu.cloudtm.exceptions.OracleException;
 import eu.cloudtm.model.KPI;
-import eu.cloudtm.stats.WPMSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Constructor;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Created by: Fabio Perfetti
@@ -36,7 +31,7 @@ public abstract class AbstractOracle implements IOracle {
 
     public static AbstractOracle getInstance(String oracleName, Controller _controller) {
         if (oracleName.indexOf('.') < 0) {
-            oracleName = "eu.cloudtm.oracles." + oracleName;
+            oracleName = "eu.cloudtm.eu.cloudtm.oracles." + oracleName;
         }
         try {
             AbstractOracle obj;

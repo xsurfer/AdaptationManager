@@ -1,11 +1,7 @@
 package eu.cloudtm.model;
 
-import eu.cloudtm.StatsManager;
-import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Map;
 
 /**
  * Created by: Fabio Perfetti

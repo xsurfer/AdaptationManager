@@ -37,7 +37,7 @@ import Tas2.physicalModel.cpunet.net.tas.FixedRttServiceTimes;
 import eu.cloudtm.StatsManager;
 import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.model.ACF;
-import eu.cloudtm.oracles.InputOracle;
+import eu.cloudtm.oracles.ProcessedSample;
 import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
 import eu.cloudtm.wpm.logService.remote.events.PublishMeasurement;
 import org.apache.commons.logging.Log;
@@ -63,7 +63,7 @@ public class DSTMScenarioFactory {
     private DSTMScenarioFactory() {
     }
 
-    public static DSTMScenarioTas2 buildScenario(InputOracle input,
+    public static DSTMScenarioTas2 buildScenario(ProcessedSample input,
                                                  double timeWindow)
             throws PublishAttributeException, Tas2Exception {
 

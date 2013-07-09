@@ -16,6 +16,7 @@
     <modules>
         <module>webIf</module>
         <module>autonomicManager</module>
+        <module>commons</module>
     </modules>
 
     <dependencies>

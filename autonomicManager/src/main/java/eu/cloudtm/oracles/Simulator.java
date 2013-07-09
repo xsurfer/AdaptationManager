@@ -1,9 +1,7 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.Controller;
 import eu.cloudtm.model.KPI;
-import eu.cloudtm.stats.WPMSample;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +26,7 @@ public class Simulator extends AbstractOracle {
     }
 
     @Override
-    public KPI forecast(InputOracle sample) {
+    public KPI forecast(ProcessedSample sample) {
 
         ProcessBuilder pb = new ProcessBuilder(script, "");
         pb.directory(new File(directory));

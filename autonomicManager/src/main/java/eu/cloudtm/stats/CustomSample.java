@@ -1,6 +1,6 @@
 package eu.cloudtm.stats;
 
-import eu.cloudtm.oracles.InputOracle;
+import eu.cloudtm.oracles.ProcessedSample;
 
 import java.util.Map;
 
@@ -11,14 +11,14 @@ import java.util.Map;
  * Time: 3:56 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CustomSample extends InputOracle {
+public class CustomSample extends ProcessedSample {
 
     private Map<WPMParam, Double> customAvgWPMParam;
     private Map<EvaluatedParam, Double> customEvaluatedParam;
-    private InputOracle inputOracle;
+    private ProcessedSample inputOracle;
 
     public CustomSample(WPMSample sample,
-                        InputOracle _inputOracle,
+                        eu.cloudtm.oracles.ProcessedSample _inputOracle,
                         Map<WPMParam, Double> _customAvgWPMParam,
                         Map<EvaluatedParam, Double> _evaluatedParam) {
         super(sample);

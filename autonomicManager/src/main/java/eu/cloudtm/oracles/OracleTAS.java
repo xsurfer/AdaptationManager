@@ -4,14 +4,12 @@ import Tas2.core.ModelResult;
 import Tas2.core.Tas2;
 import Tas2.core.environment.DSTMScenarioTas2;
 import Tas2.exception.Tas2Exception;
-import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.Controller;
 import eu.cloudtm.exceptions.OracleException;
 import eu.cloudtm.model.KPI;
 import eu.cloudtm.model.PlatformConfiguration;
 import eu.cloudtm.model.utils.InstanceConfig;
 import eu.cloudtm.model.utils.ReplicationProtocol;
-import eu.cloudtm.stats.WPMSample;
 import eu.cloudtm.oracles.common.DSTMScenarioFactory;
 import eu.cloudtm.oracles.common.PublishAttributeException;
 
@@ -37,7 +35,7 @@ public class OracleTAS extends AbstractOracle {
     }
 
     @Override
-    public KPI forecast(InputOracle input) throws OracleException {
+    public KPI forecast(ProcessedSample input) throws OracleException {
         DSTMScenarioTas2 scenario;
 
         try {

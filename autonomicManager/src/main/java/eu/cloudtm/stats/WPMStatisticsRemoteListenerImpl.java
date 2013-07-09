@@ -1,6 +1,6 @@
 package eu.cloudtm.stats;
 
-import eu.cloudtm.common.SampleListener;
+import eu.cloudtm.oracles.ProcessedSample;
 import eu.cloudtm.wpm.logService.remote.events.*;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.parser.ResourceType;
@@ -84,6 +84,8 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         //trace(mem);
 
         WPMSample newSample = WPMSample.getInstance(ip2params);
+        if(newSample.get)
+
         notifyListeners(newSample);
 
     }
@@ -105,7 +107,7 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         */
     }
 
-    private void notifyListeners(WPMSample sample){
+    private void notifyListeners(ProcessedSample sample){
         for(SampleListener listener : listeners){
             listener.onNewSample(sample);
         }

@@ -1,7 +1,7 @@
 package eu.cloudtm;
 
 import com.google.gson.Gson;
-import eu.cloudtm.common.SampleListener;
+import eu.cloudtm.stats.SampleListener;
 import eu.cloudtm.exceptions.OutputFilterException;
 import eu.cloudtm.model.PlatformConfiguration;
 import eu.cloudtm.model.PlatformTuning;

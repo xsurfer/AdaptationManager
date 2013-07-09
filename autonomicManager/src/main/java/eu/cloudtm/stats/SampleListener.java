@@ -1,6 +1,6 @@
-package eu.cloudtm.common;
+package eu.cloudtm.stats;
 
-import eu.cloudtm.stats.WPMSample;
+import eu.cloudtm.oracles.ProcessedSample;
 
 /**
  * Created by: Fabio Perfetti
@@ -9,6 +9,6 @@ import eu.cloudtm.stats.WPMSample;
  */
 public interface SampleListener {
 
-    public void onNewSample(WPMSample sample);
+    public void onNewSample(ProcessedSample sample);
 
 }

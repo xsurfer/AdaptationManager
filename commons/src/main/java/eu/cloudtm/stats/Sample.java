@@ -1,6 +1,5 @@
 package eu.cloudtm.stats;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -11,6 +10,8 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public interface Sample {
+
+    public long getId();
 
     public Set<String> getNodes();
 

@@ -16,13 +16,13 @@ import java.util.Set;
  * Time: 5:31 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class InputOracle implements Sample {
+public abstract class ProcessedSample implements Sample {
 
     protected WPMSample sample;
 
     private Map<EvaluatedParam, Double> evaluatedParams = new HashMap<EvaluatedParam, Double>();
 
-    public InputOracle(WPMSample sample){
+    public ProcessedSample(WPMSample sample){
         this.sample = sample;
         init();
     }

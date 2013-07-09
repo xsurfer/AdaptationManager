@@ -1,7 +1,5 @@
 package eu.cloudtm.stats;
 
-import eu.cloudtm.wpm.parser.ResourceType;
-
 /**
  * Created with IntelliJ IDEA.
  * User: fabio

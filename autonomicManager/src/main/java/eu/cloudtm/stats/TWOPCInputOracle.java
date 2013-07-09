@@ -2,9 +2,6 @@ package eu.cloudtm.stats;
 
 import eu.cloudtm.Controller;
 import eu.cloudtm.model.ACF;
-import eu.cloudtm.oracles.InputOracle;
-
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,7 +10,7 @@ import java.util.Set;
  * Time: 8:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TWOPCInputOracle extends InputOracle {
+public class TWOPCInputOracle extends eu.cloudtm.oracles.ProcessedSample {
 
     public TWOPCInputOracle(WPMSample sample) {
         super(sample);

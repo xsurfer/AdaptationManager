@@ -40,7 +40,6 @@ public class WhatIf {
         customParam.setLocalReadOnlyTxLocalServiceTime( lastSample.getAggregate( WPMParam.LocalReadOnlyTxLocalServiceTime, 0 ) );
         return customParam;
 
-//        return null;
     }
 
 

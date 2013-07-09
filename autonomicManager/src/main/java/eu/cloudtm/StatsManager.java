@@ -1,6 +1,7 @@
 package eu.cloudtm;
 
-import eu.cloudtm.common.SampleListener;
+import eu.cloudtm.oracles.ProcessedSample;
+import eu.cloudtm.stats.SampleListener;
 import eu.cloudtm.stats.WPMSample;
 import eu.cloudtm.common.dto.StatisticDTO;
 import eu.cloudtm.wpm.logService.remote.events.*;
@@ -25,7 +26,7 @@ public class StatsManager implements SampleListener {
 
     private final static int MAX_SIZE = 1000;
 
-    private final Deque<WPMSample> stack = new ArrayDeque<WPMSample>(MAX_SIZE);
+    private final Deque<ProcessedSample> stack = new ArrayDeque<ProcessedSample>(MAX_SIZE);
 
     private StatsManager(){
 
@@ -38,13 +39,13 @@ public class StatsManager implements SampleListener {
         return instance;
     }
 
-    public void onNewSample(WPMSample _sample){
+    public void onNewSample(ProcessedSample sample){
         if(stack.size()>=MAX_SIZE){
-            WPMSample removed = stack.removeLast();
+            ProcessedSample removed = stack.removeLast();
             //log.trace("Deleted stat: " + removed.getId());
         }
-        stack.push(_sample);
-        log.trace("New stas added: " + _sample.getId());
+        stack.push(sample);
+        log.trace("New stas added: " + sample.getId());
     }
 
     /**
@@ -54,18 +55,18 @@ public class StatsManager implements SampleListener {
      * @param type
      * @return
      */
-    public StatisticDTO getAllAvgStatistic(String param, ResourceType type){
-
-        StatisticDTO ret = new StatisticDTO(param);
-
-        Iterator<WPMSample> iter;
-        for (iter = stack.descendingIterator(); iter.hasNext();  ) {
-            WPMSample stat = iter.next();
-            double mean = getAvgAttribute(param, stat, type);
-            ret.addPoint(stat.getId(),mean);
-        }
-        return ret;
-    }
+//    public StatisticDTO getAllAvgStatistic(String param, ResourceType type){
+//
+//        StatisticDTO ret = new StatisticDTO(param);
+//
+//        Iterator<WPMSample> iter;
+//        for (iter = stack.descendingIterator(); iter.hasNext();  ) {
+//            WPMSample stat = iter.next();
+//            double mean = getAvgAttribute(param, stat, type);
+//            ret.addPoint(stat.getId(),mean);
+//        }
+//        return ret;
+//    }
 
     /**
      * This method returns all samples related to a single stat
@@ -73,29 +74,27 @@ public class StatsManager implements SampleListener {
      * @param type
      * @return
      */
-    public StatisticDTO getLastAvgStatistic(String param, ResourceType type){
-        StatisticDTO ret = new StatisticDTO(param);
-        WPMSample lastStat = stack.peek();
-        if(lastStat == null)
-            return ret;
-        double mean = getAvgAttribute(param, lastStat, type);
-        ret.addPoint(lastStat.getId(),mean);
-
-        return ret;
-    }
+//    public StatisticDTO getLastAvgStatistic(String param, ResourceType type){
+//        StatisticDTO ret = new StatisticDTO(param);
+//        WPMSample lastStat = stack.peek();
+//        if(lastStat == null)
+//            return ret;
+//        double mean = getAvgAttribute(param, lastStat, type);
+//        ret.addPoint(lastStat.getId(),mean);
+//
+//        return ret;
+//    }
 
     /**
      * This method returns the last sample related to a single stat
-     * @param attribute
-     * @param type
      * @return
      */
-    public double getLastAvgAttribute(String attribute, ResourceType type) {
-        WPMSample lastStat = stack.peek();
-        if(lastStat == null)
-            return -1;
-        return getAvgAttribute(attribute, lastStat, type);
-    }
+//    public double getLastAvgAttribute(String attribute, ResourceType type) {
+//        WPMSample lastStat = stack.peek();
+//        if(lastStat == null)
+//            return -1;
+//        return getAvgAttribute(attribute, lastStat, type);
+//    }
 
     public WPMSample getLastSample(){
         return stack.peek();
@@ -112,13 +111,13 @@ public class StatsManager implements SampleListener {
     }
 
 
-    public static double getAvgAttribute(String attribute, Map<String, PublishAttribute<Double>> values){
-        double ret= -1.0;
-        if( values != null && !values.isEmpty() ){
-            ret = cast( values.get(attribute).getValue() );
-        }
-        return ret;
-    }
+//    public static double getAvgAttribute(String attribute, Map<String, PublishAttribute<Double>> values){
+//        double ret= -1.0;
+//        if( values != null && !values.isEmpty() ){
+//            ret = cast( values.get(attribute).getValue() );
+//        }
+//        return ret;
+//    }
 
 
 //    public static double getAvgAttribute(String attribute, HashMap<String, PublishAttribute> values){
@@ -145,40 +144,40 @@ public class StatsManager implements SampleListener {
 //
 //    }
 
-    /**
-     * this method evaluates de average of specific sample related to a single stat
-     * @param attribute
-     * @param stat
-     * @param type
-     * @return
-     */
-    public static double getAvgAttribute(String attribute, WPMSample stat, ResourceType type) {
-
-        Map<String, PublishAttribute<Double>> values;
-        switch (type){
-            case JMX:
-                values = stat.getJmx();
-                break;
-            case MEMORY:
-                values = stat.getMem();
-                break;
-            default:
-                throw new RuntimeException("No stats");
-        }
-        return getAvgAttribute(attribute, values);
-    }
-
-    private static double cast(Object o) throws ClassCastException {
-        try {
-            return (Long) o;
-        } catch (ClassCastException c) {
-            try {
-                return (Double) o;
-            } catch (ClassCastException cc) {
-                return (Integer) o;
-            }
-        }
-    }
+//    /**
+//     * this method evaluates de average of specific sample related to a single stat
+//     * @param attribute
+//     * @param stat
+//     * @param type
+//     * @return
+//     */
+//    public static double getAvgAttribute(String attribute, WPMSample stat, ResourceType type) {
+//
+//        Map<String, PublishAttribute<Double>> values;
+//        switch (type){
+//            case JMX:
+//                values = stat.getJmx();
+//                break;
+//            case MEMORY:
+//                values = stat.getMem();
+//                break;
+//            default:
+//                throw new RuntimeException("No stats");
+//        }
+//        return getAvgAttribute(attribute, values);
+//    }
+//
+//    private static double cast(Object o) throws ClassCastException {
+//        try {
+//            return (Long) o;
+//        } catch (ClassCastException c) {
+//            try {
+//                return (Double) o;
+//            } catch (ClassCastException cc) {
+//                return (Integer) o;
+//            }
+//        }
+//    }
 
 
 
