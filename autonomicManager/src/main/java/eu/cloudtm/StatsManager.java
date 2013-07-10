@@ -23,7 +23,7 @@ public class StatsManager implements SampleListener {
 
     private final Deque<ProcessedSample> stack = new ArrayDeque<ProcessedSample>(MAX_SIZE);
 
-    private StatsManager(){
+    public StatsManager(){
 
     }
 

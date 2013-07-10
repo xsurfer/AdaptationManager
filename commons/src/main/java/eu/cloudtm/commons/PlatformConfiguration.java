@@ -14,32 +14,22 @@ public class PlatformConfiguration {
 
 
     /* SCALE */
-    private int platformSize;
-    private int threadPerNode;
-    private InstanceConfig nodesConfig;
+    private int platformSize = 2;
+    private int threadPerNode = 2;
+    private InstanceConfig nodesConfig = InstanceConfig.MEDIUM;
 
     /* REP PROT */
-    private ReplicationProtocol replicationProtocol;
+    private ReplicationProtocol replicationProtocol = ReplicationProtocol.TWOPC;
 
     /* REP DEGREE */
-    private int replicationDegree;
+    private int replicationDegree = 2;
 
     /* DATA PLACEMENT */
-    private Boolean dataPlacement;
+    private Boolean dataPlacement = false;
 
-    public PlatformConfiguration(int _numNodes,
-                                 int _numThreads,
-                                 InstanceConfig _nodeConfig,
-                                 ReplicationProtocol _replicationProtocol,
-                                 int _replicationDegree,
-                                 boolean _dataPlacement){
-        platformSize = _numNodes;
-        threadPerNode = _numThreads;
-        nodesConfig = _nodeConfig;
-        replicationProtocol = _replicationProtocol;
-        replicationDegree = _replicationDegree;
-        dataPlacement = _dataPlacement;
+    public PlatformConfiguration(){
     }
+
 
     /* *** GETTER *** */
 

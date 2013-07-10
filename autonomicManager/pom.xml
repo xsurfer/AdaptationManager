@@ -103,7 +103,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>eu.cloudtm.AutonomicManager</mainClass>
+                    <mainClass>eu.cloudtm.Main</mainClass>
                 </configuration>
             </plugin>
 
@@ -116,7 +116,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>eu.cloudtm.AutonomicManager</mainClass>
+                            <mainClass>eu.cloudtm.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -127,7 +127,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>eu.cloudtm.AutonomicManager</mainClass>
+                            <mainClass>eu.cloudtm.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
