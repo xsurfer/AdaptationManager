@@ -1,6 +1,5 @@
 package eu.cloudtm.actuators;
 
-import eu.cloudtm.IActuator;
 import eu.cloudtm.actuators.deltacloud.CallableSeveralTimes;
 import eu.cloudtm.actuators.deltacloud.DeltaCloudException;
 import eu.cloudtm.actuators.deltacloud.FixedExecutionRunnable;

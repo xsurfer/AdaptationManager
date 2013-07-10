@@ -1,6 +1,7 @@
 package eu.cloudtm.stats;
 
-import eu.cloudtm.oracles.ProcessedSample;
+
+import eu.cloudtm.ProcessedSample;
 
 /**
  * Created by: Fabio Perfetti

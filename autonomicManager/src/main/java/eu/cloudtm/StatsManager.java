@@ -1,18 +1,13 @@
 package eu.cloudtm;
 
-import eu.cloudtm.oracles.ProcessedSample;
 import eu.cloudtm.stats.SampleListener;
-import eu.cloudtm.stats.WPMSample;
-import eu.cloudtm.common.dto.StatisticDTO;
-import eu.cloudtm.wpm.logService.remote.events.*;
-import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.*;
 
 /**
- * It contains a stack of samples. Each {@link eu.cloudtm.stats.WPMSample} is organized in categories
+ * It contains a stack of samples.
  *
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
@@ -30,13 +25,6 @@ public class StatsManager implements SampleListener {
 
     private StatsManager(){
 
-    }
-
-    public static StatsManager getInstance(){
-        if(instance == null){
-            instance = new StatsManager();
-        }
-        return instance;
     }
 
     public void onNewSample(ProcessedSample sample){
@@ -96,15 +84,15 @@ public class StatsManager implements SampleListener {
 //        return getAvgAttribute(attribute, lastStat, type);
 //    }
 
-    public WPMSample getLastSample(){
+    public ProcessedSample getLastSample(){
         return stack.peek();
     }
 
-    public List<WPMSample> getLastNSample(int n){
-        List<WPMSample> samples = new ArrayList<WPMSample>();
-        Queue<WPMSample> queue = Collections.asLifoQueue(new ArrayDeque<WPMSample>(stack));
+    public List<ProcessedSample> getLastNSample(int n){
+        List<ProcessedSample> samples = new ArrayList<ProcessedSample>();
+        Queue<ProcessedSample> queue = Collections.asLifoQueue(new ArrayDeque<ProcessedSample>(stack));
         for(int i=0; i<n; i++){
-            WPMSample sample = queue.remove();
+            ProcessedSample sample = queue.remove();
             samples.add( sample );
         }
         return samples;

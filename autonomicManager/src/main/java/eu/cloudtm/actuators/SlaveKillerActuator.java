@@ -5,10 +5,8 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import eu.cloudtm.IActuator;
 import eu.cloudtm.actuators.radargun.RadargunException;
 import eu.cloudtm.actuators.radargun.SlaveKillerResponse;
-import eu.cloudtm.exceptions.ActuatorException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.deltacloud.client.DeltaCloudClientException;
@@ -53,7 +51,7 @@ public class SlaveKillerActuator implements IActuator {
     }
 
     @Override
-    public void actuate() throws ActuatorException {
+    public void actuate() throws RadargunException {
         ClientConfig config = new DefaultClientConfig();
         Client client = Client.create(config);
         WebResource service = client.resource(getBaseURI());

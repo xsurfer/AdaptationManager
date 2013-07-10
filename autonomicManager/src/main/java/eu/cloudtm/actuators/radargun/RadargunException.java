@@ -1,6 +1,6 @@
 package eu.cloudtm.actuators.radargun;
 
-import eu.cloudtm.exceptions.ActuatorException;
+import eu.cloudtm.actuators.exceptions.ActuatorException;
 
 /**
  * Created by: Fabio Perfetti

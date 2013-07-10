@@ -17,6 +17,9 @@
         <module>webIf</module>
         <module>autonomicManager</module>
         <module>commons</module>
+        <module>statistics</module>
+        <module>oracoles</module>
+        <module>actuators</module>
     </modules>
 
     <dependencies>

@@ -1,8 +1,9 @@
 package eu.cloudtm;
 
 import eu.cloudtm.RESTServer.RESTServer;
-import eu.cloudtm.model.*;
-import eu.cloudtm.model.utils.*;
+import eu.cloudtm.commons.InstanceConfig;
+import eu.cloudtm.commons.PlatformConfiguration;
+import eu.cloudtm.commons.ReplicationProtocol;
 import eu.cloudtm.stats.WPMStatisticsRemoteListenerImpl;
 import eu.cloudtm.stats.WPMViewChangeRemoteListenerImpl;
 import eu.cloudtm.wpm.connector.WPMConnector;

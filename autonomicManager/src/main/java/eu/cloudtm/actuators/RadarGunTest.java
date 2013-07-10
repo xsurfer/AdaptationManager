@@ -1,6 +1,6 @@
 package eu.cloudtm.actuators;
 
-import eu.cloudtm.exceptions.ActuatorException;
+import eu.cloudtm.actuators.exceptions.ActuatorException;
 import org.apache.deltacloud.client.DeltaCloudClientException;
 
 import java.io.BufferedReader;
