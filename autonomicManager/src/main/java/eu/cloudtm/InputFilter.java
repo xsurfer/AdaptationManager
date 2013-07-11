@@ -1,6 +1,6 @@
 package eu.cloudtm;
 
-import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.statistics.WPMProcessedSample;
 import eu.cloudtm.statistics.WPMParam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +38,7 @@ public class InputFilter {
     }
 
     public boolean doFilter(){
-        List<ProcessedSample> lastNSamples = statsManager.getLastNSample( Controller.SAMPLE_WINDOW );
+        List<WPMProcessedSample> lastNSamples = statsManager.getLastNSample( Controller.SAMPLE_WINDOW );
         boolean reconfigure;
 
         boolean arrivalRateResponse = evaluateArrivalRate(lastNSamples);
@@ -50,10 +50,10 @@ public class InputFilter {
         return reconfigure;
     }
 
-    private boolean evaluateAbortRate(List<ProcessedSample> lastNSamples){
+    private boolean evaluateAbortRate(List<WPMProcessedSample> lastNSamples){
         double abortSum = 0.0;
-        for (ProcessedSample sample : lastNSamples){
-            abortSum += (1 - sample.getAvgParam(WPMParam.CommitProbability));
+        for (WPMProcessedSample sample : lastNSamples){
+            abortSum += (1 - sample.getParam(WPMParam.CommitProbability));
         }
         double currentAbortAvg =  abortSum / ((double) lastNSamples.size());
         log.debug("currentAbortAvg: " + currentAbortAvg);
@@ -79,14 +79,14 @@ public class InputFilter {
         return false;
     }
 
-    private boolean evaluateResponseTime(List<ProcessedSample> lastNSamples){
+    private boolean evaluateResponseTime(List<WPMProcessedSample> lastNSamples){
         return false;
     }
 
-    private boolean evaluateArrivalRate(List<ProcessedSample> lastNSamples){
+    private boolean evaluateArrivalRate(List<WPMProcessedSample> lastNSamples){
         double throughputSum = 0.0;
-        for (ProcessedSample sample : lastNSamples){
-            throughputSum += sample.getAvgParam(WPMParam.Throughput);
+        for (WPMProcessedSample sample : lastNSamples){
+            throughputSum += sample.getParam(WPMParam.Throughput);
         }
         double currentThroughputAvg =  throughputSum / ((double) lastNSamples.size());
         log.trace("currentThroughputAvg: " + currentThroughputAvg);

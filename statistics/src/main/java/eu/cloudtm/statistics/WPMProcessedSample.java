@@ -11,13 +11,13 @@ import java.util.Map;
  * Time: 5:31 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class ProcessedSample implements Sample {
+public abstract class WPMProcessedSample implements Sample {
 
     protected WPMSample sample;
 
     private Map<EvaluatedParam, Double> evaluatedParams = new HashMap<EvaluatedParam, Double>();
 
-    public ProcessedSample(WPMSample sample){
+    public WPMProcessedSample(WPMSample sample){
         this.sample = sample;
         init();
     }
@@ -34,18 +34,8 @@ public abstract class ProcessedSample implements Sample {
     }
 
     @Override
-    public List<String> getNodes() {
-        return sample.getNodes();
-    }
-
-    @Override
-    public Object getPerNodeParam(WPMParam param, String nodeIP) {
-        return sample.getPerNodeParam(param, nodeIP);
-    }
-
-    @Override
-    public double getAvgParam(WPMParam param) {
-        return sample.getAvgParam(param);
+    public double getParam(WPMParam param) {
+        return sample.getParam(param);
     }
 
 

@@ -1,7 +1,5 @@
 package eu.cloudtm.statistics;
 
-import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -17,51 +15,28 @@ public class WPMSample implements Sample {
 
     private final long id;
 
-    private final Map<String, Map<String, PublishAttribute>> ip2params;
+    private final Map<String, Double> aggregatedFromWPM;
 
-    public static WPMSample getInstance(Map<String, Map<String, PublishAttribute>> ip2params){
+    public static WPMSample getInstance(Map<String, Double> params2values){
         WPMSample sample = new WPMSample(
                 counter.getAndIncrement(),
-                new HashMap<String, Map<String, PublishAttribute>>(ip2params)
+                new HashMap<String, Double>(params2values)
         );
 
         return sample;
     }
 
-    public WPMSample(long _id, Map<String, Map<String, PublishAttribute>> _ip2params){
+    public WPMSample(long _id, Map<String, Double> aggregated){
         this.id = _id;
-        ip2params = _ip2params;
-
+        this.aggregatedFromWPM = aggregated;
     }
 
     public long getId(){ return id; }
 
-
     @Override
-    public Object getPerNodeParam(WPMParam wpmParam, String nodeIP) {
-        Map<String, PublishAttribute> string2publishAttribute = ip2params.get(nodeIP);
-        return string2publishAttribute.get(wpmParam.getParam()).getValue();
+    public double getParam(WPMParam param) {
+        return aggregatedFromWPM.get(param.getKey());
     }
 
-    @Override
-    public List<String> getNodes() {
-        return new ArrayList<String>( ip2params.keySet() );
-
-    }
-
-    @Override
-    public double getAvgParam(WPMParam param) {
-        double sum = 0;
-
-        for(String ip : ip2params.keySet()){
-            sum += (Double) getPerNodeParam(param, ip);
-        }
-        double avg = sum / (double) ( ip2params.keySet().size() );
-        return avg;
-    }
-
-    protected Map<String, Map<String, PublishAttribute>> getAll(){
-        return ip2params;
-    }
 }
 

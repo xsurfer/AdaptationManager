@@ -34,7 +34,7 @@ public class OracleTAS extends AbstractOracle {
 //    }
 //
 //    @Override
-//    public KPI forecast(ProcessedSample input) throws OracleException {
+//    public KPI forecast(WPMProcessedSample input) throws OracleException {
 //        DSTMScenarioTas2 scenario;
 //
 //        try {

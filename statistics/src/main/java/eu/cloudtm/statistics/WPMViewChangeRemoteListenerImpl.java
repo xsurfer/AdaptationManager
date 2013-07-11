@@ -1,4 +1,4 @@
-package eu.cloudtm;
+package eu.cloudtm.statistics;
 
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.events.PublishViewChangeEvent;
@@ -26,10 +26,11 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
     private String[] currentVMs;
 
-    private WPMStatisticsRemoteListener statisticsListener;
+    private WPMStatisticsRemoteListernerFactory statisticsListernerFactory;
 
-    public WPMViewChangeRemoteListenerImpl(WPMConnector connector){
+    public WPMViewChangeRemoteListenerImpl(WPMConnector connector, WPMStatisticsRemoteListernerFactory statisticsListernerFactory){
         this.connector = connector;
+        this.statisticsListernerFactory = statisticsListernerFactory;
         registerViewChangeListener();
     }
 
@@ -52,9 +53,6 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
         log.info("New set of VMs " + Arrays.toString(currentVMs));
 
-        WPMStatisticsRemoteListener listener = WPMStatisticsRemoteListernerFactory.getInstance().build();
-        this.statisticsListener = listener;
-
-        connector.registerStatisticsRemoteListener(new SubscribeEvent(currentVMs), listener);
+        statisticsListernerFactory.build(new SubscribeEvent(currentVMs));
     }
 }

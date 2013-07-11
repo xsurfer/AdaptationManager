@@ -1,6 +1,6 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.statistics.WPMProcessedSample;
 import eu.cloudtm.statistics.WPMParam;
 
 /**
@@ -10,9 +10,9 @@ import eu.cloudtm.statistics.WPMParam;
  */
 public class InputOracleWPM implements InputOracle {
 
-    private ProcessedSample processedSample;
+    private WPMProcessedSample processedSample;
 
-    public InputOracleWPM(ProcessedSample processedSample) {
+    public InputOracleWPM(WPMProcessedSample processedSample) {
         this.processedSample = processedSample;
     }
 
@@ -23,6 +23,6 @@ public class InputOracleWPM implements InputOracle {
 
     @Override
     public double getAvgParam(WPMParam param) {
-        return processedSample.getAvgParam(param);
+        return processedSample.getParam(param);
     }
 }

@@ -30,12 +30,12 @@ public enum WPMParam {
     ;
 
     private final int id;
-    private final String param;
+    private final String key;
     private final Class clazz;
 
     private WPMParam(int id, String name, Class clazz){
         this.id = id;
-        this.param = name;
+        this.key = name;
         this.clazz = clazz;
     }
 
@@ -43,8 +43,8 @@ public enum WPMParam {
         return id;
     }
 
-    public String getParam(){
-        return param;
+    public String getKey(){
+        return key;
     }
 
     public static WPMParam getById(int id){
@@ -57,7 +57,7 @@ public enum WPMParam {
 
     public static WPMParam getByName(String name){
         for( WPMParam param : values() ){
-            if( param.getParam() == name )
+            if( param.getKey() == name )
                 return param;
         }
         return null;

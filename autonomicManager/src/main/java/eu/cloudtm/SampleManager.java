@@ -1,7 +1,7 @@
 package eu.cloudtm;
 
-import eu.cloudtm.statistics.ProcessedSample;
-import eu.cloudtm.statistics.SampleDispatcher;
+import eu.cloudtm.statistics.WPMProcessedSample;
+import eu.cloudtm.statistics.StatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -14,26 +14,26 @@ import java.util.*;
  * E-mail: perfabio87@gmail.com
  * Date: 6/6/13
  */
-public class SampleManager implements SampleDispatcher {
+public class SampleManager implements StatsManager {
 
     private final static Log log = LogFactory.getLog(SampleManager.class);
 
     private final static int MAX_SIZE = 1000;
 
-    private final Deque<ProcessedSample> stack = new ArrayDeque<ProcessedSample>(MAX_SIZE);
+    private final Deque<WPMProcessedSample> stack = new ArrayDeque<WPMProcessedSample>(MAX_SIZE);
 
     public SampleManager(){
 
     }
 
-    public void dispatch(ProcessedSample sample){
+    public void process(WPMProcessedSample sample){
         pushSample(sample);
 
     }
 
-    private void pushSample(ProcessedSample sample){
+    private void pushSample(WPMProcessedSample sample){
         if(stack.size()>=MAX_SIZE){
-            ProcessedSample removed = stack.removeLast();
+            WPMProcessedSample removed = stack.removeLast();
             //log.trace("Deleted stat: " + removed.getId());
         }
         stack.push(sample);
@@ -88,15 +88,15 @@ public class SampleManager implements SampleDispatcher {
 //        return getAvgAttribute(attribute, lastStat, type);
 //    }
 
-    public ProcessedSample getLastSample(){
+    public WPMProcessedSample getLastSample(){
         return stack.peek();
     }
 
-    public List<ProcessedSample> getLastNSample(int n){
-        List<ProcessedSample> samples = new ArrayList<ProcessedSample>();
-        Queue<ProcessedSample> queue = Collections.asLifoQueue(new ArrayDeque<ProcessedSample>(stack));
+    public List<WPMProcessedSample> getLastNSample(int n){
+        List<WPMProcessedSample> samples = new ArrayList<WPMProcessedSample>();
+        Queue<WPMProcessedSample> queue = Collections.asLifoQueue(new ArrayDeque<WPMProcessedSample>(stack));
         for(int i=0; i<n; i++){
-            ProcessedSample sample = queue.remove();
+            WPMProcessedSample sample = queue.remove();
             samples.add( sample );
         }
         return samples;

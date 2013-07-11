@@ -37,7 +37,7 @@
 //import eu.cloudtm.SampleManager;
 //import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 //import eu.cloudtm.model.ACF;
-//import eu.cloudtm.oracles.ProcessedSample;
+//import eu.cloudtm.oracles.WPMProcessedSample;
 //import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
 //import eu.cloudtm.wpm.logService.remote.events.PublishMeasurement;
 //import org.apache.commons.logging.Log;
@@ -63,7 +63,7 @@
 //    private DSTMScenarioFactory() {
 //    }
 //
-//    public static DSTMScenarioTas2 buildScenario(ProcessedSample input,
+//    public static DSTMScenarioTas2 buildScenario(WPMProcessedSample input,
 //                                                 double timeWindow)
 //            throws PublishAttributeException, Tas2Exception {
 //

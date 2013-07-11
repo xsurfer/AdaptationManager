@@ -2,7 +2,7 @@ package eu.cloudtm;
 
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
-import eu.cloudtm.statistics.SampleDispatcher;
+import eu.cloudtm.statistics.StatsManager;
 
 /**
  * Created by: Fabio Perfetti
@@ -13,7 +13,7 @@ public class AutonomicManager {
 
     public AutonomicManager(PlatformConfiguration platformConfiguration,
                             PlatformTuning platformTuning,
-                            SampleDispatcher sampleManager
+                            StatsManager sampleManager
     ){
 
 

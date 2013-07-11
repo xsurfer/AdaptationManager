@@ -1,7 +1,7 @@
 package eu.cloudtm.oracles;
 
 import eu.cloudtm.Controller;
-import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.statistics.WPMProcessedSample;
 import eu.cloudtm.commons.KPI;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
@@ -64,7 +64,7 @@ public abstract class AbstractOracle implements IOracle {
     }
 
 
-    public KPI minimizeCosts(ProcessedSample sample,
+    public KPI minimizeCosts(WPMProcessedSample sample,
                              double arrivalRateToGuarantee,
                              double abortRateToGuarantee,
                              double responseTimeToGuarantee)
@@ -76,7 +76,7 @@ public abstract class AbstractOracle implements IOracle {
 
 
 
-    private KPI binarySearch(ProcessedSample sample,
+    private KPI binarySearch(WPMProcessedSample sample,
                              double arrivalRateToGuarantee,
                              double abortRateToGuarantee,
                              double responseTimeToGuarantee)

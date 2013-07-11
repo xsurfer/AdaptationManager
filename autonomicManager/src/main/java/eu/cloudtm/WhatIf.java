@@ -16,9 +16,9 @@
 // */
 //public class WhatIf {
 //
-//    private ProcessedSample processedSample;
+//    private WPMProcessedSample processedSample;
 //
-//    public WhatIf(ProcessedSample processedSample){
+//    public WhatIf(WPMProcessedSample processedSample){
 //        this.processedSample = processedSample;
 //
 //    }
@@ -46,7 +46,7 @@
 //
 //    public static void evaluate(WhatIfCustomParamDTO customParam){
 //
-////        WPMSample lastSample = SampleDispatcher.getInstance().getLastSample();
+////        WPMSample lastSample = StatsManager.getInstance().getLastSample();
 ////        Map<String, PublishAttribute<Double>> map = lastSample.getJmx();
 //
 ////        CustomSample customSample = new CustomSample();

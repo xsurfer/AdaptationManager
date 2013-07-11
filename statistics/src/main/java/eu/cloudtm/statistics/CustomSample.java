@@ -9,14 +9,14 @@ import java.util.Map;
  * Time: 3:56 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CustomSample extends ProcessedSample {
+public class CustomSample extends WPMProcessedSample {
 
     private Map<WPMParam, Double> customAvgWPMParam;
     private Map<EvaluatedParam, Double> customEvaluatedParam;
-    private ProcessedSample inputOracle;
+    private WPMProcessedSample inputOracle;
 
     public CustomSample(WPMSample sample,
-                        ProcessedSample _inputOracle,
+                        WPMProcessedSample _inputOracle,
                         Map<WPMParam, Double> _customAvgWPMParam,
                         Map<EvaluatedParam, Double> _evaluatedParam) {
         super(sample);
@@ -26,15 +26,10 @@ public class CustomSample extends ProcessedSample {
     }
 
     @Override
-    public Object getPerNodeParam(WPMParam param, String nodeIP) {
-        return sample.getPerNodeParam(param, nodeIP);
-    }
-
-    @Override
-    public double getAvgParam(WPMParam param) {
+    public double getParam(WPMParam param) {
         Double retVal = customAvgWPMParam.get(param);
         if(retVal==null) {
-            retVal = sample.getAvgParam(param);
+            retVal = sample.getParam(param);
         }
         return retVal;
     }

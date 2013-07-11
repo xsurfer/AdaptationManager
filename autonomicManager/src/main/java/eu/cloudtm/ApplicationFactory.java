@@ -3,7 +3,9 @@ package eu.cloudtm;
 import eu.cloudtm.RESTServer.RESTServer;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
-import eu.cloudtm.statistics.SampleDispatcher;
+import eu.cloudtm.statistics.StatsManager;
+import eu.cloudtm.statistics.WPMStatisticsRemoteListernerFactory;
+import eu.cloudtm.statistics.WPMViewChangeRemoteListenerImpl;
 import eu.cloudtm.wpm.connector.WPMConnector;
 
 /**
@@ -14,7 +16,7 @@ import eu.cloudtm.wpm.connector.WPMConnector;
 public class ApplicationFactory {
 
 
-    private SampleDispatcher statsManager;
+    private StatsManager statsManager;
 
     private PlatformConfiguration platformConfiguration;
 

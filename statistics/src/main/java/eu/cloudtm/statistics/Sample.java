@@ -13,10 +13,6 @@ public interface Sample {
 
     public long getId();
 
-    public List<String> getNodes();
-
-    public Object getPerNodeParam(WPMParam param, String nodeIp);
-
-    public double getAvgParam(WPMParam param);
+    public double getParam(WPMParam param);
 
 }
