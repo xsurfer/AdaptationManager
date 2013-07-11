@@ -1,6 +1,6 @@
 package eu.cloudtm;
 
-import eu.cloudtm.model.SLAItem;
+import eu.cloudtm.commons.SLAItem;
 
 import java.util.Arrays;
 import java.util.Set;

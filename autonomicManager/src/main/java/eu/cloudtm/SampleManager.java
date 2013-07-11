@@ -1,6 +1,7 @@
 package eu.cloudtm;
 
-import eu.cloudtm.stats.SampleListener;
+import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.statistics.SampleDispatcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -13,21 +14,24 @@ import java.util.*;
  * E-mail: perfabio87@gmail.com
  * Date: 6/6/13
  */
-public class StatsManager implements SampleListener {
+public class SampleManager implements SampleDispatcher {
 
-    private static StatsManager instance;
-
-    private final static Log log = LogFactory.getLog(StatsManager.class);
+    private final static Log log = LogFactory.getLog(SampleManager.class);
 
     private final static int MAX_SIZE = 1000;
 
     private final Deque<ProcessedSample> stack = new ArrayDeque<ProcessedSample>(MAX_SIZE);
 
-    public StatsManager(){
+    public SampleManager(){
 
     }
 
-    public void onNewSample(ProcessedSample sample){
+    public void dispatch(ProcessedSample sample){
+        pushSample(sample);
+
+    }
+
+    private void pushSample(ProcessedSample sample){
         if(stack.size()>=MAX_SIZE){
             ProcessedSample removed = stack.removeLast();
             //log.trace("Deleted stat: " + removed.getId());

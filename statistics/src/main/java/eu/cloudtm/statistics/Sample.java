@@ -1,15 +1,19 @@
-package eu.cloudtm.oracles;
+package eu.cloudtm.statistics;
 
-import eu.cloudtm.statistics.WPMParam;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
  * User: fabio
- * Date: 7/10/13
- * Time: 6:43 PM
+ * Date: 7/8/13
+ * Time: 3:57 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface InputOracle {
+public interface Sample {
+
+    public long getId();
+
+    public List<String> getNodes();
 
     public Object getPerNodeParam(WPMParam param, String nodeIp);
 

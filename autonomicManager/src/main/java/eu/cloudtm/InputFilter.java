@@ -1,7 +1,7 @@
 package eu.cloudtm;
 
-import eu.cloudtm.stats.WPMSample;
-import eu.cloudtm.wpm.parser.ResourceType;
+import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.statistics.WPMParam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,7 +16,7 @@ public class InputFilter {
 
     private static Log log = LogFactory.getLog(InputFilter.class);
 
-    private StatsManager statsManager;
+    private SampleManager statsManager;
 
     /* *** SOGLIE *** */
     private static final int DELTA_ARRIVAL_RATE = 2;
@@ -33,12 +33,12 @@ public class InputFilter {
 //    private double current;
 //    private double currentThroughput;
 
-    public InputFilter(StatsManager _statsManager){
+    public InputFilter(SampleManager _statsManager){
         statsManager = _statsManager;
     }
 
     public boolean doFilter(){
-        List<WPMSample> lastNSamples = statsManager.getLastNSample( Controller.SAMPLE_WINDOW );
+        List<ProcessedSample> lastNSamples = statsManager.getLastNSample( Controller.SAMPLE_WINDOW );
         boolean reconfigure;
 
         boolean arrivalRateResponse = evaluateArrivalRate(lastNSamples);
@@ -50,10 +50,10 @@ public class InputFilter {
         return reconfigure;
     }
 
-    private boolean evaluateAbortRate(List<WPMSample> lastNSamples){
+    private boolean evaluateAbortRate(List<ProcessedSample> lastNSamples){
         double abortSum = 0.0;
-        for (WPMSample sample : lastNSamples){
-            abortSum += (1 - StatsManager.getAvgAttribute("CommitProbability", sample, ResourceType.JMX));
+        for (ProcessedSample sample : lastNSamples){
+            abortSum += (1 - sample.getAvgParam(WPMParam.CommitProbability));
         }
         double currentAbortAvg =  abortSum / ((double) lastNSamples.size());
         log.debug("currentAbortAvg: " + currentAbortAvg);
@@ -79,14 +79,14 @@ public class InputFilter {
         return false;
     }
 
-    private boolean evaluateResponseTime(List<WPMSample> lastNSamples){
+    private boolean evaluateResponseTime(List<ProcessedSample> lastNSamples){
         return false;
     }
 
-    private boolean evaluateArrivalRate(List<WPMSample> lastNSamples){
+    private boolean evaluateArrivalRate(List<ProcessedSample> lastNSamples){
         double throughputSum = 0.0;
-        for (WPMSample sample : lastNSamples){
-            throughputSum += StatsManager.getAvgAttribute("Throughput", sample, ResourceType.JMX);
+        for (ProcessedSample sample : lastNSamples){
+            throughputSum += sample.getAvgParam(WPMParam.Throughput);
         }
         double currentThroughputAvg =  throughputSum / ((double) lastNSamples.size());
         log.trace("currentThroughputAvg: " + currentThroughputAvg);

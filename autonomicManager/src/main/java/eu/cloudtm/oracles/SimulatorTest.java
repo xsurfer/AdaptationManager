@@ -1,5 +1,7 @@
 package eu.cloudtm.oracles;
 
+import eu.cloudtm.oracles.exceptions.OracleException;
+
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
@@ -9,8 +11,11 @@ public class SimulatorTest {
 
     public static void main(String[] args) {
         Simulator sim = new Simulator();
-        sim.forecast(null,1,1);
-
+        try {
+            sim.forecast(null);
+        } catch (OracleException e) {
+            e.printStackTrace();
+        }
 
 
     }

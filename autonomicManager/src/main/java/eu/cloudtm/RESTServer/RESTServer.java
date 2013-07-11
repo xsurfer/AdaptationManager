@@ -76,35 +76,5 @@ public class RESTServer {
         httpServer.stop();
     }
 
-    /*
-    public static void main(String[] args) throws IOException {
-        String hostname;
-        Options options = new Options();
-        options.addOption("host", true, "hostname to listen on");
 
-        CommandLineParser parser = new GnuParser();
-        CommandLine cmd;
-        try {
-            cmd = parser.parse(options, args);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        hostname = cmd.getOptionValue("host");
-        if (hostname == null || hostname.length() <= 0)
-            hostname = "localhost";
-        log.info("HOSTNAME: " + hostname);
-
-        RESTServer server = new RESTServer();
-        server.startServer();
-
-        log.info("Hit 1000 to stop it...");
-        int num = 0;
-        while (num != 1000) {
-            Scanner in = new Scanner(System.in);
-            num = in.nextInt();
-        }
-        server.stopServer();
-
-    }
-    */
 }

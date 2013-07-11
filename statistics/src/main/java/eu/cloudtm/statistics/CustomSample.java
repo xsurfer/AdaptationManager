@@ -1,4 +1,4 @@
-package eu.cloudtm;
+package eu.cloudtm.statistics;
 
 import java.util.Map;
 
@@ -26,15 +26,15 @@ public class CustomSample extends ProcessedSample {
     }
 
     @Override
-    public double getPerNodeParam(WPMParam param, int classIdx, String nodeIP) {
-        return sample.getPerNodeParam(param, classIdx, nodeIP);
+    public Object getPerNodeParam(WPMParam param, String nodeIP) {
+        return sample.getPerNodeParam(param, nodeIP);
     }
 
     @Override
-    public double getAvgParam(WPMParam param, int classIdx) {
+    public double getAvgParam(WPMParam param) {
         Double retVal = customAvgWPMParam.get(param);
         if(retVal==null) {
-            retVal = sample.getAvgParam(param, classIdx);
+            retVal = sample.getAvgParam(param);
         }
         return retVal;
     }

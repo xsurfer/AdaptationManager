@@ -1,6 +1,7 @@
-package eu.cloudtm.stats;
+package eu.cloudtm;
 
-import eu.cloudtm.oracles.ProcessedSample;
+import eu.cloudtm.commons.ReplicationProtocol;
+import eu.cloudtm.statistics.*;
 import eu.cloudtm.wpm.logService.remote.events.*;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.parser.ResourceType;
@@ -19,14 +20,11 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     private final static Log log = LogFactory.getLog(WPMStatisticsRemoteListenerImpl.class);
 
-    private Set<SampleListener> listeners = new HashSet();
+    private SampleDispatcher dispatcher;
 
-    public WPMStatisticsRemoteListenerImpl(){
+    public WPMStatisticsRemoteListenerImpl(SampleDispatcher sampleDispatcher){
+        this.dispatcher = sampleDispatcher;
 
-    }
-
-    public WPMStatisticsRemoteListenerImpl(Set<SampleListener> _listeners){
-        listeners.addAll(_listeners);
     }
 
     @Override
@@ -40,11 +38,11 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         Set<String> ips = event.getIps();
         log.trace("Received statistics from wpm instances " + ips.toString());
 
-        Map<String, Map<WPMParam, Double>> ip2params = new HashMap<String, Map<WPMParam, Double>>();
+        Map<String, Map<String, PublishAttribute>> ip2params = new HashMap<String, Map<String, PublishAttribute>>();
 
         for (String ip : ips) {
 
-            Map<WPMParam, Double> nodeStats = new HashMap<WPMParam, Double>();       // conterra tutti i campionamenti per tale ip, perdendo l'organizzazione in JMX, MEM...
+            Map<String, PublishAttribute> nodeStats = new HashMap<String, PublishAttribute>();
             log.trace("Parsing statistics relevant to " + ip);
 
             log.trace("Parsing JMX stats");
@@ -53,13 +51,7 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
                 if (numResources > 1) {
                     log.trace("The log file contains " + numResources + " JMX samples. I' going to consider only the first");
                 }
-
-                for(Map.Entry<String, PublishAttribute> entry : event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues().entrySet()){
-                    WPMParam key = WPMParam.getByName(entry.getKey());
-                    double val = new Double(entry.getValue().getValue().toString());
-                    nodeStats.put(key, val);
-                }
-
+                nodeStats.putAll(event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues());
             }
 
             log.trace("Parsing MEM stats");
@@ -68,25 +60,32 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
                 if (numResources > 1) {
                     log.trace("The log file contains " + numResources + " JMX samples. I' going to consider only the first");
                 }
-
-                for(Map.Entry<String, PublishAttribute> entry : event.getPublishMeasurement(ResourceType.MEMORY, 0, ip).getValues().entrySet()){
-                    WPMParam key = WPMParam.getByName(entry.getKey());
-                    double val = new Double(entry.getValue().getValue().toString());
-                    nodeStats.put(key, val);
-                }
+                nodeStats.putAll( event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues() );
             }
-
 
             ip2params.put(ip, nodeStats);
         }
 
-        //trace(jmx);
-        //trace(mem);
+        WPMSample wpmSample = WPMSample.getInstance(ip2params);
 
-        WPMSample newSample = WPMSample.getInstance(ip2params);
-        if(newSample.get)
+        String singleNode = wpmSample.getNodes().get(0);
 
-        notifyListeners(newSample);
+        String repProtWPMValue = (String) wpmSample.getPerNodeParam(WPMParam.CurrentProtocolId, singleNode);
+        ReplicationProtocol currentProtocol = ReplicationProtocol.getByWPMValue( repProtWPMValue );
+        ProcessedSample processedSample = null;
+        switch (currentProtocol){
+            case PB:
+
+                break;
+            case TO:
+                break;
+            case TWOPC:
+                processedSample = new TWOPCInputOracle(wpmSample);
+                break;
+        }
+
+        dispatcher.dispatch(processedSample);
+
 
     }
 
@@ -107,11 +106,11 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         */
     }
 
-    private void notifyListeners(ProcessedSample sample){
-        for(SampleListener listener : listeners){
-            listener.onNewSample(sample);
-        }
-    }
+//    private void notifyListeners(ProcessedSample sample){
+//        for(SampleDispatcher listener : listeners){
+//            listener.dispatch(sample);
+//        }
+//    }
 
 
     private void trace(Set<HashMap<String, PublishAttribute>> set) {
@@ -155,16 +154,16 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
     }
 
 
-    public boolean addSampleListener(SampleListener sampleListener){
-        return listeners.add(sampleListener);
-    }
-
-    public boolean removeSampleListener(SampleListener sampleListener){
-        return listeners.remove(sampleListener);
-    }
-
-    public Set<SampleListener> getSampleListeners(){
-        return this.listeners;
-    }
+//    public boolean addSampleListener(SampleDispatcher sampleListener){
+//        return listeners.add(sampleListener);
+//    }
+//
+//    public boolean removeSampleListener(SampleDispatcher sampleListener){
+//        return listeners.remove(sampleListener);
+//    }
+//
+//    public Set<SampleDispatcher> getSampleListeners(){
+//        return this.listeners;
+//    }
 
 }

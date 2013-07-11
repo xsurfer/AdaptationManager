@@ -1,4 +1,4 @@
-package eu.cloudtm;
+package eu.cloudtm.statistics;
 
 
 import eu.cloudtm.commons.ACF;
@@ -18,13 +18,13 @@ public class TWOPCInputOracle extends ProcessedSample {
 
     @Override
     public double getACF() {
-        double PaoloLocalTakenLocks = getAvgParam(WPMParam.PaoloLocalTakenLocks, 0);
-        double NumPuts = getAvgParam(WPMParam.NumPuts, 0);
-        double PaoloLocalTakenHoldTime = getAvgParam(WPMParam.PaoloLocalTakenHoldTime, 0);
-        double PaoloRemoteTakenHoldTime = getAvgParam(WPMParam.PaoloRemoteTakenHoldTime, 0);
-        double PaoloRemoteTakenLocks = getAvgParam(WPMParam.PaoloRemoteTakenLocks, 0);
-        double threads = Controller.getInstance().getCurrentConfiguration().threadPerNode();
-        double timeWindow = Controller.TIME_WINDOW;
+        double PaoloLocalTakenLocks = getAvgParam(WPMParam.PaoloLocalTakenLocks);
+        double NumPuts = getAvgParam(WPMParam.NumPuts);
+        double PaoloLocalTakenHoldTime = getAvgParam(WPMParam.PaoloLocalTakenHoldTime);
+        double PaoloRemoteTakenHoldTime = getAvgParam(WPMParam.PaoloRemoteTakenHoldTime);
+        double PaoloRemoteTakenLocks = getAvgParam(WPMParam.PaoloRemoteTakenLocks);
+        double threads = 0; //Controller.getInstance().getCurrentConfiguration().threadPerNode();
+        double timeWindow = 60D; // Controller.TIME_WINDOW;
 
         double acf = new ACF(
                 PaoloLocalTakenLocks,

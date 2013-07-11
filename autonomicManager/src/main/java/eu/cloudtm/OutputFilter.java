@@ -1,8 +1,8 @@
 package eu.cloudtm;
 
 import eu.cloudtm.actuators.DeltaCloudActuator;
+import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.exceptions.OutputFilterException;
-import eu.cloudtm.model.PlatformConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.deltacloud.client.DeltaCloudClientException;

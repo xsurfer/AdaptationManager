@@ -15,17 +15,35 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.apache.deltacloud.client</groupId>
-            <artifactId>client</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <groupId>eu.cloudtm</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>eu.cloudtm</groupId>
-            <artifactId>WPMConnector</artifactId>
-            <version>1.0.0</version>
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${basedir}/lib/WPMConnector.jar</systemPath>-->
+            <artifactId>oracoles</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.cloudtm</groupId>
+            <artifactId>actuators</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.cloudtm</groupId>
+            <artifactId>statistics</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.apache.deltacloud.client</groupId>
+            <artifactId>client</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -48,35 +66,44 @@
         </dependency>
         -->
 
+        <!--
         <dependency>
             <groupId>flanagan</groupId>
             <artifactId>flanagan</artifactId>
             <version>1.0.0</version>
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${basedir}/lib/flanagan-1.0.0.jar</systemPath>-->
         </dependency>
 
         <dependency>
             <groupId>jama</groupId>
             <artifactId>jama</artifactId>
             <version>1.0.2</version>
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${basedir}/lib/jama-1.0.2.jar</systemPath>-->
         </dependency>
 
         <dependency>
             <groupId>eu.cloudtm</groupId>
             <artifactId>tas</artifactId>
             <version>2.0.0</version>
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${basedir}/lib/tas-2.0.0.jar</systemPath>-->
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.2.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-bundle</artifactId>
+            <version>1.17.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-grizzly2</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+
     </dependencies>
 
 

@@ -1,6 +1,8 @@
 package eu.cloudtm;
 
 import eu.cloudtm.commons.PlatformConfiguration;
+import eu.cloudtm.commons.PlatformTuning;
+import eu.cloudtm.statistics.SampleDispatcher;
 
 /**
  * Created by: Fabio Perfetti
@@ -9,7 +11,11 @@ import eu.cloudtm.commons.PlatformConfiguration;
  */
 public class AutonomicManager {
 
-    public AutonomicManager(){
+    public AutonomicManager(PlatformConfiguration platformConfiguration,
+                            PlatformTuning platformTuning,
+                            SampleDispatcher sampleManager
+    ){
+
 
     }
 

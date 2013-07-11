@@ -1,13 +1,12 @@
 package eu.cloudtm;
 
 import com.google.gson.Gson;
-import eu.cloudtm.stats.SampleListener;
+import eu.cloudtm.commons.PlatformConfiguration;
+import eu.cloudtm.commons.PlatformState;
+import eu.cloudtm.commons.PlatformTuning;
+import eu.cloudtm.commons.State;
 import eu.cloudtm.exceptions.OutputFilterException;
-import eu.cloudtm.model.PlatformConfiguration;
-import eu.cloudtm.model.PlatformTuning;
-import eu.cloudtm.model.State;
-import eu.cloudtm.model.utils.PlatformState;
-import eu.cloudtm.stats.WPMSample;
+import eu.cloudtm.statistics.WPMSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * E-mail: perfabio87@gmail.com
  * Date: 6/5/13
  */
-public class Controller implements SampleListener {
+public class Controller {
 
     private static Log log = LogFactory.getLog(Controller.class);
 
@@ -42,7 +41,7 @@ public class Controller implements SampleListener {
 
     /* COMPONENTs */
 
-    private StatsManager statsManager;
+    private eu.cloudtm.SampleManager statsManager;
 
     private InputFilter inputFilter;
 
@@ -79,13 +78,8 @@ public class Controller implements SampleListener {
         return instance;
     }
 
-    public static Controller getInstance(PlatformConfiguration _configuration){
-        if(instance == null)
-            instance = new Controller(_configuration, StatsManager.getInstance());
-        return instance;
-    }
 
-    private Controller(PlatformConfiguration _configuration, StatsManager _statsManager) {
+    public Controller(PlatformConfiguration _configuration, SampleManager _statsManager) {
         statsManager =  _statsManager;
         platformConfiguration = _configuration;
         inputFilter = new InputFilter(statsManager);
@@ -94,7 +88,6 @@ public class Controller implements SampleListener {
 
     /* METHODS */
 
-    @Override
     public void onNewSample(WPMSample sample) {
         ControllerLogger.log.info("New sample stats received (" + sample.getId() + ")");
         if( !samplesCounter.compareAndSet(SAMPLE_WINDOW, 1) ){  // Num sample < SAMPLE_WINDOW

@@ -3,6 +3,8 @@ package eu.cloudtm;
 import eu.cloudtm.RESTServer.RESTServer;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
+import eu.cloudtm.statistics.SampleDispatcher;
+import eu.cloudtm.wpm.connector.WPMConnector;
 
 /**
  * Created by: Fabio Perfetti
@@ -11,9 +13,8 @@ import eu.cloudtm.commons.PlatformTuning;
  */
 public class ApplicationFactory {
 
-    private AutonomicManager autonomicManager;
 
-    private StatsManager statsManager;
+    private SampleDispatcher statsManager;
 
     private PlatformConfiguration platformConfiguration;
 
@@ -21,17 +22,31 @@ public class ApplicationFactory {
 
     private RESTServer restServer;
 
+    private WPMConnector connector;
+
     public AutonomicManager build(){
 
-        statsManager = new StatsManager();
+        statsManager = new SampleManager();
         platformConfiguration = new PlatformConfiguration();
         platformTuning = new PlatformTuning();
 
         restServer = new RESTServer();
 
+        buildWpmListener();
 
-        autonomicManager = new AutonomicManager();
+        AutonomicManager autonomicManager = new AutonomicManager(platformConfiguration, platformTuning, statsManager);
         return autonomicManager;
+    }
+
+    private void buildWpmListener(){
+        try {
+            connector = new WPMConnector();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        WPMViewChangeRemoteListenerImpl viewChangeListener = new WPMViewChangeRemoteListenerImpl(connector);
+        WPMStatisticsRemoteListernerFactory WPMStatsfactory = new WPMStatisticsRemoteListernerFactory(statsManager);
     }
 
 

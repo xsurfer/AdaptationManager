@@ -1,8 +1,8 @@
-package eu.cloudtm;
+package eu.cloudtm.statistics;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,18 +34,18 @@ public abstract class ProcessedSample implements Sample {
     }
 
     @Override
-    public Set<String> getNodes() {
+    public List<String> getNodes() {
         return sample.getNodes();
     }
 
     @Override
-    public double getPerNodeParam(WPMParam param, int classIdx, String nodeIP) {
-        return sample.getPerNodeParam(param, classIdx, nodeIP);
+    public Object getPerNodeParam(WPMParam param, String nodeIP) {
+        return sample.getPerNodeParam(param, nodeIP);
     }
 
     @Override
-    public double getAvgParam(WPMParam param, int classIdx) {
-        return sample.getAvgParam(param, classIdx);
+    public double getAvgParam(WPMParam param) {
+        return sample.getAvgParam(param);
     }
 
 

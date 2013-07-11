@@ -7,17 +7,24 @@ package eu.cloudtm.commons;
  */
 public enum ReplicationProtocol {
 
-    TWOPC("2pc"),TOM("tom"),PB("pb");
+    TWOPC("2PC"),TO("TO"),PB("PB");
 
-    private final String text;
+    private final String wpmValue;
 
     private ReplicationProtocol(final String text) {
-        this.text = text;
+        this.wpmValue = text;
     }
 
-    @Override
-    public String toString() {
-        return text;
+    public static ReplicationProtocol getByWPMValue(String wpmValue){
+        for ( ReplicationProtocol rp : values() ){
+            if(rp.getWpmValue().equals(wpmValue))
+                return rp;
+        }
+        throw new RuntimeException("No protocol available with wpmValue=" + wpmValue );
+    }
+
+    public String getWpmValue() {
+        return wpmValue;
     }
 
 }

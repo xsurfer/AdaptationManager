@@ -1,9 +1,10 @@
 package eu.cloudtm;
 
-import eu.cloudtm.exceptions.OracleException;
-import eu.cloudtm.model.KPI;
-import eu.cloudtm.model.PlatformConfiguration;
+import eu.cloudtm.commons.KPI;
+import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.oracles.AbstractOracle;
+import eu.cloudtm.oracles.IOracle;
+import eu.cloudtm.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,13 +25,13 @@ public class Optimizer {
 
     private SLAManager slaManager = new SLAManager();
 
-    private StatsManager statsManager;
+    private SampleManager statsManager;
 
     private final static int ARRIVAL_RATE_GUARANTEE_PERC = 50;
     private final static int ABORT_GUARANTEE_PERC = 5;
     private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
 
-    public Optimizer(Controller _controller, List<String> _oracles, StatsManager _statsManager){
+    public Optimizer(Controller _controller, List<String> _oracles, SampleManager _statsManager){
         controller = _controller;
         oracles = _oracles;
         statsManager = _statsManager;
@@ -55,7 +56,7 @@ public class Optimizer {
 
         PlatformConfiguration nextConfig = null;
         for(String oracleName : oracles){
-            IOracle oracle = AbstractOracle.getInstance(oracleName, controller);
+            AbstractOracle oracle = AbstractOracle.getInstance(oracleName, controller);
             log.info( oracle );
             KPI kpi = null;
             try {

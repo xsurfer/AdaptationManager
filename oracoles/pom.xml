@@ -10,6 +10,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>oracoles</artifactId>
+    <packaging>jar</packaging>
 
+
+    <dependencies>
+
+        <dependency>
+            <groupId>eu.cloudtm</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.cloudtm</groupId>
+            <artifactId>statistics</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
 
 </project>

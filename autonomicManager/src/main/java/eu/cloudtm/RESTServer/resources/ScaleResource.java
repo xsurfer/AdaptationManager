@@ -3,8 +3,8 @@ package eu.cloudtm.RESTServer.resources;
 import com.google.gson.Gson;
 import com.sun.jersey.spi.resource.Singleton;
 import eu.cloudtm.Controller;
-import eu.cloudtm.model.utils.Forecaster;
-import eu.cloudtm.model.utils.InstanceConfig;
+import eu.cloudtm.commons.Forecaster;
+import eu.cloudtm.commons.InstanceConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
