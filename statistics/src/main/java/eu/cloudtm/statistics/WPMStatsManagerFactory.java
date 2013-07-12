@@ -1,5 +1,6 @@
 package eu.cloudtm.statistics;
 
+import eu.cloudtm.commons.IPlatformConfiguration;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
 
@@ -18,7 +19,12 @@ public class WPMStatsManagerFactory {
 
     private WPMStatisticsRemoteListernerFactory statisticsRemoteListernerFactory;
 
-    public WPMStatsManagerFactory(){
+    private WPMViewChangeRemoteListener viewChangeRemoteListener;
+
+    private IPlatformConfiguration platformConfiguration;
+
+    public WPMStatsManagerFactory(IPlatformConfiguration platformConfiguration){
+        this.platformConfiguration = platformConfiguration;
 
     }
 
@@ -35,11 +41,10 @@ public class WPMStatsManagerFactory {
             throw new RuntimeException(e);
         }
 
-        WPMViewChangeRemoteListener viewChangeRemoteListener = new WPMViewChangeRemoteListenerImpl(connector);
 
-        WPMStatsManager wpmStatsManager = new WPMStatsManager(viewChangeRemoteListener);
-        this.statisticsRemoteListernerFactory =
-                new WPMStatisticsRemoteListernerFactory(connector, wpmStatsManager);
+        WPMStatsManager wpmStatsManager = new WPMStatsManager();
+        this.statisticsRemoteListernerFactory = new WPMStatisticsRemoteListernerFactory(connector, wpmStatsManager, platformConfiguration);
+        viewChangeRemoteListener = new WPMViewChangeRemoteListenerImpl(connector, statisticsRemoteListernerFactory);
 
         return wpmStatsManager;
     }

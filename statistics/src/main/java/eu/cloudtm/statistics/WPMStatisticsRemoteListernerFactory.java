@@ -1,8 +1,10 @@
 package eu.cloudtm.statistics;
 
+import eu.cloudtm.commons.IPlatformConfiguration;
+import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
-import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
+import eu.cloudtm.wpm.logService.remote.observables.Handle;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,14 +17,17 @@ public class WPMStatisticsRemoteListernerFactory {
 
     private StatsManager dispatcher;
     private WPMConnector connector;
+    private IPlatformConfiguration currentConfig;
 
-    public WPMStatisticsRemoteListernerFactory(WPMConnector connector, StatsManager dispatcher){
+    public WPMStatisticsRemoteListernerFactory(WPMConnector connector, StatsManager dispatcher, IPlatformConfiguration currentConfig){
         this.connector = connector;
         this.dispatcher = dispatcher;
+        this.currentConfig = currentConfig;
     }
 
-    public WPMStatisticsRemoteListener build(SubscribeEvent subscribeEvent){
-        return new WPMStatisticsRemoteListenerImpl(connector, dispatcher);
+    public Handle build(SubscribeEvent subscribeEvent){
+        StatsProcessor processor = new StatsProcessor(currentConfig);
+        return new WPMStatisticsRemoteListenerImpl(connector, dispatcher, subscribeEvent, processor).getHandle();
     }
 
 }

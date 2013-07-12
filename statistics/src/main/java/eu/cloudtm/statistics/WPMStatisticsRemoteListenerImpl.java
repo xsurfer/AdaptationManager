@@ -3,6 +3,7 @@ package eu.cloudtm.statistics;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.events.*;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
+import eu.cloudtm.wpm.logService.remote.observables.Handle;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,9 +22,23 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     private StatsManager statsManager;
 
-    public WPMStatisticsRemoteListenerImpl(WPMConnector connector, StatsManager statsManager){
-        this.statsManager = statsManager;
+    private Handle handle;
 
+    private StatsProcessor processor;
+
+    public WPMStatisticsRemoteListenerImpl(WPMConnector connector, StatsManager statsManager, SubscribeEvent subscribeEvent, StatsProcessor processor){
+        this.processor = processor;
+
+        this.statsManager = statsManager;
+        try {
+            handle = connector.registerStatisticsRemoteListener(subscribeEvent, this);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Handle getHandle(){
+        return handle;
     }
 
     @Override
@@ -110,7 +125,8 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         }
 
         WPMSample wpmSample = WPMSample.getInstance(aggregatedStats);
-        statsManager.process(wpmSample);
+        WPMProcessedSample processedSample = processor.process(wpmSample);
+        statsManager.push(processedSample);
     }
 
 

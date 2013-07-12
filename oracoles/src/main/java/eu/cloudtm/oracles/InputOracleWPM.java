@@ -1,7 +1,10 @@
 package eu.cloudtm.oracles;
 
+import eu.cloudtm.statistics.EvaluatedParam;
 import eu.cloudtm.statistics.WPMProcessedSample;
 import eu.cloudtm.statistics.WPMParam;
+
+import java.util.Map;
 
 /**
  * Created by: Fabio Perfetti
@@ -11,18 +14,26 @@ import eu.cloudtm.statistics.WPMParam;
 public class InputOracleWPM implements InputOracle {
 
     private WPMProcessedSample processedSample;
+    private Map<ForecastParam, Object> forecastParam;
 
-    public InputOracleWPM(WPMProcessedSample processedSample) {
+    public InputOracleWPM(WPMProcessedSample processedSample, Map<ForecastParam, Object> forecastParam) {
         this.processedSample = processedSample;
+        this.forecastParam = forecastParam;
     }
 
     @Override
-    public Object getPerNodeParam(WPMParam param, String nodeIp) {
-        return processedSample.getPerNodeParam(param, nodeIp);
-    }
-
-    @Override
-    public double getAvgParam(WPMParam param) {
+    public Object getParam(WPMParam param) {
         return processedSample.getParam(param);
     }
+
+    @Override
+    public Object getForecastParam(ForecastParam param) {
+        return forecastParam.get(param);
+    }
+
+    @Override
+    public double getEvaluatedParam(EvaluatedParam param){
+        return processedSample.getEvaluatedParam(param);
+    }
+
 }

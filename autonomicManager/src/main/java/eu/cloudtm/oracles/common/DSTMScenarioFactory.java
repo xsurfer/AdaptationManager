@@ -34,7 +34,7 @@
 //import Tas2.physicalModel.cpunet.cpu.two.CpuServiceTimes2Impl;
 //import Tas2.physicalModel.cpunet.net.queue.NetServiceTimes;
 //import Tas2.physicalModel.cpunet.net.tas.FixedRttServiceTimes;
-//import eu.cloudtm.SampleManager;
+//import eu.cloudtm.WPMStatsManagerOLD;
 //import eu.cloudtm.common.dto.WhatIfCustomParamDTO;
 //import eu.cloudtm.model.ACF;
 //import eu.cloudtm.oracles.WPMProcessedSample;
@@ -100,9 +100,9 @@
 //
 //        // customizing cpu params
 //        if (customParam.getLocalReadOnlyTxLocalServiceTime() != -1)
-//            cpu.setReadOnlyTxLocalExecutionS(SampleManager.getAvgAttribute("LocalReadOnlyTxLocalServiceTime", jmx));
+//            cpu.setReadOnlyTxLocalExecutionS(WPMStatsManagerOLD.getAvgAttribute("LocalReadOnlyTxLocalServiceTime", jmx));
 //        if (customParam.getLocalUpdateTxLocalServiceTime() != -1)
-//            cpu.setUpdateTxLocalExecutionS(SampleManager.getAvgAttribute("LocalUpdateTxLocalServiceTime", jmx));
+//            cpu.setUpdateTxLocalExecutionS(WPMStatsManagerOLD.getAvgAttribute("LocalUpdateTxLocalServiceTime", jmx));
 //
 //        log.trace(cpu);
 //
@@ -141,31 +141,31 @@
 //    private Set<HashMap<String, PublishAttribute>> toHashMapSet(Set<PublishMeasurement> measurements) {
 //        Set<HashMap<String, PublishAttribute>> set = new HashSet<HashMap<String, PublishAttribute>>();
 //        for (PublishMeasurement m : measurements) {
-//            set.add(m.getValues());
+//            set.push(m.getValues());
 //        }
 //        return set;
 //    }
 //
 //    private static CpuServiceTimes buildCpuServiceTimes(HashMap<String, PublishAttribute> values) throws PublishAttributeException {
 //        //Local Update
-//        double updateLocalTxLocalExec = SampleManager.getAvgAttribute("LocalUpdateTxLocalServiceTime", values);
-//        double updateLocalTxPrepare = SampleManager.getAvgAttribute("LocalUpdateTxPrepareServiceTime", values);
-//        double updateLocalTxCommit = SampleManager.getAvgAttribute("LocalUpdateTxCommitServiceTime", values);
-//        double updateLocalTxLocalRollback = SampleManager.getAvgAttribute("LocalUpdateTxLocalRollbackResponseTime", values);
-//        double updateLocalTxRemoteRollback = SampleManager.getAvgAttribute("LocalUpdateTxRemoteRollbackServiceTime", values);
+//        double updateLocalTxLocalExec = WPMStatsManagerOLD.getAvgAttribute("LocalUpdateTxLocalServiceTime", values);
+//        double updateLocalTxPrepare = WPMStatsManagerOLD.getAvgAttribute("LocalUpdateTxPrepareServiceTime", values);
+//        double updateLocalTxCommit = WPMStatsManagerOLD.getAvgAttribute("LocalUpdateTxCommitServiceTime", values);
+//        double updateLocalTxLocalRollback = WPMStatsManagerOLD.getAvgAttribute("LocalUpdateTxLocalRollbackResponseTime", values);
+//        double updateLocalTxRemoteRollback = WPMStatsManagerOLD.getAvgAttribute("LocalUpdateTxRemoteRollbackServiceTime", values);
 //        //Local Read Only
 //        //TODO this should be the service time. I only have the response time due to a bug. It's +/- the same if I don't vary the threads and keep the load low
 //
 //        // FABIO FABIO FABIO ---> questa è vecchia da sostituire con LocalReadOnlyTxLocalServiceTime
 //        //double readOnlyTxLocalExec = getAvgAttribute("AvgLocalReadOnlyExecutionTime",values);//getAvgAttribute("LocalReadOnlyTxLocalResponseTime", values);
 //        // FABIO FABIO FABIO
-//        double readOnlyTxLocalExec = SampleManager.getAvgAttribute("LocalReadOnlyTxLocalServiceTime", values);
-//        double readOnlyTxPrepare = SampleManager.getAvgAttribute("LocalReadOnlyTxPrepareServiceTime", values);//("ReadOnlyCommitCpuTime");
-//        double readOnlyTxCommit = SampleManager.getAvgAttribute("LocalReadOnlyTxCommitServiceTime", values);
+//        double readOnlyTxLocalExec = WPMStatsManagerOLD.getAvgAttribute("LocalReadOnlyTxLocalServiceTime", values);
+//        double readOnlyTxPrepare = WPMStatsManagerOLD.getAvgAttribute("LocalReadOnlyTxPrepareServiceTime", values);//("ReadOnlyCommitCpuTime");
+//        double readOnlyTxCommit = WPMStatsManagerOLD.getAvgAttribute("LocalReadOnlyTxCommitServiceTime", values);
 //        //Remote Update
-//        double updateRemoteTxLocalExec = SampleManager.getAvgAttribute("RemoteUpdateTxPrepareServiceTime", values);
-//        double updateRemoteTxCommit = SampleManager.getAvgAttribute("RemoteUpdateTxCommitServiceTime", values);
-//        double updateRemoteTxRollback = SampleManager.getAvgAttribute("RemoteUpdateTxRollbackServiceTime", values);
+//        double updateRemoteTxLocalExec = WPMStatsManagerOLD.getAvgAttribute("RemoteUpdateTxPrepareServiceTime", values);
+//        double updateRemoteTxCommit = WPMStatsManagerOLD.getAvgAttribute("RemoteUpdateTxCommitServiceTime", values);
+//        double updateRemoteTxRollback = WPMStatsManagerOLD.getAvgAttribute("RemoteUpdateTxRollbackServiceTime", values);
 //
 //        CpuServiceTimes2Impl cpu = new CpuServiceTimes2Impl();
 //        cpu.setUpdateTxLocalExecutionS(updateLocalTxLocalExec);
@@ -194,16 +194,16 @@
 //            throws PublishAttributeException {
 //
 //        //TODO: check
-//        double wrOps = (double) ((int) SampleManager.getAvgAttribute("SuxNumPuts", JMXvalues));
+//        double wrOps = (double) ((int) WPMStatsManagerOLD.getAvgAttribute("SuxNumPuts", JMXvalues));
 //        boolean RoA = ROA;
-//        double wrPer = SampleManager.getAvgAttribute("RetryWritePercentage", JMXvalues);
+//        double wrPer = WPMStatsManagerOLD.getAvgAttribute("RetryWritePercentage", JMXvalues);
 //        double lambda = CLOSED_SYSTEM;
-//        double mexSize = SampleManager.getAvgAttribute("PrepareCommandBytes", JMXvalues);
+//        double mexSize = WPMStatsManagerOLD.getAvgAttribute("PrepareCommandBytes", JMXvalues);
 //
 //
 //        double acf = ACF.evaluate(JMXvalues, threads, timeWindow);//rrp.getAcfFromInversePrepareProb(numThreads,wrOps);//rrp.getClosedAcf(numThreads);
 //
-//        double mem = SampleManager.getAvgAttribute("MemoryInfo.used", MEMvalues);
+//        double mem = WPMStatsManagerOLD.getAvgAttribute("MemoryInfo.used", MEMvalues);
 //
 //        WorkParams workParams = new WorkParams();
 //        workParams.setRetryOnAbort(RoA);

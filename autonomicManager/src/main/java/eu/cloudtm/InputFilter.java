@@ -2,6 +2,7 @@ package eu.cloudtm;
 
 import eu.cloudtm.statistics.WPMProcessedSample;
 import eu.cloudtm.statistics.WPMParam;
+import eu.cloudtm.statistics.WPMStatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,7 +17,7 @@ public class InputFilter {
 
     private static Log log = LogFactory.getLog(InputFilter.class);
 
-    private SampleManager statsManager;
+    private WPMStatsManager statsManager;
 
     /* *** SOGLIE *** */
     private static final int DELTA_ARRIVAL_RATE = 2;
@@ -33,7 +34,7 @@ public class InputFilter {
 //    private double current;
 //    private double currentThroughput;
 
-    public InputFilter(SampleManager _statsManager){
+    public InputFilter(WPMStatsManager _statsManager){
         statsManager = _statsManager;
     }
 

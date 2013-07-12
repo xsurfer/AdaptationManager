@@ -1,6 +1,10 @@
 package eu.cloudtm.statistics;
 
 
+import eu.cloudtm.commons.dto.StatisticDTO;
+
+import java.util.List;
+
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
@@ -8,6 +12,14 @@ package eu.cloudtm.statistics;
  */
 public interface StatsManager {
 
-    public void process(WPMSample sample);
+    public void push(WPMProcessedSample sample);
+
+    public WPMProcessedSample getLastSample();
+
+    public List<WPMProcessedSample> getLastNSample(int n);
+
+    public StatisticDTO getLastAvgStatistic(String param);
+
+    public StatisticDTO getAllAvgStatistic(String param);
 
 }

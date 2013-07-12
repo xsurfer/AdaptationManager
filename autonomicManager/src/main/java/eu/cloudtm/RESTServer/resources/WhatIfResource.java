@@ -2,7 +2,7 @@
 //
 //import com.google.gson.Gson;
 //import com.sun.jersey.spi.resource.Singleton;
-//import eu.cloudtm.SampleManager;
+//import eu.cloudtm.WPMStatsManagerOLD;
 //import eu.cloudtm.WhatIf;
 //import eu.cloudtm.Controller;
 //import eu.cloudtm.oracles.AbstractOracle;
@@ -63,7 +63,7 @@
 //    ){
 //
 //        if(lastSample==null)
-//            lastSample = SampleManager.getInstance().getLastSample();
+//            lastSample = WPMStatsManagerOLD.getInstance().getLastSample();
 //
 //        WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
 //        customParam.setACF( validateParam(acf) );
@@ -122,7 +122,7 @@
 //
 //        WhatIfCustomParamDTO currentParamDTO = WhatIf.retrieveCurrentValues();
 //
-//        lastSample = SampleManager.getInstance().getLastSample();
+//        lastSample = WPMStatsManagerOLD.getInstance().getLastSample();
 //
 //        StringBuffer json = new StringBuffer();
 //
@@ -131,7 +131,7 @@
 //            if (json.length() > 3) {
 //                json.append(" , ");
 //            }
-//            json.append( getJSON(param.getKey(), String.valueOf(SampleManager.getInstance().getAvgAttribute(param.getKey(), lastSample, param.getValue())) ) );
+//            json.append( getJSON(param.getKey(), String.valueOf(WPMStatsManagerOLD.getInstance().getAvgAttribute(param.getKey(), lastSample, param.getValue())) ) );
 //        }
 //
 //        if (json.length() > 3) {

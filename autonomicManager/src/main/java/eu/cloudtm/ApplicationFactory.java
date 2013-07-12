@@ -3,9 +3,7 @@ package eu.cloudtm;
 import eu.cloudtm.RESTServer.RESTServer;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
-import eu.cloudtm.statistics.StatsManager;
-import eu.cloudtm.statistics.WPMStatisticsRemoteListernerFactory;
-import eu.cloudtm.statistics.WPMViewChangeRemoteListenerImpl;
+import eu.cloudtm.statistics.*;
 import eu.cloudtm.wpm.connector.WPMConnector;
 
 /**
@@ -15,8 +13,9 @@ import eu.cloudtm.wpm.connector.WPMConnector;
  */
 public class ApplicationFactory {
 
+    WPMStatsManagerFactory wpmStatsManagerFactory;
 
-    private StatsManager statsManager;
+    private WPMStatsManager wpmStatsManager;
 
     private PlatformConfiguration platformConfiguration;
 
@@ -28,30 +27,18 @@ public class ApplicationFactory {
 
     public AutonomicManager build(){
 
-        statsManager = new SampleManager();
         platformConfiguration = new PlatformConfiguration();
         platformTuning = new PlatformTuning();
 
+        wpmStatsManagerFactory = new WPMStatsManagerFactory(platformConfiguration);
+
         restServer = new RESTServer();
 
-        buildWpmListener();
+        wpmStatsManager = wpmStatsManagerFactory.build();
 
-        AutonomicManager autonomicManager = new AutonomicManager(platformConfiguration, platformTuning, statsManager);
+        AutonomicManager autonomicManager = new AutonomicManager(platformConfiguration, platformTuning, wpmStatsManager);
         return autonomicManager;
     }
-
-    private void buildWpmListener(){
-        try {
-            connector = new WPMConnector();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        WPMViewChangeRemoteListenerImpl viewChangeListener = new WPMViewChangeRemoteListenerImpl(connector);
-        WPMStatisticsRemoteListernerFactory WPMStatsfactory = new WPMStatisticsRemoteListernerFactory(statsManager);
-    }
-
-
 
 
 }

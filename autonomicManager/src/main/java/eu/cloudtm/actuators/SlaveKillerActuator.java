@@ -1,7 +1,7 @@
 package eu.cloudtm.actuators;
 
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.Client;
+import javax.ws.rs.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -10,6 +10,7 @@ import eu.cloudtm.actuators.radargun.SlaveKillerResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.deltacloud.client.DeltaCloudClientException;
+import org.glassfish.jersey.client.ClientConfig;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;

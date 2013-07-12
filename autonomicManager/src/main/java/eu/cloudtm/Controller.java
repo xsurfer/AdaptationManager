@@ -7,6 +7,7 @@ import eu.cloudtm.commons.PlatformTuning;
 import eu.cloudtm.commons.State;
 import eu.cloudtm.exceptions.OutputFilterException;
 import eu.cloudtm.statistics.WPMSample;
+import eu.cloudtm.statistics.WPMStatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,7 +42,7 @@ public class Controller {
 
     /* COMPONENTs */
 
-    private eu.cloudtm.SampleManager statsManager;
+    private WPMStatsManager statsManager;
 
     private InputFilter inputFilter;
 
@@ -79,7 +80,7 @@ public class Controller {
     }
 
 
-    public Controller(PlatformConfiguration _configuration, SampleManager _statsManager) {
+    public Controller(PlatformConfiguration _configuration, WPMStatsManager _statsManager) {
         statsManager =  _statsManager;
         platformConfiguration = _configuration;
         inputFilter = new InputFilter(statsManager);

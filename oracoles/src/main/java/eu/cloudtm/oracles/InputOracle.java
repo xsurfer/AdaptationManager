@@ -1,5 +1,6 @@
 package eu.cloudtm.oracles;
 
+import eu.cloudtm.statistics.EvaluatedParam;
 import eu.cloudtm.statistics.WPMParam;
 
 /**
@@ -11,8 +12,10 @@ import eu.cloudtm.statistics.WPMParam;
  */
 public interface InputOracle {
 
-    public Object getPerNodeParam(WPMParam param, String nodeIp);
+    public Object getParam(WPMParam param);
 
-    public double getAvgParam(WPMParam param);
+    public double getEvaluatedParam(EvaluatedParam param);
+
+    public Object getForecastParam(ForecastParam param);
 
 }

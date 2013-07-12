@@ -5,6 +5,7 @@ import eu.cloudtm.wpm.logService.remote.events.PublishViewChangeEvent;
 import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
+import eu.cloudtm.wpm.logService.remote.observables.Handle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,6 +29,8 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
     private WPMStatisticsRemoteListernerFactory statisticsListernerFactory;
 
+    private Handle lastHandle;
+
     public WPMViewChangeRemoteListenerImpl(WPMConnector connector, WPMStatisticsRemoteListernerFactory statisticsListernerFactory){
         this.connector = connector;
         this.statisticsListernerFactory = statisticsListernerFactory;
@@ -44,6 +47,11 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
     @Override
     public void onViewChange(PublishViewChangeEvent event) throws RemoteException {
+
+        if(lastHandle != null){
+            connector.removeStatisticsRemoteListener(lastHandle);
+        }
+
         currentVMs = event.getCurrentVMs();
 
         if (currentVMs == null) {
@@ -53,6 +61,6 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
 
         log.info("New set of VMs " + Arrays.toString(currentVMs));
 
-        statisticsListernerFactory.build(new SubscribeEvent(currentVMs));
+        lastHandle = statisticsListernerFactory.build(new SubscribeEvent(currentVMs));
     }
 }

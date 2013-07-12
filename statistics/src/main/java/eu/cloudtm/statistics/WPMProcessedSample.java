@@ -28,7 +28,7 @@ public abstract class WPMProcessedSample implements Sample {
     }
 
     private void init(){
-        // add here all the customizations
+        // push here all the customizations
         evaluatedParams.put(EvaluatedParam.ACF, getACF());
 
     }

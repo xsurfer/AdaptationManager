@@ -1,80 +1,47 @@
 package eu.cloudtm.RESTServer;
 
-import com.sun.jersey.api.container.grizzly2.GrizzlyWebContainerFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import eu.cloudtm.statistics.StatsManager;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import javax.ws.rs.core.UriBuilder;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
- * Date: 5/30/13
+ * Main class.
+ *
  */
-
 public class RESTServer {
 
-    private static Log log = LogFactory.getLog(RESTServer.class);
+    // Base URI the Grizzly HTTP server will listen on
+    public static final String BASE_URI = "http://localhost:9998/myapp/";
 
-    private final static String DEFAULT_HOST = "localhost";
-    private final static int DEFAULT_PORT = 9998;
+    private final ResourceConfig rc;
 
-    private HttpServer httpServer;
-
-    private int getPort(int defaultPort) {
-        //grab port from environment, otherwise fall back to default port 9998
-        String httpPort = System.getProperty("autonomicManager.rest.port");
-        if (null != httpPort) {
-            try {
-                return Integer.parseInt(httpPort);
-            } catch (NumberFormatException e) {
-            }
-        }
-        return defaultPort;
+    public RESTServer(StatsManager statsManager){
+        rc = new RESTApplication(statsManager);
     }
 
-    private URI getBaseURI(String defaultHost) {
-        //grab port from environment, otherwise fall back to default port 9998
-        String host = System.getProperty("autonomicManager.rest.host");
-        if (null != host) {
-            try {
-                String uri = "http://" + host + "/";
-                return UriBuilder.fromUri(uri).port(getPort(DEFAULT_PORT)).build();
-            } catch (NumberFormatException e) {
-            }
-        }
+    /**
+     * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
+     * @return Grizzly HTTP server.
+     */
+    public HttpServer startServer() {
+        // create a resource config that scans for JAX-RS resources and providers
+        // in it.fperfetti package
 
-        String uri = "http://" + defaultHost + "/";
-        return UriBuilder.fromUri(uri).port(getPort(DEFAULT_PORT)).build();
+
+
+        // uncomment the following line if you want to enable
+        // support for JSON on the service (you also have to uncomment
+        // dependency on jersey-media-json module in pom.xml)
+        // --
+        // rc.addBinder(org.glassfish.jersey.media.json.JsonJaxbBinder);
+
+        // create and start a new instance of grizzly http server
+        // exposing the Jersey application at BASE_URI
+        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
-
-    //public static final URI BASE_URI = getBaseURI();
-
-    public void startServer() {
-        final Map<String, String> initParams = new HashMap<String, String>();
-
-        initParams.put("com.sun.jersey.config.property.packages", "eu.cloudtm.RESTServer.resources");
-
-        log.info("Starting grizzly2...");
-        try {
-            this.httpServer=GrizzlyWebContainerFactory.create(getBaseURI(DEFAULT_HOST), initParams);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        log.info(String.format("Jersey app started with WADL available at "
-                + "%sapplication.wadl",
-                getBaseURI(DEFAULT_HOST)));
-    }
-
-    public void stopServer(){
-        httpServer.stop();
-    }
-
 
 }
+

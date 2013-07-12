@@ -3,8 +3,8 @@ package eu.cloudtm;
 import eu.cloudtm.commons.KPI;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.oracles.AbstractOracle;
-import eu.cloudtm.oracles.IOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
+import eu.cloudtm.statistics.WPMStatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,13 +25,13 @@ public class Optimizer {
 
     private SLAManager slaManager = new SLAManager();
 
-    private SampleManager statsManager;
+    private WPMStatsManager statsManager;
 
     private final static int ARRIVAL_RATE_GUARANTEE_PERC = 50;
     private final static int ABORT_GUARANTEE_PERC = 5;
     private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
 
-    public Optimizer(Controller _controller, List<String> _oracles, SampleManager _statsManager){
+    public Optimizer(Controller _controller, List<String> _oracles, WPMStatsManager _statsManager){
         controller = _controller;
         oracles = _oracles;
         statsManager = _statsManager;

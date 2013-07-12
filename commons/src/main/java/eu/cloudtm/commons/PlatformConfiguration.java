@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/1/13
  */
-public class PlatformConfiguration {
+public class PlatformConfiguration implements IPlatformConfiguration {
 
     private static Log log = LogFactory.getLog(PlatformConfiguration.class);
 
