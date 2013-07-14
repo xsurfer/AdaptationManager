@@ -20,6 +20,20 @@ public class PlatformTuning {
     private Forecaster degreeForecaster;
 
 
+    public Forecaster scaleForecaster(){
+        return scaleForecaster;
+    }
+
+    public Forecaster protocolForecaster(){
+        return protocolForecaster;
+    }
+
+    public Forecaster degreeForecaster(){
+        return degreeForecaster;
+    }
+
+
+
     public void setScaleForecaster(Forecaster _forecaster){
         scaleForecaster = _forecaster;
     }

@@ -1,11 +1,10 @@
 package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
-import com.sun.jersey.spi.resource.Singleton;
-import eu.cloudtm.Controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
@@ -40,7 +39,9 @@ public class StatusResource extends AbstractResource {
     @GET
     @Produces("application/json")
     public Response getState() {
-        String json = Controller.getInstance().getJSONState();
+
+        // TODO solve String json = ControllerOld.getInstance().getJSONState();
+        String json = "";
 
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);

@@ -10,19 +10,19 @@ import eu.cloudtm.commons.ACF;
  * Time: 8:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TWOPCInputOracle extends WPMProcessedSample {
+public class TWOPCInputOracle extends ProcessedSample {
 
-    public TWOPCInputOracle(WPMSample sample) {
+    public TWOPCInputOracle(Sample sample) {
         super(sample);
     }
 
     @Override
     public double getACF() {
-        double PaoloLocalTakenLocks = getParam(WPMParam.PaoloLocalTakenLocks);
-        double NumPuts = getParam(WPMParam.NumPuts);
-        double PaoloLocalTakenHoldTime = getParam(WPMParam.PaoloLocalTakenHoldTime);
-        double PaoloRemoteTakenHoldTime = getParam(WPMParam.PaoloRemoteTakenHoldTime);
-        double PaoloRemoteTakenLocks = getParam(WPMParam.PaoloRemoteTakenLocks);
+        double PaoloLocalTakenLocks = getParam(Param.PaoloLocalTakenLocks);
+        double NumPuts = getParam(Param.NumPuts);
+        double PaoloLocalTakenHoldTime = getParam(Param.PaoloLocalTakenHoldTime);
+        double PaoloRemoteTakenHoldTime = getParam(Param.PaoloRemoteTakenHoldTime);
+        double PaoloRemoteTakenLocks = getParam(Param.PaoloRemoteTakenLocks);
         double threads = 0; //Controller.getInstance().getCurrentConfiguration().threadPerNode();
         double timeWindow = 60D; // Controller.TIME_WINDOW;
 

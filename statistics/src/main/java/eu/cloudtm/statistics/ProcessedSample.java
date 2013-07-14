@@ -1,7 +1,6 @@
 package eu.cloudtm.statistics;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,13 +10,13 @@ import java.util.Map;
  * Time: 5:31 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class WPMProcessedSample implements Sample {
+public abstract class ProcessedSample implements Sample {
 
-    protected WPMSample sample;
+    protected Sample sample;
 
     private Map<EvaluatedParam, Double> evaluatedParams = new HashMap<EvaluatedParam, Double>();
 
-    public WPMProcessedSample(WPMSample sample){
+    public ProcessedSample(Sample sample){
         this.sample = sample;
         init();
     }
@@ -34,7 +33,7 @@ public abstract class WPMProcessedSample implements Sample {
     }
 
     @Override
-    public double getParam(WPMParam param) {
+    public double getParam(Param param) {
         return sample.getParam(param);
     }
 

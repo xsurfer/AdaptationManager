@@ -30,6 +30,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
     public PlatformConfiguration(){
     }
 
+    public PlatformConfiguration(int size, int repDegree, ReplicationProtocol repProtocol){
+        this.platformSize = size;
+        this.replicationDegree = repDegree;
+        this.replicationProtocol = repProtocol;
+    }
+
 
     /* *** GETTER *** */
 

@@ -12,14 +12,20 @@ import java.util.List;
  */
 public interface StatsManager {
 
-    public void push(WPMProcessedSample sample);
+    public void push(ProcessedSample sample);
 
-    public WPMProcessedSample getLastSample();
+    public ProcessedSample getLastSample();
 
-    public List<WPMProcessedSample> getLastNSample(int n);
+    public List<ProcessedSample> getLastNSample(int n);
 
     public StatisticDTO getLastAvgStatistic(String param);
 
     public StatisticDTO getAllAvgStatistic(String param);
+
+    public void notifyListeners(ProcessedSample sample);
+
+    public void removeListener(SampleListener listener);
+
+    public void addListener(SampleListener listener);
 
 }

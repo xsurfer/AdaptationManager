@@ -5,13 +5,13 @@ package eu.cloudtm.exceptions;
  * E-mail: perfabio87@gmail.com
  * Date: 6/21/13
  */
-public class OutputFilterException extends Exception {
+public class ReconfiguratorException extends Exception {
 
-    public OutputFilterException(String str){
+    public ReconfiguratorException(String str){
         super(str);
     }
 
-    public OutputFilterException(Throwable t){
+    public ReconfiguratorException(Throwable t){
         super(t);
     }
 

@@ -16,27 +16,36 @@ public class ApplicationFactory {
     WPMStatsManagerFactory wpmStatsManagerFactory;
 
     private WPMStatsManager wpmStatsManager;
-
     private PlatformConfiguration platformConfiguration;
-
     private PlatformTuning platformTuning;
-
     private RESTServer restServer;
-
     private WPMConnector connector;
 
     public AutonomicManager build(){
-
         platformConfiguration = new PlatformConfiguration();
         platformTuning = new PlatformTuning();
 
         wpmStatsManagerFactory = new WPMStatsManagerFactory(platformConfiguration);
 
-        restServer = new RESTServer();
-
         wpmStatsManager = wpmStatsManagerFactory.build();
 
-        AutonomicManager autonomicManager = new AutonomicManager(platformConfiguration, platformTuning, wpmStatsManager);
+
+
+        Reconfigurator reconfigurator = new Reconfigurator();
+        Optimizer optimizer = new Optimizer(reconfigurator, platformTuning);
+        InputFilter inputFilter = new InputFilter(wpmStatsManager, optimizer);
+
+
+        restServer = new RESTServer(wpmStatsManager);
+
+        AutonomicManager autonomicManager = new AutonomicManager(
+                platformConfiguration,
+                platformTuning,
+                wpmStatsManager,
+                inputFilter,
+                optimizer,
+                reconfigurator);
+
         return autonomicManager;
     }
 

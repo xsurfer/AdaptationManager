@@ -10,7 +10,8 @@ import eu.cloudtm.commons.ReplicationProtocol;
 public enum  ForecastParam {
 
     ReplicationProtocol                         ( 0, "REP_PROT", eu.cloudtm.commons.ReplicationProtocol.class),
-    ReplicationDegree                           ( 1, "REP_DEGREE", Double.class),
+    ReplicationDegree                           ( 1, "REP_DEGREE", Integer.class),
+    NumNodes                                    ( 2, "NUM_NODES", Integer.class),
     ;
 
     private final int id;

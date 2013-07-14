@@ -1,6 +1,6 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.commons.KPI;
+import eu.cloudtm.commons.KPIimpl;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,13 +11,12 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/12/13
  */
-public class OracleTAS extends AbstractOracle {
+public class OracleTAS implements Oracle {
 
     private static Log log = LogFactory.getLog(OracleTAS.class);
 
-
     @Override
-    public KPI forecast(InputOracle input) throws OracleException {
+    public KPIimpl forecast(InputOracle input) throws OracleException {
         return null;
     }
 }
@@ -29,16 +28,16 @@ public class OracleTAS extends AbstractOracle {
 //
 //    }
 //
-//    public OracleTAS(Controller _controller) {
+//    public OracleTAS(ControllerOld _controller) {
 //        super(_controller);
 //    }
 //
 //    @Override
-//    public KPI forecast(WPMProcessedSample input) throws OracleException {
+//    public KPIimpl forecast(ProcessedSample input) throws OracleException {
 //        DSTMScenarioTas2 scenario;
 //
 //        try {
-//            scenario = DSTMScenarioFactory.buildScenario(input, Controller.TIME_WINDOW);
+//            scenario = DSTMScenarioFactory.buildScenario(input, ControllerOld.TIME_WINDOW);
 //        } catch (PublishAttributeException e) {
 //            throw new RuntimeException(e);
 //        } catch (Tas2Exception e) {
@@ -53,7 +52,7 @@ public class OracleTAS extends AbstractOracle {
 //    }
 
 //    @Override
-//    public KPI forecastWithCustomParam(WPMSample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) throws OracleException {
+//    public KPIimpl forecastWithCustomParam(WPMSample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) throws OracleException {
 //        DSTMScenarioTas2 scenario = null;
 //
 //        try {
@@ -62,7 +61,7 @@ public class OracleTAS extends AbstractOracle {
 //                    customParam,
 //                    numNodes,
 //                    numThreads,
-//                    Controller.TIME_WINDOW);
+//                    ControllerOld.TIME_WINDOW);
 //
 //        } catch (PublishAttributeException e) {
 //            throw new RuntimeException(e);
@@ -77,7 +76,7 @@ public class OracleTAS extends AbstractOracle {
 //        }
 //    }
 
-//    private KPI realForecast(DSTMScenarioTas2 scenario, int numNodes, int numThreads) throws Tas2Exception {
+//    private KPIimpl realForecast(DSTMScenarioTas2 scenario, int numNodes, int numThreads) throws Tas2Exception {
 //        ModelResult result;
 //        try {
 //            log.info("calling tas");
@@ -98,7 +97,7 @@ public class OracleTAS extends AbstractOracle {
 //                2,
 //                false);
 //
-//        KPI ret = new KPI(config, throughput, abortP, rtt);
+//        KPIimpl ret = new KPIimpl(config, throughput, abortP, rtt);
 //
 //        return ret;
 //    }

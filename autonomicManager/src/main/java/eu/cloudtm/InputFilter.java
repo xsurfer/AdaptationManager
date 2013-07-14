@@ -1,8 +1,17 @@
 package eu.cloudtm;
 
-import eu.cloudtm.statistics.WPMProcessedSample;
-import eu.cloudtm.statistics.WPMParam;
-import eu.cloudtm.statistics.WPMStatsManager;
+import eu.cloudtm.commons.KPI;
+import eu.cloudtm.commons.KPIimpl;
+import eu.cloudtm.exceptions.ReconfiguratorException;
+import eu.cloudtm.oracles.exceptions.OracleException;
+import eu.cloudtm.statistics.Param;
+import eu.cloudtm.statistics.ProcessedSample;
+
+import eu.cloudtm.statistics.SampleListener;
+import eu.cloudtm.statistics.StatsManager;
+import org.apache.commons.collections15.Buffer;
+import org.apache.commons.collections15.BufferUtils;
+import org.apache.commons.collections15.buffer.CircularFifoBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -13,11 +22,15 @@ import java.util.List;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public class InputFilter {
+public class InputFilter implements SampleListener {
 
     private static Log log = LogFactory.getLog(InputFilter.class);
 
-    private WPMStatsManager statsManager;
+    private static final int SLIDE_WINDOW_SIZE = 5;
+
+    private Optimizer optimizer;
+
+    private Buffer<ProcessedSample> sampleSlideWindow = BufferUtils.synchronizedBuffer(new CircularFifoBuffer<ProcessedSample>(SLIDE_WINDOW_SIZE));
 
     /* *** SOGLIE *** */
     private static final int DELTA_ARRIVAL_RATE = 2;
@@ -34,29 +47,43 @@ public class InputFilter {
 //    private double current;
 //    private double currentThroughput;
 
-    public InputFilter(WPMStatsManager _statsManager){
-        statsManager = _statsManager;
+    public InputFilter(StatsManager statsManager, Optimizer optimizer){
+        this.optimizer = optimizer;
+        statsManager.addListener(this);
     }
 
-    public boolean doFilter(){
-        List<WPMProcessedSample> lastNSamples = statsManager.getLastNSample( Controller.SAMPLE_WINDOW );
-        boolean reconfigure;
+    @Override
+    public void onNewSample(ProcessedSample sample) {
+        sampleSlideWindow.add(sample);
 
-        boolean arrivalRateResponse = evaluateArrivalRate(lastNSamples);
-        boolean responseTimeResponse = evaluateResponseTime(lastNSamples);
-        boolean abortRateResponse = evaluateAbortRate(lastNSamples);
+        if(sampleSlideWindow.size() < SLIDE_WINDOW_SIZE){
+            return;
+        }
+
+        boolean reconfigure;
+        boolean arrivalRateResponse = evaluateArrivalRate();
+        boolean responseTimeResponse = evaluateResponseTime();
+        boolean abortRateResponse = evaluateAbortRate();
 
         reconfigure =  arrivalRateResponse || responseTimeResponse || abortRateResponse;
-
-        return reconfigure;
+        if(reconfigure){
+            KPI current = new KPIimpl(lastAvgArrivalRate, lastAvgAbortRate, lastAvgResposeTime);
+            try {
+                optimizer.doOptimize(current, sample);
+            } catch (ReconfiguratorException e) {
+                log.warn("Eccezione durante la riconfigurazione!!");
+            } catch (OracleException e) {
+                log.warn("Eccezione durante l'ottimizzazione!!");
+            }
+        }
     }
 
-    private boolean evaluateAbortRate(List<WPMProcessedSample> lastNSamples){
+    private boolean evaluateAbortRate(){
         double abortSum = 0.0;
-        for (WPMProcessedSample sample : lastNSamples){
-            abortSum += (1 - sample.getParam(WPMParam.CommitProbability));
+        for (ProcessedSample sample : sampleSlideWindow){
+            abortSum += (1 - sample.getParam(Param.CommitProbability));
         }
-        double currentAbortAvg =  abortSum / ((double) lastNSamples.size());
+        double currentAbortAvg =  abortSum / ((double) sampleSlideWindow.size());
         log.debug("currentAbortAvg: " + currentAbortAvg);
         log.debug("lastAvgAbortRate: " + lastAvgAbortRate);
 
@@ -80,16 +107,16 @@ public class InputFilter {
         return false;
     }
 
-    private boolean evaluateResponseTime(List<WPMProcessedSample> lastNSamples){
+    private boolean evaluateResponseTime(){
         return false;
     }
 
-    private boolean evaluateArrivalRate(List<WPMProcessedSample> lastNSamples){
+    private boolean evaluateArrivalRate(){
         double throughputSum = 0.0;
-        for (WPMProcessedSample sample : lastNSamples){
-            throughputSum += sample.getParam(WPMParam.Throughput);
+        for (ProcessedSample sample : sampleSlideWindow){
+            throughputSum += sample.getParam(Param.Throughput);
         }
-        double currentThroughputAvg =  throughputSum / ((double) lastNSamples.size());
+        double currentThroughputAvg =  throughputSum / ((double) sampleSlideWindow.size());
         log.trace("currentThroughputAvg: " + currentThroughputAvg);
         log.trace("lastAvgArrivalRate: " + lastAvgArrivalRate);
 

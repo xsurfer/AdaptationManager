@@ -1,7 +1,6 @@
 package eu.cloudtm.RESTServer.resources;
 
 import com.google.gson.Gson;
-import eu.cloudtm.Controller;
 import eu.cloudtm.commons.Forecaster;
 import eu.cloudtm.commons.InstanceConfig;
 import org.apache.commons.logging.Log;
@@ -44,9 +43,11 @@ public class ScaleResource extends AbstractResource {
         }
 
         /** UPDATING STATE **/
-        //Controller.getInstance().updateScale(size, instanceType, tuning);
+        //ControllerOld.getInstance().updateScale(size, instanceType, tuning);
 
-        String json = gson.toJson(Controller.getInstance().getState());
+        //TODO sistemare qui sotto String json = gson.toJson(ControllerOld.getInstance().getState());
+
+        String json = "{ \"todo\" : \"da impl\" }";
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }

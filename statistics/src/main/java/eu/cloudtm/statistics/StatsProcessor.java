@@ -1,7 +1,6 @@
 package eu.cloudtm.statistics;
 
 import eu.cloudtm.commons.IPlatformConfiguration;
-import eu.cloudtm.commons.PlatformConfiguration;
 
 /**
  * Created by: Fabio Perfetti
@@ -16,7 +15,7 @@ public class StatsProcessor {
         this.currentConfig = currentConfig;
     }
 
-    public WPMProcessedSample process(WPMSample rawSample){
+    public ProcessedSample process(WPMSample rawSample){
         // TODO processare in base al protocollo o altro... per ora solo 2pc
         TWOPCInputOracle processedSample = new TWOPCInputOracle(rawSample);
         return processedSample;

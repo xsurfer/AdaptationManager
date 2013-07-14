@@ -4,8 +4,8 @@
 //import com.sun.jersey.spi.resource.Singleton;
 //import eu.cloudtm.WPMStatsManagerOLD;
 //import eu.cloudtm.WhatIf;
-//import eu.cloudtm.Controller;
-//import eu.cloudtm.oracles.AbstractOracle;
+//import eu.cloudtm.ControllerOld;
+//import eu.cloudtm.oracles.OracleService;
 //import eu.cloudtm.wpm.parser.ResourceType;
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
@@ -78,9 +78,9 @@
 //        customParam.setRetryWritePercentage(validateParam(retryWritePercentage));
 //        customParam.setRTT( validateParam(rtt) );
 //
-//        Set<KPI> result = null;
-//        for( String oracleName : Controller.getInstance().getOracles() ){
-//            IOracle oracle = AbstractOracle.getInstance(oracleName, Controller.getInstance());
+//        Set<KPIimpl> result = null;
+//        for( String oracleName : ControllerOld.getInstance().getOracles() ){
+//            Oracle oracle = OracleService.getInstance(oracleName, ControllerOld.getInstance());
 //            try {
 //                result = oracle.whatIf(lastSample, customParam);
 //            } catch (OracleException e) {
@@ -91,7 +91,7 @@
 //        lastSample = null;
 //
 //        WhatIfDTO whatIfResult = new WhatIfDTO();
-//        for(KPI kpi:result){
+//        for(KPIimpl kpi:result){
 //            whatIfResult.addThroughputPoint(kpi.getPlatformConfiguration().platformSize(),kpi.getThroughput());
 //            whatIfResult.addResponseTimePoint(kpi.getPlatformConfiguration().platformSize(),kpi.getRtt());
 //            whatIfResult.addAbortRatePoint(kpi.getPlatformConfiguration().platformSize(),kpi.getAbortProbability());
@@ -139,7 +139,7 @@
 //        }
 //
 //        double acf;
-//        acf = ACF.evaluate(lastSample.getJmx(), Controller.getInstance().getCurrentConfiguration().threadPerNode(), Controller.TIME_WINDOW );
+//        acf = ACF.evaluate(lastSample.getJmx(), ControllerOld.getInstance().getCurrentConfiguration().threadPerNode(), ControllerOld.TIME_WINDOW );
 //        log.info("********************************** ACF = " + acf + " ***************************");
 //
 //        json.append( getJSON("ACF", String.valueOf(acf) ) );

@@ -1,7 +1,7 @@
 package eu.cloudtm.oracles;
 
 import eu.cloudtm.statistics.EvaluatedParam;
-import eu.cloudtm.statistics.WPMParam;
+import eu.cloudtm.statistics.Param;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,7 +12,7 @@ import eu.cloudtm.statistics.WPMParam;
  */
 public interface InputOracle {
 
-    public Object getParam(WPMParam param);
+    public Object getParam(Param param);
 
     public double getEvaluatedParam(EvaluatedParam param);
 

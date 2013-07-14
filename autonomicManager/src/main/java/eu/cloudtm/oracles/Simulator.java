@@ -1,7 +1,6 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.Controller;
-import eu.cloudtm.commons.KPI;
+import eu.cloudtm.commons.KPIimpl;
 import eu.cloudtm.oracles.exceptions.OracleException;
 
 import java.io.File;
@@ -13,7 +12,7 @@ import java.io.InputStream;
  * E-mail: perfabio87@gmail.com
  * Date: 6/24/13
  */
-public class Simulator extends AbstractOracle {
+public class Simulator implements Oracle {
 
     private static final String directory = "/home/fabio/Desktop/simulatore/DAGSwithCubist/Debug";
     private static final String script = "/home/fabio/Desktop/simulatore/DAGSwithCubist/Debug/DAGSwithCubist";
@@ -22,12 +21,8 @@ public class Simulator extends AbstractOracle {
 
     public Simulator(){}
 
-    public Simulator(Controller _controller) {
-        super(_controller);
-    }
-
     @Override
-    public KPI forecast(InputOracle input) throws OracleException {
+    public KPIimpl forecast(InputOracle input) throws OracleException {
 
         ProcessBuilder pb = new ProcessBuilder(script, "");
         pb.directory(new File(directory));

@@ -1,7 +1,5 @@
 package eu.cloudtm.statistics;
 
-import java.util.List;
-
 /**
  * Created with IntelliJ IDEA.
  * User: fabio
@@ -13,6 +11,6 @@ public interface Sample {
 
     public long getId();
 
-    public double getParam(WPMParam param);
+    public double getParam(Param param);
 
 }

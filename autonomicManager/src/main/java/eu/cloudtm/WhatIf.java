@@ -1,10 +1,9 @@
 package eu.cloudtm;
 
-import eu.cloudtm.commons.ACF;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.statistics.EvaluatedParam;
-import eu.cloudtm.statistics.WPMParam;
-import eu.cloudtm.statistics.WPMProcessedSample;
+import eu.cloudtm.statistics.Param;
+import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
 
 import java.util.HashMap;
@@ -19,9 +18,9 @@ import java.util.Map;
 */
 public class WhatIf {
 
-    private WPMProcessedSample processedSample;
+    private ProcessedSample processedSample;
 
-    public WhatIf(WPMProcessedSample processedSample){
+    public WhatIf(ProcessedSample processedSample){
         this.processedSample = processedSample;
 
     }
@@ -35,13 +34,13 @@ public class WhatIf {
 
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
         customParam.setACF( acf  );
-        customParam.setCommitBroadcastWallClockTime( processedSample.getParam(WPMParam.CommitBroadcastWallClockTime) );
-        customParam.setRTT( processedSample.getParam( WPMParam.RTT ) );
-        customParam.setPrepareCommandBytes( processedSample.getParam( WPMParam.PrepareCommandBytes ) );
-        customParam.setSuxNumPuts( processedSample.getParam( WPMParam.SuxNumPuts ) );
-        customParam.setRetryWritePercentage( processedSample.getParam( WPMParam.RetryWritePercentage ) );
-        customParam.setLocalUpdateTxLocalServiceTime( processedSample.getParam( WPMParam.LocalUpdateTxLocalServiceTime ) );
-        customParam.setLocalReadOnlyTxLocalServiceTime( processedSample.getParam( WPMParam.LocalReadOnlyTxLocalServiceTime ) );
+        customParam.setCommitBroadcastWallClockTime( processedSample.getParam(Param.CommitBroadcastWallClockTime) );
+        customParam.setRTT( processedSample.getParam( Param.RTT ) );
+        customParam.setPrepareCommandBytes( processedSample.getParam( Param.PrepareCommandBytes ) );
+        customParam.setSuxNumPuts( processedSample.getParam( Param.SuxNumPuts ) );
+        customParam.setRetryWritePercentage( processedSample.getParam( Param.RetryWritePercentage ) );
+        customParam.setLocalUpdateTxLocalServiceTime( processedSample.getParam( Param.LocalUpdateTxLocalServiceTime ) );
+        customParam.setLocalReadOnlyTxLocalServiceTime( processedSample.getParam( Param.LocalReadOnlyTxLocalServiceTime ) );
         return customParam;
 
     }

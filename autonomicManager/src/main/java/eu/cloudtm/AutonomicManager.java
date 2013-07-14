@@ -2,8 +2,9 @@ package eu.cloudtm;
 
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
+import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.statistics.SampleListener;
 import eu.cloudtm.statistics.StatsManager;
-import eu.cloudtm.statistics.WPMStatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -17,19 +18,27 @@ public class AutonomicManager {
     private static Log log = LogFactory.getLog(AutonomicManager.class);
 
     private PlatformConfiguration platformConfiguration;
-    private PlatformTuning platformTuning;
-    private WPMStatsManager wpmStatsManager;
+    private StatsManager statsManager;
+    private InputFilter inputFilter;
+    private Optimizer optimizer;
+    private Reconfigurator reconfigurator;
 
     public AutonomicManager(PlatformConfiguration platformConfiguration,
                             PlatformTuning platformTuning,
-                            WPMStatsManager sampleManager ){
-        this.wpmStatsManager = sampleManager;
+                            StatsManager sampleManager,
+                            InputFilter inputFilter,
+                            Optimizer optimizer,
+                            Reconfigurator reconfigurator){
+        this.statsManager = sampleManager;
         this.platformConfiguration = platformConfiguration;
-        this.platformTuning = platformTuning;
+
+        this.inputFilter = inputFilter;
+        this.optimizer = optimizer;
+        this.reconfigurator = reconfigurator;
     }
 
     public void start(){
-        log.warn("Starting Controller");
+        log.warn("Autonomic Manager started");
     }
 
 }

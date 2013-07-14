@@ -34,7 +34,7 @@ public class WPMSample implements Sample {
     public long getId(){ return id; }
 
     @Override
-    public double getParam(WPMParam param) {
+    public double getParam(Param param) {
         return aggregatedFromWPM.get(param.getKey());
     }
 

@@ -7,7 +7,7 @@ package eu.cloudtm.statistics;
  * Time: 2:47 PM
  * To change this template use File | Settings | File Templates.
  */
-public enum WPMParam {
+public enum Param {
 
     LocalReadOnlyTxLocalServiceTime             ( 0, "LocalReadOnlyTxLocalServiceTime", Double.class),
     LocalUpdateTxLocalServiceTime               ( 1, "LocalUpdateTxLocalServiceTime", Double.class),
@@ -33,7 +33,7 @@ public enum WPMParam {
     private final String key;
     private final Class clazz;
 
-    private WPMParam(int id, String name, Class clazz){
+    private Param(int id, String name, Class clazz){
         this.id = id;
         this.key = name;
         this.clazz = clazz;
@@ -47,16 +47,16 @@ public enum WPMParam {
         return key;
     }
 
-    public static WPMParam getById(int id){
-        for( WPMParam param : values() ){
+    public static Param getById(int id){
+        for( Param param : values() ){
             if( param.getId() == id )
                 return param;
         }
         return null;
     }
 
-    public static WPMParam getByName(String name){
-        for( WPMParam param : values() ){
+    public static Param getByName(String name){
+        for( Param param : values() ){
             if( param.getKey() == name )
                 return param;
         }

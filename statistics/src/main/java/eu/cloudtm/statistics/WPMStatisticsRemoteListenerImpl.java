@@ -84,9 +84,9 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 //
 //        String singleNode = wpmSample.getNodes().get(0);
 //
-//        String repProtWPMValue = (String) wpmSample.getPerNodeParam(WPMParam.CurrentProtocolId, singleNode);
+//        String repProtWPMValue = (String) wpmSample.getPerNodeParam(Param.CurrentProtocolId, singleNode);
 //        ReplicationProtocol currentProtocol = ReplicationProtocol.getByWPMValue( repProtWPMValue );
-//        WPMProcessedSample processedSample = null;
+//        ProcessedSample processedSample = null;
 //        switch (currentProtocol){
 //            case PB:
 //
@@ -125,7 +125,7 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         }
 
         WPMSample wpmSample = WPMSample.getInstance(aggregatedStats);
-        WPMProcessedSample processedSample = processor.process(wpmSample);
+        ProcessedSample processedSample = processor.process(wpmSample);
         statsManager.push(processedSample);
     }
 

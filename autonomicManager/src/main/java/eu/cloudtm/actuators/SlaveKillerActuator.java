@@ -2,9 +2,6 @@ package eu.cloudtm.actuators;
 
 import com.google.gson.Gson;
 import javax.ws.rs.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 import eu.cloudtm.actuators.radargun.RadargunException;
 import eu.cloudtm.actuators.radargun.SlaveKillerResponse;
 import org.apache.commons.logging.Log;
@@ -12,7 +9,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.deltacloud.client.DeltaCloudClientException;
 import org.glassfish.jersey.client.ClientConfig;
 
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -53,20 +53,17 @@ public class SlaveKillerActuator implements IActuator {
 
     @Override
     public void actuate() throws RadargunException {
-        ClientConfig config = new DefaultClientConfig();
-        Client client = Client.create(config);
-        WebResource service = client.resource(getBaseURI());
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(getBaseURI());
 
-        String res = service.path(SLAVE)
-                .path( String.valueOf(JMX_PORT) )
-                .path(COMPONENT)
-                .accept(MediaType.APPLICATION_JSON)
-                .get(String.class);
+        String res = target.request(MediaType.APPLICATION_JSON_TYPE)
+                .get()
+                .readEntity(String.class);
 
         log.info(res);
         SlaveKillerResponse response = new Gson().fromJson(res, SlaveKillerResponse.class);
 
-        if(!response.getResult().equals("Success"))
+        if(response==null || !response.getResult().equals("Success"))
             throw new RadargunException("Problem while stopping " + response.toString());
 
         //log.info("response result: " + response.getResult());

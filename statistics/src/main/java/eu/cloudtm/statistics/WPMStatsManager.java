@@ -4,6 +4,7 @@ import eu.cloudtm.commons.dto.StatisticDTO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 import javax.inject.Singleton;
 import java.util.*;
 
@@ -22,32 +23,35 @@ public class WPMStatsManager implements StatsManager {
 
     private final static int MAX_SIZE = 1000;
 
-    private final Deque<WPMProcessedSample> stack = new ArrayDeque<WPMProcessedSample>(MAX_SIZE);
+    private final Deque<ProcessedSample> stack = new ArrayDeque<ProcessedSample>(MAX_SIZE);
+
+    private final Set<SampleListener> listeners = new HashSet<SampleListener>();
 
     public WPMStatsManager(){
     }
 
     @Override
-    public void push(WPMProcessedSample wpmProcessedSample){
+    public final void push(ProcessedSample wpmProcessedSample){
         if(stack.size()>=MAX_SIZE){
-            WPMProcessedSample removed = stack.removeLast();
+            ProcessedSample removed = stack.removeLast();
             //log.trace("Deleted stat: " + removed.getId());
         }
         stack.push(wpmProcessedSample);
+        notifyListeners(wpmProcessedSample);
         log.trace("New stas added: " + wpmProcessedSample.getId());
     }
 
     @Override
-    public WPMProcessedSample getLastSample(){
+    public final ProcessedSample getLastSample(){
         return stack.peek();
     }
 
     @Override
-    public List<WPMProcessedSample> getLastNSample(int n){
-        List<WPMProcessedSample> samples = new ArrayList<WPMProcessedSample>();
-        Queue<WPMProcessedSample> queue = Collections.asLifoQueue(new ArrayDeque<WPMProcessedSample>(stack));
+    public final List<ProcessedSample> getLastNSample(int n){
+        List<ProcessedSample> samples = new ArrayList<ProcessedSample>();
+        Queue<ProcessedSample> queue = Collections.asLifoQueue(new ArrayDeque<ProcessedSample>(stack));
         for(int i=0; i<n; i++){
-            WPMProcessedSample sample = queue.remove();
+            ProcessedSample sample = queue.remove();
             samples.add( sample );
         }
         return samples;
@@ -59,16 +63,17 @@ public class WPMStatsManager implements StatsManager {
      * @param param
      * @return
      */
-    public StatisticDTO getAllAvgStatistic(String param){
+    @Override
+    public final StatisticDTO getAllAvgStatistic(String param){
 
         StatisticDTO ret = new StatisticDTO(param);
 
-        Iterator<WPMProcessedSample> iter;
+        Iterator<ProcessedSample> iter;
         for (iter = stack.descendingIterator(); iter.hasNext();  ) {
-            WPMProcessedSample processedSample = iter.next();
+            ProcessedSample processedSample = iter.next();
             ret.addPoint(
                     processedSample.getId(),
-                    processedSample.getParam(WPMParam.getByName(param))
+                    processedSample.getParam(Param.getByName(param))
             );
         }
         return ret;
@@ -79,29 +84,36 @@ public class WPMStatsManager implements StatsManager {
      * @param param
      * @return
      */
-    public StatisticDTO getLastAvgStatistic(String param){
+    @Override
+    public final StatisticDTO getLastAvgStatistic(String param){
         StatisticDTO ret = new StatisticDTO(param);
-        WPMProcessedSample processedSample = stack.peek();
+        ProcessedSample processedSample = stack.peek();
         if(processedSample == null)
             return ret;
         ret.addPoint(
                 processedSample.getId(),
-                processedSample.getParam(WPMParam.getByName(param))
+                processedSample.getParam(Param.getByName(param))
         );
 
         return ret;
     }
 
-    /**
-     * This method returns the last sample related to a single stat
-     * @return
-     */
-//    public double getLastAvgAttribute(String attribute, ResourceType type) {
-//        WPMSample lastStat = stack.peek();
-//        if(lastStat == null)
-//            return -1;
-//        return getAvgAttribute(attribute, lastStat, type);
-//    }
+    @Override
+    public final void notifyListeners(ProcessedSample sample) {
+        for(SampleListener listener : listeners){
+            listener.onNewSample(sample);
+        }
+    }
+
+    @Override
+    public final void removeListener(SampleListener listener) {
+        listeners.remove(listener);
+    }
+
+    @Override
+    public final void addListener(SampleListener listener) {
+        listeners.add(listener);
+    }
 
 }
 
