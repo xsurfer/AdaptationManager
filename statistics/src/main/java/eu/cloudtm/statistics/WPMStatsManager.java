@@ -73,7 +73,7 @@ public class WPMStatsManager implements StatsManager {
             ProcessedSample processedSample = iter.next();
             ret.addPoint(
                     processedSample.getId(),
-                    processedSample.getParam(Param.getByName(param))
+                    (Double) processedSample.getParam(Param.getByName(param))
             );
         }
         return ret;
@@ -92,7 +92,7 @@ public class WPMStatsManager implements StatsManager {
             return ret;
         ret.addPoint(
                 processedSample.getId(),
-                processedSample.getParam(Param.getByName(param))
+                (Double) processedSample.getParam(Param.getByName(param))
         );
 
         return ret;

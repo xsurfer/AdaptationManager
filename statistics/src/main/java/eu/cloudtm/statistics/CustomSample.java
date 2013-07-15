@@ -26,8 +26,8 @@ public class CustomSample extends ProcessedSample {
     }
 
     @Override
-    public double getParam(Param param) {
-        Double retVal = customAvgWPMParam.get(param);
+    public Object getParam(Param param) {
+        Object retVal = customAvgWPMParam.get(param);
         if(retVal==null) {
             retVal = sample.getParam(param);
         }

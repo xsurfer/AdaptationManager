@@ -16,7 +16,7 @@ public enum Param {
     PrepareCommandBytes                         ( 4, "PrepareCommandBytes", Double.class),
     RTT                                         ( 5, "RTT", Double.class),
     CommitBroadcastWallClockTime                ( 6, "CommitBroadcastWallClockTime", Double.class),
-    PaoloLocalTakenLocks                        ( 7, "PaoloLocalTakenLocks", Double.class),
+    PaoloLocalTakenLocks                        ( 7, "PaoloLocalTakenLocks", Long.class),
     PaoloRemoteTakenLocks                       ( 8, "PaoloRemoteTakenLocks", Double.class),
     NumPuts                                     ( 9, "NumPuts", Double.class),
     PaoloLocalTakenHoldTime                     ( 10, "PaoloLocalTakenHoldTime", Double.class),
@@ -24,10 +24,10 @@ public enum Param {
     CurrentProtocolId                           ( 12, "CurrentProtocolId", String.class),
     CommitProbability                           ( 13, "CommitProbability", Double.class),
     Throughput                                  ( 14, "Throughput", Double.class),
-
-
-
     ;
+
+
+
 
     private final int id;
     private final String key;

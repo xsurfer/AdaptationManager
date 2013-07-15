@@ -11,6 +11,6 @@ public interface Sample {
 
     public long getId();
 
-    public double getParam(Param param);
+    public Object getParam(Param param);
 
 }

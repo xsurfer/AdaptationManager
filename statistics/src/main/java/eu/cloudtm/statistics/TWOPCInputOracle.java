@@ -18,11 +18,11 @@ public class TWOPCInputOracle extends ProcessedSample {
 
     @Override
     public double getACF() {
-        double PaoloLocalTakenLocks = getParam(Param.PaoloLocalTakenLocks);
-        double NumPuts = getParam(Param.NumPuts);
-        double PaoloLocalTakenHoldTime = getParam(Param.PaoloLocalTakenHoldTime);
-        double PaoloRemoteTakenHoldTime = getParam(Param.PaoloRemoteTakenHoldTime);
-        double PaoloRemoteTakenLocks = getParam(Param.PaoloRemoteTakenLocks);
+        double PaoloLocalTakenLocks = (Long) getParam(Param.PaoloLocalTakenLocks);
+        double NumPuts = (Double) getParam(Param.NumPuts);
+        double PaoloLocalTakenHoldTime = (Double) getParam(Param.PaoloLocalTakenHoldTime);
+        double PaoloRemoteTakenHoldTime = (Double) getParam(Param.PaoloRemoteTakenHoldTime);
+        double PaoloRemoteTakenLocks = (Double) getParam(Param.PaoloRemoteTakenLocks);
         double threads = 0; //Controller.getInstance().getCurrentConfiguration().threadPerNode();
         double timeWindow = 60D; // Controller.TIME_WINDOW;
 

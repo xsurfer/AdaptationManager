@@ -81,7 +81,7 @@ public class InputFilter implements SampleListener {
     private boolean evaluateAbortRate(){
         double abortSum = 0.0;
         for (ProcessedSample sample : sampleSlideWindow){
-            abortSum += (1 - sample.getParam(Param.CommitProbability));
+            abortSum += (1 - (Double) sample.getParam(Param.CommitProbability));
         }
         double currentAbortAvg =  abortSum / ((double) sampleSlideWindow.size());
         log.debug("currentAbortAvg: " + currentAbortAvg);
@@ -114,7 +114,7 @@ public class InputFilter implements SampleListener {
     private boolean evaluateArrivalRate(){
         double throughputSum = 0.0;
         for (ProcessedSample sample : sampleSlideWindow){
-            throughputSum += sample.getParam(Param.Throughput);
+            throughputSum += (Double) sample.getParam(Param.Throughput);
         }
         double currentThroughputAvg =  throughputSum / ((double) sampleSlideWindow.size());
         log.trace("currentThroughputAvg: " + currentThroughputAvg);

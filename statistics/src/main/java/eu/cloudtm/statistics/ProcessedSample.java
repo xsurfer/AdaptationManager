@@ -33,7 +33,7 @@ public abstract class ProcessedSample implements Sample {
     }
 
     @Override
-    public double getParam(Param param) {
+    public Object getParam(Param param) {
         return sample.getParam(param);
     }
 

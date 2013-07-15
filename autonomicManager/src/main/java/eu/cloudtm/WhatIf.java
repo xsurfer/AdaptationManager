@@ -34,13 +34,13 @@ public class WhatIf {
 
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
         customParam.setACF( acf  );
-        customParam.setCommitBroadcastWallClockTime( processedSample.getParam(Param.CommitBroadcastWallClockTime) );
-        customParam.setRTT( processedSample.getParam( Param.RTT ) );
-        customParam.setPrepareCommandBytes( processedSample.getParam( Param.PrepareCommandBytes ) );
-        customParam.setSuxNumPuts( processedSample.getParam( Param.SuxNumPuts ) );
-        customParam.setRetryWritePercentage( processedSample.getParam( Param.RetryWritePercentage ) );
-        customParam.setLocalUpdateTxLocalServiceTime( processedSample.getParam( Param.LocalUpdateTxLocalServiceTime ) );
-        customParam.setLocalReadOnlyTxLocalServiceTime( processedSample.getParam( Param.LocalReadOnlyTxLocalServiceTime ) );
+        customParam.setCommitBroadcastWallClockTime( (Double) processedSample.getParam(Param.CommitBroadcastWallClockTime) );
+        customParam.setRTT( (Double) processedSample.getParam( Param.RTT ) );
+        customParam.setPrepareCommandBytes( (Double) processedSample.getParam( Param.PrepareCommandBytes ) );
+        customParam.setSuxNumPuts( (Double) processedSample.getParam( Param.SuxNumPuts ) );
+        customParam.setRetryWritePercentage( (Double) processedSample.getParam( Param.RetryWritePercentage ) );
+        customParam.setLocalUpdateTxLocalServiceTime( (Double) processedSample.getParam( Param.LocalUpdateTxLocalServiceTime ) );
+        customParam.setLocalReadOnlyTxLocalServiceTime( (Double) processedSample.getParam( Param.LocalReadOnlyTxLocalServiceTime ) );
         return customParam;
 
     }

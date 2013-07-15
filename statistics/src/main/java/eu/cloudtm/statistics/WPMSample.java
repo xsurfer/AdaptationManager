@@ -15,18 +15,18 @@ public class WPMSample implements Sample {
 
     private final long id;
 
-    private final Map<String, Double> aggregatedFromWPM;
+    private final Map<String, Object> aggregatedFromWPM;
 
-    public static WPMSample getInstance(Map<String, Double> params2values){
+    public static WPMSample getInstance(Map<String, Object> params2values){
         WPMSample sample = new WPMSample(
                 counter.getAndIncrement(),
-                new HashMap<String, Double>(params2values)
+                new HashMap<String, Object>(params2values)
         );
 
         return sample;
     }
 
-    public WPMSample(long _id, Map<String, Double> aggregated){
+    public WPMSample(long _id, Map<String, Object> aggregated){
         this.id = _id;
         this.aggregatedFromWPM = aggregated;
     }
@@ -34,7 +34,7 @@ public class WPMSample implements Sample {
     public long getId(){ return id; }
 
     @Override
-    public double getParam(Param param) {
+    public Object getParam(Param param) {
         return aggregatedFromWPM.get(param.getKey());
     }
 
