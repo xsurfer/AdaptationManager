@@ -1,4 +1,4 @@
-package eu.cloudtm.statistics;
+package eu.cloudtm.commons;
 
 /**
  * Created with IntelliJ IDEA.

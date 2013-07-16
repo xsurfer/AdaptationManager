@@ -1,5 +1,8 @@
 package eu.cloudtm.statistics;
 
+import eu.cloudtm.commons.EvaluatedParam;
+import eu.cloudtm.commons.Param;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;

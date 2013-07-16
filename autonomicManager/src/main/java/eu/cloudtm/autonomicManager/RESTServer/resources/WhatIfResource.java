@@ -77,7 +77,7 @@ public class WhatIfResource extends AbstractResource {
         Map<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>> result = whatIf.evaluate(customParam);
 
         StringBuffer json = new StringBuffer();
-        json.append( gson.toJson("aa") );
+        json.append( gson.toJson(result) );
 
         log.info(json);
         Response.ResponseBuilder builder = Response.ok( json.toString() );
@@ -92,5 +92,41 @@ public class WhatIfResource extends AbstractResource {
         strBuf.append( gson.toJson( val ) );
         return strBuf.toString();
     }
+
+
+    // DA VISUALIZZARE:
+//    [
+//    {
+//        "forecaster":"analytical",
+//            "throughput": [
+//        [2,100],
+//        [3,100],
+//        [4,100],
+//        [5,100],
+//        [6,100]
+//        ]
+//    },
+//    {
+//        "forecaster":"simulator",
+//            "throughput": [
+//        [2,100],
+//        [3,100],
+//        [4,100],
+//        [5,100],
+//        [6,100]
+//        ]
+//    },
+//    {
+//        "forecaster":"morpher",
+//            "throughput": [
+//        [2,100],
+//        [3,100],
+//        [4,100],
+//        [5,100],
+//        [6,100]
+//        ]
+//    }
+//
+//    ]
 
 }

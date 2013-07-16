@@ -1,8 +1,10 @@
-package eu.cloudtm.oracles;
+package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.statistics.EvaluatedParam;
+import eu.cloudtm.commons.EvaluatedParam;
+import eu.cloudtm.commons.ForecastParam;
+import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.statistics.ProcessedSample;
-import eu.cloudtm.statistics.Param;
+import eu.cloudtm.commons.Param;
 
 import java.util.Map;
 

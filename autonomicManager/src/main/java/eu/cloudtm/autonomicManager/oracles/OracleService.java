@@ -1,9 +1,8 @@
 package eu.cloudtm.autonomicManager.oracles;
 
 import eu.cloudtm.commons.*;
-import eu.cloudtm.oracles.ForecastParam;
+import eu.cloudtm.commons.ForecastParam;
 import eu.cloudtm.oracles.InputOracle;
-import eu.cloudtm.oracles.InputOracleWPM;
 import eu.cloudtm.oracles.Oracle;
 import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.oracles.exceptions.OracleException;

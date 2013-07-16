@@ -6,8 +6,8 @@ import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.oracles.OracleService;
 import eu.cloudtm.statistics.CustomSample;
-import eu.cloudtm.statistics.EvaluatedParam;
-import eu.cloudtm.statistics.Param;
+import eu.cloudtm.commons.EvaluatedParam;
+import eu.cloudtm.commons.Param;
 import eu.cloudtm.statistics.ProcessedSample;
 
 import java.util.HashMap;

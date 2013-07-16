@@ -1,6 +1,4 @@
-package eu.cloudtm.oracles;
-
-import eu.cloudtm.commons.ReplicationProtocol;
+package eu.cloudtm.commons;
 
 /**
  * Created by: Fabio Perfetti
