@@ -1,5 +1,6 @@
 package eu.cloudtm.oracles;
 
+import eu.cloudtm.commons.KPI;
 import eu.cloudtm.commons.KPIimpl;
 import eu.cloudtm.oracles.exceptions.OracleException;
 
@@ -22,7 +23,7 @@ public class Simulator implements Oracle {
     public Simulator(){}
 
     @Override
-    public KPIimpl forecast(InputOracle input) throws OracleException {
+    public KPI forecast(InputOracle input) throws OracleException {
 
         ProcessBuilder pb = new ProcessBuilder(script, "");
         pb.directory(new File(directory));
@@ -42,6 +43,7 @@ public class Simulator implements Oracle {
             e.printStackTrace();
         }
 
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        KPI kpi = new KPIimpl(0,0,0);
+        return kpi;
     }
 }

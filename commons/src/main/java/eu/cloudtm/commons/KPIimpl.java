@@ -28,7 +28,7 @@ public class KPIimpl implements KPI {
     }
 
     @Override
-    public double responseTime() {
+    public double responseTime(int txClassId) {
         return rtt;
     }
 

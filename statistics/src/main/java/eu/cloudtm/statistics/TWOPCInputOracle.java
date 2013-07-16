@@ -3,6 +3,8 @@ package eu.cloudtm.statistics;
 
 import eu.cloudtm.commons.ACF;
 
+import java.util.Random;
+
 /**
  * Created with IntelliJ IDEA.
  * User: fabio
@@ -18,24 +20,26 @@ public class TWOPCInputOracle extends ProcessedSample {
 
     @Override
     public double getACF() {
-        double PaoloLocalTakenLocks = (Long) getParam(Param.PaoloLocalTakenLocks);
-        double NumPuts = (Double) getParam(Param.NumPuts);
-        double PaoloLocalTakenHoldTime = (Double) getParam(Param.PaoloLocalTakenHoldTime);
-        double PaoloRemoteTakenHoldTime = (Double) getParam(Param.PaoloRemoteTakenHoldTime);
-        double PaoloRemoteTakenLocks = (Double) getParam(Param.PaoloRemoteTakenLocks);
-        double threads = 0; //Controller.getInstance().getCurrentConfiguration().threadPerNode();
-        double timeWindow = 60D; // Controller.TIME_WINDOW;
 
-        double acf = new ACF(
-                PaoloLocalTakenLocks,
-                NumPuts,
-                PaoloLocalTakenHoldTime,
-                PaoloRemoteTakenHoldTime,
-                PaoloRemoteTakenLocks,
-                threads,
-                timeWindow).evaluate();
+//        double PaoloLocalTakenLocks = (Long) getParam(Param.PaoloLocalTakenLocks);
+//        double NumPuts = (Double) getParam(Param.NumPuts);
+//        double PaoloLocalTakenHoldTime = (Double) getParam(Param.PaoloLocalTakenHoldTime);
+//        double PaoloRemoteTakenHoldTime = (Double) getParam(Param.PaoloRemoteTakenHoldTime);
+//        double PaoloRemoteTakenLocks = (Double) getParam(Param.PaoloRemoteTakenLocks);
+//        double threads = 0; //Controller.getInstance().getCurrentConfiguration().threadPerNode();
+//        double timeWindow = 60D; // Controller.TIME_WINDOW;
+//
+//        double acf = new ACF(
+//                PaoloLocalTakenLocks,
+//                NumPuts,
+//                PaoloLocalTakenHoldTime,
+//                PaoloRemoteTakenHoldTime,
+//                PaoloRemoteTakenLocks,
+//                threads,
+//                timeWindow).evaluate();
+        Random rnd = new Random();
 
-        return acf;
+        return rnd.nextDouble();
     }
 
 }

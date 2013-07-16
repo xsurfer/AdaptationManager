@@ -11,5 +11,5 @@ public interface KPI {
 
     public double abortRate();
 
-    public double responseTime();
+    public double responseTime(int txClassId);
 }

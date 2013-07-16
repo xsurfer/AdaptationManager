@@ -100,6 +100,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
     }
 
 
+    @Override
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("{ ")
+                .append( platformSize() + " " )
+                .append( replicationDegree() + " ")
+                .append( replicationProtocol() + "}");
+        return builder.toString();
+    }
+
 
     public PlatformConfiguration toJSON() {
         log.info("TO IMPLEMENT");

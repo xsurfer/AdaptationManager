@@ -3,7 +3,10 @@ package eu.cloudtm.statistics;
 import eu.cloudtm.commons.IPlatformConfiguration;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -17,6 +20,8 @@ import java.rmi.RemoteException;
  */
 public class WPMStatsManagerFactory {
 
+    private static Log log = LogFactory.getLog(WPMStatsManagerFactory.class);
+
     private WPMStatisticsRemoteListernerFactory statisticsRemoteListernerFactory;
 
     private WPMViewChangeRemoteListener viewChangeRemoteListener;
@@ -29,18 +34,21 @@ public class WPMStatsManagerFactory {
     }
 
     public WPMStatsManager build(){
-
         WPMConnector connector = null;
-        try {
-            connector = new WPMConnector();
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
 
+        while(connector == null){
+            try {
+                connector = new WPMConnector();
+            } catch (Exception e) {
+                log.warn("Check if the LogService is running and press enter to retry...");
+                try {
+                    System.in.read();
+                } catch (IOException e1) {
+                    throw new RuntimeException(e);
+                }
+                connector = null;
+            }
+        }
 
         WPMStatsManager wpmStatsManager = new WPMStatsManager();
         this.statisticsRemoteListernerFactory = new WPMStatisticsRemoteListernerFactory(connector, wpmStatsManager, platformConfiguration);

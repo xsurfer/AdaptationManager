@@ -1,7 +1,8 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.commons.KPIimpl;
+import eu.cloudtm.commons.*;
 import eu.cloudtm.oracles.exceptions.OracleException;
+import eu.cloudtm.statistics.Param;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,8 +17,16 @@ public class OracleTAS implements Oracle {
     private static Log log = LogFactory.getLog(OracleTAS.class);
 
     @Override
-    public KPIimpl forecast(InputOracle input) throws OracleException {
-        return null;
+    public KPI forecast(InputOracle inputOracle) throws OracleException {
+        double throughput = (Double) inputOracle.getParam(Param.Throughput);
+
+        if(throughput >= 0 && throughput < 100){
+            return new KPIimpl(150, 0, 0);
+        } else if( throughput >= 100 && throughput < 400 ) {
+            return new KPIimpl(600, 0, 0);
+        } else {
+            return new KPIimpl(1200, 0 , 0);
+        }
     }
 }
 

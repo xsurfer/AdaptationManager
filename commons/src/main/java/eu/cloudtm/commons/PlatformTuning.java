@@ -13,39 +13,32 @@ public class PlatformTuning {
 
     private static Log log = LogFactory.getLog(PlatformTuning.class);
 
-    private Forecaster scaleForecaster;
+    private Forecaster forecaster = Forecaster.ANALYTICAL;
 
-    private Forecaster protocolForecaster;
+    private boolean autoScale = true;
+    private boolean autoDegree = true;
+    private boolean autoProtocol = true;
 
-    private Forecaster degreeForecaster;
-
-
-    public Forecaster scaleForecaster(){
-        return scaleForecaster;
+    public PlatformTuning(Forecaster forecaster, boolean defaultTuning){
+        this.forecaster = forecaster;
+        autoScale = autoDegree = autoProtocol = defaultTuning;
     }
 
-    public Forecaster protocolForecaster(){
-        return protocolForecaster;
+    public Forecaster forecaster(){
+        return forecaster;
     }
 
-    public Forecaster degreeForecaster(){
-        return degreeForecaster;
+    public boolean isAutoScale(){
+        return autoScale;
     }
 
-
-
-    public void setScaleForecaster(Forecaster _forecaster){
-        scaleForecaster = _forecaster;
+    public boolean isAutoDegree(){
+        return autoDegree;
     }
 
-    public void setProtocolForecaster(Forecaster _forecaster){
-        scaleForecaster = _forecaster;
+    public boolean isAutoProtocol(){
+        return autoProtocol;
     }
-
-    public void setDegreeForecaster(Forecaster _forecaster){
-        scaleForecaster = _forecaster;
-    }
-
 
     public PlatformTuning toJSON() {
         log.info("TO IMPLEMENT");

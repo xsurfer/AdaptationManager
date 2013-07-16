@@ -11,23 +11,20 @@ import java.util.Map;
  */
 public class CustomSample extends ProcessedSample {
 
-    private Map<Param, Double> customAvgWPMParam;
+    private ProcessedSample sample;
+    private Map<Param, Double> customParam;
     private Map<EvaluatedParam, Double> customEvaluatedParam;
-    private ProcessedSample inputOracle;
 
-    public CustomSample(WPMSample sample,
-                        ProcessedSample _inputOracle,
-                        Map<Param, Double> _customAvgWPMParam,
-                        Map<EvaluatedParam, Double> _evaluatedParam) {
+    public CustomSample(ProcessedSample sample, Map<Param, Double> customParam, Map<EvaluatedParam, Double> customEvaluatedParam ) {
         super(sample);
-        inputOracle = _inputOracle;
-        customAvgWPMParam = _customAvgWPMParam;
-        customEvaluatedParam = _evaluatedParam;
+        this.sample = sample;
+        this.customParam = customParam;
+        this.customEvaluatedParam = customEvaluatedParam;
     }
 
     @Override
     public Object getParam(Param param) {
-        Object retVal = customAvgWPMParam.get(param);
+        Object retVal = customParam.get(param);
         if(retVal==null) {
             retVal = sample.getParam(param);
         }
@@ -38,10 +35,9 @@ public class CustomSample extends ProcessedSample {
     public double getACF() {
         Double retVal = customEvaluatedParam.get(EvaluatedParam.ACF);
         if(retVal==null) {
-            retVal = inputOracle.getEvaluatedParam(EvaluatedParam.ACF);
+            retVal = sample.getEvaluatedParam(EvaluatedParam.ACF);
         }
         return retVal;
     }
-
 
 }

@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.deltacloud.client.DeltaCloudClientException;
 
 import java.net.MalformedURLException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by: Fabio Perfetti
@@ -18,17 +19,21 @@ public class Reconfigurator {
 
     private final Log log = LogFactory.getLog(Reconfigurator.class);
 
+    private AtomicInteger numReconfig = new AtomicInteger(0);
+
     public void reconfigure(PlatformConfiguration conf) throws ReconfiguratorException {
 
         // se già sto riconfigurando aspetto (a meno che: riconf attuale >> riconf prec...)
         // x ora riconfigure se e solo se non sto già riconfigurando
+
+        ControllerLogger.log.info("Reconfiguring: " + conf);
 
         int numNodes = conf.platformSize();
         int numThreads = conf.threadPerNode();
         try {
             DeltaCloudActuator deltaCloudActuator = DeltaCloudActuator.getInstance(numNodes, numThreads);
             deltaCloudActuator.actuate();
-            ControllerLogger.log.info("Riconfigurazione terminata");
+            ControllerLogger.log.info(numReconfig.incrementAndGet() + "reconfiguration ended");
         } catch (MalformedURLException e) {
             throw new ReconfiguratorException(e);
         } catch (DeltaCloudClientException e) {

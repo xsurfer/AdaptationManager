@@ -1,11 +1,23 @@
 package eu.cloudtm.commons.dto;
 
+import eu.cloudtm.commons.Forecaster;
+import eu.cloudtm.commons.ReplicationProtocol;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
  * Date: 6/17/13
  */
 public class WhatIfCustomParamDTO {
+
+    private Set<Forecaster> forecasters = new HashSet<Forecaster>();
+
+    private ReplicationProtocol replProtocol = ReplicationProtocol.TWOPC;
 
     private double ACF = -1;
     private double GetWriteTx = -1;
@@ -18,6 +30,18 @@ public class WhatIfCustomParamDTO {
     private double PrepareCommandBytes = -1;
     private double RTT = -1;
     private double CommitBroadcastWallClockTime = -1;
+
+    public void addForecaster(Forecaster forecaster){
+        forecasters.add(forecaster);
+    }
+
+    public boolean removeForecaster(Forecaster forecaster){
+        return forecasters.remove(forecaster);
+    }
+
+    public Set<Forecaster> getForecasters(){
+        return forecasters;
+    }
 
     public double getACF() {
         return ACF;

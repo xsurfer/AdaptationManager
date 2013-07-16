@@ -103,33 +103,6 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     }
 
-//    @Override
-//    public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
-//
-//        Map<String, Object> aggregatedStats = new HashMap<String, Object>();
-//
-//        log.trace("Parsing JMX stats");
-//        PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX);
-//        HashMap<String, PublishAttribute> jmx = pm.getValues();
-//
-//        for(Map.Entry<String,PublishAttribute> e : jmx.entrySet()){
-//            aggregatedStats.put(e.getKey(), e.getValue().getValue());
-//        }
-//
-//        log.trace("Parsing MEM stats");
-//        pm = event.getPublishMeasurement(ResourceType.MEMORY);
-//        HashMap<String, PublishAttribute> mem = pm.getValues();
-//
-//        for(Map.Entry<String,PublishAttribute> e : mem.entrySet()){
-//            aggregatedStats.put(e.getKey(), e.getValue().getValue());
-//        }
-//
-//        WPMSample wpmSample = WPMSample.getInstance(aggregatedStats);
-//        ProcessedSample processedSample = processor.process(wpmSample);
-//        statsManager.push(processedSample);
-//    }
-
-
     @Override
     public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
 
@@ -139,24 +112,52 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
         PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX);
         HashMap<String, PublishAttribute> jmx = pm.getValues();
 
-        log.info("SIZE jmx: " + jmx.size());
-        int i = 0;
         for(Map.Entry<String,PublishAttribute> e : jmx.entrySet()){
-            log.info(i + " - " +e.getKey() + " : " + e.getValue().getValue().getClass());
+            aggregatedStats.put(e.getKey(), e.getValue().getValue());
         }
 
         log.trace("Parsing MEM stats");
         pm = event.getPublishMeasurement(ResourceType.MEMORY);
         HashMap<String, PublishAttribute> mem = pm.getValues();
 
-        for(Map.Entry<String,PublishAttribute> e : jmx.entrySet()){
-            log.info(e.getKey() + ":" + e.getValue().getValue().getClass());
+        for(Map.Entry<String,PublishAttribute> e : mem.entrySet()){
+            aggregatedStats.put(e.getKey(), e.getValue().getValue());
         }
 
-        //WPMSample wpmSample = WPMSample.getInstance(aggregatedStats);
-        //ProcessedSample processedSample = processor.process(wpmSample);
-        //statsManager.push(processedSample);
+        WPMSample wpmSample = WPMSample.getInstance(aggregatedStats);
+        ProcessedSample processedSample = processor.process(wpmSample);
+        statsManager.push(processedSample);
     }
+
+
+//    Usato per leggere le chiavi
+//    @Override
+//    public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
+//
+//        Map<String, Object> aggregatedStats = new HashMap<String, Object>();
+//
+//        log.trace("Parsing JMX stats");
+//        PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX);
+//        HashMap<String, PublishAttribute> jmx = pm.getValues();
+//
+//        log.info("SIZE jmx: " + jmx.size());
+//        int i = 0;
+//        for(Map.Entry<String,PublishAttribute> e : jmx.entrySet()){
+//            log.info(i + " - " +e.getKey() + " : " + e.getValue().getValue().getClass());
+//        }
+//
+//        log.trace("Parsing MEM stats");
+//        pm = event.getPublishMeasurement(ResourceType.MEMORY);
+//        HashMap<String, PublishAttribute> mem = pm.getValues();
+//
+//        for(Map.Entry<String,PublishAttribute> e : mem.entrySet()){
+//            log.info(e.getKey() + ":" + e.getValue().getValue().getClass());
+//        }
+//
+//        //WPMSample wpmSample = WPMSample.getInstance(aggregatedStats);
+//        //ProcessedSample processedSample = processor.process(wpmSample);
+//        //statsManager.push(processedSample);
+//    }
 
 
 

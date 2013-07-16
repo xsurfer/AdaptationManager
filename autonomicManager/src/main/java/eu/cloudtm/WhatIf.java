@@ -1,6 +1,11 @@
 package eu.cloudtm;
 
+import eu.cloudtm.commons.Forecaster;
+import eu.cloudtm.commons.KPI;
+import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.oracles.OracleService;
+import eu.cloudtm.statistics.CustomSample;
 import eu.cloudtm.statistics.EvaluatedParam;
 import eu.cloudtm.statistics.Param;
 import eu.cloudtm.statistics.ProcessedSample;
@@ -27,32 +32,56 @@ public class WhatIf {
 
     public WhatIfCustomParamDTO retrieveCurrentValues(){
 
-        Map<String, PublishAttribute<Double>> customMap = new HashMap<String, PublishAttribute<Double>>();
+        WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
 
         Double acf = processedSample.getEvaluatedParam(EvaluatedParam.ACF);
-
-
-        WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
         customParam.setACF( acf  );
-        customParam.setCommitBroadcastWallClockTime( (Double) processedSample.getParam(Param.CommitBroadcastWallClockTime) );
-        customParam.setRTT( (Double) processedSample.getParam( Param.RTT ) );
-        customParam.setPrepareCommandBytes( (Double) processedSample.getParam( Param.PrepareCommandBytes ) );
-        customParam.setSuxNumPuts( (Double) processedSample.getParam( Param.SuxNumPuts ) );
-        customParam.setRetryWritePercentage( (Double) processedSample.getParam( Param.RetryWritePercentage ) );
+        customParam.setCommitBroadcastWallClockTime( (Double) processedSample.getParam(Param.AvgCommitAsync) );
+        customParam.setRTT( (Double) processedSample.getParam( Param.AvgPrepareAsync ) );
+        customParam.setPrepareCommandBytes( (Double) processedSample.getParam( Param.AvgPrepareCommandSize ) );
+        customParam.setSuxNumPuts( (Double) processedSample.getParam( Param.AvgNumPutsBySuccessfulLocalTx ) );
+        customParam.setRetryWritePercentage( (Double) processedSample.getParam( Param.PercentageSuccessWriteTransactions ) );
         customParam.setLocalUpdateTxLocalServiceTime( (Double) processedSample.getParam( Param.LocalUpdateTxLocalServiceTime ) );
         customParam.setLocalReadOnlyTxLocalServiceTime( (Double) processedSample.getParam( Param.LocalReadOnlyTxLocalServiceTime ) );
         return customParam;
-
     }
 
 
-    public static void evaluate(WhatIfCustomParamDTO customParam){
+    public Map<Forecaster, Map<PlatformConfiguration, KPI>> evaluate(WhatIfCustomParamDTO customParamDTO){
 
-//        WPMSample lastSample = StatsManager.getInstance().getLastSample();
-//        Map<String, PublishAttribute<Double>> map = lastSample.getJmx();
+        Map<Param, Double> customParam = new HashMap<Param, Double>();
+        Map<EvaluatedParam, Double> customEvaluatedParam = new HashMap<EvaluatedParam, Double>();
 
-//        CustomSample customSample = new CustomSample();
+        Map<Forecaster, Map<PlatformConfiguration, KPI>> result = new HashMap<Forecaster, Map<PlatformConfiguration, KPI>>();
+        for(Forecaster forecaster : customParamDTO.getForecasters()){
+            if(forecaster.equals(Forecaster.COMMITTEE)){
+                throw new RuntimeException("Not yet implemented");
+            } else {
+                OracleService oracleService = OracleService.getInstance( forecaster.getOracleClass() );
+                CustomSample customSample = new CustomSample(processedSample, customParam, customEvaluatedParam);
+                result.put(forecaster, oracleService.whatIf(customSample));
+            }
+        }
+        return result;
+    }
 
+    private Map<Param, Double> extractCustomParam(WhatIfCustomParamDTO whatIfCustomParam){
+        Map<Param, Double> customParam = new HashMap<Param, Double>();
+        customParam.put(Param.AvgCommitAsync, whatIfCustomParam.getCommitBroadcastWallClockTime());
+        customParam.put(Param.AvgPrepareAsync, whatIfCustomParam.getRTT());
+        customParam.put(Param.AvgPrepareCommandSize, whatIfCustomParam.getPrepareCommandBytes() );
+        customParam.put(Param.AvgNumPutsBySuccessfulLocalTx, whatIfCustomParam.getSuxNumPuts() );
+        customParam.put(Param.PercentageSuccessWriteTransactions, whatIfCustomParam.getRetryWritePercentage() );
+        customParam.put(Param.LocalUpdateTxLocalServiceTime, whatIfCustomParam.getLocalUpdateTxLocalServiceTime() );
+        customParam.put(Param.LocalReadOnlyTxLocalServiceTime, whatIfCustomParam.getLocalReadOnlyTxLocalServiceTime() );
+
+        return customParam;
+    }
+
+    private Map<EvaluatedParam, Double> extractCustomEvaluatedParam(WhatIfCustomParamDTO whatIfCustomParam){
+        Map<EvaluatedParam, Double> customParam = new HashMap<EvaluatedParam, Double>();
+        customParam.put(EvaluatedParam.ACF, whatIfCustomParam.getACF());
+        return customParam;
     }
 
 }

@@ -16,6 +16,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by: Fabio Perfetti
@@ -26,21 +28,23 @@ public class InputFilter implements SampleListener {
 
     private static Log log = LogFactory.getLog(InputFilter.class);
 
-    private static final int SLIDE_WINDOW_SIZE = 5;
+    private static final int SLIDE_WINDOW_SIZE = 30;
 
     private Optimizer optimizer;
 
     private Buffer<ProcessedSample> sampleSlideWindow = BufferUtils.synchronizedBuffer(new CircularFifoBuffer<ProcessedSample>(SLIDE_WINDOW_SIZE));
 
     /* *** SOGLIE *** */
-    private static final int DELTA_ARRIVAL_RATE = 2;
-    private double lastAvgArrivalRate = 0.0;
+    private static final int DELTA_ARRIVAL_RATE = 20;
+    private volatile double lastAvgArrivalRate = 0.0;
 
-    private static final int DELTA_ABORT_RATE = 2;
-    private double lastAvgAbortRate = 0.0;
+    private static final int DELTA_ABORT_RATE = 20;
+    private volatile double lastAvgAbortRate = 0.0;
 
     private static final int DELTA_RESPONSE_TIME = 2;
-    private double lastAvgResposeTime = 0.0;
+    private volatile double lastAvgResposeTime = 0.0;
+
+    private Lock reconfigurationLock = new ReentrantLock();
 
 //    /* *** VALORI ATTUALI *** */
 //    private double currentArrivalRate;
@@ -53,35 +57,45 @@ public class InputFilter implements SampleListener {
     }
 
     @Override
-    public void onNewSample(ProcessedSample sample) {
+    public synchronized void onNewSample(ProcessedSample sample) {
         sampleSlideWindow.add(sample);
 
         if(sampleSlideWindow.size() < SLIDE_WINDOW_SIZE){
             return;
         }
-
         boolean reconfigure;
         boolean arrivalRateResponse = evaluateArrivalRate();
         boolean responseTimeResponse = evaluateResponseTime();
         boolean abortRateResponse = evaluateAbortRate();
 
         reconfigure =  arrivalRateResponse || responseTimeResponse || abortRateResponse;
+
         if(reconfigure){
-            KPI current = new KPIimpl(lastAvgArrivalRate, lastAvgAbortRate, lastAvgResposeTime);
-            try {
-                optimizer.doOptimize(current, sample);
-            } catch (ReconfiguratorException e) {
-                log.warn("Eccezione durante la riconfigurazione!!");
-            } catch (OracleException e) {
-                log.warn("Eccezione durante l'ottimizzazione!!");
+            if(reconfigurationLock.tryLock()){
+                try{
+                    ControllerLogger.log.info("Starting a new reconfiguration...");
+                    KPI current = new KPIimpl(lastAvgArrivalRate, lastAvgAbortRate, lastAvgResposeTime);
+                    try {
+                        optimizer.doOptimize(current, sample);
+                    } catch (ReconfiguratorException e) {
+                        ControllerLogger.log.warn("Eccezione durante la riconfigurazione!!");
+                    } catch (OracleException e) {
+                        ControllerLogger.log.warn("Eccezione durante l'ottimizzazione!!");
+                    }
+
+                } finally {
+                    reconfigurationLock.unlock();
+                }
+            } else {
+                ControllerLogger.log.info("Reconfiguration is running, skipping...");
             }
         }
     }
 
-    private boolean evaluateAbortRate(){
+    private  synchronized boolean evaluateAbortRate(){
         double abortSum = 0.0;
         for (ProcessedSample sample : sampleSlideWindow){
-            abortSum += (1 - (Double) sample.getParam(Param.CommitProbability));
+            abortSum += (Double) sample.getParam(Param.AbortRate);
         }
         double currentAbortAvg =  abortSum / ((double) sampleSlideWindow.size());
         log.debug("currentAbortAvg: " + currentAbortAvg);
@@ -107,11 +121,11 @@ public class InputFilter implements SampleListener {
         return false;
     }
 
-    private boolean evaluateResponseTime(){
+    private synchronized boolean evaluateResponseTime(){
         return false;
     }
 
-    private boolean evaluateArrivalRate(){
+    private synchronized boolean evaluateArrivalRate(){
         double throughputSum = 0.0;
         for (ProcessedSample sample : sampleSlideWindow){
             throughputSum += (Double) sample.getParam(Param.Throughput);
@@ -120,7 +134,7 @@ public class InputFilter implements SampleListener {
         log.trace("currentThroughputAvg: " + currentThroughputAvg);
         log.trace("lastAvgArrivalRate: " + lastAvgArrivalRate);
 
-        if(lastAvgArrivalRate == 0 || lastAvgArrivalRate == Double.NaN){
+        if(lastAvgArrivalRate == 0D || lastAvgArrivalRate == Double.NaN){
             log.info("Updating && Skipping lastAvgArrivalRate");
             lastAvgArrivalRate = currentThroughputAvg;
         } else {

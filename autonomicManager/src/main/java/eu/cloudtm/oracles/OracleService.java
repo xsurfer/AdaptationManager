@@ -1,5 +1,6 @@
 package eu.cloudtm.oracles;
 
+import eu.cloudtm.ControllerLogger;
 import eu.cloudtm.commons.*;
 import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.oracles.exceptions.OracleException;
@@ -8,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +17,7 @@ import java.util.Map;
  * E-mail: perfabio87@gmail.com
  * Date: 6/14/13
  */
-public class OracleService {
+public class OracleService implements IOracleService {
 
     private static Log log = LogFactory.getLog(OracleService.class);
 
@@ -72,6 +74,12 @@ public class OracleService {
         return configuration;
     }
 
+    @Override
+    public Map<PlatformConfiguration, KPI> whatIf(ProcessedSample sample) {
+
+        return null;
+    }
+
     private PlatformConfiguration exploreAllCases(ProcessedSample sample,
                                 double arrivalRateToGuarantee,
                                 double abortRateToGuarantee,
@@ -96,9 +104,14 @@ public class OracleService {
 
                     InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParams);
 
+//                    ControllerLogger.log.info("Forecasting with: " +
+//                            "nodes "      + numNodes + ", " +
+//                            "repDegree "    + repDegree + ", " +
+//                            "repProt "      + protocol
+//                    );
                     KPI kpi = oracle.forecast( inputOracle );
 
-                    if( kpi.throughput()>arrivalRateToGuarantee && kpi.abortRate() < abortRateToGuarantee ){
+                    if( kpi.throughput() >= arrivalRateToGuarantee && kpi.abortRate() <= abortRateToGuarantee ){
                         found = true;
                         finalNumNodes = numNodes;
                         finalRepDegree = repDegree;
@@ -106,6 +119,7 @@ public class OracleService {
                         break;
                     }
                 }
+                repDegree++;
             }
             numNodes++;
         }
