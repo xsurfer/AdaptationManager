@@ -78,7 +78,7 @@
 //        customParam.setRetryWritePercentage(validateParam(retryWritePercentage));
 //        customParam.setRTT( validateParam(rtt) );
 //
-//        Set<KPIimpl> result = null;
+//        Set<OutputOracleImpl> result = null;
 //        for( String oracleName : ControllerOld.getInstance().getOracles() ){
 //            Oracle oracle = OracleService.getInstance(oracleName, ControllerOld.getInstance());
 //            try {
@@ -91,7 +91,7 @@
 //        lastSample = null;
 //
 //        WhatIfDTO whatIfResult = new WhatIfDTO();
-//        for(KPIimpl kpi:result){
+//        for(OutputOracleImpl kpi:result){
 //            whatIfResult.addThroughputPoint(kpi.getPlatformConfiguration().platformSize(),kpi.getThroughput());
 //            whatIfResult.addResponseTimePoint(kpi.getPlatformConfiguration().platformSize(),kpi.getRtt());
 //            whatIfResult.addAbortRatePoint(kpi.getPlatformConfiguration().platformSize(),kpi.getAbortProbability());

@@ -3,9 +3,9 @@ package eu.cloudtm.statistics;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.events.PublishViewChangeEvent;
 import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
-import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
 import eu.cloudtm.wpm.logService.remote.observables.Handle;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

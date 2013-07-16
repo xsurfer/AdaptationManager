@@ -3,13 +3,12 @@ package eu.cloudtm.statistics;
 import eu.cloudtm.commons.IPlatformConfiguration;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
+
 
 /**
  * Created with IntelliJ IDEA.

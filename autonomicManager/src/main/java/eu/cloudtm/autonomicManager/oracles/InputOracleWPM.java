@@ -34,7 +34,7 @@ public class InputOracleWPM implements InputOracle {
     }
 
     @Override
-    public double getEvaluatedParam(EvaluatedParam param){
+    public Object getEvaluatedParam(EvaluatedParam param){
         return processedSample.getEvaluatedParam(param);
     }
 

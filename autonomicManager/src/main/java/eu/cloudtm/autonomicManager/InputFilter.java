@@ -1,7 +1,7 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.commons.OutputOracle;
-import eu.cloudtm.commons.KPIimpl;
+import eu.cloudtm.oracles.OutputOracle;
+import eu.cloudtm.autonomicManager.oracles.OutputOracleImpl;
 import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.commons.Param;
@@ -73,7 +73,7 @@ public class InputFilter implements SampleListener {
             if(reconfigurationLock.tryLock()){
                 try{
                     ControllerLogger.log.info("Starting a new reconfiguration...");
-                    OutputOracle current = new KPIimpl(lastAvgArrivalRate, lastAvgAbortRate, lastAvgResposeTime);
+                    OutputOracle current = new OutputOracleImpl(lastAvgArrivalRate, lastAvgAbortRate, lastAvgResposeTime);
                     try {
                         optimizer.doOptimize(current, sample);
                     } catch (ReconfiguratorException e) {

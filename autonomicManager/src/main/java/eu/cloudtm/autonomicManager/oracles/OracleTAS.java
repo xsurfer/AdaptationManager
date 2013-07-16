@@ -1,8 +1,8 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.commons.*;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.commons.Param;
 import org.apache.commons.logging.Log;
@@ -23,11 +23,11 @@ public class OracleTAS implements Oracle {
         double throughput = (Double) inputOracle.getParam(Param.Throughput);
 
         if(throughput >= 0 && throughput < 100){
-            return new KPIimpl(150, 0, 0);
+            return new OutputOracleImpl(150, 0, 0);
         } else if( throughput >= 100 && throughput < 400 ) {
-            return new KPIimpl(600, 0, 0);
+            return new OutputOracleImpl(600, 0, 0);
         } else {
-            return new KPIimpl(1200, 0 , 0);
+            return new OutputOracleImpl(1200, 0 , 0);
         }
     }
 }
@@ -44,7 +44,7 @@ public class OracleTAS implements Oracle {
 //    }
 //
 //    @Override
-//    public KPIimpl forecast(ProcessedSample input) throws OracleException {
+//    public OutputOracleImpl forecast(ProcessedSample input) throws OracleException {
 //        DSTMScenarioTas2 scenario;
 //
 //        try {
@@ -63,7 +63,7 @@ public class OracleTAS implements Oracle {
 //    }
 
 //    @Override
-//    public KPIimpl forecastWithCustomParam(WPMSample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) throws OracleException {
+//    public OutputOracleImpl forecastWithCustomParam(WPMSample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) throws OracleException {
 //        DSTMScenarioTas2 scenario = null;
 //
 //        try {
@@ -87,7 +87,7 @@ public class OracleTAS implements Oracle {
 //        }
 //    }
 
-//    private KPIimpl realForecast(DSTMScenarioTas2 scenario, int numNodes, int numThreads) throws Tas2Exception {
+//    private OutputOracleImpl realForecast(DSTMScenarioTas2 scenario, int numNodes, int numThreads) throws Tas2Exception {
 //        ModelResult result;
 //        try {
 //            log.info("calling tas");
@@ -108,7 +108,7 @@ public class OracleTAS implements Oracle {
 //                2,
 //                false);
 //
-//        KPIimpl ret = new KPIimpl(config, throughput, abortP, rtt);
+//        OutputOracleImpl ret = new OutputOracleImpl(config, throughput, abortP, rtt);
 //
 //        return ret;
 //    }

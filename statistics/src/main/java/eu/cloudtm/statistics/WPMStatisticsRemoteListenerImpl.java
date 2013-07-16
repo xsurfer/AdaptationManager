@@ -5,6 +5,7 @@ import eu.cloudtm.wpm.logService.remote.events.*;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.logService.remote.observables.Handle;
 import eu.cloudtm.wpm.parser.ResourceType;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,9 +25,9 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     private Handle handle;
 
-    private StatsProcessor processor;
+    private Processor processor;
 
-    public WPMStatisticsRemoteListenerImpl(WPMConnector connector, StatsManager statsManager, SubscribeEvent subscribeEvent, StatsProcessor processor){
+    public WPMStatisticsRemoteListenerImpl(WPMConnector connector, StatsManager statsManager, SubscribeEvent subscribeEvent, Processor processor){
         this.processor = processor;
 
         this.statsManager = statsManager;

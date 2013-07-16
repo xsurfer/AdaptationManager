@@ -1,6 +1,5 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.commons.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 
 /**
@@ -12,10 +11,10 @@ public interface Oracle {
 
     public OutputOracle forecast(InputOracle input) throws OracleException;
 
-    //public KPIimpl minimizeCosts(InputOracleWPM input, double arrivalRate, double abortRate, double responseTime) throws OracleException;
+    //public OutputOracleImpl minimizeCosts(InputOracleWPM input, double arrivalRate, double abortRate, double responseTime) throws OracleException;
 
-    //public Set<KPIimpl> whatIf(InputOracleWPM input) throws OracleException;
+    //public Set<OutputOracleImpl> whatIf(InputOracleWPM input) throws OracleException;
 
-    //public KPIimpl forecastWithCustomParam(WPMSample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) throws OracleException;
+    //public OutputOracleImpl forecastWithCustomParam(WPMSample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) throws OracleException;
 
 }

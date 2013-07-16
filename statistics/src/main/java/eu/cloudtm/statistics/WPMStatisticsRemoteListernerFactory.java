@@ -26,7 +26,7 @@ public class WPMStatisticsRemoteListernerFactory {
     }
 
     public Handle build(SubscribeEvent subscribeEvent){
-        StatsProcessor processor = new StatsProcessor(currentConfig);
+        Processor processor = new StatsProcessor(currentConfig);
         return new WPMStatisticsRemoteListenerImpl(connector, dispatcher, subscribeEvent, processor).getHandle();
     }
 

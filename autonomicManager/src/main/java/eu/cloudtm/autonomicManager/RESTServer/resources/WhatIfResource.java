@@ -3,7 +3,7 @@ package eu.cloudtm.autonomicManager.RESTServer.resources;
 import com.google.gson.Gson;
 import eu.cloudtm.autonomicManager.WhatIf;
 import eu.cloudtm.commons.Forecaster;
-import eu.cloudtm.commons.OutputOracle;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.statistics.StatsManager;

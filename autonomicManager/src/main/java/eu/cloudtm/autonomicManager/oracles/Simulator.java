@@ -1,7 +1,6 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.commons.OutputOracle;
-import eu.cloudtm.commons.KPIimpl;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
@@ -45,7 +44,7 @@ public class Simulator implements Oracle {
             e.printStackTrace();
         }
 
-        OutputOracle outputOracle = new KPIimpl(0,0,0);
+        OutputOracle outputOracle = new OutputOracleImpl(0,0,0);
         return outputOracle;
     }
 }

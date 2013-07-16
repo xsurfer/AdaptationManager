@@ -7,7 +7,7 @@ import eu.cloudtm.commons.IPlatformConfiguration;
  * E-mail: perfabio87@gmail.com
  * Date: 7/12/13
  */
-public class StatsProcessor {
+public class StatsProcessor implements Processor {
 
     private IPlatformConfiguration currentConfig;
 
@@ -15,7 +15,7 @@ public class StatsProcessor {
         this.currentConfig = currentConfig;
     }
 
-    public ProcessedSample process(WPMSample rawSample){
+    public ProcessedSample process(Sample rawSample){
         // TODO processare in base al protocollo o altro... per ora solo 2pc
         TWOPCInputOracle processedSample = new TWOPCInputOracle(rawSample);
         return processedSample;

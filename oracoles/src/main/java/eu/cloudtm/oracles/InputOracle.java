@@ -15,7 +15,7 @@ public interface InputOracle {
 
     public Object getParam(Param param);
 
-    public double getEvaluatedParam(EvaluatedParam param);
+    public Object getEvaluatedParam(EvaluatedParam param);
 
     public Object getForecastParam(ForecastParam param);
 

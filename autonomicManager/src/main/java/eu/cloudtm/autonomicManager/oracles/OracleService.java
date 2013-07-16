@@ -4,6 +4,7 @@ import eu.cloudtm.commons.*;
 import eu.cloudtm.commons.ForecastParam;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;

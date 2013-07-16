@@ -2,6 +2,7 @@ package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.commons.*;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.statistics.StatsManager;
 import org.apache.commons.logging.Log;

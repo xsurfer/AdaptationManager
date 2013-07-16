@@ -19,7 +19,7 @@ public class TWOPCInputOracle extends ProcessedSample {
     }
 
     @Override
-    public double getACF() {
+    public Double getACF() {
 
 //        double PaoloLocalTakenLocks = (Long) getParam(Param.PaoloLocalTakenLocks);
 //        double NumPuts = (Double) getParam(Param.NumPuts);

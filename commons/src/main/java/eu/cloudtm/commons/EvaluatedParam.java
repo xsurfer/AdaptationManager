@@ -9,7 +9,12 @@ package eu.cloudtm.commons;
  */
 public enum EvaluatedParam {
 
-    ACF             ( 0, "ACF" );
+    ACF                         ( 0, "ACF" ),
+    CORE_PER_CPU                ( 1, "CORE_PER_CPU" ),
+    MAX_ACTIVE_THREADS          ( 2, "MAX_ACTIVE_THREADS" ),
+    SYSTEM_TYPE                 ( 3, "SYSTEM_TYPE" ),
+
+    ;
 
 
     private final int id;

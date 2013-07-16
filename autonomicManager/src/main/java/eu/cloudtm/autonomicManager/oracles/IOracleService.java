@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.commons.OutputOracle;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.ReplicationProtocol;
 import eu.cloudtm.oracles.exceptions.OracleException;

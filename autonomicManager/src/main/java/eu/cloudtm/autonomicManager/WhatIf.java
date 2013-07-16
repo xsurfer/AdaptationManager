@@ -1,7 +1,7 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.commons.Forecaster;
-import eu.cloudtm.commons.OutputOracle;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.oracles.OracleService;
@@ -34,7 +34,11 @@ public class WhatIf {
 
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
 
-        Double acf = processedSample.getEvaluatedParam(EvaluatedParam.ACF);
+        Double acf = null;
+        Object acfObj = processedSample.getEvaluatedParam(EvaluatedParam.ACF);
+        if(acfObj != null){
+            acf = (Double) acfObj;
+        }
         customParam.setACF( acf  );
         customParam.setCommitBroadcastWallClockTime( (Double) processedSample.getParam(Param.AvgCommitAsync) );
         customParam.setRTT( (Double) processedSample.getParam( Param.AvgPrepareAsync ) );
@@ -50,7 +54,7 @@ public class WhatIf {
     public Map<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>> evaluate(WhatIfCustomParamDTO customParamDTO){
 
         Map<Param, Object> customParam = extractCustomParam(customParamDTO);
-        Map<EvaluatedParam, Double> customEvaluatedParam = extractCustomEvaluatedParam(customParamDTO);
+        Map<EvaluatedParam, Object> customEvaluatedParam = extractCustomEvaluatedParam(customParamDTO);
 
         Map<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>> result = new HashMap<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>>();
         for(Forecaster forecaster : customParamDTO.getForecasters()){
@@ -79,8 +83,8 @@ public class WhatIf {
         return customParam;
     }
 
-    private Map<EvaluatedParam, Double> extractCustomEvaluatedParam(WhatIfCustomParamDTO whatIfCustomParam){
-        Map<EvaluatedParam, Double> customParam = new HashMap<EvaluatedParam, Double>();
+    private Map<EvaluatedParam, Object> extractCustomEvaluatedParam(WhatIfCustomParamDTO whatIfCustomParam){
+        Map<EvaluatedParam, Object> customParam = new HashMap<EvaluatedParam, Object>();
         if( whatIfCustomParam!=null ){
             customParam.put(EvaluatedParam.ACF, whatIfCustomParam.getACF());
         }

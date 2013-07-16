@@ -2,6 +2,7 @@ package eu.cloudtm.statistics;
 
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -20,9 +21,9 @@ public class CustomSample extends ProcessedSample {
 
     private ProcessedSample sample;
     private Map<Param, Object> customParam;
-    private Map<EvaluatedParam, Double> customEvaluatedParam;
+    private Map<EvaluatedParam, Object> customEvaluatedParam;
 
-    public CustomSample(ProcessedSample sample, Map<Param, Object> customParam, Map<EvaluatedParam, Double> customEvaluatedParam ) {
+    public CustomSample(ProcessedSample sample, Map<Param, Object> customParam, Map<EvaluatedParam, Object> customEvaluatedParam ) {
         super(sample);
         this.sample = sample;
         this.customParam = customParam;
@@ -40,15 +41,20 @@ public class CustomSample extends ProcessedSample {
     }
 
     @Override
-    public double getACF() {
-        Double retVal = null;
+    public Double getACF() {
+        Object retVal = null;
         retVal = customEvaluatedParam.get(EvaluatedParam.ACF);
 
         if(retVal==null) {
             log.info("WhatIf: user didn't set ACF, using the one measured");
-            retVal =  sample.getEvaluatedParam(EvaluatedParam.ACF);
+            Object retObject = sample.getEvaluatedParam(EvaluatedParam.ACF);
+            if(retObject != null){
+                retVal =  retObject;
+            }
         }
-        return retVal;
+        if(retVal!=null)
+            return (Double) retVal;
+        return null;
     }
 
 }

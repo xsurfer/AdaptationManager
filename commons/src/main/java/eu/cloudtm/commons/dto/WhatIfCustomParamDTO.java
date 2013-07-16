@@ -3,9 +3,7 @@ package eu.cloudtm.commons.dto;
 import eu.cloudtm.commons.Forecaster;
 import eu.cloudtm.commons.ReplicationProtocol;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**

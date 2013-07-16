@@ -3,6 +3,8 @@ package eu.cloudtm.autonomicManager;
 import eu.cloudtm.commons.*;
 import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
 import eu.cloudtm.autonomicManager.oracles.OracleService;
+import eu.cloudtm.autonomicManager.oracles.OutputOracleImpl;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -56,7 +58,7 @@ public class Optimizer {
         OracleService oracleService = OracleService.getInstance(platformTuning.forecaster().getOracleClass());
 
         PlatformConfiguration forecastedConfig;
-        KPIimpl kpi = null;
+        OutputOracleImpl kpi = null;
         try {
             forecastedConfig = oracleService.minimizeCosts(processedSample, arrivalRateToGuarantee, abortRateToGuarantee, responseTimeToGuarantee );
 
