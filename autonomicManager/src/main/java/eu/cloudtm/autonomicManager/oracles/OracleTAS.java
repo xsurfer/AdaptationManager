@@ -4,7 +4,7 @@ import eu.cloudtm.commons.*;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
-import eu.cloudtm.statistics.Param;
+import eu.cloudtm.commons.Param;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

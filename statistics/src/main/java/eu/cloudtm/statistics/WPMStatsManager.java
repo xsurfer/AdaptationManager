@@ -1,5 +1,6 @@
 package eu.cloudtm.statistics;
 
+import eu.cloudtm.commons.Param;
 import eu.cloudtm.commons.dto.StatisticDTO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

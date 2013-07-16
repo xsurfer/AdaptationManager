@@ -4,7 +4,7 @@ import eu.cloudtm.commons.OutputOracle;
 import eu.cloudtm.commons.KPIimpl;
 import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
 import eu.cloudtm.oracles.exceptions.OracleException;
-import eu.cloudtm.statistics.Param;
+import eu.cloudtm.commons.Param;
 import eu.cloudtm.statistics.ProcessedSample;
 
 import eu.cloudtm.statistics.SampleListener;

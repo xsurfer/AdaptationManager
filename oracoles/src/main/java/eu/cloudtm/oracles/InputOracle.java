@@ -1,7 +1,8 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.statistics.EvaluatedParam;
-import eu.cloudtm.statistics.Param;
+import eu.cloudtm.commons.EvaluatedParam;
+import eu.cloudtm.commons.ForecastParam;
+import eu.cloudtm.commons.Param;
 
 /**
  * Created with IntelliJ IDEA.

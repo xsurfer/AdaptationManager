@@ -1,5 +1,7 @@
 package eu.cloudtm.statistics;
 
+import eu.cloudtm.commons.Param;
+
 /**
  * Created with IntelliJ IDEA.
  * User: fabio

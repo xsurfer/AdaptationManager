@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager.RESTServer;
 
+import eu.cloudtm.autonomicManager.ControllerLogger;
 import eu.cloudtm.statistics.StatsManager;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -45,6 +46,8 @@ public class RESTServer {
         // exposing the Jersey application at BASE_URI
         httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
         httpServer.start();
+
+        ControllerLogger.log.info("Web Server + REST Interface started");
     }
 
 }

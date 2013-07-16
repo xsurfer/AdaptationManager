@@ -1,5 +1,7 @@
 package eu.cloudtm.statistics;
 
+import eu.cloudtm.commons.Param;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
