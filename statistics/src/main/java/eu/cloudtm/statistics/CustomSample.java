@@ -1,5 +1,8 @@
 package eu.cloudtm.statistics;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.Map;
 
 /**
@@ -11,11 +14,13 @@ import java.util.Map;
  */
 public class CustomSample extends ProcessedSample {
 
+    private static Log log = LogFactory.getLog(CustomSample.class);
+
     private ProcessedSample sample;
-    private Map<Param, Double> customParam;
+    private Map<Param, Object> customParam;
     private Map<EvaluatedParam, Double> customEvaluatedParam;
 
-    public CustomSample(ProcessedSample sample, Map<Param, Double> customParam, Map<EvaluatedParam, Double> customEvaluatedParam ) {
+    public CustomSample(ProcessedSample sample, Map<Param, Object> customParam, Map<EvaluatedParam, Double> customEvaluatedParam ) {
         super(sample);
         this.sample = sample;
         this.customParam = customParam;
@@ -26,6 +31,7 @@ public class CustomSample extends ProcessedSample {
     public Object getParam(Param param) {
         Object retVal = customParam.get(param);
         if(retVal==null) {
+            log.info("WhatIf: user didn't set " + param + ", using the one measured");
             retVal = sample.getParam(param);
         }
         return retVal;
@@ -33,9 +39,12 @@ public class CustomSample extends ProcessedSample {
 
     @Override
     public double getACF() {
-        Double retVal = customEvaluatedParam.get(EvaluatedParam.ACF);
+        Double retVal = null;
+        retVal = customEvaluatedParam.get(EvaluatedParam.ACF);
+
         if(retVal==null) {
-            retVal = sample.getEvaluatedParam(EvaluatedParam.ACF);
+            log.info("WhatIf: user didn't set ACF, using the one measured");
+            retVal =  sample.getEvaluatedParam(EvaluatedParam.ACF);
         }
         return retVal;
     }

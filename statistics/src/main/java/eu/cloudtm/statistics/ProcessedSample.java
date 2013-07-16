@@ -2,6 +2,7 @@ package eu.cloudtm.statistics;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,11 +15,12 @@ public abstract class ProcessedSample implements Sample {
 
     protected Sample sample;
 
+    private AtomicBoolean initialized = new AtomicBoolean(false);
+
     private Map<EvaluatedParam, Double> evaluatedParams = new HashMap<EvaluatedParam, Double>();
 
     public ProcessedSample(Sample sample){
         this.sample = sample;
-        init();
     }
 
     @Override
@@ -39,6 +41,9 @@ public abstract class ProcessedSample implements Sample {
 
 
     public double getEvaluatedParam(EvaluatedParam param) {
+        if(!initialized.compareAndSet(false, true)){
+            init();
+        }
         return evaluatedParams.get(param);
     }
 

@@ -1,7 +1,6 @@
 package eu.cloudtm.oracles;
 
-import eu.cloudtm.commons.KPI;
-import eu.cloudtm.commons.KPIimpl;
+import eu.cloudtm.commons.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 
 /**
@@ -11,7 +10,7 @@ import eu.cloudtm.oracles.exceptions.OracleException;
  */
 public interface Oracle {
 
-    public KPI forecast(InputOracle input) throws OracleException;
+    public OutputOracle forecast(InputOracle input) throws OracleException;
 
     //public KPIimpl minimizeCosts(InputOracleWPM input, double arrivalRate, double abortRate, double responseTime) throws OracleException;
 

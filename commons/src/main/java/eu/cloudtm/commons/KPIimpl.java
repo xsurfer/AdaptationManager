@@ -5,7 +5,7 @@ package eu.cloudtm.commons;
  * E-mail: perfabio87@gmail.com
  * Date: 6/12/13
  */
-public class KPIimpl implements KPI {
+public class KPIimpl implements OutputOracle {
 
     private double throughput;
     private double abortProbability;

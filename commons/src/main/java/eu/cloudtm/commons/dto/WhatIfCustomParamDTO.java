@@ -15,8 +15,8 @@ import java.util.Set;
  */
 public class WhatIfCustomParamDTO {
 
+    private int replicationDegree = 1;
     private Set<Forecaster> forecasters = new HashSet<Forecaster>();
-
     private ReplicationProtocol replProtocol = ReplicationProtocol.TWOPC;
 
     private double ACF = -1;
@@ -30,6 +30,24 @@ public class WhatIfCustomParamDTO {
     private double PrepareCommandBytes = -1;
     private double RTT = -1;
     private double CommitBroadcastWallClockTime = -1;
+
+    public void setReplicationDegree(int val){
+        if(val<=0)
+            throw new IllegalArgumentException("Replication degree must be >0");
+        replicationDegree = val;
+    }
+
+    public int getReplicationDegree(){
+        return replicationDegree;
+    }
+
+    public void setReplicationProtocol(ReplicationProtocol repProt){
+        this.replProtocol = repProt;
+    }
+
+    public ReplicationProtocol getReplicationProtocol(){
+        return replProtocol;
+    }
 
     public void addForecaster(Forecaster forecaster){
         forecasters.add(forecaster);

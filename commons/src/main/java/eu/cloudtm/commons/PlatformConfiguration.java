@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/1/13
  */
-public class PlatformConfiguration implements IPlatformConfiguration {
+public class PlatformConfiguration implements IPlatformConfiguration, Comparable<PlatformConfiguration> {
 
     private static Log log = LogFactory.getLog(PlatformConfiguration.class);
 
@@ -116,5 +116,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
         Gson gson = new Gson();
         PlatformConfiguration state = gson.fromJson(gson.toJson(this), PlatformConfiguration.class);
         return state;
+    }
+
+    @Override
+    public int compareTo(PlatformConfiguration o) {
+
+        if( platformSize() > o.platformSize() ){
+            return 1;
+        } else if(platformSize() < o.platformSize() ){
+            return -1;
+        } else
+            return 0;
     }
 }
