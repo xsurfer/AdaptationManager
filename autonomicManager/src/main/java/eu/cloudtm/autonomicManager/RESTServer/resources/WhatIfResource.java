@@ -1,131 +1,254 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import eu.cloudtm.autonomicManager.WhatIf;
+import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Forecaster;
-import eu.cloudtm.oracles.OutputOracle;
-import eu.cloudtm.commons.PlatformConfiguration;
+import eu.cloudtm.commons.GsonFactory;
+import eu.cloudtm.commons.ReplicationProtocol;
+import eu.cloudtm.commons.dto.WhatIfDTO;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.statistics.StatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/whatif")
 public class WhatIfResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(WhatIfResource.class);
 
-    private Gson gson = new Gson();
-
     @Inject
     private StatsManager statsManager;
 
 
     @GET @Path("/values")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public synchronized Response updateValuesFromSystem() {
 
-        WhatIf whatIf = new WhatIf(statsManager.getLastSample());
+        ProcessedSample sample = statsManager.getLastSample();
+
+        if(sample!=null)
+            log.info("Sample: " + sample.getId() );
+        else
+            log.info("Sample is null");
+
+        log.info("ACF: " + sample.getEvaluatedParam(EvaluatedParam.ACF));
+
+        WhatIf whatIf = new WhatIf(sample);
         WhatIfCustomParamDTO customDTO = whatIf.retrieveCurrentValues();
+
+        List<String> fieldExclusions = new ArrayList<String>();
+        fieldExclusions.add("forecasters");
+        fieldExclusions.add("replProtocol");
+
+
+        Gson gson = GsonFactory.build(fieldExclusions, null);
 
         String json = gson.toJson(customDTO);
 
         log.info("Custom Values Retrieved: " + json);
 
-        Response.ResponseBuilder builder = Response.ok(json.toString());
+        Response.ResponseBuilder builder = Response.ok( json );
         return makeCORS(builder);
     }
 
 
-    @PUT
-    @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
     public synchronized Response whatIf(
-            @DefaultValue("-1") @FormParam("acf") double acf,
-            @DefaultValue("-1") @FormParam("RetryWritePercentage") double retryWritePercentage,
-            @DefaultValue("-1") @FormParam("SuxNumPuts") double suxNumPuts,
-            @DefaultValue("-1") @FormParam("GetWriteTx") double getWriteTx,
-            @DefaultValue("-1") @FormParam("GetReadOnlyTx") double getReadOnlyTx,
-            @DefaultValue("-1") @FormParam("LocalUpdateTxLocalServiceTime") double localUpdateTxLocalServiceTime,
-            @DefaultValue("-1") @FormParam("LocalReadOnlyTxLocalServiceTime") double localReadOnlyTxLocalServiceTime,
-            @DefaultValue("-1") @FormParam("PrepareCommandBytes") double prepareCommandBytes,
-            @DefaultValue("-1") @FormParam("RTT") double rtt,
-            @DefaultValue("-1") @FormParam("CommitBroadcastWallClockTime") double commitBroadcastWallClockTime,
-            @DefaultValue("-1") @FormParam("RemoteGetLatency") double remoteGetLatency
+
+            @DefaultValue("-1") @FormParam("acf") Double acf,
+            @DefaultValue("-1") @FormParam("PercentageSuccessWriteTransactions") Double percentageSuccessWriteTransactions,
+            @DefaultValue("-1") @FormParam("AvgNumPutsBySuccessfulLocalTx") Double avgNumPutsBySuccessfulLocalTx,
+            @DefaultValue("-1") @FormParam("AvgGetsPerWrTransaction") Double avgGetsPerWrTransaction,
+            @DefaultValue("-1") @FormParam("AvgGetsPerROTransaction") Long avgGetsPerROTransaction,
+
+            @DefaultValue("-1") @FormParam("LocalUpdateTxLocalServiceTime") Long localUpdateTxLocalServiceTime,
+            @DefaultValue("-1") @FormParam("LocalReadOnlyTxLocalServiceTime") Long localReadOnlyTxLocalServiceTime,
+
+            @DefaultValue("-1") @FormParam("AvgPrepareCommandSize") Long avgPrepareCommandSize,
+            @DefaultValue("-1") @FormParam("AvgPrepareAsync") Long avgPrepareAsync,
+            @DefaultValue("-1") @FormParam("AvgCommitAsync") Long avgCommitAsync,
+            @DefaultValue("-1") @FormParam("AvgRemoteGetRtt") Long avgRemoteGetRtt,
+
+            @FormParam("oracoles") List<String> fores,
+            @DefaultValue("2")@FormParam("repDegree") Integer repDegree,
+            @DefaultValue("TWOPC") @FormParam("repProtocol") ReplicationProtocol repProtocol
     ){
 
+        Double a = new Double("3");
+        log.info(acf);
+
+        log.info(percentageSuccessWriteTransactions);
+
+        log.info(avgNumPutsBySuccessfulLocalTx);
+
+        log.info(avgGetsPerWrTransaction);
+
+        log.info(avgGetsPerROTransaction);
+
+        log.info(localUpdateTxLocalServiceTime);
+
+        log.info(localReadOnlyTxLocalServiceTime);
+
+        log.info(avgPrepareCommandSize);
+
+        log.info(avgPrepareAsync);
+        log.info(avgCommitAsync);
+        log.info(avgRemoteGetRtt);
+
+
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
+
+        log.info("Forecasters: " + fores);
+
+        for(String forecasterString : fores){
+            log.info("Aggiungendo " + forecasterString);
+            Forecaster forecaster = Forecaster.valueOf(forecasterString);
+            customParam.addForecaster(forecaster);
+        }
+
+        log.info("Replication Degree: " + repDegree);
+        customParam.setReplicationDegree(repDegree);
+        customParam.setReplicationProtocol(repProtocol);
+
         customParam.setACF( acf );
-        customParam.setCommitBroadcastWallClockTime( commitBroadcastWallClockTime );
-        customParam.setGetReadOnlyTx( getReadOnlyTx );
-        customParam.setGetWriteTx( getWriteTx );
+        customParam.setAvgCommitAsync(avgCommitAsync);
+        customParam.setAvgGetsPerROTransaction(avgGetsPerROTransaction);
+        customParam.setAvgGetsPerWrTransaction(avgGetsPerWrTransaction);
         customParam.setLocalReadOnlyTxLocalServiceTime( localReadOnlyTxLocalServiceTime );
         customParam.setLocalUpdateTxLocalServiceTime( localUpdateTxLocalServiceTime );
-        customParam.setPrepareCommandBytes( prepareCommandBytes );
-        customParam.setSuxNumPuts( suxNumPuts );
-        customParam.setRemoteGetLatency( remoteGetLatency );
-        customParam.setRetryWritePercentage( retryWritePercentage );
-        customParam.setRTT( rtt );
+        customParam.setAvgPrepareCommandSize(avgPrepareCommandSize);
+        customParam.setAvgNumPutsBySuccessfulLocalTx(avgNumPutsBySuccessfulLocalTx);
+        customParam.setAvgRemoteGetRtt(avgRemoteGetRtt);
+        customParam.setPercentageSuccessWriteTransactions(percentageSuccessWriteTransactions);
+        customParam.setAvgPrepareAsync(avgPrepareAsync);
 
-        WhatIf whatIf = new WhatIf(statsManager.getLastSample());
-        Map<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>> result = whatIf.evaluate(customParam);
+        ProcessedSample sample = statsManager.getLastSample();
+        WhatIf whatIf = new WhatIf(sample);
+        if(sample!=null)
+            log.info("Sample: " + sample.getId() );
+        else
+            log.info("Sample is null");
 
-        StringBuffer json = new StringBuffer();
-        json.append( gson.toJson(result) );
+        List<WhatIfDTO> result = whatIf.evaluate(customParam);
 
-        log.info(json);
-        Response.ResponseBuilder builder = Response.ok( json.toString() );
+        Gson gson = new Gson();
+        String json = gson.toJson(result);
+
+        log.trace("RESULT: " + json);
+
+        Response.ResponseBuilder builder = Response.ok( json );
         return makeCORS(builder);
     }
 
 
-    private String getJSON(String key, String val){
-        StringBuffer strBuf = new StringBuffer();
-        strBuf.append( gson.toJson( key ) );
-        strBuf.append( ":" );
-        strBuf.append( gson.toJson( val ) );
-        return strBuf.toString();
-    }
 
-
-    // DA VISUALIZZARE:
+//    ESEMPIO DI RISPOSTA DA GENERARE:
 //    [
 //    {
 //        "forecaster":"analytical",
-//            "throughput": [
-//        [2,100],
-//        [3,100],
-//        [4,100],
-//        [5,100],
-//        [6,100]
-//        ]
+//        "throughput": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "responseTimeRead": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "responseTimeWrite": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "abortRate": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
 //    },
 //    {
 //        "forecaster":"simulator",
-//            "throughput": [
-//        [2,100],
-//        [3,100],
-//        [4,100],
-//        [5,100],
-//        [6,100]
-//        ]
-//    },
+//        "throughput": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "responseTimeRead": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "responseTimeWrite": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "abortRate": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//    }
 //    {
 //        "forecaster":"morpher",
-//            "throughput": [
-//        [2,100],
-//        [3,100],
-//        [4,100],
-//        [5,100],
-//        [6,100]
-//        ]
-//    }
+//        "throughput": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "responseTimeRead": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "responseTimeWrite": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//        "abortRate": [
+//              [2,100],
+//              [3,100],
+//              [4,100],
+//              [5,100],
+//              [6,100]
+//          ],
+//    },
 //
 //    ]
 

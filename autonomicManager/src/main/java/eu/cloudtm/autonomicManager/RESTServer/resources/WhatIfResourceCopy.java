@@ -67,16 +67,16 @@
 //
 //        WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
 //        customParam.setACF( validateParam(acf) );
-//        customParam.setCommitBroadcastWallClockTime( validateParam(commitBroadcastWallClockTime) );
-//        customParam.setGetReadOnlyTx(validateParam(getReadOnlyTx));
-//        customParam.setGetWriteTx(validateParam(getWriteTx));
+//        customParam.setAvgCommitAsync( validateParam(commitBroadcastWallClockTime) );
+//        customParam.setAvgGetsPerROTransaction(validateParam(getReadOnlyTx));
+//        customParam.setAvgGetsPerWrTransaction(validateParam(getWriteTx));
 //        customParam.setLocalReadOnlyTxLocalServiceTime(validateParam(localReadOnlyTxLocalServiceTime));
 //        customParam.setLocalUpdateTxLocalServiceTime(validateParam(localUpdateTxLocalServiceTime));
-//        customParam.setPrepareCommandBytes(validateParam(prepareCommandBytes));
-//        customParam.setSuxNumPuts(validateParam(suxNumPuts));
-//        customParam.setRemoteGetLatency(validateParam(remoteGetLatency));
-//        customParam.setRetryWritePercentage(validateParam(retryWritePercentage));
-//        customParam.setRTT( validateParam(rtt) );
+//        customParam.setAvgPrepareCommandSize(validateParam(prepareCommandBytes));
+//        customParam.setAvgNumPutsBySuccessfulLocalTx(validateParam(suxNumPuts));
+//        customParam.setAvgRemoteGetRtt(validateParam(remoteGetLatency));
+//        customParam.setPercentageSuccessWriteTransactions(validateParam(retryWritePercentage));
+//        customParam.setAvgPrepareAsync( validateParam(rtt) );
 //
 //        Set<OutputOracleImpl> result = null;
 //        for( String oracleName : ControllerOld.getInstance().getOracles() ){

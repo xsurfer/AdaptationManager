@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Reconfigurator {
 
+    private boolean enabled = false;
+
     private final Log log = LogFactory.getLog(Reconfigurator.class);
 
     private AtomicInteger numReconfig = new AtomicInteger(0);
@@ -32,9 +34,12 @@ public class Reconfigurator {
         int numThreads = conf.threadPerNode();
         try {
             DeltaCloudActuator deltaCloudActuator = DeltaCloudActuator.getInstance(numNodes, numThreads);
-            log.warn("Actuator is disabled");
-            //deltaCloudActuator.actuate();
-            ControllerLogger.log.info(numReconfig.incrementAndGet() + "reconfiguration ended");
+            if(!enabled){
+                ControllerLogger.log.warn("Actuator is disabled");
+            } else {
+                deltaCloudActuator.actuate();
+            }
+            ControllerLogger.log.info("Reconfiguration #" + numReconfig.incrementAndGet() + " ended");
         } catch (MalformedURLException e) {
             throw new ReconfiguratorException(e);
         } catch (DeltaCloudClientException e) {

@@ -1,5 +1,7 @@
 package eu.cloudtm.commons.dto;
 
+import eu.cloudtm.commons.Forecaster;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -10,12 +12,19 @@ import java.util.Collection;
  */
 public class WhatIfDTO {
 
+    private Forecaster forecaster;
+
     private Collection<Collection<Double>> throughput = new ArrayList<Collection<Double>>();
-    private Collection<Collection<Double>> responseTime = new ArrayList<Collection<Double>>();
+    private Collection<Collection<Double>> readResponseTime = new ArrayList<Collection<Double>>();
+    private Collection<Collection<Double>> writeResponseTime = new ArrayList<Collection<Double>>();
     private Collection<Collection<Double>> abortRate = new ArrayList<Collection<Double>>();
 
-    public WhatIfDTO(){
+    public WhatIfDTO(Forecaster forecaster){
+         this.forecaster = forecaster;
+    }
 
+    public Forecaster getForecaster(){
+        return forecaster;
     }
 
     public void addThroughputPoint(long x, double y){
@@ -25,11 +34,18 @@ public class WhatIfDTO {
         throughput.add(point);
     }
 
-    public void addResponseTimePoint(long x, double y){
+    public void addReadResponseTimePoint(long x, double y){
         Collection<Double> point = new ArrayList<Double>();
         point.add((double) x);
         point.add(y);
-        responseTime.add(point);
+        readResponseTime.add(point);
+    }
+
+    public void addWriteResponseTimePoint(long x, double y){
+        Collection<Double> point = new ArrayList<Double>();
+        point.add((double) x);
+        point.add(y);
+        writeResponseTime.add(point);
     }
 
     public void addAbortRatePoint(long x, double y){

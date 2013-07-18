@@ -51,7 +51,7 @@
   
   <context-param>
     <param-name>rest_port</param-name>
-    <param-value>9998</param-value>
+    <param-value>1515</param-value>
   </context-param>
 
 </web-app>

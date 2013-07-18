@@ -13,23 +13,23 @@ import java.util.Set;
  */
 public class WhatIfCustomParamDTO {
 
-    private int replicationDegree = 1;
+    private Integer replicationDegree = 2;
     private Set<Forecaster> forecasters = new HashSet<Forecaster>();
     private ReplicationProtocol replProtocol = ReplicationProtocol.TWOPC;
 
-    private double ACF = -1;
-    private double GetWriteTx = -1;
-    private double GetReadOnlyTx = -1;
-    private double RemoteGetLatency = -1;
-    private double LocalReadOnlyTxLocalServiceTime = -1;
-    private double LocalUpdateTxLocalServiceTime = -1;
-    private double RetryWritePercentage = -1;
-    private double SuxNumPuts = -1;
-    private double PrepareCommandBytes = -1;
-    private double RTT = -1;
-    private double CommitBroadcastWallClockTime = -1;
+    private Double ACF = -1D;
+    private double AvgGetsPerWrTransaction = -1; //  # GET per write transaction
+    private Long AvgGetsPerROTransaction = -1L;   // #GET per read only transaction
+    private Long AvgRemoteGetRtt = -1L;  //  Remote get latency
+    private Long LocalReadOnlyTxLocalServiceTime = -1L; // Read Only transaction demand
+    private Long LocalUpdateTxLocalServiceTime = -1L;  // Write transaction demand
+    private Double PercentageSuccessWriteTransactions = -1D;  // Write Transactions Percentage
+    private Double AvgNumPutsBySuccessfulLocalTx = -1D;  // #put per write tx
+    private Long AvgPrepareCommandSize = -1L; // size of prepare msg
+    private Long AvgPrepareAsync = -1L;   // prepare latency
+    private Long AvgCommitAsync = -1L;    // commit latency
 
-    public void setReplicationDegree(int val){
+    public void setReplicationDegree(Integer val){
         if(val<=0)
             throw new IllegalArgumentException("Replication degree must be >0");
         replicationDegree = val;
@@ -67,84 +67,87 @@ public class WhatIfCustomParamDTO {
         this.ACF = ACF;
     }
 
-    public double getGetWriteTx() {
-        return GetWriteTx;
+    public double getAvgGetsPerWrTransaction() {
+        return AvgGetsPerWrTransaction;
     }
 
-    public void setGetWriteTx(double getWriteTx) {
-        GetWriteTx = getWriteTx;
+    public void setAvgGetsPerWrTransaction(double avgGetsPerWrTransaction) {
+        AvgGetsPerWrTransaction = avgGetsPerWrTransaction;
     }
 
-    public double getGetReadOnlyTx() {
-        return GetReadOnlyTx;
+    public double getAvgGetsPerROTransaction() {
+        return AvgGetsPerROTransaction;
     }
 
-    public void setGetReadOnlyTx(double getReadOnlyTx) {
-        GetReadOnlyTx = getReadOnlyTx;
+    public void setAvgGetsPerROTransaction(Long avgGetsPerROTransaction) {
+        AvgGetsPerROTransaction = avgGetsPerROTransaction;
     }
 
-    public double getRemoteGetLatency() {
-        return RemoteGetLatency;
+    public double getAvgRemoteGetRtt() {
+        return AvgRemoteGetRtt;
     }
 
-    public void setRemoteGetLatency(double remoteGetLatency) {
-        RemoteGetLatency = remoteGetLatency;
+    public void setAvgRemoteGetRtt(Long avgRemoteGetRtt) {
+        AvgRemoteGetRtt = avgRemoteGetRtt;
     }
 
-    public double getLocalReadOnlyTxLocalServiceTime() {
+    public Long getLocalReadOnlyTxLocalServiceTime() {
         return LocalReadOnlyTxLocalServiceTime;
     }
 
-    public void setLocalReadOnlyTxLocalServiceTime(double localReadOnlyTxLocalServiceTime) {
+    public void setLocalReadOnlyTxLocalServiceTime(Long localReadOnlyTxLocalServiceTime) {
         LocalReadOnlyTxLocalServiceTime = localReadOnlyTxLocalServiceTime;
     }
 
-    public double getLocalUpdateTxLocalServiceTime() {
+    public Long getLocalUpdateTxLocalServiceTime() {
         return LocalUpdateTxLocalServiceTime;
     }
 
-    public void setLocalUpdateTxLocalServiceTime(double localUpdateTxLocalServiceTime) {
+    public void setLocalUpdateTxLocalServiceTime(Long localUpdateTxLocalServiceTime) {
         LocalUpdateTxLocalServiceTime = localUpdateTxLocalServiceTime;
     }
 
-    public double getRetryWritePercentage() {
-        return RetryWritePercentage;
+    public Double getPercentageSuccessWriteTransactions() {
+        return PercentageSuccessWriteTransactions;
     }
 
-    public void setRetryWritePercentage(double retryWritePercentage) {
-        RetryWritePercentage = retryWritePercentage;
+    public void setPercentageSuccessWriteTransactions(Double percentageSuccessWriteTransactions) {
+        PercentageSuccessWriteTransactions = percentageSuccessWriteTransactions;
     }
 
-    public double getSuxNumPuts() {
-        return SuxNumPuts;
+    public Double getAvgNumPutsBySuccessfulLocalTx() {
+        return AvgNumPutsBySuccessfulLocalTx;
     }
 
-    public void setSuxNumPuts(double suxNumPuts) {
-        SuxNumPuts = suxNumPuts;
+    public void setAvgNumPutsBySuccessfulLocalTx(Double avgNumPutsBySuccessfulLocalTx) {
+        AvgNumPutsBySuccessfulLocalTx = avgNumPutsBySuccessfulLocalTx;
     }
 
-    public double getPrepareCommandBytes() {
-        return PrepareCommandBytes;
+    public Long getAvgPrepareCommandSize() {
+        return AvgPrepareCommandSize;
     }
 
-    public void setPrepareCommandBytes(double prepareCommandBytes) {
-        PrepareCommandBytes = prepareCommandBytes;
+    public void setAvgPrepareCommandSize(Long avgPrepareCommandSize) {
+        AvgPrepareCommandSize = avgPrepareCommandSize;
     }
 
-    public double getRTT() {
-        return RTT;
+    public double getAvgPrepareAsync() {
+        return AvgPrepareAsync;
     }
 
-    public void setRTT(double RTT) {
-        this.RTT = RTT;
+    public void setAvgPrepareAsync(Long avgPrepareAsync) {
+        this.AvgPrepareAsync = avgPrepareAsync;
     }
 
-    public double getCommitBroadcastWallClockTime() {
-        return CommitBroadcastWallClockTime;
+    public Long getAvgCommitAsync() {
+        return AvgCommitAsync;
     }
 
-    public void setCommitBroadcastWallClockTime(double commitBroadcastWallClockTime) {
-        CommitBroadcastWallClockTime = commitBroadcastWallClockTime;
+    public void setAvgCommitAsync(Long avgCommitAsync) {
+        AvgCommitAsync = avgCommitAsync;
     }
+
+
+
 
 }

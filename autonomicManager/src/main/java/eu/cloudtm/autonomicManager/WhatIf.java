@@ -1,6 +1,7 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.commons.Forecaster;
+import eu.cloudtm.commons.dto.WhatIfDTO;
 import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
@@ -9,10 +10,10 @@ import eu.cloudtm.statistics.CustomSample;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
 import eu.cloudtm.statistics.ProcessedSample;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
 * Created with IntelliJ IDEA.
@@ -22,6 +23,8 @@ import java.util.TreeMap;
 * To change this template use File | Settings | File Templates.
 */
 public class WhatIf {
+
+    private static Log log = LogFactory.getLog(WhatIf.class);
 
     private ProcessedSample processedSample;
 
@@ -40,31 +43,51 @@ public class WhatIf {
             acf = (Double) acfObj;
         }
         customParam.setACF( acf  );
-        customParam.setCommitBroadcastWallClockTime( (Double) processedSample.getParam(Param.AvgCommitAsync) );
-        customParam.setRTT( (Double) processedSample.getParam( Param.AvgPrepareAsync ) );
-        customParam.setPrepareCommandBytes( (Double) processedSample.getParam( Param.AvgPrepareCommandSize ) );
-        customParam.setSuxNumPuts( (Double) processedSample.getParam( Param.AvgNumPutsBySuccessfulLocalTx ) );
-        customParam.setRetryWritePercentage( (Double) processedSample.getParam( Param.PercentageSuccessWriteTransactions ) );
-        customParam.setLocalUpdateTxLocalServiceTime( (Double) processedSample.getParam( Param.LocalUpdateTxLocalServiceTime ) );
-        customParam.setLocalReadOnlyTxLocalServiceTime( (Double) processedSample.getParam( Param.LocalReadOnlyTxLocalServiceTime ) );
+        customParam.setAvgCommitAsync((Long) processedSample.getParam(Param.AvgCommitAsync));
+        customParam.setAvgPrepareAsync((Long) processedSample.getParam(Param.AvgPrepareAsync));
+        customParam.setAvgPrepareCommandSize((Long) processedSample.getParam(Param.AvgPrepareCommandSize));
+        customParam.setAvgNumPutsBySuccessfulLocalTx((Double) processedSample.getParam(Param.AvgNumPutsBySuccessfulLocalTx));
+        customParam.setPercentageSuccessWriteTransactions((Double) processedSample.getParam(Param.PercentageSuccessWriteTransactions));
+        customParam.setLocalUpdateTxLocalServiceTime( (Long) processedSample.getParam( Param.LocalUpdateTxLocalServiceTime ) );
+        customParam.setLocalReadOnlyTxLocalServiceTime( (Long) processedSample.getParam( Param.LocalReadOnlyTxLocalServiceTime ) );
+        customParam.setAvgRemoteGetRtt( (Long) processedSample.getParam( Param.AvgRemoteGetRtt ) );
+        customParam.setAvgGetsPerWrTransaction( (Long) processedSample.getParam( Param.AvgGetsPerWrTransaction ) );
+        customParam.setAvgGetsPerROTransaction( (Long) processedSample.getParam( Param.AvgGetsPerROTransaction ) );
         return customParam;
     }
 
 
-    public Map<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>> evaluate(WhatIfCustomParamDTO customParamDTO){
+    public List<WhatIfDTO> evaluate(WhatIfCustomParamDTO customParamDTO){
 
         Map<Param, Object> customParam = extractCustomParam(customParamDTO);
         Map<EvaluatedParam, Object> customEvaluatedParam = extractCustomEvaluatedParam(customParamDTO);
 
-        Map<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>> result = new HashMap<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>>();
+        List<WhatIfDTO> result = new ArrayList<WhatIfDTO>();
+
         for(Forecaster forecaster : customParamDTO.getForecasters()){
+            WhatIfDTO currWhatIfResult = new WhatIfDTO(forecaster);
+
             if(forecaster.equals(Forecaster.COMMITTEE)){
                 throw new RuntimeException("Not yet implemented");
             } else {
                 OracleService oracleService = OracleService.getInstance( forecaster.getOracleClass() );
                 CustomSample customSample = new CustomSample(processedSample, customParam, customEvaluatedParam);
-                result.put( forecaster, oracleService.whatIf( customSample, customParamDTO.getReplicationProtocol(), customParamDTO.getReplicationDegree() ) );
+                TreeMap<PlatformConfiguration, OutputOracle> currForecast = new TreeMap<PlatformConfiguration, OutputOracle>();
+                currForecast = oracleService.whatIf( customSample, customParamDTO.getReplicationProtocol(), customParamDTO.getReplicationDegree() );
+
+                for (Map.Entry<PlatformConfiguration, OutputOracle> entry : currForecast.entrySet()){
+                    long platformSize = entry.getKey().platformSize();
+                    OutputOracle currOut = entry.getValue();
+
+                    currWhatIfResult.addThroughputPoint( platformSize, currOut.throughput() );
+                    log.warn("FIX TX CLASSES");
+                    currWhatIfResult.addReadResponseTimePoint(platformSize, currOut.responseTime(0));
+                    currWhatIfResult.addWriteResponseTimePoint(platformSize, currOut.responseTime(1));
+                    currWhatIfResult.addAbortRatePoint(platformSize, currOut.abortRate());
+                }
+
             }
+            result.add(currWhatIfResult);
         }
         return result;
     }
@@ -72,11 +95,11 @@ public class WhatIf {
     private Map<Param, Object> extractCustomParam(WhatIfCustomParamDTO whatIfCustomParam){
         Map<Param, Object> customParam = new HashMap<Param, Object>();
         if( whatIfCustomParam!=null ){
-            customParam.put(Param.AvgCommitAsync, whatIfCustomParam.getCommitBroadcastWallClockTime());
-            customParam.put(Param.AvgPrepareAsync, whatIfCustomParam.getRTT());
-            customParam.put(Param.AvgPrepareCommandSize, whatIfCustomParam.getPrepareCommandBytes() );
-            customParam.put(Param.AvgNumPutsBySuccessfulLocalTx, whatIfCustomParam.getSuxNumPuts() );
-            customParam.put(Param.PercentageSuccessWriteTransactions, whatIfCustomParam.getRetryWritePercentage() );
+            customParam.put(Param.AvgCommitAsync, whatIfCustomParam.getAvgCommitAsync());
+            customParam.put(Param.AvgPrepareAsync, whatIfCustomParam.getAvgPrepareAsync());
+            customParam.put(Param.AvgPrepareCommandSize, whatIfCustomParam.getAvgPrepareCommandSize() );
+            customParam.put(Param.AvgNumPutsBySuccessfulLocalTx, whatIfCustomParam.getAvgNumPutsBySuccessfulLocalTx() );
+            customParam.put(Param.PercentageSuccessWriteTransactions, whatIfCustomParam.getPercentageSuccessWriteTransactions() );
             customParam.put(Param.LocalUpdateTxLocalServiceTime, whatIfCustomParam.getLocalUpdateTxLocalServiceTime() );
             customParam.put(Param.LocalReadOnlyTxLocalServiceTime, whatIfCustomParam.getLocalReadOnlyTxLocalServiceTime() );
         }

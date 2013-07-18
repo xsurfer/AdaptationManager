@@ -2,12 +2,14 @@ package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.commons.*;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.commons.dto.WhatIfDTO;
 import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.statistics.StatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -99,19 +101,13 @@ public class AutonomicManager {
         customParamDTO.setReplicationDegree(4);
 
 
-        Map<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>> result = whatIf.evaluate(customParamDTO);
+        List<WhatIfDTO> result = whatIf.evaluate(customParamDTO);
 
         /* Stampa delle predizioni */
-        for (Map.Entry<Forecaster, TreeMap<PlatformConfiguration, OutputOracle>> forecaster2entries : result.entrySet()){
-            log.info("Forecaster: " + forecaster2entries.getKey());
+        for (WhatIfDTO whatIfRes : result){
+            log.info("Forecaster: " + whatIfRes.getForecaster());
+            log.info("to reimplement");
 
-            for( Map.Entry<PlatformConfiguration, OutputOracle> entries : forecaster2entries.getValue().entrySet()){
-                PlatformConfiguration platform = entries.getKey();
-                OutputOracle outputOracle = entries.getValue();
-                log.info("---");
-                log.info("Platform: " + platform.platformSize() + ", " + platform.replicationDegree() + ", " + platform.replicationProtocol() );
-                log.info("OutputOracle: " + outputOracle.throughput() + ", " + outputOracle.abortRate() + ", " + outputOracle.responseTime(0) );
-            }
         }
     }
 

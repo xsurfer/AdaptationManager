@@ -95,7 +95,7 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 //            case TO:
 //                break;
 //            case TWOPC:
-//                processedSample = new TWOPCInputOracle(wpmSample);
+//                processedSample = new TWOPCProcessedSample(wpmSample);
 //                break;
 //        }
 //

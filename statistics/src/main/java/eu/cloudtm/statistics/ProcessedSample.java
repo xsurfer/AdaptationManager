@@ -3,6 +3,8 @@ package eu.cloudtm.statistics;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
 import eu.cloudtm.commons.SystemType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class ProcessedSample implements Sample {
+
+    private static Log log = LogFactory.getLog(ProcessedSample.class);
 
     private static final int CORE_PER_CPU = 8;
     private static final SystemType DEFAULT_SYSTEM_TYPE = SystemType.MULE;
@@ -35,10 +39,11 @@ public abstract class ProcessedSample implements Sample {
         return sample.getId();
     }
 
-    private void init(){
+    private synchronized void init(){
         // push here all the customizations
         evaluatedParams.put(EvaluatedParam.ACF, getACF());
         evaluatedParams.put(EvaluatedParam.CORE_PER_CPU, getCoreCPU());
+        evaluatedParams.put(EvaluatedParam.SYSTEM_TYPE, getSystemType());
 
     }
 
@@ -48,8 +53,8 @@ public abstract class ProcessedSample implements Sample {
     }
 
 
-    public Object getEvaluatedParam(EvaluatedParam param) {
-        if(!initialized.compareAndSet(false, true)){
+    public synchronized Object getEvaluatedParam(EvaluatedParam param) {
+        if(initialized.compareAndSet(false, true)){
             init();
         }
         Object ret = evaluatedParams.get(param);

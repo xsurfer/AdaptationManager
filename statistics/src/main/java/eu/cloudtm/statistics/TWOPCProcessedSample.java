@@ -12,9 +12,9 @@ import java.util.Random;
  * Time: 8:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TWOPCInputOracle extends ProcessedSample {
+public class TWOPCProcessedSample extends ProcessedSample {
 
-    public TWOPCInputOracle(Sample sample) {
+    public TWOPCProcessedSample(Sample sample) {
         super(sample);
     }
 

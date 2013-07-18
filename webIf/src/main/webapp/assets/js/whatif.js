@@ -1,18 +1,20 @@
 var REST_GET_VALUES = 'http://' + REST_HOST + ':' + REST_PORT +'/whatif/values';
 var REST_GET_WHATIF = 'http://' + REST_HOST + ':' + REST_PORT +'/whatif';
 
-var resources = [ 'abortRate', 'throughput', 'responseTime' ];
+var resources = [ 'abortRate', 'throughput', 'readResponseTime', 'writeResponseTime' ];
 
 var containers = {
 		'throughput' : 'placeholderThroughput',
 		'abortRate' : 'placeholderAbortRate',
-		'responseTime' : 'placeholderResponseTime'
+		'readResponseTime' : 'placeholderReadResponseTime',
+		'writeResponseTime' : 'placeholderWriteResponseTime',
 }
 
 var plots = {
 		'throughput' : null,
 		'abortRate' : null,
-		'responseTime' : null
+		'readResponseTime' : null,
+		'writeResponseTime' : null,
 }
 
 var series = {
@@ -31,7 +33,17 @@ var series = {
 				fill : true
 			}
 		} ],
-		"responseTime" : [ {
+		"readResponseTime" : [ {
+			data : [],
+			lines : {
+				fill : true
+			},
+			curvedLines: {
+				apply : true
+			}
+		} ],
+
+		"writeResponseTime" : [ {
 			data : [],
 			lines : {
 				fill : true
@@ -45,16 +57,16 @@ var series = {
 $(document).ready( 
 
 		function(){
-			
+
 			$("body").on({
-			    // When ajaxStart is fired, add 'loading' to body class
-			    ajaxStart: function() { 			    	
-			        $(this).addClass("loading"); 
-			    },
-			    // When ajaxStop is fired, rmeove 'loading' from body class
-			    ajaxStop: function() {
-			        $(this).removeClass("loading"); 
-			    }    
+				// When ajaxStart is fired, add 'loading' to body class
+				ajaxStart: function() { 			    	
+					$(this).addClass("loading"); 
+				},
+				// When ajaxStop is fired, rmeove 'loading' from body class
+				ajaxStop: function() {
+					$(this).removeClass("loading"); 
+				}    
 			});
 
 			$('#updateValues').click(function() { 
@@ -125,54 +137,64 @@ $(document).ready(
 function getAllAndUpdate() {
 	var dataToBeSent = $("form#whatif").serialize();
 	console.log(dataToBeSent);
-	
+
 	var url = REST_GET_WHATIF;
 
 	$.ajax({
 		url: url,
-		type: 'PUT',
+		type: "POST",
 		crossDomain: true,
-		data: dataToBeSent,
-		dataType: 'json',
-		global: true,
+		data: dataToBeSent,	
+		dataType: "json",
+		contentType: "application/x-www-form-urlencoded",
 		success: function(json) {	        
 
-
+			console.log(json);
 			console.log("risorse: " + resources.length);
-			for ( var resLen = 0; resLen < resources.length; resLen++) {
-				param = resources[resLen];
-				console.log("analizzando: " + param);
+			console.log("predizione fatta da: " + json.length + " oracoli");
 
-				dataSize = json[param].length;
-				data = json[param];
-				console.log("size: " + dataSize);
+			for(var forecast=0; forecast < json.length; forecast++){
 
-				var nextData = [];
 
-//            [ 
-//				[2.0,398.6991260451597],[3.0,705.6247975269262],[4.0,903.0586480645841],[5.0,1210.3070778706026],[6.0,1411.2449155071085],[7.0,1706.4529070958245],[8.0,1888.042245499542],[9.0,2181.4290920243793],[10.0,2299.0031156528057]
-//            ]				
-				
-				for ( var i = 0; i < dataSize; i++) {					
-					nextData.push(data[i]);					
-				}
-				console.log(nextData);
+				for ( var resLen = 0; resLen < resources.length; resLen++) {
+					param = resources[resLen];
+					console.log("analizzando: " + param);
 
-				//var res = [];
-				//for ( var i = 1; i < nextData.length; ++i) {
+					dataSize = json[forecast][param].length;
+					data = json[forecast][param];
+					console.log("size: " + dataSize);
+
+					var nextData = [];
+
+//					[ 
+//					[2.0,398.6991260451597],[3.0,705.6247975269262],[4.0,903.0586480645841],[5.0,1210.3070778706026],[6.0,1411.2449155071085],[7.0,1706.4529070958245],[8.0,1888.042245499542],[9.0,2181.4290920243793],[10.0,2299.0031156528057]
+//					]				
+
+					for ( var i = 0; i < dataSize; i++) {					
+						nextData.push(data[i]);					
+					}
+					console.log(nextData);
+
+					//var res = [];
+					//for ( var i = 1; i < nextData.length; ++i) {
 //					res.push([ i, nextData[i] ]);
-				//}
+					//}
 
-				var currSeries = series[param];
-				currSeries[0].data = nextData;
+					var currSeries = series[param];
+					currSeries[0].data = nextData;
 
-				var currPlot = plots[param];
-				currPlot.setData(currSeries);
+					var currPlot = plots[param];
+					currPlot.setData(currSeries);
 
-				currPlot.setupGrid();
-				currPlot.draw();
+					currPlot.setupGrid();
+					currPlot.draw();
+				}
 			}
 
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log("textStatus:" + textStatus);
+			console.log("errorThrown:" + errorThrown);
 		}
 	});
 }
@@ -226,7 +248,7 @@ function drawPlots() {
 						//max: 5,
 						tickSize: 1,
 						//tickFormatter : function(val, axis) {
-							//return val+1;
+						//return val+1;
 						//}
 					},
 					yaxis : {
