@@ -112,6 +112,11 @@ public class OracleService implements IOracleService {
         return result;
     }
 
+    @Override
+    public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
+        return null;
+    }
+
     private PlatformConfiguration exploreAllCases(ProcessedSample sample,
                                 double arrivalRateToGuarantee,
                                 double abortRateToGuarantee,

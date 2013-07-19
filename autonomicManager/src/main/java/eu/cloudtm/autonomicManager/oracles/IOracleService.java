@@ -26,4 +26,6 @@ public interface IOracleService {
     public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, ReplicationProtocol repProtocol, int repDegree);
 
 
+    public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException;
+
 }

@@ -15,68 +15,39 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public class Optimizer {
+public abstract class Optimizer {
 
     private static Log log = LogFactory.getLog(Optimizer.class);
 
-    private PlatformTuning platformTuning;
-    private PlatformConfiguration platformConfiguration;
-    private Reconfigurator reconfigurator;
+    protected PlatformTuning platformTuning;
+    protected PlatformConfiguration platformConfiguration;
+    protected Reconfigurator reconfigurator;
+    protected SLAManager slaManager;
 
     private final static int ARRIVAL_RATE_GUARANTEE_PERC = 50;
     private final static int ABORT_GUARANTEE_PERC = 5;
     private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
 
-    public Optimizer(Reconfigurator reconfigurator, PlatformConfiguration platformConfiguration, PlatformTuning platformTuning){
+    public Optimizer(Reconfigurator reconfigurator,
+                     SLAManager slaManager,
+                     PlatformConfiguration platformConfiguration,
+                     PlatformTuning platformTuning){
+        this.slaManager = slaManager;
         this.platformTuning = platformTuning;
         this.reconfigurator = reconfigurator;
         this.platformConfiguration = platformConfiguration;
     }
 
-    public void doOptimize(OutputOracle current, ProcessedSample processedSample) throws ReconfiguratorException, OracleException {
-
-        // TODO: Cercare una configurazione valida per ogni classe transazionale (Read, Write) cioè che rispetta gli SLAs
-
-        double arrivalRateToGuarantee =  current.throughput() +  (current.throughput() * (ARRIVAL_RATE_GUARANTEE_PERC / 100));
-        log.trace("arrivalRateToGuarantee:" + arrivalRateToGuarantee);
-
-        double abortRateToGuarantee = current.abortRate() + (current.abortRate() * (ABORT_GUARANTEE_PERC / 100));
-        log.trace("abortRateToGuarantee:" + abortRateToGuarantee);
-
-        double responseTimeToGuarantee = current.responseTime(0) + (current.responseTime(0) * (RESPONSE_TIME_GUARANTEE_PERC / 100));
-        log.trace("responseTimeToGuarantee:" + abortRateToGuarantee);
-
-
-        //SLAItem sla = slaManager.getReadSLA(arrivalRateToGuarantee);
-        // TODO: cercare una configurazione che soddisfi tutte le classi txs
-
+    public void doOptimize(ProcessedSample sample) throws OracleException {
         if(!platformTuning.forecaster().isAutoTuning()){
             return;
         }
-
-        ControllerLogger.log.info("Querying " + platformTuning.forecaster() + " oracle");
-        OracleService oracleService = OracleService.getInstance(platformTuning.forecaster().getOracleClass());
-
-        PlatformConfiguration forecastedConfig;
-        OutputOracleImpl kpi = null;
-        try {
-            forecastedConfig = oracleService.minimizeCosts(processedSample, arrivalRateToGuarantee, abortRateToGuarantee, responseTimeToGuarantee );
-
-        } catch (OracleException e) {
-            throw e;
-        }
-
-        if(forecastedConfig==null){
-            ControllerLogger.log.info(" »»» No configuration found «««");
-            return;
-        } else {
-            ControllerLogger.log.info(" »»» Configuration found «««" );
-        }
-
-        reconfigurator.reconfigure(createNextConfig(forecastedConfig));
+        optimize(sample);
     }
 
-    private PlatformConfiguration createNextConfig(PlatformConfiguration forecastedConfig){
+    public abstract void optimize(ProcessedSample processedSample) throws OracleException;
+
+    protected PlatformConfiguration createNextConfig(PlatformConfiguration forecastedConfig){
         int size, repDegree;
         ReplicationProtocol repProt;
 
@@ -88,3 +59,21 @@ public class Optimizer {
     }
 
 }
+
+
+
+// TODO: Cercare una configurazione valida per ogni classe transazionale (Read, Write) cioè che rispetta gli SLAs
+
+        /*
+        double arrivalRateToGuarantee =  current.throughput() +  (current.throughput() * (ARRIVAL_RATE_GUARANTEE_PERC / 100));
+        log.trace("arrivalRateToGuarantee:" + arrivalRateToGuarantee);
+
+        double abortRateToGuarantee = current.abortRate() + (current.abortRate() * (ABORT_GUARANTEE_PERC / 100));
+        log.trace("abortRateToGuarantee:" + abortRateToGuarantee);
+
+        double responseTimeToGuarantee = current.responseTime(0) + (current.responseTime(0) * (RESPONSE_TIME_GUARANTEE_PERC / 100));
+        log.trace("responseTimeToGuarantee:" + abortRateToGuarantee);
+        */
+
+//SLAItem sla = slaManager.getReadSLA(arrivalRateToGuarantee);
+// TODO: cercare una configurazione che soddisfi tutte le classi txs

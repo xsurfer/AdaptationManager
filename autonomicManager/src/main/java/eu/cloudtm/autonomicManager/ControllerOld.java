@@ -116,7 +116,7 @@
 //            state.update(PlatformState.RECONFIGURING);
 //            ControllerLogger.log.info("Looking for an available configuration...");
 //
-//            PlatformConfiguration nextConf = new Optimizer(this, oracles, statsManager).doOptimize(inputFilter.getLastAvgArrivalRate(),
+//            PlatformConfiguration nextConf = new Optimizer(this, oracles, statsManager).optimize(inputFilter.getLastAvgArrivalRate(),
 //                    inputFilter.getLastAvgAbortRate(), inputFilter.getLastAvgResposeTime());
 //
 //            if(nextConf != null){

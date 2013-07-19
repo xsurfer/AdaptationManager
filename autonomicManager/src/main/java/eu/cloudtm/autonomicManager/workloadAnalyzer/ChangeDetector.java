@@ -1,6 +1,5 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
 import eu.cloudtm.statistics.ProcessedSample;
@@ -13,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created with IntelliJ IDEA.
@@ -30,8 +28,8 @@ public abstract class ChangeDetector implements IChangeDetector {
 
     private Buffer<ProcessedSample> sampleSlideWindow = BufferUtils.synchronizedBuffer(new CircularFifoBuffer<ProcessedSample>(SLIDE_WINDOW_SIZE));
 
-    private Reconfigurator reconfigurator;
-    protected WorkloadAdapter workloadAdapter;
+
+    protected AlertManager alertManager;
 
     private Map<Param, Double> monitoredParams2delta = new HashMap<Param, Double>();
     private Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta = new HashMap<EvaluatedParam, Double>();
@@ -39,16 +37,12 @@ public abstract class ChangeDetector implements IChangeDetector {
     private Map<Param, Double> lastAvgParams = new HashMap<Param, Double>();
     private Map<EvaluatedParam, Double> lastAvgEvaluatedParams = new HashMap<EvaluatedParam, Double>();
 
-    private ReentrantLock reconfigurationLock = new ReentrantLock();
-
     public ChangeDetector(SampleProducer sampleProducer,
-                          WorkloadAdapter workloadAdapter,
-                          Reconfigurator reconfigurator,
+                          AlertManager alertManager,
                           Map<Param, Double> monitoredParams2delta,
                           Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta){
         sampleProducer.addListener(this);
-        this.workloadAdapter = workloadAdapter;
-        this.reconfigurator = reconfigurator;
+        this.alertManager = alertManager;
         this.monitoredParams2delta = monitoredParams2delta;
         this.monitoredEvaluatedParams2delta = monitoredEvaluatedParams2delta;
         init();
@@ -142,9 +136,7 @@ public abstract class ChangeDetector implements IChangeDetector {
         return false;
     }
 
-
-
-    protected void add(ProcessedSample sample){
+    private void add(ProcessedSample sample){
         sampleSlideWindow.add(sample);
     }
 

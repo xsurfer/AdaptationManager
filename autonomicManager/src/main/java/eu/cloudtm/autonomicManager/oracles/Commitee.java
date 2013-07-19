@@ -67,6 +67,11 @@ public class Commitee implements IOracleService {
         throw new RuntimeException("TO IMPLEMENT");
     }
 
+    @Override
+    public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
+        throw new RuntimeException("TO IMPLEMENT");
+    }
+
     private PlatformConfiguration doVoting(Map<Forecaster, PlatformConfiguration> forecaster2conf){
 
         int size = 0;

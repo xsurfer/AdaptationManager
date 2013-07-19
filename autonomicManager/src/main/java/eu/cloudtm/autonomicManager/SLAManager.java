@@ -28,7 +28,7 @@ public class SLAManager {
     public SLAItem getWriteSLA(double throughput){
 
         for(SLAItem sla : writeTxClass){
-            if(sla.getThroughput()>throughput)
+            if(sla.getThroughput() > throughput)
                 return sla;
         }
         return null;

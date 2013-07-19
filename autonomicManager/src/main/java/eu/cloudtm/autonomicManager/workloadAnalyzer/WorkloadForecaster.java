@@ -33,6 +33,8 @@ public class WorkloadForecaster extends SampleProducer implements SampleListener
     private Set<EvaluatedParam> monitoredEvaluatedParam;
     private Map<EvaluatedParam, PolynomialFitter> evaluatedParamForecasters = new HashMap<EvaluatedParam, PolynomialFitter>();
 
+    private ProcessedSample lastSampleForecasted;
+
     public WorkloadForecaster(SampleProducer statsManager,
                               Set<Param> monitoredParams,
                               Set<EvaluatedParam> monitoredEvaluatedParam){
@@ -65,8 +67,12 @@ public class WorkloadForecaster extends SampleProducer implements SampleListener
             forecaster.addPoint(sample.getId(), (Double) sample.getEvaluatedParam(param));
         }
 
-        ProcessedSample forecastedSample = new CustomSample(sample, createCustomMap(sample.getId()), createCustomEvaluatedMap(sample.getId()) );
-        notify(forecastedSample);
+        lastSampleForecasted = new CustomSample(sample, createCustomMap(sample.getId()), createCustomEvaluatedMap(sample.getId()) );
+        notify(lastSampleForecasted);
+    }
+
+    public ProcessedSample lastForecast(){
+        return lastSampleForecasted;
     }
 
     private Map<Param, Object> createCustomMap(long instance){

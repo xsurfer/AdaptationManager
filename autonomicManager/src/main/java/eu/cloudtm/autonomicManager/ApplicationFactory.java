@@ -30,11 +30,12 @@ public class ApplicationFactory {
         WPMStatsManager wpmStatsManager = wpmStatsManagerFactory.build();
 
 
+        SLAManager slaManager = new SLAManager();
 
         Reconfigurator reconfigurator = new Reconfigurator(platformConfiguration);
-        Optimizer optimizer = new Optimizer(reconfigurator, platformConfiguration ,platformTuning);
+        Optimizer optimizer = new MuleOptimizer(reconfigurator, slaManager, platformConfiguration ,platformTuning);
 
-        workloadAnalyzerFactory = new WorkloadAnalyzerFactory(wpmStatsManager, reconfigurator);
+        workloadAnalyzerFactory = new WorkloadAnalyzerFactory(wpmStatsManager, reconfigurator, optimizer);
         WorkloadAnalyzer workloadAnalyzer = workloadAnalyzerFactory.build();
 
 

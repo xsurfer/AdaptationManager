@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
+import eu.cloudtm.autonomicManager.Optimizer;
 import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
@@ -19,8 +20,9 @@ import java.util.Set;
  */
 public class WorkloadAnalyzerFactory {
 
-    SampleProducer statsManager;
-    Reconfigurator reconfigurator;
+    private SampleProducer statsManager;
+    private Reconfigurator reconfigurator;
+    private Optimizer optimizer;
 
     Map<Param, Double> param2delta = new HashMap<Param, Double>(){{
         put(Param.AvgNumPutsBySuccessfulLocalTx, 20D);
@@ -36,13 +38,18 @@ public class WorkloadAnalyzerFactory {
     }};
 
     public WorkloadAnalyzerFactory(SampleProducer statsManager,
-                                   Reconfigurator reconfigurator){
+                                   Reconfigurator reconfigurator,
+                                   Optimizer optimizer){
+        this.statsManager = statsManager;
+        this.reconfigurator = reconfigurator;
+        this.optimizer = optimizer;
 
     }
 
     public WorkloadAnalyzer build(){
 
-        AlertManager alertManager = new AlertManager();
+
+        AlertManager alertManager = AlertManager.createInstance( "REACTIVE", optimizer, reconfigurator );
 
         WorkloadForecaster workloadForecaster = new WorkloadForecaster(
                 statsManager,

@@ -16,13 +16,13 @@ import java.util.Map;
  */
 public class ReactiveChangeDetector extends ChangeDetector {
 
-    public ReactiveChangeDetector(SampleProducer sampleProducer, WorkloadAdapter alertManager, Reconfigurator reconfigurator, Map<Param, Double> monitoredParams2delta, Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta) {
-        super(sampleProducer, alertManager, reconfigurator, monitoredParams2delta, monitoredEvaluatedParams2delta);
+    public ReactiveChangeDetector(SampleProducer sampleProducer, AlertManager alertManager, Reconfigurator reconfigurator, Map<Param, Double> monitoredParams2delta, Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta) {
+        super(sampleProducer, alertManager, monitoredParams2delta, monitoredEvaluatedParams2delta);
     }
 
     @Override
     public void dispatchEvent(WorkloadEvent e) {
-        workloadAdapter.workloadChanged(e);
+        alertManager.workloadChanged(e);
     }
 
 

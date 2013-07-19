@@ -38,7 +38,7 @@ public class Reconfigurator {
         this.current = current;
     }
 
-    public boolean reconfigure(PlatformConfiguration nextConf) throws ReconfiguratorException {
+    public boolean reconfigure(PlatformConfiguration nextConf) {
         if( reconfiguring.compareAndSet(false, true) ){
 
 //            ControllerLogger.log.info("Reconfiguring: " + nextConf);

@@ -1,5 +1,8 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
+import eu.cloudtm.autonomicManager.Optimizer;
+import eu.cloudtm.autonomicManager.Reconfigurator;
+
 /**
  * Created with IntelliJ IDEA.
  * User: fabio
@@ -7,21 +10,29 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
  * Time: 1:53 PM
  * To change this template use File | Settings | File Templates.
  */
-public class AlertManager implements WorkloadAdapter {
+public abstract class AlertManager implements WorkloadAdapter {
 
-    public AlertManager(){
+    protected Optimizer optimizer;
+    protected Reconfigurator reconfigurator;
 
+    public static AlertManager createInstance(String policy, Optimizer optimizer, Reconfigurator reconfigurator ){
+        AlertManager alertManager = null;
+        if(policy.equals("REACTIVE")){
+            alertManager = new PureReactiveAlertManager(optimizer, reconfigurator);
+
+        } else if(policy.equals("PROACTIVE")){
+
+        } else { // REACTIVE-PROACTIVE
+
+        }
+        return alertManager;
     }
 
-    @Override
-    public void workloadChanged(WorkloadEvent e) {
-
+    public AlertManager(Optimizer optimizer, Reconfigurator reconfigurator){
+        this.optimizer = optimizer;
+        this.reconfigurator = reconfigurator;
     }
 
-    @Override
-    public void workloadWillChange(WorkloadEvent e) {
 
-
-    }
 
 }
