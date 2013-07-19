@@ -1,6 +1,8 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
+import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
+import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzerFactory;
 import eu.cloudtm.commons.Forecaster;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
@@ -16,36 +18,34 @@ import java.io.IOException;
 public class ApplicationFactory {
 
     WPMStatsManagerFactory wpmStatsManagerFactory;
-
-    private WPMStatsManager wpmStatsManager;
-    private PlatformConfiguration platformConfiguration;
-    private PlatformTuning platformTuning;
-    private RESTServer restServer;
-
+    WorkloadAnalyzerFactory workloadAnalyzerFactory;
 
     public AutonomicManager build(){
-        platformConfiguration = new PlatformConfiguration();
-        platformTuning = new PlatformTuning(Forecaster.ANALYTICAL, true);
+        PlatformConfiguration platformConfiguration = new PlatformConfiguration();
+        PlatformTuning platformTuning = new PlatformTuning(Forecaster.ANALYTICAL, true);
 
         wpmStatsManagerFactory = new WPMStatsManagerFactory(platformConfiguration);
 
-        wpmStatsManager = wpmStatsManagerFactory.build();
+
+        WPMStatsManager wpmStatsManager = wpmStatsManagerFactory.build();
 
 
 
         Reconfigurator reconfigurator = new Reconfigurator(platformConfiguration);
         Optimizer optimizer = new Optimizer(reconfigurator, platformConfiguration ,platformTuning);
-        WorkloadAnalyzer inputFilter = new WorkloadAnalyzer(wpmStatsManager, optimizer);
+
+        workloadAnalyzerFactory = new WorkloadAnalyzerFactory(wpmStatsManager, reconfigurator);
+        WorkloadAnalyzer workloadAnalyzer = workloadAnalyzerFactory.build();
 
 
-        restServer = new RESTServer(wpmStatsManager);
+        RESTServer restServer = new RESTServer(wpmStatsManager);
 
 
         AutonomicManager autonomicManager = new AutonomicManager(
                 platformConfiguration,
                 platformTuning,
                 wpmStatsManager,
-                inputFilter,
+                workloadAnalyzer,
                 optimizer,
                 reconfigurator);
 

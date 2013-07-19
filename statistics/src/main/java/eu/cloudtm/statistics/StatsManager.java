@@ -23,9 +23,4 @@ public interface StatsManager {
     public StatisticDTO getAllAvgStatistic(String param);
 
     public void notifyListeners(ProcessedSample sample);
-
-    public void removeListener(SampleListener listener);
-
-    public void addListener(SampleListener listener);
-
 }

@@ -18,7 +18,7 @@ import java.util.*;
  */
 
 @Singleton
-public class WPMStatsManager implements StatsManager {
+public class WPMStatsManager extends SampleProducer implements StatsManager {
 
     private final static Log log = LogFactory.getLog(WPMStatsManager.class);
 

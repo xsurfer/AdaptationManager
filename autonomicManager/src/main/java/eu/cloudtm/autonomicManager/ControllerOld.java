@@ -43,7 +43,7 @@
 //
 //    private WPMStatsManager statsManager;
 //
-//    private WorkloadAnalyzer inputFilter;
+//    private ReactiveChangeDetector inputFilter;
 //
 //    private Reconfigurator outputFilter = new Reconfigurator();
 //
@@ -76,7 +76,7 @@
 //    public ControllerOld(PlatformConfiguration _configuration, WPMStatsManager _statsManager) {
 //        statsManager =  _statsManager;
 //        platformConfiguration = _configuration;
-//        inputFilter = new WorkloadAnalyzer(statsManager);
+//        inputFilter = new ReactiveChangeDetector(statsManager);
 //    }
 //
 //

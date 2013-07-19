@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
+import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import eu.cloudtm.commons.*;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.commons.dto.WhatIfDTO;
@@ -23,21 +24,21 @@ public class AutonomicManager {
     private PlatformTuning platformTuning;
     private PlatformConfiguration platformConfiguration;
     private StatsManager statsManager;
-    private WorkloadAnalyzer inputFilter;
+    private WorkloadAnalyzer workloadAnalyzer;
     private Optimizer optimizer;
     private Reconfigurator reconfigurator;
 
     public AutonomicManager(PlatformConfiguration platformConfiguration,
                             PlatformTuning platformTuning,
                             StatsManager sampleManager,
-                            WorkloadAnalyzer inputFilter,
+                            WorkloadAnalyzer workloadAnalyzer,
                             Optimizer optimizer,
                             Reconfigurator reconfigurator){
         this.statsManager = sampleManager;
         this.platformConfiguration = platformConfiguration;
         this.platformTuning = platformTuning;
 
-        this.inputFilter = inputFilter;
+        this.workloadAnalyzer = workloadAnalyzer;
         this.optimizer = optimizer;
         this.reconfigurator = reconfigurator;
     }
