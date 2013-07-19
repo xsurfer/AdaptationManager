@@ -5,6 +5,8 @@ import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 
+import java.util.Random;
+
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
@@ -22,7 +24,7 @@ public class Morpher implements Oracle {
     @Override
     public OutputOracle forecast(InputOracle input) throws OracleException {
 
-        OutputOracle outputOracle = new OutputOracleImpl(0,0,0);
-        return outputOracle;
+        Random rnd = new Random();
+        return new OutputOracleImpl(rnd.nextInt(3000), rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble());
     }
 }

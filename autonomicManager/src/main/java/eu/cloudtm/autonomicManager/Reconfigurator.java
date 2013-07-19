@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.deltacloud.client.DeltaCloudClientException;
 
 import java.net.MalformedURLException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,35 +18,64 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Reconfigurator {
 
-    private boolean enabled = false;
-
     private final Log log = LogFactory.getLog(Reconfigurator.class);
 
     private AtomicInteger numReconfig = new AtomicInteger(0);
 
-    public void reconfigure(PlatformConfiguration conf) throws ReconfiguratorException {
+    private final PlatformConfiguration current;
 
-        // se già sto riconfigurando aspetto (a meno che: riconf attuale >> riconf prec...)
-        // x ora riconfigure se e solo se non sto già riconfigurando
+    private PlatformConfiguration nextConfiguration;
 
-        ControllerLogger.log.info("Reconfiguring: " + conf);
+    private int progress = 0;
 
-        int numNodes = conf.platformSize();
-        int numThreads = conf.threadPerNode();
+    private boolean testing = true;
+
+    private AtomicBoolean reconfiguring = new AtomicBoolean(false);
+
+
+
+    public Reconfigurator(PlatformConfiguration current) {
+        this.current = current;
+    }
+
+    public boolean reconfigure(PlatformConfiguration nextConf) throws ReconfiguratorException {
+        if( reconfiguring.compareAndSet(false, true) ){
+
+//            ControllerLogger.log.info("Reconfiguring: " + nextConf);
+//            reconfigureSize(nextConf.platformSize(), nextConf.threadPerNode());
+//            ControllerLogger.log.info("Reconfiguration #" + numReconfig.incrementAndGet() + " ended");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void reconfigureSize(int numNodes, int numThreads) throws ReconfiguratorException {
+
         try {
             DeltaCloudActuator deltaCloudActuator = DeltaCloudActuator.getInstance(numNodes, numThreads);
-            if(!enabled){
+            if(testing){
                 ControllerLogger.log.warn("Actuator is disabled");
             } else {
                 deltaCloudActuator.actuate();
             }
-            ControllerLogger.log.info("Reconfiguration #" + numReconfig.incrementAndGet() + " ended");
+
         } catch (MalformedURLException e) {
             throw new ReconfiguratorException(e);
         } catch (DeltaCloudClientException e) {
             throw new ReconfiguratorException(e);
         }
 
+    }
 
+    public boolean isReconfiguring(){
+        return reconfiguring.get();
+    }
+
+    public int progress(){
+        if(reconfiguring.get()){
+            return progress;
+        }
+        return -1;
     }
 }

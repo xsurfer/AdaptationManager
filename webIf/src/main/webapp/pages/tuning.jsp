@@ -33,9 +33,53 @@
 			<h2>Tuning</h2>
 			<!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
 
+			<!-- FORECASTER FORM -->
+			<form id="forecaster">
+
+				<div class="resource">
+					<fieldset class="resource">
+						<legend>Forecaster:</legend>
+						
+						<!-- CURRENT -->
+						<div class="current">
+							<ol>
+								<li>
+									<p class="label">Current configuration:</p>
+									<p class="config"><span id="current_forecaster">ANALYTICAL</span></p>								
+								</li>
+							</ol>
+						</div>						
+						
+						<!-- TUNING -->
+						<div class="tuning">
+							<ol>							
+								<li>
+									<div class="conf_tuning">
+										<fieldset name="forecaster_tuning_self">
+											<!-- <label for="wr_tx_local_exec_time">Forecasting method:</label> -->
+											<select name="rep_protocol_forecasting" class="forecasting">
+												<option selected value="ANALYTICAL">Analytical</option>
+												<option value="SIMULATOR">Simulator</option>
+												<option value="MACHINE_LEARNING">Machine Learning</option>
+												<option value="COMMITTEE">Committee</option>
+											</select>
+										</fieldset>										
+									</div>
+								</li>
+							</ol>
+						</div>
+						
+						<!-- CONTROL -->
+						<div class="control">
+							<input class="submit" type="submit" value="Set" />
+						</div>
+					</fieldset>
+				</div>
+			</form>
+				
+				
 			<!-- SCALE FORM -->
 			<form id="scale">
-			
 				<!-- RESOURCE -->
 				<div class="resource">
 					<fieldset class="resource">
@@ -60,7 +104,7 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="scale_tuning" value="MANUAL">
+										<input type="radio" name="scale_tuning" value="FALSE">
 										Manual tuning
 									</div>
 									<div class="conf_tuning">
@@ -68,7 +112,7 @@
 											<input type="text" name="scale_size" id=scale_size size="3" />
 											<select name="instance_type">
 												<option value="SMALL">Small</option>
-												<option value="MEDIUM">Medium</option>
+												<option selected value="MEDIUM">Medium</option>
 												<option value="LARGE">Large</option>
 											</select>
 										</fieldset>
@@ -77,19 +121,8 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="scale_tuning" value="SELF">Self-tuning
-									</div>
-									<div class="conf_tuning">
-										<fieldset name="scale_tuning_self">
-											<!-- <label for="wr_tx_local_exec_time">Forecasting method:</label> -->
-											<select name="scale_forecasting" class="forecasting">
-												<option value="ANALYTICAL">Analytical Method</option>
-												<option value="SIMULATOR">Simulator</option>
-												<option value="MACHINELEARNING">Machine Learning</option>
-											</select>
-										</fieldset>										
-									</div>
-									
+										<input type="radio" name="scale_tuning" value="TRUE">Self-tuning
+									</div>																	
 								</li>
 							</ol>
 						</div>
@@ -129,7 +162,7 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_degree_tuning" value="MANUAL">
+										<input type="radio" name="rep_degree_tuning" value="FALSE">
 										Manual tuning
 									</div>
 									<div class="conf_tuning">
@@ -142,19 +175,8 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_degree_tuning" value="SELF">Self-tuning
+										<input type="radio" name="rep_degree_tuning" value="TRUE">Self-tuning
 									</div>
-									<div class="conf_tuning">
-										<fieldset name="rep_degree_tuning_self">
-											<!-- <label for="wr_tx_local_exec_time">Forecasting method:</label> -->
-											<select name="rep_degree_forecasting" class="forecasting">
-												<option value="analytical">Analytical Method</option>
-												<option value="simulator">Simulator</option>
-												<option value="ml">Machine Learning</option>
-											</select>
-										</fieldset>										
-									</div>
-																		
 								</li>
 							</ol>
 						</div>
@@ -194,13 +216,13 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">										
-										<input type="radio" id="rep_protocol_tuning_manual" name="rep_protocol_tuning" value="MANUAL" />
+										<input type="radio" id="rep_protocol_tuning_manual" name="rep_protocol_tuning" value="FALSE" />
 										<label for="rep_protocol_tuning_manual">Manual tuning</label>										
 									</div>
 									<div class="conf_tuning">
 										<fieldset name="rep_protocol_tuning_manual">
 											<select name="rep_protocol">
-												<option value="2PC">2PC</option>
+												<option selected value="2PC">2PC</option>
 												<option value="TO">TO</option>
 												<option value="PB">PB</option>
 											</select>											
@@ -211,20 +233,9 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_protocol_tuning" id="rep_protocol_tuning_self" value="SELF" />
+										<input type="radio" id="rep_protocol_tuning_self" name="rep_protocol_tuning"  value="TRUE" />
 										<label for="rep_protocol_tuning_self">Self-tuning</label>
 									</div>
-									<div class="conf_tuning">
-										<fieldset name="rep_protocol_tuning_self">
-											<!-- <label for="wr_tx_local_exec_time">Forecasting method:</label> -->
-											<select name="rep_protocol_forecasting" class="forecasting">
-												<option value="analytical">Analytical Method</option>
-												<option value="simulator">Simulator</option>
-												<option value="ml">Machine Learning</option>
-											</select>
-										</fieldset>										
-									</div>
-																		
 								</li>
 							</ol>
 						</div>

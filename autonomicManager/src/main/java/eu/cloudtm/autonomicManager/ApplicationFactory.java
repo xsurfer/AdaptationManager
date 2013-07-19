@@ -33,9 +33,9 @@ public class ApplicationFactory {
 
 
 
-        Reconfigurator reconfigurator = new Reconfigurator();
+        Reconfigurator reconfigurator = new Reconfigurator(platformConfiguration);
         Optimizer optimizer = new Optimizer(reconfigurator, platformConfiguration ,platformTuning);
-        InputFilter inputFilter = new InputFilter(wpmStatsManager, optimizer);
+        WorkloadAnalyzer inputFilter = new WorkloadAnalyzer(wpmStatsManager, optimizer);
 
 
         restServer = new RESTServer(wpmStatsManager);

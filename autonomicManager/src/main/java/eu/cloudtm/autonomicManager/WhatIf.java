@@ -52,7 +52,7 @@ public class WhatIf {
         customParam.setLocalReadOnlyTxLocalServiceTime( (Long) processedSample.getParam( Param.LocalReadOnlyTxLocalServiceTime ) );
         customParam.setAvgRemoteGetRtt( (Long) processedSample.getParam( Param.AvgRemoteGetRtt ) );
         customParam.setAvgGetsPerWrTransaction( (Long) processedSample.getParam( Param.AvgGetsPerWrTransaction ) );
-        customParam.setAvgGetsPerROTransaction( (Long) processedSample.getParam( Param.AvgGetsPerROTransaction ) );
+        customParam.setAvgGetsPerROTransaction( (Long) processedSample.getParam( Param.AvgGetsPerWrTransaction ) );
         return customParam;
     }
 

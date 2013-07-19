@@ -3,16 +3,13 @@ package eu.cloudtm.autonomicManager;
 import eu.cloudtm.commons.*;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.commons.dto.WhatIfDTO;
-import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.statistics.StatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 /**
  * Created by: Fabio Perfetti
@@ -23,20 +20,22 @@ public class AutonomicManager {
 
     private static Log log = LogFactory.getLog(AutonomicManager.class);
 
+    private PlatformTuning platformTuning;
     private PlatformConfiguration platformConfiguration;
     private StatsManager statsManager;
-    private InputFilter inputFilter;
+    private WorkloadAnalyzer inputFilter;
     private Optimizer optimizer;
     private Reconfigurator reconfigurator;
 
     public AutonomicManager(PlatformConfiguration platformConfiguration,
                             PlatformTuning platformTuning,
                             StatsManager sampleManager,
-                            InputFilter inputFilter,
+                            WorkloadAnalyzer inputFilter,
                             Optimizer optimizer,
                             Reconfigurator reconfigurator){
         this.statsManager = sampleManager;
         this.platformConfiguration = platformConfiguration;
+        this.platformTuning = platformTuning;
 
         this.inputFilter = inputFilter;
         this.optimizer = optimizer;

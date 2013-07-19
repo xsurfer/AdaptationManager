@@ -1,10 +1,17 @@
-var resources = ["scale","rep_degree","rep_protocol","data_placement"];
+var resources = [
+                 "scale",
+                 "rep_degree",
+                 "rep_protocol",
+                 "data_placement"
+                 ];
+
 var resourceToFeature = { "scale":"scale", 
 						"replicationDegree":"rep_degree", 
 						"replicationProtocol":"rep_protocol",
 						"dataPlacement":"data_placement"
 					  };
-var featureToField = { "scale":"size", 
+var featureToField = { 
+		"scale":"size", 
 		"rep_protocol":"protocol", 
 		"rep_degree":"degree",
 		//"dataPlacement":"data_placement"
@@ -35,7 +42,7 @@ $(document).ready(
 
 function init(){
 	init_radioBtn();
-	initCurrentConfig();
+	//initCurrentConfig();
 }
 
 /*
@@ -51,7 +58,7 @@ function init(){
 function initCurrentConfig(){
 	var current = 'current_';
 	var currentOpt = 'current_opt_';
-	console.log("======");
+	
 	$.getJSON( REST_STATUS, function(data){
 				
 		var items = [];
@@ -74,16 +81,20 @@ function initCurrentConfig(){
 }
 
 function init_radioBtn(){	
-
-	var length = resources.length, element = null;
-	for (var i = 0; i < length; i++) {
-		
+	
+	var element = null;
+	
+	for (var i = 0; i < resources.length; i++) {		
+		console.log(resources.length);
 		element = resources[i];
+		if(element == 'data_placement')
+			break;
+		
 		var $radios = $('input:radio[name='+element+'_tuning]');
 				
 		// INIT		
 	    if($radios.is(':checked') === false) {
-	        $radios.filter('[value=MANUAL]').prop('checked', true);
+	        $radios.filter('[value=FALSE]').prop('checked', true);
 	        disableFieldset($radios);
 	    }
 	    
@@ -95,6 +106,8 @@ function init_radioBtn(){
 }
 
 function disableFieldset($radio){
+
+	
 	console.log($radio.val()); // manual o self	
 	console.log($radio.attr("name"));
 	// seleziono tutte le fieldset che non si chiamano in quel modo e le disattivo
@@ -103,20 +116,17 @@ function disableFieldset($radio){
 	
 	var fieldsetName = $radio.attr("name") + '_';
 	var enabled = disabled = fieldsetName;
-	if($radio.attr("value")=="SELF"){
-		enabled += 'self';
+	if($radio.attr("value")=="TRUE"){
+		//enabled += 'self';
 		disabled += 'manual';
+		console.log("disabled: " + disabled);
+		$('fieldset[name="'+ disabled +'"]').children().attr("disabled", "disabled");
 	} else {
 		enabled += 'manual';
-		disabled += 'self';
-	}
-	
-	console.log("enabled: " + enabled);
-	console.log("disabled: " + disabled);
-	
-	$('fieldset[name="'+ disabled +'"]').children().attr("disabled", "disabled");
-	$('fieldset[name="'+ enabled +'"]').children().removeAttr("disabled");
-
+		console.log("enabled: " + enabled);
+		$('fieldset[name="'+ enabled +'"]').children().removeAttr("disabled");
+		//disabled += 'self';
+	}			
 }
 
 function sendScale() {

@@ -23,9 +23,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public class InputFilter implements SampleListener {
+public class WorkloadAnalyzer implements SampleListener {
 
-    private static Log log = LogFactory.getLog(InputFilter.class);
+    private static Log log = LogFactory.getLog(WorkloadAnalyzer.class);
 
     private static final int SLIDE_WINDOW_SIZE = 30;
 
@@ -50,7 +50,7 @@ public class InputFilter implements SampleListener {
 //    private double current;
 //    private double currentThroughput;
 
-    public InputFilter(StatsManager statsManager, Optimizer optimizer){
+    public WorkloadAnalyzer(StatsManager statsManager, Optimizer optimizer){
         this.optimizer = optimizer;
         statsManager.addListener(this);
     }
@@ -73,13 +73,13 @@ public class InputFilter implements SampleListener {
             if(reconfigurationLock.tryLock()){
                 try{
                     ControllerLogger.log.info("Starting a new reconfiguration...");
-                    OutputOracle current = new OutputOracleImpl(lastAvgArrivalRate, lastAvgAbortRate, lastAvgResposeTime);
+                    OutputOracle current = new OutputOracleImpl(lastAvgArrivalRate, lastAvgAbortRate, lastAvgResposeTime, lastAvgResposeTime);
                     try {
                         optimizer.doOptimize(current, sample);
                     } catch (ReconfiguratorException e) {
-                        ControllerLogger.log.warn("Eccezione durante la riconfigurazione!!");
+                        ControllerLogger.log.warn("Exeception while reconfiguring!!");
                     } catch (OracleException e) {
-                        ControllerLogger.log.warn("Eccezione durante l'ottimizzazione!!");
+                        ControllerLogger.log.warn("Exeception while optimizing!!");
                     }
 
                 } finally {
@@ -105,15 +105,15 @@ public class InputFilter implements SampleListener {
             lastAvgAbortRate = currentAbortAvg;
         } else {
             double rapporto = ( currentAbortAvg / lastAvgAbortRate ) * 100;
-            log.debug("rapporto: " + rapporto );
+            log.debug("ratio: " + rapporto );
 
             double variazione = Math.abs(rapporto - 100);
-            log.debug("variazione: " + variazione );
+            log.debug("variation: " + variazione );
 
             if( variazione >= DELTA_ABORT_RATE ){
-                log.debug("Update the lastAvgAbortRate");
+                log.trace("Update the lastAvgAbortRate");
                 lastAvgAbortRate = currentAbortAvg;
-                log.trace("SOGLIA RAGGIUNTA x AbortRate");
+                log.info("BOUND REACHED (AbortRate)");
                 return true;
             }
         }
@@ -130,23 +130,23 @@ public class InputFilter implements SampleListener {
             throughputSum += (Double) sample.getParam(Param.Throughput);
         }
         double currentThroughputAvg =  throughputSum / ((double) sampleSlideWindow.size());
-        log.trace("currentThroughputAvg: " + currentThroughputAvg);
-        log.trace("lastAvgArrivalRate: " + lastAvgArrivalRate);
+        log.debug("currentThroughputAvg: " + currentThroughputAvg);
+        log.debug("lastAvgArrivalRate: " + lastAvgArrivalRate);
 
         if(lastAvgArrivalRate == 0D || lastAvgArrivalRate == Double.NaN){
             log.info("Updating && Skipping lastAvgArrivalRate");
             lastAvgArrivalRate = currentThroughputAvg;
         } else {
             double rapporto = ( currentThroughputAvg / lastAvgArrivalRate ) * 100;
-            log.info("rapporto: " + rapporto );
+            log.debug("ratio: " + rapporto );
 
             double variazione = Math.abs(rapporto - 100);
-            log.info("variazione: " + variazione );
+            log.debug("variation: " + variazione );
 
             if( variazione >= DELTA_ARRIVAL_RATE ){
-                log.info("Update the lastAvgArrivalRate");
+                log.trace("Update the lastAvgArrivalRate");
                 lastAvgArrivalRate = currentThroughputAvg;
-                log.trace("SOGLIA RAGGIUNTA x ArrivalRate");
+                log.info("BOUND REACHED (ArrivalRate)");
                 return true;
             }
         }

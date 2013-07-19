@@ -42,7 +42,7 @@ public class CustomSample extends ProcessedSample {
 
     @Override
     public Double getACF() {
-        Object retVal = null;
+        Object retVal;
         retVal = customEvaluatedParam.get(EvaluatedParam.ACF);
 
         if(retVal==null) {

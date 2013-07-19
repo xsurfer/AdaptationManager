@@ -1,5 +1,7 @@
 package eu.cloudtm.autonomicManager.oracles;
 
+import eu.cloudtm.commons.ForecastParam;
+import eu.cloudtm.commons.Param;
 import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
@@ -8,6 +10,7 @@ import eu.cloudtm.oracles.exceptions.OracleException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 /**
  * Created by: Fabio Perfetti
@@ -26,25 +29,28 @@ public class Simulator implements Oracle {
     @Override
     public OutputOracle forecast(InputOracle input) throws OracleException {
 
-        ProcessBuilder pb = new ProcessBuilder(script, "");
-        pb.directory(new File(directory));
+//        ProcessBuilder pb = new ProcessBuilder(script, "");
+//        pb.directory(new File(directory));
+//
+//        try {
+//            p = pb.start();
+//            InputStream shellIn = p.getInputStream(); // this captures the output from the command
+//            int shellExitStatus = p.waitFor(); // wait for the shell to finish and get the return code
+//            int c;
+//            while ((c = shellIn.read()) != -1) {
+//                System.out.write(c);
+//            }
+//            shellIn.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
-        try {
-            p = pb.start();
-            InputStream shellIn = p.getInputStream(); // this captures the output from the command
-            int shellExitStatus = p.waitFor(); // wait for the shell to finish and get the return code
-            int c;
-            while ((c = shellIn.read()) != -1) {
-                System.out.write(c);
-            }
-            shellIn.close();
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        OutputOracle outputOracle = new OutputOracleImpl(0,0,0);
-        return outputOracle;
+        Random rnd = new Random();
+
+        return new OutputOracleImpl(rnd.nextInt(3000), rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble());
+
     }
 }

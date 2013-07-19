@@ -1,5 +1,7 @@
 package eu.cloudtm.autonomicManager.oracles;
 
+import eu.cloudtm.commons.EvaluatedParam;
+import eu.cloudtm.commons.ForecastParam;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
 import eu.cloudtm.oracles.OutputOracle;
@@ -7,6 +9,8 @@ import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.commons.Param;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Random;
 
 
 /**
@@ -20,15 +24,8 @@ public class OracleTAS implements Oracle {
 
     @Override
     public OutputOracle forecast(InputOracle inputOracle) throws OracleException {
-        double throughput = (Double) inputOracle.getParam(Param.Throughput);
-
-        if(throughput >= 0 && throughput < 100){
-            return new OutputOracleImpl(150, 0, 0);
-        } else if( throughput >= 100 && throughput < 400 ) {
-            return new OutputOracleImpl(600, 0, 0);
-        } else {
-            return new OutputOracleImpl(1200, 0 , 0);
-        }
+        Random rnd = new Random();
+        return new OutputOracleImpl(rnd.nextInt(3000), rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble());
     }
 }
 

@@ -11,10 +11,4 @@ public interface Oracle {
 
     public OutputOracle forecast(InputOracle input) throws OracleException;
 
-    //public OutputOracleImpl minimizeCosts(InputOracleWPM input, double arrivalRate, double abortRate, double responseTime) throws OracleException;
-
-    //public Set<OutputOracleImpl> whatIf(InputOracleWPM input) throws OracleException;
-
-    //public OutputOracleImpl forecastWithCustomParam(WPMSample sample, WhatIfCustomParamDTO customParam, int numNodes, int numThreads) throws OracleException;
-
 }

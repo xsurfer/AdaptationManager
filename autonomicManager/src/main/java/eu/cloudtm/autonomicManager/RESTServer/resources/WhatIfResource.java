@@ -87,38 +87,28 @@ public class WhatIfResource extends AbstractResource {
     ){
 
         Double a = new Double("3");
-        log.info(acf);
 
-        log.info(percentageSuccessWriteTransactions);
-
-        log.info(avgNumPutsBySuccessfulLocalTx);
-
-        log.info(avgGetsPerWrTransaction);
-
-        log.info(avgGetsPerROTransaction);
-
-        log.info(localUpdateTxLocalServiceTime);
-
-        log.info(localReadOnlyTxLocalServiceTime);
-
-        log.info(avgPrepareCommandSize);
-
-        log.info(avgPrepareAsync);
-        log.info(avgCommitAsync);
-        log.info(avgRemoteGetRtt);
-
+        log.trace("acf: " + acf);
+        log.trace("percentageSuccessWriteTransactions: " + percentageSuccessWriteTransactions);
+        log.trace("avgNumPutsBySuccessfulLocalTx: " + avgNumPutsBySuccessfulLocalTx);
+        log.trace("avgGetsPerWrTransaction: " + avgGetsPerWrTransaction);
+        log.trace("avgGetsPerROTransaction: " + avgGetsPerROTransaction);
+        log.trace("localUpdateTxLocalServiceTime: " + localUpdateTxLocalServiceTime);
+        log.trace("localReadOnlyTxLocalServiceTime: " + localReadOnlyTxLocalServiceTime);
+        log.trace("avgPrepareCommandSize: " + avgPrepareCommandSize);
+        log.trace("avgPrepareAsync: " + avgPrepareAsync);
+        log.trace("avgCommitAsync: " + avgCommitAsync);
+        log.trace("avgRemoteGetRtt: " + avgRemoteGetRtt);
+        log.trace("fores: " + fores);
+        log.trace("repDegree: " + repDegree);
 
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
 
-        log.info("Forecasters: " + fores);
-
         for(String forecasterString : fores){
-            log.info("Aggiungendo " + forecasterString);
+            log.trace("Adding " + forecasterString);
             Forecaster forecaster = Forecaster.valueOf(forecasterString);
             customParam.addForecaster(forecaster);
         }
-
-        log.info("Replication Degree: " + repDegree);
         customParam.setReplicationDegree(repDegree);
         customParam.setReplicationProtocol(repProtocol);
 

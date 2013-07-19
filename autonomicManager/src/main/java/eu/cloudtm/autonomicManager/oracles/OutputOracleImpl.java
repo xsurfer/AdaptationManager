@@ -11,12 +11,14 @@ public class OutputOracleImpl implements OutputOracle {
 
     private double throughput;
     private double abortProbability;
-    private double rtt;
+    private double responseTimeRead;
+    private double responseTimeWrite;
 
-    public OutputOracleImpl(double throughput, double abortProbability, double responseTime) {
+    public OutputOracleImpl(double throughput, double abortProbability, double responseTimeRead, double responseTimeWrite) {
         this.throughput = throughput;
         this.abortProbability = abortProbability;
-        this.rtt = responseTime;
+        this.responseTimeRead = responseTimeRead;
+        this.responseTimeWrite = responseTimeWrite;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class OutputOracleImpl implements OutputOracle {
 
     @Override
     public double responseTime(int txClassId) {
-        return rtt;
+        return responseTimeRead;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class OutputOracleImpl implements OutputOracle {
         return "OutputOracleImpl{" +
                 "throughput=" + throughput +
                 ", abortProbability=" + abortProbability +
-                ", rtt=" + rtt +
+                ", responseTimeRead=" + responseTimeRead +
                 '}';
     }
 
@@ -67,7 +69,7 @@ public class OutputOracleImpl implements OutputOracle {
     public boolean equals(Object obj){
         if( this.throughput == ((OutputOracleImpl) obj).throughput )
             if( this.abortProbability == ((OutputOracleImpl) obj).abortProbability )
-                if( this.rtt == ((OutputOracleImpl) obj).rtt )
+                if( this.responseTimeRead == ((OutputOracleImpl) obj).responseTimeRead)
                     return true;
         return false;
     }

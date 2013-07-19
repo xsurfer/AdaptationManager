@@ -18,7 +18,7 @@ var plots = {
 }
 
 var series = {
-		"throughput" : [ {
+		"throughput" : [ {			
 			data : [],
 			lines : {
 				fill : true,
@@ -134,67 +134,59 @@ $(document).ready(
 /* Out of main */
 /* *********** */
 
+function serie(label,data)
+{
+	this.label = label;
+	this.data = data;
+	this.lines = { fill : true, };
+	this.curvedLines = { apply : true };
+}
+
 function getAllAndUpdate() {
 	var dataToBeSent = $("form#whatif").serialize();
-	console.log(dataToBeSent);
+	console.log("dataToBeSent: " + dataToBeSent);
 
 	var url = REST_GET_WHATIF;
 
 	$.ajax({
+		dataType: "json",
+		contentType: "application/x-www-form-urlencoded",		
 		url: url,
 		type: "POST",
 		crossDomain: true,
 		data: dataToBeSent,	
-		dataType: "json",
-		contentType: "application/x-www-form-urlencoded",
-		success: function(json) {	        
-
+		
+		success: function(json) {	 
+				          
 			console.log(json);
 			console.log("risorse: " + resources.length);
 			console.log("predizione fatta da: " + json.length + " oracoli");
 
-			for(var forecast=0; forecast < json.length; forecast++){
-
-
-				for ( var resLen = 0; resLen < resources.length; resLen++) {
-					param = resources[resLen];
-					console.log("analizzando: " + param);
-
-					dataSize = json[forecast][param].length;
-					data = json[forecast][param];
-					console.log("size: " + dataSize);
-
-					var nextData = [];
-
-//					[ 
-//					[2.0,398.6991260451597],[3.0,705.6247975269262],[4.0,903.0586480645841],[5.0,1210.3070778706026],[6.0,1411.2449155071085],[7.0,1706.4529070958245],[8.0,1888.042245499542],[9.0,2181.4290920243793],[10.0,2299.0031156528057]
-//					]				
-
-					for ( var i = 0; i < dataSize; i++) {					
-						nextData.push(data[i]);					
-					}
-					console.log(nextData);
-
-					//var res = [];
-					//for ( var i = 1; i < nextData.length; ++i) {
-//					res.push([ i, nextData[i] ]);
-					//}
-
-					var currSeries = series[param];
-					currSeries[0].data = nextData;
-
-					var currPlot = plots[param];
-					currPlot.setData(currSeries);
-
-					currPlot.setupGrid();
-					currPlot.draw();
+			for ( var resLen = 0; resLen < resources.length; resLen++) {				
+				var param = resources[resLen];
+				var currPlot = plots[param];
+				
+				console.log("creando grafico per risorsa: " + param);
+				
+				var dataseries = [];
+						
+				for(var forecastIter=0; forecastIter < json.length; forecastIter++){
+					var forecast = json[forecastIter];
+					console.log("analizzando oracolo: " + forecast.forecaster);
+					var currSerie = new serie(forecast.forecaster, forecast[param]);
+					console.log("nuova serie: " + currSerie);
+					dataseries.push(currSerie);
 				}
+				
+				// updating the plot 
+				currPlot.setData(dataseries);
+				currPlot.setupGrid();
+				currPlot.draw();
 			}
 
 		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log("textStatus:" + textStatus);
-			console.log("errorThrown:" + errorThrown);
+		error: function(xhr, status) {
+			alert(status);
 		}
 	});
 }

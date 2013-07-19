@@ -50,7 +50,7 @@ public class DeltaCloudActuator implements IActuator {
 
 
     public static DeltaCloudActuator getInstance(int _nodes, int threads) throws MalformedURLException, DeltaCloudClientException {
-        DeltaCloudClient client = new DeltaCloudClientImpl("http://cloudtm.ist.utl.pt:30000","fabio+OpenShift","spiro55");
+        DeltaCloudClient client = new DeltaCloudClientImpl("http://cloudtm.ist.utl.pt:30000","fabio+OpenShift","cloud%fabio");
         //DeltaCloudClient client = new DeltaCloudClientImpl("http://localhost:3001","mockuser","mockpassword");
 
         DeltaCloudActuator actuator = new DeltaCloudActuator(client, _nodes, threads);
