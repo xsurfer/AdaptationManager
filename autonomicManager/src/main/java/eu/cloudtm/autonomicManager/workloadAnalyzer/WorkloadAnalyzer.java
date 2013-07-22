@@ -11,7 +11,7 @@ public class WorkloadAnalyzer {
 
     public WorkloadAnalyzer( ChangeDetector reactive,
                              ChangeDetector proactive,
-                             WorkloadAdapter alertManager){
+                             WorkloadEventListener alertManager){
 
     }
 

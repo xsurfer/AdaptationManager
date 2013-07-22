@@ -3,6 +3,7 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
+import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.statistics.SampleProducer;
 
 import java.util.Map;
@@ -16,12 +17,29 @@ import java.util.Map;
  */
 public class ProactiveChangeDetector extends ChangeDetector {
 
-    public ProactiveChangeDetector(SampleProducer sampleProducer, AlertManager alertManager, Reconfigurator reconfigurator, Map<Param, Double> monitoredParams2delta, Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta) {
-        super(sampleProducer, alertManager, monitoredParams2delta, monitoredEvaluatedParams2delta);
+    private WorkloadForecaster forecaster;
+
+    public ProactiveChangeDetector(SampleProducer sampleProducer,
+                                   Map<Param, Double> monitoredParams2delta,
+                                   Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta,
+                                   WorkloadForecaster forecaster) {
+        super(sampleProducer, monitoredParams2delta, monitoredEvaluatedParams2delta);
+        this.forecaster = forecaster;
     }
 
     @Override
-    public void dispatchEvent(WorkloadEvent e) {
-        alertManager.workloadWillChange(e);
+    public void onNewSample(ProcessedSample sample){
+        forecaster.add(sample);
+        add(forecaster.forecast());
+
+        if(sampleSlideWindow.size() < SLIDE_WINDOW_SIZE){
+            return;
+        }
+
+        boolean reconfigure = evaluateParam() || evaluateEvaluatedParam();
+        if(reconfigure){
+            fireEvent( WorkloadEvent.WorkloadEventType.WORKLOAD_WILL_CHANGE, sample);
+        }
     }
+
 }

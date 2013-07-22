@@ -2,6 +2,8 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.statistics.ProcessedSample;
 
+import java.util.EventObject;
+
 /**
  * Created with IntelliJ IDEA.
  * User: fabio
@@ -9,27 +11,41 @@ import eu.cloudtm.statistics.ProcessedSample;
  * Time: 11:08 AM
  * To change this template use File | Settings | File Templates.
  */
-public class WorkloadEvent {
+public class WorkloadEvent extends EventObject {
 
+    public enum WorkloadEventType{
+        WORKLOAD_CHANGED, WORKLOAD_WILL_CHANGE;
+    }
+
+    private final WorkloadEventType type;
     private final long timestamp;
-    private final Object source;
     private final ProcessedSample sample;
 
-    public WorkloadEvent(Object source, ProcessedSample sample){
+    /**
+     * Constructs a prototypical Event.
+     *
+     * @param source The object on which the Event initially occurred.
+     * @throws IllegalArgumentException
+     *          if source is null.
+     */
+    public WorkloadEvent(ChangeDetector source, WorkloadEventType type, ProcessedSample sample) {
+        super(source);
+        this.type = type;
         this.timestamp = System.currentTimeMillis();
-        this.source = source;
         this.sample = sample;
     }
 
-    public ProcessedSample getSample(){
-        return sample;
+    public WorkloadEventType getEventType(){
+        return type;
     }
 
     public long getTimestamp(){
         return timestamp;
     }
 
-    public Object getSource(){
-        return source;
+    public ProcessedSample getSample(){
+        return sample;
     }
+
+
 }

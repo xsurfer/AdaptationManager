@@ -2,10 +2,12 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.Optimizer;
 import eu.cloudtm.autonomicManager.Reconfigurator;
+import eu.cloudtm.autonomicManager.configs.AlertManagerConfig;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
 import eu.cloudtm.statistics.SampleProducer;
 import eu.cloudtm.statistics.StatsManager;
+import org.apache.commons.configuration.Configuration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,8 @@ import java.util.Set;
  */
 public class WorkloadAnalyzerFactory {
 
+
+    private Configuration config;
     private SampleProducer statsManager;
     private Reconfigurator reconfigurator;
     private Optimizer optimizer;
@@ -37,9 +41,11 @@ public class WorkloadAnalyzerFactory {
         put(EvaluatedParam.ACF, 20D);
     }};
 
-    public WorkloadAnalyzerFactory(SampleProducer statsManager,
-                                   Reconfigurator reconfigurator,
-                                   Optimizer optimizer){
+    public WorkloadAnalyzerFactory( Configuration config,
+                                    SampleProducer statsManager,
+                                    Reconfigurator reconfigurator,
+                                    Optimizer optimizer){
+        this.config = config;
         this.statsManager = statsManager;
         this.reconfigurator = reconfigurator;
         this.optimizer = optimizer;
@@ -48,28 +54,30 @@ public class WorkloadAnalyzerFactory {
 
     public WorkloadAnalyzer build(){
 
-
-        AlertManager alertManager = AlertManager.createInstance( "REACTIVE", optimizer, reconfigurator );
-
         WorkloadForecaster workloadForecaster = new WorkloadForecaster(
-                statsManager,
                 param2delta.keySet(),
                 evaluatedParam2delta.keySet()
         );
 
         ChangeDetector proactiveChangeDetector = new ProactiveChangeDetector(
-                workloadForecaster,
-                alertManager,
-                reconfigurator,
+                statsManager,
                 param2delta,
-                evaluatedParam2delta);
+                evaluatedParam2delta,
+                workloadForecaster
+        );
 
-        ChangeDetector reactiveChangeDetector = new ReactiveChangeDetector(workloadForecaster,
-                alertManager,
-                reconfigurator,
+        ChangeDetector reactiveChangeDetector = new ReactiveChangeDetector(
+                statsManager,
                 param2delta,
-                evaluatedParam2delta);
+                evaluatedParam2delta
+        );
 
+
+        String policy = config.getString( AlertManagerConfig.POLICY.key() );
+        AlertManager alertManager = AlertManager.createInstance( policy, optimizer, reconfigurator );
+
+        proactiveChangeDetector.addEventListener(alertManager);
+        reactiveChangeDetector.addEventListener(alertManager);
 
         WorkloadAnalyzer workloadAnalyzer = new WorkloadAnalyzer(reactiveChangeDetector,
                 proactiveChangeDetector,
@@ -77,5 +85,6 @@ public class WorkloadAnalyzerFactory {
 
         return workloadAnalyzer;
     }
+
 
 }

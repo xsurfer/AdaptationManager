@@ -7,10 +7,8 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
  * Time: 11:01 AM
  * To change this template use File | Settings | File Templates.
  */
-public interface WorkloadAdapter {
+public interface WorkloadEventListener {
 
-    public void workloadChanged(WorkloadEvent e);
-
-    public void workloadWillChange(WorkloadEvent e);
+    public void workloadEventPerformed(WorkloadEvent e);
 
 }

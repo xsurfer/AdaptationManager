@@ -27,13 +27,18 @@ public class PureReactiveAlertManager extends AlertManager {
         super(optimizer, reconfigurator);
     }
 
-    @Override
-    public void workloadChanged(WorkloadEvent event) {
 
-        if(!reconfigurator.isReconfiguring()){
+    @Override
+    public void workloadEventPerformed(WorkloadEvent event) {
+
+        if( !event.getEventType().equals(WorkloadEvent.WorkloadEventType.WORKLOAD_CHANGED) ){
+            return;
+        }
+
+        if( !reconfigurator.isReconfiguring() ){
             if( reconfigurationLock.tryLock() ){
                 try{
-                    optimizer.optimize(event.getSample());
+                    optimizer.optimize( event.getSample() );
                 } catch (OracleException e) {
                     ControllerLogger.log.warn("Exception thrown querying oracles");
                 } finally {
@@ -41,10 +46,5 @@ public class PureReactiveAlertManager extends AlertManager {
                 }
             }
         }
-    }
-
-    @Override
-    public void workloadWillChange(WorkloadEvent e) {
-
     }
 }

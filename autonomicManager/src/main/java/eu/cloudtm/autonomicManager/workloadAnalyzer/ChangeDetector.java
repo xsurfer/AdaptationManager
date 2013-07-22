@@ -10,8 +10,7 @@ import org.apache.commons.collections15.buffer.CircularFifoBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,12 +23,11 @@ public abstract class ChangeDetector implements IChangeDetector {
 
     private static Log log = LogFactory.getLog(ChangeDetector.class);
 
-    private static final int SLIDE_WINDOW_SIZE = 30;
+    protected static final int SLIDE_WINDOW_SIZE = 30;
 
-    private Buffer<ProcessedSample> sampleSlideWindow = BufferUtils.synchronizedBuffer(new CircularFifoBuffer<ProcessedSample>(SLIDE_WINDOW_SIZE));
+    protected Buffer<ProcessedSample> sampleSlideWindow = BufferUtils.synchronizedBuffer(new CircularFifoBuffer<ProcessedSample>(SLIDE_WINDOW_SIZE));
 
-
-    protected AlertManager alertManager;
+    private List<WorkloadEventListener> listeners = new ArrayList<WorkloadEventListener>();
 
     private Map<Param, Double> monitoredParams2delta = new HashMap<Param, Double>();
     private Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta = new HashMap<EvaluatedParam, Double>();
@@ -37,33 +35,17 @@ public abstract class ChangeDetector implements IChangeDetector {
     private Map<Param, Double> lastAvgParams = new HashMap<Param, Double>();
     private Map<EvaluatedParam, Double> lastAvgEvaluatedParams = new HashMap<EvaluatedParam, Double>();
 
+
+
     public ChangeDetector(SampleProducer sampleProducer,
-                          AlertManager alertManager,
                           Map<Param, Double> monitoredParams2delta,
                           Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta){
         sampleProducer.addListener(this);
-        this.alertManager = alertManager;
         this.monitoredParams2delta = monitoredParams2delta;
         this.monitoredEvaluatedParams2delta = monitoredEvaluatedParams2delta;
         init();
     }
 
-    @Override
-    public void onNewSample(ProcessedSample sample){
-        add(sample);
-
-        if(sampleSlideWindow.size() < SLIDE_WINDOW_SIZE){
-            return;
-        }
-
-        boolean reconfigure = evaluateParam() || evaluateEvaluatedParam();
-        if(reconfigure){
-            WorkloadEvent event = new WorkloadEvent(this,sample);
-            dispatchEvent(event);
-        }
-    }
-
-    public abstract void dispatchEvent(WorkloadEvent e);
 
     private void init(){
         for(Param param : monitoredParams2delta.keySet()){
@@ -74,7 +56,7 @@ public abstract class ChangeDetector implements IChangeDetector {
         }
     }
 
-    private boolean evaluateParam(){
+    protected boolean evaluateParam(){
         for(Param param : monitoredParams2delta.keySet()){
             double sum = 0.0;
             for (ProcessedSample sample : sampleSlideWindow){
@@ -105,7 +87,7 @@ public abstract class ChangeDetector implements IChangeDetector {
         return false;
     }
 
-    private boolean evaluateEvaluatedParam(){
+    protected boolean evaluateEvaluatedParam(){
         for(EvaluatedParam param : monitoredEvaluatedParams2delta.keySet()){
             double sum = 0.0;
             for (ProcessedSample sample : sampleSlideWindow){
@@ -136,8 +118,26 @@ public abstract class ChangeDetector implements IChangeDetector {
         return false;
     }
 
-    private void add(ProcessedSample sample){
+    protected void add(ProcessedSample sample){
         sampleSlideWindow.add(sample);
     }
+
+    public synchronized void addEventListener(WorkloadEventListener listener)  {
+        listeners.add(listener);
+    }
+
+    public synchronized void removeEventListener(WorkloadEventListener listener)   {
+        listeners.remove(listener);
+    }
+
+    protected synchronized void fireEvent(WorkloadEvent.WorkloadEventType type, ProcessedSample sample) {
+        WorkloadEvent event = new WorkloadEvent(this, type, sample);
+        Iterator<WorkloadEventListener> i = listeners.iterator();
+        while(i.hasNext())  {
+            i.next().workloadEventPerformed(event);
+        }
+    }
+
+
 
 }

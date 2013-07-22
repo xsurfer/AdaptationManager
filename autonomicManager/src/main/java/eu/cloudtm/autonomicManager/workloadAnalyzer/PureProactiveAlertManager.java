@@ -18,13 +18,9 @@ public class PureProactiveAlertManager extends AlertManager {
         super(optimizer, reconfigurator);
     }
 
-    @Override
-    public void workloadChanged(WorkloadEvent e) {
-
-    }
 
     @Override
-    public void workloadWillChange(WorkloadEvent e) {
+    public void workloadEventPerformed(WorkloadEvent e) {
 
     }
 }

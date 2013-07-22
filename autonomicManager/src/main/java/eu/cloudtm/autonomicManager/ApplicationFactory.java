@@ -7,6 +7,7 @@ import eu.cloudtm.commons.Forecaster;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
 import eu.cloudtm.statistics.*;
+import org.apache.commons.configuration.Configuration;
 
 import java.io.IOException;
 
@@ -17,8 +18,14 @@ import java.io.IOException;
  */
 public class ApplicationFactory {
 
-    WPMStatsManagerFactory wpmStatsManagerFactory;
-    WorkloadAnalyzerFactory workloadAnalyzerFactory;
+    private Configuration configuration;
+    private WPMStatsManagerFactory wpmStatsManagerFactory;
+    private WorkloadAnalyzerFactory workloadAnalyzerFactory;
+
+    public ApplicationFactory(Configuration configuration){
+        this.configuration = configuration;
+    }
+
 
     public AutonomicManager build(){
         PlatformConfiguration platformConfiguration = new PlatformConfiguration();
@@ -35,7 +42,7 @@ public class ApplicationFactory {
         Reconfigurator reconfigurator = new Reconfigurator(platformConfiguration);
         Optimizer optimizer = new MuleOptimizer(reconfigurator, slaManager, platformConfiguration ,platformTuning);
 
-        workloadAnalyzerFactory = new WorkloadAnalyzerFactory(wpmStatsManager, reconfigurator, optimizer);
+        workloadAnalyzerFactory = new WorkloadAnalyzerFactory(configuration, wpmStatsManager, reconfigurator, optimizer);
         WorkloadAnalyzer workloadAnalyzer = workloadAnalyzerFactory.build();
 
 

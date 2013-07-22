@@ -12,4 +12,6 @@ import eu.cloudtm.statistics.SampleListener;
  */
 public interface IChangeDetector extends SampleListener {
 
+
+
 }

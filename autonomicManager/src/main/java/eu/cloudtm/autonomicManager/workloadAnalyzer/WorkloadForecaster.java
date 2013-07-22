@@ -19,7 +19,7 @@ import java.util.Set;
  * Time: 11:03 AM
  * To change this template use File | Settings | File Templates.
  */
-public class WorkloadForecaster extends SampleProducer implements SampleListener {
+public class WorkloadForecaster {
 
     private static final int POLYNOMIAL_GRADE = 1;
 
@@ -35,12 +35,10 @@ public class WorkloadForecaster extends SampleProducer implements SampleListener
 
     private ProcessedSample lastSampleForecasted;
 
-    public WorkloadForecaster(SampleProducer statsManager,
-                              Set<Param> monitoredParams,
+    public WorkloadForecaster(Set<Param> monitoredParams,
                               Set<EvaluatedParam> monitoredEvaluatedParam){
         this.monitoredParams = monitoredParams;
         this.monitoredEvaluatedParam = monitoredEvaluatedParam;
-        statsManager.addListener(this);
         init();
     }
 
@@ -55,9 +53,7 @@ public class WorkloadForecaster extends SampleProducer implements SampleListener
         }
     }
 
-    @Override
-    public void onNewSample(ProcessedSample sample) {
-
+    public void add(ProcessedSample sample){
         for(Param param : monitoredParams){
             PolynomialFitter forecaster = paramForecasters.get(param);
             forecaster.addPoint(sample.getId(), (Double) sample.getParam(param));
@@ -68,10 +64,10 @@ public class WorkloadForecaster extends SampleProducer implements SampleListener
         }
 
         lastSampleForecasted = new CustomSample(sample, createCustomMap(sample.getId()), createCustomEvaluatedMap(sample.getId()) );
-        notify(lastSampleForecasted);
     }
 
-    public ProcessedSample lastForecast(){
+
+    public ProcessedSample forecast(){
         return lastSampleForecasted;
     }
 
