@@ -22,7 +22,7 @@ import java.net.URI;
  * E-mail: perfabio87@gmail.com
  * Date: 6/27/13
  */
-public class SlaveKillerActuator implements IActuator {
+public class SlaveKillerActuator {
 
     private Log log = LogFactory.getLog(SlaveKillerActuator.class);
 
@@ -51,7 +51,6 @@ public class SlaveKillerActuator implements IActuator {
         COMPONENT = component;
     }
 
-    @Override
     public void actuate() throws RadargunException {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(getBaseURI());

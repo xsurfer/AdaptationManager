@@ -1,7 +1,6 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import eu.cloudtm.autonomicManager.WhatIf;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Forecaster;

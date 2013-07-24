@@ -23,14 +23,14 @@ public abstract class ChangeDetector implements IChangeDetector {
 
     private static Log log = LogFactory.getLog(ChangeDetector.class);
 
-    protected static final int SLIDE_WINDOW_SIZE = 30;
+    protected static final int SLIDE_WINDOW_SIZE = 10;
 
     protected Buffer<ProcessedSample> sampleSlideWindow = BufferUtils.synchronizedBuffer(new CircularFifoBuffer<ProcessedSample>(SLIDE_WINDOW_SIZE));
 
     private List<WorkloadEventListener> listeners = new ArrayList<WorkloadEventListener>();
 
-    private Map<Param, Double> monitoredParams2delta = new HashMap<Param, Double>();
-    private Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta = new HashMap<EvaluatedParam, Double>();
+    private Map<Param, Double> monitoredParams2delta;
+    private Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta;
 
     private Map<Param, Double> lastAvgParams = new HashMap<Param, Double>();
     private Map<EvaluatedParam, Double> lastAvgEvaluatedParams = new HashMap<EvaluatedParam, Double>();
@@ -48,19 +48,23 @@ public abstract class ChangeDetector implements IChangeDetector {
 
 
     private void init(){
+
         for(Param param : monitoredParams2delta.keySet()){
+            log.warn("initializing avg structure ["+param+"]");
             lastAvgParams.put(param, 0.0);
         }
         for(EvaluatedParam evaluatedParam : monitoredEvaluatedParams2delta.keySet()){
+            log.warn("initializing avg structure ["+evaluatedParam+"]");
             lastAvgEvaluatedParams.put(evaluatedParam, 0.0);
         }
     }
 
     protected boolean evaluateParam(){
         for(Param param : monitoredParams2delta.keySet()){
+            log.trace("Analyzing " + param.getKey());
             double sum = 0.0;
             for (ProcessedSample sample : sampleSlideWindow){
-                sum += (Double) sample.getParam( param );
+                sum +=  ((Number) sample.getParam( param ) ).doubleValue();
             }
             double currentAvg =  sum / ((double) sampleSlideWindow.size());
             log.debug("currentAvg: " + currentAvg);
@@ -89,6 +93,8 @@ public abstract class ChangeDetector implements IChangeDetector {
 
     protected boolean evaluateEvaluatedParam(){
         for(EvaluatedParam param : monitoredEvaluatedParams2delta.keySet()){
+            log.trace("");
+            log.trace("Analyzing " + param.getKey());
             double sum = 0.0;
             for (ProcessedSample sample : sampleSlideWindow){
                 sum += (Double) sample.getEvaluatedParam( param );
@@ -107,12 +113,13 @@ public abstract class ChangeDetector implements IChangeDetector {
                 double variation = Math.abs(ratio - 100);
                 log.debug("variation: " + variation );
 
-                if( variation >= monitoredParams2delta.get(param) ){
-                    log.trace("Update the lastAvgAbortRate");
+                if( variation >= monitoredEvaluatedParams2delta.get(param) ){
+                    log.trace("Updating lastAvgEvaluatedParams for param:" + param + " to: " + currentAvg);
                     lastAvgEvaluatedParams.put(param, currentAvg);
-                    log.info("BOUND REACHED (AbortRate)");
+                    log.info("BOUND REACHED (" + param.getKey() + ")" );
                     return true;
                 }
+
             }
         }
         return false;

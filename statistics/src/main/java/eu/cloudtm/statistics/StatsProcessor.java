@@ -17,7 +17,7 @@ public class StatsProcessor implements Processor {
 
     public ProcessedSample process(Sample rawSample){
         // TODO processare in base al protocollo o altro... per ora solo 2pc
-        TWOPCProcessedSample processedSample = new TWOPCProcessedSample(rawSample);
+        ProcessedSample processedSample = new TWOPCProcessedSample(rawSample);
         return processedSample;
     }
 

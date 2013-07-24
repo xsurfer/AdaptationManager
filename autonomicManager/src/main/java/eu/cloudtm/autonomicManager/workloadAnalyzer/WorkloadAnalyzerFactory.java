@@ -1,17 +1,16 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.Optimizer;
+import eu.cloudtm.autonomicManager.AbstractOptimizer;
+import eu.cloudtm.autonomicManager.IReconfigurator;
 import eu.cloudtm.autonomicManager.Reconfigurator;
-import eu.cloudtm.autonomicManager.configs.AlertManagerConfig;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
 import eu.cloudtm.statistics.SampleProducer;
-import eu.cloudtm.statistics.StatsManager;
-import org.apache.commons.configuration.Configuration;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,11 +21,9 @@ import java.util.Set;
  */
 public class WorkloadAnalyzerFactory {
 
-
-    private Configuration config;
     private SampleProducer statsManager;
-    private Reconfigurator reconfigurator;
-    private Optimizer optimizer;
+    private IReconfigurator reconfigurator;
+    private AbstractOptimizer optimizer;
 
     Map<Param, Double> param2delta = new HashMap<Param, Double>(){{
         put(Param.AvgNumPutsBySuccessfulLocalTx, 20D);
@@ -41,11 +38,9 @@ public class WorkloadAnalyzerFactory {
         put(EvaluatedParam.ACF, 20D);
     }};
 
-    public WorkloadAnalyzerFactory( Configuration config,
-                                    SampleProducer statsManager,
-                                    Reconfigurator reconfigurator,
-                                    Optimizer optimizer){
-        this.config = config;
+    public WorkloadAnalyzerFactory(SampleProducer statsManager,
+                                    IReconfigurator reconfigurator,
+                                    AbstractOptimizer optimizer){
         this.statsManager = statsManager;
         this.reconfigurator = reconfigurator;
         this.optimizer = optimizer;
@@ -73,7 +68,7 @@ public class WorkloadAnalyzerFactory {
         );
 
 
-        String policy = config.getString( AlertManagerConfig.POLICY.key() );
+        String policy = Config.getInstance().getString(KeyConfig.ALERT_MANAGER_POLICY.key());
         AlertManager alertManager = AlertManager.createInstance( policy, optimizer, reconfigurator );
 
         proactiveChangeDetector.addEventListener(alertManager);

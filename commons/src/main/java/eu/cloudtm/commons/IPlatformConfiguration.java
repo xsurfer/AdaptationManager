@@ -7,6 +7,13 @@ package eu.cloudtm.commons;
  */
 public interface IPlatformConfiguration {
 
+    public void setPlatformScale(int size, InstanceConfig nodesConfig);
+
+    public void setRepProtocol(ReplicationProtocol repProtocol);
+
+    public void setRepDegree(int repDegree);
+
+
     public int platformSize();
 
     public int threadPerNode();

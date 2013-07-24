@@ -10,7 +10,7 @@ import java.util.List;
  * Time: 12:30 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class SampleProducer {
+public abstract class SampleProducer implements ISampleProducer {
 
     private List<SampleListener> listeners = new ArrayList<SampleListener>();
 

@@ -22,18 +22,18 @@ public class AutonomicManager {
     private static Log log = LogFactory.getLog(AutonomicManager.class);
 
     private PlatformTuning platformTuning;
-    private PlatformConfiguration platformConfiguration;
+    private IPlatformConfiguration platformConfiguration;
     private StatsManager statsManager;
     private WorkloadAnalyzer workloadAnalyzer;
-    private Optimizer optimizer;
-    private Reconfigurator reconfigurator;
+    private AbstractOptimizer optimizer;
+    private IReconfigurator reconfigurator;
 
-    public AutonomicManager(PlatformConfiguration platformConfiguration,
+    public AutonomicManager(IPlatformConfiguration platformConfiguration,
                             PlatformTuning platformTuning,
                             StatsManager sampleManager,
                             WorkloadAnalyzer workloadAnalyzer,
-                            Optimizer optimizer,
-                            Reconfigurator reconfigurator){
+                            AbstractOptimizer optimizer,
+                            IReconfigurator reconfigurator){
         this.statsManager = sampleManager;
         this.platformConfiguration = platformConfiguration;
         this.platformTuning = platformTuning;

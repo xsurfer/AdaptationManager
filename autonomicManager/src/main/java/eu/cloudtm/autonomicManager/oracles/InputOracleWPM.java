@@ -3,8 +3,8 @@ package eu.cloudtm.autonomicManager.oracles;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.ForecastParam;
 import eu.cloudtm.oracles.InputOracle;
-import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.commons.Param;
+import eu.cloudtm.statistics.ProcessedSample;
 
 import java.util.Map;
 

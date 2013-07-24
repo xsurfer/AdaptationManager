@@ -1,11 +1,9 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
 import eu.cloudtm.autonomicManager.oracles.OracleService;
-import eu.cloudtm.autonomicManager.oracles.OutputOracleImpl;
+import eu.cloudtm.commons.IPlatformConfiguration;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
-import eu.cloudtm.commons.ReplicationProtocol;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -16,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public class MuleOptimizer extends Optimizer{
+public class MuleOptimizer extends AbstractOptimizer {
 
     private static Log log = LogFactory.getLog(MuleOptimizer.class);
 
@@ -25,9 +23,9 @@ public class MuleOptimizer extends Optimizer{
     private final static int ABORT_GUARANTEE_PERC = 5;
     private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
 
-    public MuleOptimizer(Reconfigurator reconfigurator,
+    public MuleOptimizer(IReconfigurator reconfigurator,
                          SLAManager slaManager,
-                         PlatformConfiguration platformConfiguration,
+                         IPlatformConfiguration platformConfiguration,
                          PlatformTuning platformTuning) {
         super(reconfigurator, slaManager, platformConfiguration, platformTuning);
     }

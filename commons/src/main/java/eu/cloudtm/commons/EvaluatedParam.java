@@ -18,19 +18,19 @@ public enum EvaluatedParam {
 
 
     private final int id;
-    private final String param;
+    private final String key;
 
     private EvaluatedParam(int id, String name){
         this.id = id;
-        this.param = name;
+        this.key = name;
     }
 
     public int getId(){
         return id;
     }
 
-    public String getParam(){
-        return param;
+    public String getKey(){
+        return key;
     }
 
     public static EvaluatedParam getById(int id){

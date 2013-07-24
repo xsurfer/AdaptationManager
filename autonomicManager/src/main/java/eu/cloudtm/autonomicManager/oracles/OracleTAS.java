@@ -41,7 +41,7 @@ public class OracleTAS implements Oracle {
 //    }
 //
 //    @Override
-//    public OutputOracleImpl forecast(ProcessedSample input) throws OracleException {
+//    public OutputOracleImpl forecast(AbstractProcessedSample input) throws OracleException {
 //        DSTMScenarioTas2 scenario;
 //
 //        try {

@@ -2,13 +2,11 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
+import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.statistics.CustomSample;
 import eu.cloudtm.statistics.ProcessedSample;
-import eu.cloudtm.statistics.SampleListener;
-import eu.cloudtm.statistics.SampleProducer;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +54,8 @@ public class WorkloadForecaster {
     public void add(ProcessedSample sample){
         for(Param param : monitoredParams){
             PolynomialFitter forecaster = paramForecasters.get(param);
-            forecaster.addPoint(sample.getId(), (Double) sample.getParam(param));
+            forecaster.addPoint(sample.getId(), ((Number) sample.getParam(param)).doubleValue() );
+
         }
         for(EvaluatedParam param : monitoredEvaluatedParam){
             PolynomialFitter forecaster = evaluatedParamForecasters.get(param);

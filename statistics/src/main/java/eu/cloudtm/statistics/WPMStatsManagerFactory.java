@@ -2,6 +2,7 @@ package eu.cloudtm.statistics;
 
 import eu.cloudtm.commons.IPlatformConfiguration;
 import eu.cloudtm.wpm.connector.WPMConnector;
+import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
 
 import org.apache.commons.logging.Log;
@@ -18,6 +19,8 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class WPMStatsManagerFactory {
+
+    private WPMStatsManagerFactory instance;
 
     private static Log log = LogFactory.getLog(WPMStatsManagerFactory.class);
 
@@ -59,5 +62,6 @@ public class WPMStatsManagerFactory {
     public WPMStatisticsRemoteListernerFactory getStatisticsRemoteListernerFactory(){
         return statisticsRemoteListernerFactory;
     }
+
 
 }

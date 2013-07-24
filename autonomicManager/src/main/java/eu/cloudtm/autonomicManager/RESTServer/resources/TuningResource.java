@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 import java.util.Random;
 
 @Singleton
-@Path("/scale")
+@Path("/tuning")
 public class TuningResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(TuningResource.class);
@@ -26,6 +26,7 @@ public class TuningResource extends AbstractResource {
 
 
     @PUT
+    @Path("/forecaster")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setForecaster(
@@ -49,6 +50,7 @@ public class TuningResource extends AbstractResource {
 
 
     @PUT
+    @Path("/scale")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setScale(

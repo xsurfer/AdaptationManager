@@ -1,8 +1,7 @@
 package eu.cloudtm.autonomicManager;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import eu.cloudtm.statistics.WPMStatsManager;
+import eu.cloudtm.statistics.WPMStatsManagerFactory;
 
 /**
  * Created by: Fabio Perfetti
@@ -13,15 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Configuration configuration;
-
-        try {
-            configuration = new PropertiesConfiguration("config.properties");
-        } catch (ConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-
-        ApplicationFactory appFactory = new ApplicationFactory(configuration);
+        AutonomicManagerFactory appFactory = new AutonomicManagerFactory();
         AutonomicManager autonomicManager = appFactory.build();
 
         autonomicManager.start();

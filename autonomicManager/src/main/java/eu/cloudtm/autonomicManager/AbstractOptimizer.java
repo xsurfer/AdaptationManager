@@ -1,10 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.commons.*;
-import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
-import eu.cloudtm.autonomicManager.oracles.OracleService;
-import eu.cloudtm.autonomicManager.oracles.OutputOracleImpl;
-import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -15,23 +11,23 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public abstract class Optimizer {
+public abstract class AbstractOptimizer {
 
-    private static Log log = LogFactory.getLog(Optimizer.class);
+    private static Log log = LogFactory.getLog(AbstractOptimizer.class);
 
     protected PlatformTuning platformTuning;
-    protected PlatformConfiguration platformConfiguration;
-    protected Reconfigurator reconfigurator;
+    protected IPlatformConfiguration platformConfiguration;
+    protected IReconfigurator reconfigurator;
     protected SLAManager slaManager;
 
     private final static int ARRIVAL_RATE_GUARANTEE_PERC = 50;
     private final static int ABORT_GUARANTEE_PERC = 5;
     private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
 
-    public Optimizer(Reconfigurator reconfigurator,
-                     SLAManager slaManager,
-                     PlatformConfiguration platformConfiguration,
-                     PlatformTuning platformTuning){
+    public AbstractOptimizer(IReconfigurator reconfigurator,
+                             SLAManager slaManager,
+                             IPlatformConfiguration platformConfiguration,
+                             PlatformTuning platformTuning){
         this.slaManager = slaManager;
         this.platformTuning = platformTuning;
         this.reconfigurator = reconfigurator;

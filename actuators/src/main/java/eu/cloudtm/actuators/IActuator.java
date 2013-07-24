@@ -9,6 +9,6 @@ import eu.cloudtm.actuators.exceptions.ActuatorException;
  */
 public interface IActuator {
 
-    public void actuate() throws ActuatorException;
+    public void actuate(int nodes, int threads) throws ActuatorException;
 
 }

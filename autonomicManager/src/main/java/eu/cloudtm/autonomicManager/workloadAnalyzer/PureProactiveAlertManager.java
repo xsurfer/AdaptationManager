@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.Optimizer;
+import eu.cloudtm.autonomicManager.AbstractOptimizer;
 import eu.cloudtm.autonomicManager.Reconfigurator;
 
 /**
@@ -13,7 +13,7 @@ import eu.cloudtm.autonomicManager.Reconfigurator;
 public class PureProactiveAlertManager extends AlertManager {
 
     public PureProactiveAlertManager(ChangeDetector changeDetector,
-                                     Optimizer optimizer,
+                                     AbstractOptimizer optimizer,
                                      Reconfigurator reconfigurator) {
         super(optimizer, reconfigurator);
     }

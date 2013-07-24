@@ -2,7 +2,6 @@ package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.PlatformTuning;
-import eu.cloudtm.commons.ReplicationProtocol;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -13,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public abstract class OpenOptimizer extends Optimizer {
+public abstract class OpenOptimizer extends AbstractOptimizer {
 
     private static Log log = LogFactory.getLog(OpenOptimizer.class);
 

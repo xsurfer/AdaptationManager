@@ -5,8 +5,8 @@ import eu.cloudtm.commons.ForecastParam;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
 import eu.cloudtm.oracles.OutputOracle;
-import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.oracles.exceptions.OracleException;
+import eu.cloudtm.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -114,8 +114,59 @@ public class OracleService implements IOracleService {
 
     @Override
     public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
-        return null;
+
+        int finalNumNodes = 0;
+        int finalRepDegree = 0;
+        ReplicationProtocol finalRepProt = null;
+        boolean found = false;
+        double maxThroughput = 0;
+
+        int numNodes=imin;
+
+        while( numNodes<=imax ){
+            int repDegree=imin;
+            while( repDegree<=numNodes ){
+                for(ReplicationProtocol protocol : ReplicationProtocol.values()){
+
+                    Map<ForecastParam, Object> forecastParams = new HashMap<ForecastParam, Object>();
+                    forecastParams.put(ForecastParam.ReplicationProtocol, protocol);
+                    forecastParams.put(ForecastParam.ReplicationDegree, repDegree);
+                    forecastParams.put(ForecastParam.NumNodes, numNodes);
+
+                    InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParams);
+
+//                    ControllerLogger.log.info("Forecasting with: " +
+//                            "nodes "      + numNodes + ", " +
+//                            "repDegree "    + repDegree + ", " +
+//                            "repProt "      + protocol
+//                    );
+                    OutputOracle outputOracle = oracle.forecast( inputOracle );
+
+
+                    if( outputOracle.throughput() > maxThroughput ){
+                        finalNumNodes = numNodes;
+                        finalRepDegree = repDegree;
+                        finalRepProt = protocol;
+                    }
+                }
+                repDegree++;
+            }
+            numNodes++;
+        }
+
+        PlatformConfiguration configuration = null;
+
+        configuration = new PlatformConfiguration();
+        configuration.setPlatformScale(finalNumNodes, InstanceConfig.MEDIUM);
+        configuration.setRepDegree(finalRepDegree);
+        configuration.setRepProtocol(finalRepProt);
+
+        return configuration;
+
     }
+
+
+
 
     private PlatformConfiguration exploreAllCases(ProcessedSample sample,
                                 double arrivalRateToGuarantee,
@@ -171,8 +222,10 @@ public class OracleService implements IOracleService {
         return configuration;
     }
 
+}
 
-//    private OutputOracle binarySearch(ProcessedSample sample,
+
+//    private OutputOracle binarySearch(AbstractProcessedSample sample,
 //                             double arrivalRateToGuarantee,
 //                             double abortRateToGuarantee,
 //                             double responseTimeToGuarantee)
@@ -223,5 +276,3 @@ public class OracleService implements IOracleService {
 //        else log.info("NO SOLUTION");
 //        return subOptKPI;
 //    }
-
-}

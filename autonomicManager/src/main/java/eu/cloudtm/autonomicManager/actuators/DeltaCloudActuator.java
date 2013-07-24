@@ -28,11 +28,9 @@ public class DeltaCloudActuator implements IActuator {
 
     private final String prefix = "cloudtm-";
 
-    private final String imageId = "b93d8a6e-32a0-4698-a056-6eb72c5d0613";
+    private final String imageId;
 
-    private final String flavorId = "10";
-
-    //private String imageId = "img3";
+    private final String flavorId;
 
 
     /* CONSTANTS */
@@ -43,28 +41,23 @@ public class DeltaCloudActuator implements IActuator {
 
     private static final long MS_BETWEEN_CREATION_RETRY = 6000;
 
+
     /* ACTUATOR PARAMETERS */
     private int nodesToCreate;
 
     private int threadsToUse;
 
 
-    public static DeltaCloudActuator getInstance(int _nodes, int threads) throws MalformedURLException, DeltaCloudClientException {
-        DeltaCloudClient client = new DeltaCloudClientImpl("http://cloudtm.ist.utl.pt:30000","fabio+OpenShift","cloud%fabio");
-        //DeltaCloudClient client = new DeltaCloudClientImpl("http://localhost:3001","mockuser","mockpassword");
-
-        DeltaCloudActuator actuator = new DeltaCloudActuator(client, _nodes, threads);
-
-        return actuator;
+    public DeltaCloudActuator(DeltaCloudClient client, String imageId, String flavorId){
+        this.client = client;
+        this.imageId = imageId;
+        this.flavorId = flavorId;
     }
 
-    private DeltaCloudActuator(DeltaCloudClient _client, int _nodes, int _threads){
-        client = _client;
-        setNodesToCreate(_nodes);
-        threadsToUse = _threads;
-    }
+    public void actuate(int nodes, int threads){
+        setNodesToCreate(nodes);
+        threadsToUse = threads;
 
-    public void actuate(){
         log.info(runningInstances().size() + " RUNNING instances");
 
         int numInstancesToChange = nodesToCreate - runningInstances().size(); //  <<< COULD BE NEGATIVE, use Math.abs() >>>
@@ -80,6 +73,7 @@ public class DeltaCloudActuator implements IActuator {
 
         log.info("There are: " + runningInstances().size() + " instances");
     }
+
 
     private void create(int nodesToCreate){
         log.info("creating " + nodesToCreate + " instances");
@@ -117,7 +111,7 @@ public class DeltaCloudActuator implements IActuator {
         }
     }
 
-    private List<Instance> runningInstances(){
+    public List<Instance> runningInstances(){
         List<Instance> allInstances;
         List<Instance> runningInstances = new ArrayList<Instance>();
 

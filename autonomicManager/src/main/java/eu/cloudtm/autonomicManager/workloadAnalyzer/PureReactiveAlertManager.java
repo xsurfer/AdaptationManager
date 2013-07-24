@@ -1,7 +1,8 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.ControllerLogger;
-import eu.cloudtm.autonomicManager.Optimizer;
+import eu.cloudtm.autonomicManager.AbstractOptimizer;
+import eu.cloudtm.autonomicManager.IReconfigurator;
 import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
@@ -22,8 +23,8 @@ public class PureReactiveAlertManager extends AlertManager {
 
     private ReentrantLock reconfigurationLock = new ReentrantLock();
 
-    public PureReactiveAlertManager(Optimizer optimizer,
-                                    Reconfigurator reconfigurator) {
+    public PureReactiveAlertManager(AbstractOptimizer optimizer,
+                                    IReconfigurator reconfigurator) {
         super(optimizer, reconfigurator);
     }
 

@@ -1,6 +1,5 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.statistics.SampleListener;
 
 /**

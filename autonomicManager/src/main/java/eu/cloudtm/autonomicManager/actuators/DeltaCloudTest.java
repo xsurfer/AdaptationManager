@@ -18,8 +18,8 @@ public class DeltaCloudTest {
         int num = in.nextInt();
 
         try {
-            DeltaCloudActuator actuator = DeltaCloudActuator.getInstance(num, 1);
-            actuator.actuate();
+            DeltaCloudActuator actuator = DeltaCloudActuatorFactory.instance().build();
+            actuator.actuate(num, 2);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (DeltaCloudClientException e) {
