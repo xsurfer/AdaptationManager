@@ -1,8 +1,5 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.statistics.WPMStatsManager;
-import eu.cloudtm.statistics.WPMStatsManagerFactory;
-
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com

@@ -1,7 +1,10 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
-import eu.cloudtm.commons.*;
+import eu.cloudtm.commons.Forecaster;
+import eu.cloudtm.commons.IPlatformConfiguration;
+import eu.cloudtm.commons.PlatformTuning;
+import eu.cloudtm.commons.ReplicationProtocol;
 import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.commons.dto.WhatIfDTO;
 import eu.cloudtm.statistics.ProcessedSample;

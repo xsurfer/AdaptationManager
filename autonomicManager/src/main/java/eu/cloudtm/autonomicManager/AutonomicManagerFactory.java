@@ -1,13 +1,21 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
+import eu.cloudtm.autonomicManager.actuators.CloudTMActuator;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzerFactory;
 import eu.cloudtm.commons.*;
-import eu.cloudtm.statistics.*;
-import org.apache.commons.configuration.Configuration;
+import eu.cloudtm.statistics.SampleProducer;
+import eu.cloudtm.statistics.StatsManager;
+import eu.cloudtm.statistics.WPMStatsManagerFactory;
+import org.apache.deltacloud.client.DeltaCloudClient;
+import org.apache.deltacloud.client.DeltaCloudClientException;
+import org.apache.deltacloud.client.DeltaCloudClientImpl;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 /**
  * Created by: Fabio Perfetti
@@ -24,6 +32,8 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     private SLAManager slaManager;
     private WorkloadAnalyzer workloadAnalyzer;
     private RESTServer restServer;
+
+    private IActuator actuator;
 
     private StatsManager wpmStatsManager;
 
@@ -79,10 +89,40 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
         return this.platformConfiguration;
     }
 
+    public DeltaCloudClient getDeltaCloudClient(){
+
+        String hostname = Config.getInstance().getString( KeyConfig.DELTACLOUD_URL.key() );
+        String username = Config.getInstance().getString( KeyConfig.DELTACLOUD_USER.key() );
+        String password = Config.getInstance().getString( KeyConfig.DELTACLOUD_PASSWORD.key() );
+        DeltaCloudClient deltaCloudClient;
+        try {
+            deltaCloudClient = new DeltaCloudClientImpl(hostname, username, password);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (DeltaCloudClientException e) {
+            throw new RuntimeException(e);
+        }
+        return deltaCloudClient;
+    }
+
+    public IActuator getActuator(){
+        if( this.actuator == null ){
+            int jmxPort = Config.getInstance().getInt( KeyConfig.ISPN_JMX_PORT.key() );
+            String imageId = Config.getInstance().getString( KeyConfig.DELTACLOUD_IMAGE.key() );
+            String flavorId = Config.getInstance().getString( KeyConfig.DELTACLOUD_FLAVOR.key() );
+
+            String domain = Config.getInstance().getString( KeyConfig.ISPN_DOMAIN.key() );
+            String cacheName = Config.getInstance().getString( KeyConfig.ISPN_CACHE_NAME.key() );
+
+            this.actuator = new CloudTMActuator( getDeltaCloudClient(), null, jmxPort, imageId, flavorId, domain, cacheName );
+        }
+        return actuator;
+    }
+
     @Override
     public IReconfigurator getReconfigurator() {
         if( this.reconfigurator == null ){
-            this.reconfigurator = new Reconfigurator( getPlatformConfiguration(), getPlatformState());
+            this.reconfigurator = new Reconfigurator( getPlatformConfiguration(), getPlatformState(), getActuator());
         }
         return reconfigurator;
     }
@@ -120,6 +160,5 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
         }
         return this.restServer;
     }
-
 
 }

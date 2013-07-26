@@ -1,8 +1,8 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 
 import java.util.Random;

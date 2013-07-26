@@ -1,6 +1,9 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.commons.*;
+import eu.cloudtm.commons.IPlatformConfiguration;
+import eu.cloudtm.commons.PlatformConfiguration;
+import eu.cloudtm.commons.PlatformTuning;
+import eu.cloudtm.commons.ReplicationProtocol;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;

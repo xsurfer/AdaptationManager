@@ -1,15 +1,10 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.commons.ForecastParam;
-import eu.cloudtm.commons.Param;
-import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Random;
 
 /**

@@ -1,23 +1,20 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.InfinispanActuator;
-import eu.cloudtm.InfinispanActuatorFactory;
-import eu.cloudtm.InfinispanMachine;
-import eu.cloudtm.autonomicManager.actuators.DeltaCloudActuator;
-import eu.cloudtm.autonomicManager.actuators.DeltaCloudActuatorFactory;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
-import eu.cloudtm.commons.*;
 import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
+import eu.cloudtm.autonomicManager.actuators.ActuatorException;
+import eu.cloudtm.commons.IPlatformConfiguration;
+import eu.cloudtm.commons.InstanceConfig;
+import eu.cloudtm.commons.PlatformState;
+import eu.cloudtm.commons.State;
 import eu.cloudtm.exception.InvocationException;
 import eu.cloudtm.exception.NoJmxProtocolRegisterException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.deltacloud.client.DeltaCloudClientException;
-import org.apache.deltacloud.client.Instance;
 
 import java.net.MalformedURLException;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,12 +43,22 @@ public class Reconfigurator implements IReconfigurator {
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private DeltaCloudActuator deltaCloudActuator;
+    private IActuator actuator;
+
+    private int jmxPort;
+    private String ispnDomain;
+    private String ispnCacheName;
 
 
-    public Reconfigurator( IPlatformConfiguration current, State platformState) {
+    public Reconfigurator( IPlatformConfiguration current, State platformState, IActuator actuator) {
         this.current = current;
         this.platformState = platformState;
+        this.actuator = actuator;
+
+        jmxPort = Config.getInstance().getInt( KeyConfig.ISPN_JMX_PORT.key() );
+        ispnDomain = Config.getInstance().getString( KeyConfig.ISPN_DOMAIN.key() );
+        ispnCacheName = Config.getInstance().getString( KeyConfig.ISPN_CACHE_NAME.key() );
+
     }
 
     public boolean reconfigure(IPlatformConfiguration nextConf) {
@@ -79,8 +86,8 @@ public class Reconfigurator implements IReconfigurator {
         ControllerLogger.log.info("Reconfiguring: " + request);
 
         try{
-            //reconfigureDegree();
-            //reconfigureProtocol();
+            reconfigureDegree();
+            reconfigureProtocol();
             reconfigureSize();
 
             current.setPlatformScale( request.platformSize(), InstanceConfig.MEDIUM );
@@ -98,73 +105,62 @@ public class Reconfigurator implements IReconfigurator {
         }
     }
 
-    private void reconfigureSize() throws MalformedURLException, DeltaCloudClientException {
-
-
-        deltaCloudActuator = DeltaCloudActuatorFactory.instance().build();
+    private void reconfigureSize() throws ReconfiguratorException {
 
         if(testing){
-            ControllerLogger.log.warn("Actuator is disabled");
+            ControllerLogger.log.warn("Reconfigurator is setted for skip the real reconfiguration");
         } else {
-            deltaCloudActuator.actuate(request.platformSize(), request.threadPerNode());
-        }
 
+            int currSize = actuator.runningInstances().size();
+            log.info(currSize + " RUNNING instances");
+
+            int numInstancesToChange = request.platformSize() - currSize; //  <<< COULD BE NEGATIVE, use Math.abs() >>>
+
+            if(numInstancesToChange>0){
+                while ( numInstancesToChange-- > 0 ){
+                    try {
+                        actuator.startInstance();
+                    } catch (ActuatorException e) {
+                        throw new ReconfiguratorException(e);
+                    }
+                }
+            } else if(numInstancesToChange < 0){
+                while ( numInstancesToChange++ < 0 ){
+                    try {
+                        actuator.stopInstance();
+                    } catch (ActuatorException e) {
+                        throw new ReconfiguratorException(e);
+                    }
+                }
+            } else {
+                log.info("Nothing to do");
+            }
+
+            currSize = actuator.runningInstances().size();
+            log.info(currSize + " RUNNING instances");
+        }
     }
 
-    private void reconfigureProtocol() {
-        int jmxPort = Config.getInstance().getInt( KeyConfig.ISPN_JMX_PORT.key() );
-
-        String ispn_domain = Config.getInstance().getString( KeyConfig.ISPN_DOMAIN.key() );
-        String ispn_cacheName = Config.getInstance().getString( KeyConfig.ISPN_CACHE_NAME.key() );
+    private void reconfigureProtocol() throws ReconfiguratorException {
 
         boolean forceStop = Config.getInstance().getBoolean( KeyConfig.ISPN_ACTUATOR_FORCE_STOP.key() );
         boolean abortOnStop = Config.getInstance().getBoolean( KeyConfig.ISPN_ACTUATOR_ABORT_ON_STOP.key() );
 
-        String fenixFrameworkDomain = Config.getInstance().getString( KeyConfig.ISPN_ACTUATOR_FENIX_FRAMEWORK.key() );
-        String applicationName = Config.getInstance().getString( KeyConfig.ISPN_ACTUATOR_APPLICATION_NAME.key() );
-
-        InfinispanActuator infinispanActuator = InfinispanActuatorFactory.getInstance().createActuator();
-        List<Instance> instances = deltaCloudActuator.runningInstances();
-        for( Instance instance : instances ){
-            InfinispanMachine machine = InfinispanActuatorFactory.getInstance().createMachine(instance.getPrivateAddresses().get(0), jmxPort );
-            infinispanActuator.addMachine( machine );
-        }
         try {
-            infinispanActuator.triggerBlockingSwitchReplicationProtocol(ispn_domain, ispn_cacheName, fenixFrameworkDomain, applicationName, request.replicationProtocol().getWpmValue(), forceStop, abortOnStop);
-            ControllerLogger.log.warn("New reconfiguration degree successfully executed");
-        } catch (NoJmxProtocolRegisterException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationException e) {
-            ControllerLogger.log.warn("Error while triggering a new reconfiguration degree");
-            throw new RuntimeException(e);
+            actuator.switchProtocol( request.replicationProtocol() );
+        } catch (ActuatorException e) {
+            throw new ReconfiguratorException(e);
         }
+    }
+
+
+    private void reconfigureDegree() throws MalformedURLException, DeltaCloudClientException, InvocationException, NoJmxProtocolRegisterException {
 
 
     }
 
-    private void reconfigureDegree(){
 
-        int jmxPort = Config.getInstance().getInt( KeyConfig.ISPN_JMX_PORT.key() );
-        String ispn_domain = Config.getInstance().getString( KeyConfig.ISPN_DOMAIN.key() );
-        String ispn_cacheName = Config.getInstance().getString( KeyConfig.ISPN_CACHE_NAME.key() );
 
-        InfinispanActuator infinispanActuator = InfinispanActuatorFactory.getInstance().createActuator();
-        List<Instance> instances = deltaCloudActuator.runningInstances();
-        for( Instance instance : instances ){
-            InfinispanMachine machine = InfinispanActuatorFactory.getInstance().createMachine(instance.getPrivateAddresses().get(0), jmxPort );
-            infinispanActuator.addMachine( machine );
-        }
-        try {
-            infinispanActuator.triggerBlockingNewReplicationDegree(ispn_domain, ispn_cacheName, request.replicationDegree());
-            ControllerLogger.log.warn("New reconfiguration degree successfully executed");
-        } catch (NoJmxProtocolRegisterException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationException e) {
-            ControllerLogger.log.warn("Error while triggering a new reconfiguration degree");
-            throw new RuntimeException(e);
-        }
-
-    }
 
 
 }

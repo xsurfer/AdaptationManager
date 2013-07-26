@@ -2,7 +2,6 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.AbstractOptimizer;
 import eu.cloudtm.autonomicManager.IReconfigurator;
-import eu.cloudtm.autonomicManager.Reconfigurator;
 
 /**
  * Created with IntelliJ IDEA.

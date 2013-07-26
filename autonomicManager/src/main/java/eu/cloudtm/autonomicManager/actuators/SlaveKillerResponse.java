@@ -1,4 +1,4 @@
-package eu.cloudtm.autonomicManager.actuators.radargun;
+package eu.cloudtm.autonomicManager.actuators;
 
 /**
  * Created by: Fabio Perfetti

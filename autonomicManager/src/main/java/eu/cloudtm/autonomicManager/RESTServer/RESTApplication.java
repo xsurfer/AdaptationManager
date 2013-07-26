@@ -3,9 +3,6 @@ package eu.cloudtm.autonomicManager.RESTServer;
 import eu.cloudtm.statistics.StatsManager;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com

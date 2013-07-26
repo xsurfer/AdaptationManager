@@ -1,7 +1,9 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.commons.*;
 import eu.cloudtm.commons.ForecastParam;
+import eu.cloudtm.commons.InstanceConfig;
+import eu.cloudtm.commons.PlatformConfiguration;
+import eu.cloudtm.commons.ReplicationProtocol;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
 import eu.cloudtm.oracles.OutputOracle;

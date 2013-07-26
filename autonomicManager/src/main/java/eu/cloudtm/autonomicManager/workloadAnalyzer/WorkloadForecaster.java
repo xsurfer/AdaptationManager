@@ -2,7 +2,6 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
-import eu.cloudtm.statistics.ProcessedSample;
 import eu.cloudtm.statistics.CustomSample;
 import eu.cloudtm.statistics.ProcessedSample;
 

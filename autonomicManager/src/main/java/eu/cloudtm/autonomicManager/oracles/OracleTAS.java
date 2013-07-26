@@ -1,12 +1,9 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.commons.EvaluatedParam;
-import eu.cloudtm.commons.ForecastParam;
 import eu.cloudtm.oracles.InputOracle;
 import eu.cloudtm.oracles.Oracle;
 import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
-import eu.cloudtm.commons.Param;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

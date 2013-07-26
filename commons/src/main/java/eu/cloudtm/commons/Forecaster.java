@@ -9,7 +9,7 @@ package eu.cloudtm.commons;
 public enum Forecaster {
     NONE(false, null),
     COMMITTEE(true, ""),
-    ANALYTICAL(true, "OracleTAS"),
+    ANALYTICAL(true, "eu.cloudtm.autonomicManager.oracles.FakeOracle"),
     SIMULATOR(true, "Simulator"),
     MACHINE_LEARNING(true, "Morpher");
 

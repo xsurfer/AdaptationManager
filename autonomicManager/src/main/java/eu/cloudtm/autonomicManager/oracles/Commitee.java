@@ -1,10 +1,10 @@
 package eu.cloudtm.autonomicManager.oracles;
 
 import eu.cloudtm.commons.Forecaster;
-import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.commons.PlatformConfiguration;
 import eu.cloudtm.commons.ReplicationProtocol;
 import eu.cloudtm.oracles.Oracle;
+import eu.cloudtm.oracles.OutputOracle;
 import eu.cloudtm.oracles.exceptions.OracleException;
 import eu.cloudtm.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -102,7 +102,7 @@ public class Commitee implements IOracleService {
         }
 
         log.info("Configurazione scelta:");
-        log.info("size: " + size);
+        log.info("runningInstancesSize: " + size);
         log.info("degree: " + degree);
         log.info("repProt: " + replicationProtocol);
 

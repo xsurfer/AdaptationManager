@@ -1,7 +1,6 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
-import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.commons.Forecaster;
 import eu.cloudtm.commons.InstanceConfig;
 import eu.cloudtm.commons.PlatformTuning;
@@ -12,7 +11,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.Random;
 
 @Singleton
 @Path("/tuning")
@@ -34,7 +32,7 @@ public class TuningResource extends AbstractResource {
     ) {
 
         /** UPDATING STATE **/
-        //ControllerOld.getInstance().updateScale(size, instanceType, tuning);
+        //ControllerOld.getInstance().updateScale(runningInstancesSize, instanceType, tuning);
 
         //TODO sistemare qui sotto
         //
