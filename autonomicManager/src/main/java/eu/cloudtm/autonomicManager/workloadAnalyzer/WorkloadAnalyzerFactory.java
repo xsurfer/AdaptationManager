@@ -4,9 +4,9 @@ import eu.cloudtm.autonomicManager.AbstractOptimizer;
 import eu.cloudtm.autonomicManager.IReconfigurator;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
-import eu.cloudtm.commons.EvaluatedParam;
-import eu.cloudtm.commons.Param;
-import eu.cloudtm.statistics.SampleProducer;
+import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
+import eu.cloudtm.autonomicManager.commons.Param;
+import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 
 import java.util.HashMap;
 import java.util.Map;

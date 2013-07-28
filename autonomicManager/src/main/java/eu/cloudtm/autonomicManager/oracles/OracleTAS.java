@@ -1,9 +1,6 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.oracles.InputOracle;
-import eu.cloudtm.oracles.Oracle;
-import eu.cloudtm.oracles.OutputOracle;
-import eu.cloudtm.oracles.exceptions.OracleException;
+import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

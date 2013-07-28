@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 
 import java.util.EventObject;
 

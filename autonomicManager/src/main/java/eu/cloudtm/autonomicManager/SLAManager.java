@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.commons.SLAItem;
+import eu.cloudtm.autonomicManager.commons.SLAItem;
 
 import java.util.Arrays;
 import java.util.Set;

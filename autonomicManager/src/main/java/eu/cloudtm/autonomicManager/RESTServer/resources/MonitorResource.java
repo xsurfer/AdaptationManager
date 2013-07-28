@@ -2,8 +2,8 @@ package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import eu.cloudtm.commons.dto.StatisticDTO;
-import eu.cloudtm.statistics.StatsManager;
+import eu.cloudtm.autonomicManager.commons.dto.StatisticDTO;
+import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import eu.cloudtm.wpm.parser.ResourceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

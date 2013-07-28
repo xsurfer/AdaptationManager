@@ -1,12 +1,9 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.commons.ForecastParam;
-import eu.cloudtm.commons.PlatformConfiguration;
-import eu.cloudtm.commons.ReplicationProtocol;
-import eu.cloudtm.oracles.InputOracle;
-import eu.cloudtm.oracles.Oracle;
-import eu.cloudtm.oracles.OutputOracle;
-import eu.cloudtm.oracles.exceptions.OracleException;
+import eu.cloudtm.autonomicManager.commons.ForecastParam;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 
 import java.util.HashMap;
 import java.util.Map;

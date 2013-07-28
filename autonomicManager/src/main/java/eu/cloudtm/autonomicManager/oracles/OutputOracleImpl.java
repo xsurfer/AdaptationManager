@@ -1,7 +1,5 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.oracles.OutputOracle;
-
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com

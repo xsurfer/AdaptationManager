@@ -1,11 +1,10 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.commons.*;
-import eu.cloudtm.oracles.OutputOracle;
-import eu.cloudtm.oracles.exceptions.OracleException;
-import eu.cloudtm.statistics.ProcessedSample;
-import eu.cloudtm.statistics.TWOPCProcessedSample;
-import eu.cloudtm.statistics.WPMSample;
+import eu.cloudtm.autonomicManager.commons.*;
+import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
+import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
+import eu.cloudtm.autonomicManager.statistics.TWOPCProcessedSample;
+import eu.cloudtm.autonomicManager.statistics.WPMSample;
 
 import java.util.HashMap;
 import java.util.Map;

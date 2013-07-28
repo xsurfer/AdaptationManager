@@ -1,14 +1,14 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
-import eu.cloudtm.commons.Forecaster;
-import eu.cloudtm.commons.IPlatformConfiguration;
-import eu.cloudtm.commons.PlatformTuning;
-import eu.cloudtm.commons.ReplicationProtocol;
-import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
-import eu.cloudtm.commons.dto.WhatIfDTO;
-import eu.cloudtm.statistics.ProcessedSample;
-import eu.cloudtm.statistics.StatsManager;
+import eu.cloudtm.autonomicManager.commons.Forecaster;
+import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.PlatformTuning;
+import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
+import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

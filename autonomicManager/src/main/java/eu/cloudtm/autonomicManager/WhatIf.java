@@ -1,15 +1,15 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.oracles.OracleService;
-import eu.cloudtm.commons.EvaluatedParam;
-import eu.cloudtm.commons.Forecaster;
-import eu.cloudtm.commons.Param;
-import eu.cloudtm.commons.PlatformConfiguration;
-import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
-import eu.cloudtm.commons.dto.WhatIfDTO;
-import eu.cloudtm.oracles.OutputOracle;
-import eu.cloudtm.statistics.CustomSample;
-import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
+import eu.cloudtm.autonomicManager.commons.Forecaster;
+import eu.cloudtm.autonomicManager.commons.Param;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.oracles.OutputOracle;
+import eu.cloudtm.autonomicManager.statistics.CustomSample;
+import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

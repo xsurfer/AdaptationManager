@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.oracles.exceptions.OracleException;
+import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 
 /**
  * Created by: Fabio Perfetti

@@ -5,7 +5,7 @@ import eu.cloudtm.InfinispanClientImpl;
 import eu.cloudtm.InfinispanMachine;
 import eu.cloudtm.autonomicManager.IActuator;
 import eu.cloudtm.autonomicManager.actuators.excepions.RadargunException;
-import eu.cloudtm.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import eu.cloudtm.exception.InvocationException;
 import eu.cloudtm.exception.NoJmxProtocolRegisterException;
 import org.apache.commons.logging.Log;

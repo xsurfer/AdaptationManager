@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
 
 /**
  * Created with IntelliJ IDEA.

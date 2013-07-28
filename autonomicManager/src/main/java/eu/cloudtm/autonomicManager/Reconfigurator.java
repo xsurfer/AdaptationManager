@@ -4,10 +4,10 @@ import eu.cloudtm.autonomicManager.actuators.ActuatorException;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
-import eu.cloudtm.commons.IPlatformConfiguration;
-import eu.cloudtm.commons.InstanceConfig;
-import eu.cloudtm.commons.PlatformState;
-import eu.cloudtm.commons.State;
+import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.InstanceConfig;
+import eu.cloudtm.autonomicManager.commons.PlatformState;
+import eu.cloudtm.autonomicManager.commons.State;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

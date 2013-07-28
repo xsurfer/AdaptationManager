@@ -1,9 +1,9 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.commons.EvaluatedParam;
-import eu.cloudtm.commons.Param;
-import eu.cloudtm.statistics.CustomSample;
-import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
+import eu.cloudtm.autonomicManager.commons.Param;
+import eu.cloudtm.autonomicManager.statistics.CustomSample;
+import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 
 import java.util.HashMap;
 import java.util.Map;

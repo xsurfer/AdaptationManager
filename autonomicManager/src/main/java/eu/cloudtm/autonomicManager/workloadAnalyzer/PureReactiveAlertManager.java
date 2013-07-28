@@ -3,7 +3,7 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 import eu.cloudtm.autonomicManager.AbstractOptimizer;
 import eu.cloudtm.autonomicManager.ControllerLogger;
 import eu.cloudtm.autonomicManager.IReconfigurator;
-import eu.cloudtm.oracles.exceptions.OracleException;
+import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

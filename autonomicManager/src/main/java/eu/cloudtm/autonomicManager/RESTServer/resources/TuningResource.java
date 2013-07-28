@@ -1,9 +1,9 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
-import eu.cloudtm.commons.Forecaster;
-import eu.cloudtm.commons.InstanceConfig;
-import eu.cloudtm.commons.PlatformTuning;
+import eu.cloudtm.autonomicManager.commons.Forecaster;
+import eu.cloudtm.autonomicManager.commons.InstanceConfig;
+import eu.cloudtm.autonomicManager.commons.PlatformTuning;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

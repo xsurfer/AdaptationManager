@@ -2,14 +2,14 @@ package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
 import eu.cloudtm.autonomicManager.WhatIf;
-import eu.cloudtm.commons.EvaluatedParam;
-import eu.cloudtm.commons.Forecaster;
-import eu.cloudtm.commons.GsonFactory;
-import eu.cloudtm.commons.ReplicationProtocol;
-import eu.cloudtm.commons.dto.WhatIfCustomParamDTO;
-import eu.cloudtm.commons.dto.WhatIfDTO;
-import eu.cloudtm.statistics.ProcessedSample;
-import eu.cloudtm.statistics.StatsManager;
+import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
+import eu.cloudtm.autonomicManager.commons.Forecaster;
+import eu.cloudtm.autonomicManager.commons.GsonFactory;
+import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
+import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
+import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

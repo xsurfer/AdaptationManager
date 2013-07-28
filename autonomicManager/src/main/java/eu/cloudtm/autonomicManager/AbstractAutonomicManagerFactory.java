@@ -2,9 +2,9 @@ package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
-import eu.cloudtm.commons.IPlatformConfiguration;
-import eu.cloudtm.commons.PlatformTuning;
-import eu.cloudtm.commons.State;
+import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.PlatformTuning;
+import eu.cloudtm.autonomicManager.commons.State;
 
 /**
  * Created with IntelliJ IDEA.
