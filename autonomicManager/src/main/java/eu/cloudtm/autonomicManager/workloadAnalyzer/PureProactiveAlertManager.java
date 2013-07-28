@@ -10,12 +10,14 @@ import eu.cloudtm.autonomicManager.Reconfigurator;
  * Time: 5:26 PM
  * To change this template use File | Settings | File Templates.
  */
-public class PureProactiveAlertManager extends AlertManager {
+public class PureProactiveAlertManager extends AbstractAlertManager {
 
-    public PureProactiveAlertManager(ChangeDetector changeDetector,
+    public PureProactiveAlertManager(AbstractChangeDetector changeDetector,
                                      AbstractOptimizer optimizer,
                                      Reconfigurator reconfigurator) {
         super(optimizer, reconfigurator);
+        throw new RuntimeException("NOT IMPLEMENTED YET");
+        // TODO implement this
     }
 
 

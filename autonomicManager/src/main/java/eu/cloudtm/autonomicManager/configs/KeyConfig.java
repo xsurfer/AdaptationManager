@@ -28,6 +28,8 @@ public enum KeyConfig {
     ISPN_ACTUATOR_FORCE_STOP("infinispanActuator.forceStop"),
     ISPN_ACTUATOR_ABORT_ON_STOP("infinispanActuator.abortOnStop"),
 
+    RADARGUN_ACTUATOR("radargun.actuator"),
+    RADARGUN_COMPONENT("radargun.component"),
 
     ;
 

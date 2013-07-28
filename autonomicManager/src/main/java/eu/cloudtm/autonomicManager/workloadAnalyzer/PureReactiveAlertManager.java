@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Time: 5:26 PM
  * To change this template use File | Settings | File Templates.
  */
-public class PureReactiveAlertManager extends AlertManager {
+public class PureReactiveAlertManager extends AbstractAlertManager {
 
     private static Log log = LogFactory.getLog(PureReactiveAlertManager.class);
 

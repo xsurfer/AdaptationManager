@@ -23,10 +23,6 @@ public abstract class AbstractOptimizer {
     protected IReconfigurator reconfigurator;
     protected SLAManager slaManager;
 
-    private final static int ARRIVAL_RATE_GUARANTEE_PERC = 50;
-    private final static int ABORT_GUARANTEE_PERC = 5;
-    private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
-
     public AbstractOptimizer(IReconfigurator reconfigurator,
                              SLAManager slaManager,
                              IPlatformConfiguration platformConfiguration,
@@ -46,7 +42,7 @@ public abstract class AbstractOptimizer {
 
     public abstract void optimize(ProcessedSample processedSample) throws OracleException;
 
-    protected PlatformConfiguration createNextConfig(PlatformConfiguration forecastedConfig){
+    protected IPlatformConfiguration createNextConfig(IPlatformConfiguration forecastedConfig){
         int size, repDegree;
         ReplicationProtocol repProt;
 
@@ -59,20 +55,3 @@ public abstract class AbstractOptimizer {
 
 }
 
-
-
-// TODO: Cercare una configurazione valida per ogni classe transazionale (Read, Write) cioè che rispetta gli SLAs
-
-        /*
-        double arrivalRateToGuarantee =  current.throughput() +  (current.throughput() * (ARRIVAL_RATE_GUARANTEE_PERC / 100));
-        log.trace("arrivalRateToGuarantee:" + arrivalRateToGuarantee);
-
-        double abortRateToGuarantee = current.abortRate() + (current.abortRate() * (ABORT_GUARANTEE_PERC / 100));
-        log.trace("abortRateToGuarantee:" + abortRateToGuarantee);
-
-        double responseTimeToGuarantee = current.responseTime(0) + (current.responseTime(0) * (RESPONSE_TIME_GUARANTEE_PERC / 100));
-        log.trace("responseTimeToGuarantee:" + abortRateToGuarantee);
-        */
-
-//SLAItem sla = slaManager.getReadSLA(arrivalRateToGuarantee);
-// TODO: cercare una configurazione che soddisfi tutte le classi txs

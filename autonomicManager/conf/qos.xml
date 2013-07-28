@@ -1,6 +1,0 @@
-<qos>
-    <tx-class id="" throughput="">
-        <rt></rt>
-
-    </tx-class>
-</qos>

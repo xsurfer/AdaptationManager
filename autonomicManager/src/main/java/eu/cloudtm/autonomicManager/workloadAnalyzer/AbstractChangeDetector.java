@@ -3,6 +3,7 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 import eu.cloudtm.commons.EvaluatedParam;
 import eu.cloudtm.commons.Param;
 import eu.cloudtm.statistics.ProcessedSample;
+import eu.cloudtm.statistics.SampleListener;
 import eu.cloudtm.statistics.SampleProducer;
 import org.apache.commons.collections15.Buffer;
 import org.apache.commons.collections15.BufferUtils;
@@ -19,9 +20,9 @@ import java.util.*;
  * Time: 11:24 AM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class ChangeDetector implements IChangeDetector {
+public abstract class AbstractChangeDetector implements SampleListener {
 
-    private static Log log = LogFactory.getLog(ChangeDetector.class);
+    private static Log log = LogFactory.getLog(AbstractChangeDetector.class);
 
     protected static final int SLIDE_WINDOW_SIZE = 10;
 
@@ -37,9 +38,9 @@ public abstract class ChangeDetector implements IChangeDetector {
 
 
 
-    public ChangeDetector(SampleProducer sampleProducer,
-                          Map<Param, Double> monitoredParams2delta,
-                          Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta){
+    public AbstractChangeDetector(SampleProducer sampleProducer,
+                                  Map<Param, Double> monitoredParams2delta,
+                                  Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta){
         sampleProducer.addListener(this);
         this.monitoredParams2delta = monitoredParams2delta;
         this.monitoredEvaluatedParams2delta = monitoredEvaluatedParams2delta;

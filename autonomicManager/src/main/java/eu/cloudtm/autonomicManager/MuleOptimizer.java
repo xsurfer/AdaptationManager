@@ -35,7 +35,7 @@ public class MuleOptimizer extends AbstractOptimizer {
         ControllerLogger.log.info("Querying " + platformTuning.forecaster() + " oracle");
         OracleService oracleService = OracleService.getInstance(platformTuning.forecaster().getOracleClass());
 
-        PlatformConfiguration forecastedConfig;
+        IPlatformConfiguration forecastedConfig;
         forecastedConfig = oracleService.maximizeThroughput(processedSample);
 
         if( forecastedConfig != null ){

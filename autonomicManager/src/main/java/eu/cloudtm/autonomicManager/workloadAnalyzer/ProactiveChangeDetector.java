@@ -14,7 +14,7 @@ import java.util.Map;
  * Time: 11:17 AM
  * To change this template use File | Settings | File Templates.
  */
-public class ProactiveChangeDetector extends ChangeDetector {
+public class ProactiveChangeDetector extends AbstractChangeDetector {
 
     private WorkloadForecaster forecaster;
 

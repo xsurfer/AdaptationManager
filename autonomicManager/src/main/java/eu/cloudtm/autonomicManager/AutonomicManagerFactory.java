@@ -1,9 +1,11 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
+import eu.cloudtm.autonomicManager.actuators.CloudTMActuator;
+import eu.cloudtm.autonomicManager.actuators.RadargunClient;
+import eu.cloudtm.autonomicManager.actuators.RadargunClientJMX;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
-import eu.cloudtm.autonomicManager.actuators.CloudTMActuator;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzerFactory;
 import eu.cloudtm.commons.*;
@@ -34,6 +36,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     private RESTServer restServer;
 
     private IActuator actuator;
+    private RadargunClient radargunClient;
 
     private StatsManager wpmStatsManager;
 
@@ -89,8 +92,22 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
         return this.platformConfiguration;
     }
 
-    public DeltaCloudClient getDeltaCloudClient(){
+    public RadargunClient getRadargunClient(){
 
+        if(radargunClient == null){
+            String actuator = Config.getInstance().getString( KeyConfig.RADARGUN_ACTUATOR.key() );
+
+            if(actuator.equals("JMX")){
+                radargunClient = new RadargunClientJMX( KeyConfig.RADARGUN_COMPONENT.key() );
+            } else {
+                // TO IMPLEMENT SLAVEKILLER CLIENT
+                throw new RuntimeException("TO IMPLEMENT");
+            }
+        }
+        return radargunClient;
+    }
+
+    public DeltaCloudClient getDeltaCloudClient(){
         String hostname = Config.getInstance().getString( KeyConfig.DELTACLOUD_URL.key() );
         String username = Config.getInstance().getString( KeyConfig.DELTACLOUD_USER.key() );
         String password = Config.getInstance().getString( KeyConfig.DELTACLOUD_PASSWORD.key() );
@@ -114,7 +131,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
             String domain = Config.getInstance().getString( KeyConfig.ISPN_DOMAIN.key() );
             String cacheName = Config.getInstance().getString( KeyConfig.ISPN_CACHE_NAME.key() );
 
-            this.actuator = new CloudTMActuator( getDeltaCloudClient(), null, jmxPort, imageId, flavorId, domain, cacheName );
+            this.actuator = new CloudTMActuator( getDeltaCloudClient(), getRadargunClient(), jmxPort, imageId, flavorId, domain, cacheName );
         }
         return actuator;
     }

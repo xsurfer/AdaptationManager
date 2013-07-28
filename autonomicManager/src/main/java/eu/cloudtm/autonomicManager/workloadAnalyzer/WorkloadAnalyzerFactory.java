@@ -53,14 +53,14 @@ public class WorkloadAnalyzerFactory {
                 evaluatedParam2delta.keySet()
         );
 
-        ChangeDetector proactiveChangeDetector = new ProactiveChangeDetector(
+        AbstractChangeDetector proactiveChangeDetector = new ProactiveChangeDetector(
                 statsManager,
                 param2delta,
                 evaluatedParam2delta,
                 workloadForecaster
         );
 
-        ChangeDetector reactiveChangeDetector = new ReactiveChangeDetector(
+        AbstractChangeDetector reactiveChangeDetector = new ReactiveChangeDetector(
                 statsManager,
                 param2delta,
                 evaluatedParam2delta
@@ -68,7 +68,7 @@ public class WorkloadAnalyzerFactory {
 
 
         String policy = Config.getInstance().getString(KeyConfig.ALERT_MANAGER_POLICY.key());
-        AlertManager alertManager = AlertManager.createInstance( policy, optimizer, reconfigurator );
+        AbstractAlertManager alertManager = AbstractAlertManager.createInstance(policy, optimizer, reconfigurator);
 
         proactiveChangeDetector.addEventListener(alertManager);
         reactiveChangeDetector.addEventListener(alertManager);

@@ -14,7 +14,7 @@ import java.util.Map;
  * Time: 2:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ReactiveChangeDetector extends ChangeDetector {
+public class ReactiveChangeDetector extends AbstractChangeDetector {
 
     public ReactiveChangeDetector(SampleProducer sampleProducer, Map<Param, Double> monitoredParams2delta, Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta) {
         super(sampleProducer, monitoredParams2delta, monitoredEvaluatedParams2delta);

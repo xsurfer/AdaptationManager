@@ -28,7 +28,7 @@ public class WorkloadEvent extends EventObject {
      * @throws IllegalArgumentException
      *          if source is null.
      */
-    public WorkloadEvent(ChangeDetector source, WorkloadEventType type, ProcessedSample sample) {
+    public WorkloadEvent(AbstractChangeDetector source, WorkloadEventType type, ProcessedSample sample) {
         super(source);
         this.type = type;
         this.timestamp = System.currentTimeMillis();

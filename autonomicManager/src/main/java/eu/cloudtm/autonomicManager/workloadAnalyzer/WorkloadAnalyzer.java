@@ -9,8 +9,8 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
  */
 public class WorkloadAnalyzer {
 
-    public WorkloadAnalyzer( ChangeDetector reactive,
-                             ChangeDetector proactive,
+    public WorkloadAnalyzer( AbstractChangeDetector reactive,
+                             AbstractChangeDetector proactive,
                              WorkloadEventListener alertManager){
 
     }

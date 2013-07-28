@@ -10,7 +10,7 @@ import eu.cloudtm.autonomicManager.IReconfigurator;
  * Time: 1:53 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AlertManager implements WorkloadEventListener {
+public abstract class AbstractAlertManager implements WorkloadEventListener {
 
     public enum Policy {
         REACTIVE, PROACTIVE, MIX;
@@ -19,10 +19,10 @@ public abstract class AlertManager implements WorkloadEventListener {
     protected AbstractOptimizer optimizer;
     protected IReconfigurator reconfigurator;
 
-    public static AlertManager createInstance(String policyStr, AbstractOptimizer optimizer, IReconfigurator reconfigurator ){
+    public static AbstractAlertManager createInstance(String policyStr, AbstractOptimizer optimizer, IReconfigurator reconfigurator ){
         Policy policy = Policy.valueOf(policyStr);
 
-        AlertManager alertManager = null;
+        AbstractAlertManager alertManager = null;
         switch (policy){
             case REACTIVE:
                 alertManager = new PureReactiveAlertManager(optimizer, reconfigurator);
@@ -38,7 +38,7 @@ public abstract class AlertManager implements WorkloadEventListener {
         return alertManager;
     }
 
-    public AlertManager(AbstractOptimizer optimizer, IReconfigurator reconfigurator){
+    public AbstractAlertManager(AbstractOptimizer optimizer, IReconfigurator reconfigurator){
         this.optimizer = optimizer;
         this.reconfigurator = reconfigurator;
     }
