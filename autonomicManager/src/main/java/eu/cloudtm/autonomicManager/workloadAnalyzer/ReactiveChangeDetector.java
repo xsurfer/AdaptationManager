@@ -8,20 +8,18 @@ import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: fabio
+ * User: Fabio Perfetti perfabio87 [at] gmail.com
  * Date: 7/19/13
  * Time: 2:06 PM
- * To change this template use File | Settings | File Templates.
  */
 public class ReactiveChangeDetector extends AbstractChangeDetector {
 
-    public ReactiveChangeDetector(SampleProducer sampleProducer, Map<Param, Double> monitoredParams2delta, Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta) {
-        super(sampleProducer, monitoredParams2delta, monitoredEvaluatedParams2delta);
+    public ReactiveChangeDetector(Map<Param, Double> monitoredParams2delta, Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta) {
+        super(monitoredParams2delta, monitoredEvaluatedParams2delta);
     }
 
     @Override
-    public void onNewSample(ProcessedSample sample){
+    public void samplePerformed(ProcessedSample sample) {
         add(sample);
 
         if(sampleSlideWindow.size() < SLIDE_WINDOW_SIZE){

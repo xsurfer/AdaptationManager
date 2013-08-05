@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager.statistics;
 
-import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 
 /**
  * Created by: Fabio Perfetti
@@ -9,9 +9,9 @@ import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
  */
 public class StatsProcessor implements Processor {
 
-    private IPlatformConfiguration currentConfig;
+    private PlatformConfiguration currentConfig;
 
-    public StatsProcessor(IPlatformConfiguration currentConfig){
+    public StatsProcessor(PlatformConfiguration currentConfig){
         this.currentConfig = currentConfig;
     }
 

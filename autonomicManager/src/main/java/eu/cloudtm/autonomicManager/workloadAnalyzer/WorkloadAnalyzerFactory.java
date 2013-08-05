@@ -2,21 +2,19 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.AbstractOptimizer;
 import eu.cloudtm.autonomicManager.IReconfigurator;
-import eu.cloudtm.autonomicManager.configs.Config;
-import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Param;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: fabio
+ * User: Fabio Perfetti perfabio87 [at] gmail.com
  * Date: 7/19/13
  * Time: 1:49 PM
- * To change this template use File | Settings | File Templates.
  */
 public class WorkloadAnalyzerFactory {
 
@@ -54,14 +52,12 @@ public class WorkloadAnalyzerFactory {
         );
 
         AbstractChangeDetector proactiveChangeDetector = new ProactiveChangeDetector(
-                statsManager,
                 param2delta,
                 evaluatedParam2delta,
                 workloadForecaster
         );
 
         AbstractChangeDetector reactiveChangeDetector = new ReactiveChangeDetector(
-                statsManager,
                 param2delta,
                 evaluatedParam2delta
         );
@@ -73,12 +69,15 @@ public class WorkloadAnalyzerFactory {
         proactiveChangeDetector.addEventListener(alertManager);
         reactiveChangeDetector.addEventListener(alertManager);
 
-        WorkloadAnalyzer workloadAnalyzer = new WorkloadAnalyzer(reactiveChangeDetector,
+        boolean enabled = Config.getInstance().getBoolean(KeyConfig.WORKLOAD_ANALYZER_AUTOSTART.key());
+
+        WorkloadAnalyzer workloadAnalyzer = new WorkloadAnalyzer(enabled,
+                statsManager,
+                reactiveChangeDetector,
                 proactiveChangeDetector,
                 alertManager);
 
         return workloadAnalyzer;
     }
-
 
 }

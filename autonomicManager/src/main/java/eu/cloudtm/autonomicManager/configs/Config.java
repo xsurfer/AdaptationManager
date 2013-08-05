@@ -11,14 +11,15 @@ import org.apache.commons.configuration.PropertiesConfiguration;
  * Time: 10:22 AM
  * To change this template use File | Settings | File Templates.
  */
-public class Config {
+public class
+        Config {
 
     private static Configuration instance;
 
     public static Configuration getInstance(){
         if(instance == null){
             try {
-                instance = new PropertiesConfiguration("config.properties");
+                instance = new PropertiesConfiguration("config/config.properties");
             } catch (ConfigurationException e) {
                 throw new RuntimeException(e);
             }

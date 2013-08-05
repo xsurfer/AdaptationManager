@@ -1,12 +1,12 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.oracles.OracleService;
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.oracles.OracleService;
 import eu.cloudtm.autonomicManager.oracles.OutputOracle;
 import eu.cloudtm.autonomicManager.statistics.CustomSample;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
@@ -16,12 +16,10 @@ import org.apache.commons.logging.LogFactory;
 import java.util.*;
 
 /**
-* Created with IntelliJ IDEA.
-* User: fabio
-* Date: 7/8/13
-* Time: 1:33 PM
-* To change this template use File | Settings | File Templates.
-*/
+ * User: Fabio Perfetti perfabio87 [at] gmail.com
+ * Date: 7/8/13
+ * Time: 1:33 PM
+ */
 public class WhatIf {
 
     private static Log log = LogFactory.getLog(WhatIf.class);

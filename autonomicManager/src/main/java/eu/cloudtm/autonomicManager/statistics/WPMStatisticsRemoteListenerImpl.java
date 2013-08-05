@@ -5,12 +5,13 @@ import eu.cloudtm.wpm.logService.remote.events.*;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMStatisticsRemoteListener;
 import eu.cloudtm.wpm.logService.remote.observables.Handle;
 import eu.cloudtm.wpm.parser.ResourceType;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by: Fabio Perfetti

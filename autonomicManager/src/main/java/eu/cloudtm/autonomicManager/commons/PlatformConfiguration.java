@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/1/13
  */
-public class PlatformConfiguration implements IPlatformConfiguration, Comparable<PlatformConfiguration> {
+public class PlatformConfiguration implements Comparable<PlatformConfiguration> {
 
     private static Log log = LogFactory.getLog(PlatformConfiguration.class);
 
@@ -31,9 +31,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, Comparable
     }
 
     public PlatformConfiguration(int size, int repDegree, ReplicationProtocol repProtocol){
-        this.platformSize = size;
-        this.replicationDegree = repDegree;
-        this.replicationProtocol = repProtocol;
+        setPlatformScale(size, InstanceConfig.MEDIUM);
+        setRepDegree(repDegree);
+        setRepProtocol(repProtocol);
     }
 
 
@@ -67,11 +67,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, Comparable
     /* *** SCALE UPDATE METHODS *** */
     /* ************************ *** */
 
-    public void setPlatformScale(int _size, InstanceConfig _nodesConfig){
-        if( _size<=0 || _nodesConfig == null )
-            throw new IllegalArgumentException("Configuration not acceptable!");
-        platformSize = _size;
-        nodesConfig = _nodesConfig;
+    public void setPlatformScale(int size, InstanceConfig nodesConfig){
+        if( size<=0 || nodesConfig == null )
+            throw new IllegalArgumentException("Scale not valid!");
+        platformSize = size;
+        this.nodesConfig = nodesConfig;
     }
 
 
@@ -79,16 +79,20 @@ public class PlatformConfiguration implements IPlatformConfiguration, Comparable
     /* *** REP PROTOCOL UPDATE METHODS *** */
     /* ******************************* *** */
 
-    public void setRepProtocol(ReplicationProtocol _repProtocol){
-        replicationProtocol = _repProtocol;
+    public void setRepProtocol(ReplicationProtocol repProtocol){
+        if(repProtocol==null)
+            throw new IllegalArgumentException("Replication Protocol not valid!");
+        replicationProtocol = repProtocol;
     }
 
     /* ***************************** *** */
     /* *** REP DEGREE UPDATE METHODS *** */
     /* ***************************** *** */
 
-    public void setRepDegree(int _repDegree){
-        replicationDegree = _repDegree;
+    public void setRepDegree(int repDegree){
+        if(repDegree<=0)
+            throw new IllegalArgumentException("Replication Degree not valid!");
+        replicationDegree = repDegree;
     }
 
     /* ********************************* *** */
@@ -104,9 +108,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, Comparable
     public String toString(){
         StringBuilder builder = new StringBuilder();
         builder.append("{ ")
-                .append( platformSize() + " " )
-                .append( replicationDegree() + " ")
-                .append( replicationProtocol() + "}");
+                .append("Nodes: ").append( platformSize() ).append(", ")
+                .append("Degree: ").append(replicationDegree()).append(", ")
+                .append("Protocol: ").append( replicationProtocol() ).append(" ")
+                .append("}");
         return builder.toString();
     }
 

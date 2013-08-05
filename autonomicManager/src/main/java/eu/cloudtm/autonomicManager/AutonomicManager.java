@@ -1,14 +1,12 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
-import eu.cloudtm.autonomicManager.commons.Forecaster;
-import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.PlatformTuning;
-import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
+import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,8 +14,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
+ * User: Fabio Perfetti perfabio87 [at] gmail.com
  * Date: 7/10/13
  */
 public class AutonomicManager {
@@ -25,13 +22,14 @@ public class AutonomicManager {
     private static Log log = LogFactory.getLog(AutonomicManager.class);
 
     private PlatformTuning platformTuning;
-    private IPlatformConfiguration platformConfiguration;
+    private PlatformConfiguration platformConfiguration;
     private StatsManager statsManager;
     private WorkloadAnalyzer workloadAnalyzer;
     private AbstractOptimizer optimizer;
     private IReconfigurator reconfigurator;
 
-    public AutonomicManager(IPlatformConfiguration platformConfiguration,
+
+    public AutonomicManager(PlatformConfiguration platformConfiguration,
                             PlatformTuning platformTuning,
                             StatsManager sampleManager,
                             WorkloadAnalyzer workloadAnalyzer,
@@ -62,6 +60,8 @@ public class AutonomicManager {
             log.info("2 - Prints current tuning configurations");
             log.info("3 - Change configurations");
             log.info("4 - WhatIf");
+            log.info("5 - Optimize now");
+            log.info("6 - Enable/Disable WorkloadAnalyzer [ current: " + (workloadAnalyzer.isEnabled() ? "enabled" : "disabled")  + " ]");
             Scanner in = new Scanner(System.in);
             selected = in.nextInt();
             processInput(selected);
@@ -78,13 +78,63 @@ public class AutonomicManager {
             case 2:
                 break;
             case 3:
+                customConfiguration();
                 break;
             case 4:
                 whatIf();
                 break;
+            case 5:
+                optimizeNow();
+                break;
+            case 6:
+                switchWorkloadAnalyzer();
+                break;
             default:
                 log.info("Unexpected input");
                 break;
+        }
+    }
+
+    private void customConfiguration(){
+
+        PlatformConfiguration configuration = new PlatformConfiguration();
+
+
+
+        try {
+            Scanner in = new Scanner(System.in);
+
+            log.info("Nodes: ");
+            int nodes = in.nextInt();
+            configuration.setPlatformScale(nodes, InstanceConfig.MEDIUM);
+
+
+            log.info("Degree: ");
+            int degree = in.nextInt();
+            configuration.setRepDegree(degree);
+
+            log.info("Protocol {2PC, TO, PB}: ");
+            String protocolString = in.next();
+            ReplicationProtocol protocol = ReplicationProtocol.valueOf(protocolString);
+            configuration.setRepProtocol(protocol);
+
+        } catch (IllegalArgumentException e){
+            log.info("Illegal value for replication protocol!");
+            return;
+        }
+
+        reconfigurator.reconfigure( configuration );
+    }
+
+    private void switchWorkloadAnalyzer(){
+        workloadAnalyzer.enable( !workloadAnalyzer.isEnabled() );
+    }
+
+    private void optimizeNow(){
+        try {
+            optimizer.doOptimize( statsManager.getLastSample() );
+        } catch (OracleException e) {
+            log.warn("Error while querying oracle", e);
         }
     }
 
@@ -116,9 +166,7 @@ public class AutonomicManager {
 
     private void currentConfiguration(){
         log.info("*** Current Configuration ***");
-        log.info("Scale: " + platformConfiguration.platformSize() + " " + platformConfiguration.nodeConfiguration());
-        log.info("RepDegree: " + platformConfiguration.replicationDegree());
-        log.info("RepProtocol: " + platformConfiguration.replicationProtocol());
+        log.info( platformConfiguration.toString() );
         log.info("");
     }
 

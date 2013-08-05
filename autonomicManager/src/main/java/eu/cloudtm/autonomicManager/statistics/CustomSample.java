@@ -2,7 +2,6 @@ package eu.cloudtm.autonomicManager.statistics;
 
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Param;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

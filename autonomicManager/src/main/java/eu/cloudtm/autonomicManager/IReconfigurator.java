@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,7 +11,7 @@ import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
  */
 public interface IReconfigurator {
 
-    public boolean reconfigure(IPlatformConfiguration nextConf);
+    public void reconfigure(PlatformConfiguration nextConf);
 
     public boolean isReconfiguring();
 

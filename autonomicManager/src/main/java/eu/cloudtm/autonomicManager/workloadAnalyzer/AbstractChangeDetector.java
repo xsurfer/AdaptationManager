@@ -2,6 +2,8 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Param;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.SampleListener;
 import eu.cloudtm.autonomicManager.statistics.SampleProducer;
@@ -12,19 +14,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created with IntelliJ IDEA.
- * User: fabio
+ * User: Fabio Perfetti perfabio87 [at] gmail.com
  * Date: 7/19/13
  * Time: 11:24 AM
- * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractChangeDetector implements SampleListener {
+public abstract class AbstractChangeDetector {
 
     private static Log log = LogFactory.getLog(AbstractChangeDetector.class);
 
-    protected static final int SLIDE_WINDOW_SIZE = 10;
+    protected static final int SLIDE_WINDOW_SIZE = Config.getInstance().getInt(KeyConfig.SLIDE_WINDOW_SIZE.key() );
 
     protected Buffer<ProcessedSample> sampleSlideWindow = BufferUtils.synchronizedBuffer(new CircularFifoBuffer<ProcessedSample>(SLIDE_WINDOW_SIZE));
 
@@ -36,17 +37,19 @@ public abstract class AbstractChangeDetector implements SampleListener {
     private Map<Param, Double> lastAvgParams = new HashMap<Param, Double>();
     private Map<EvaluatedParam, Double> lastAvgEvaluatedParams = new HashMap<EvaluatedParam, Double>();
 
+    private AtomicBoolean enabled = new AtomicBoolean(false);
 
 
-    public AbstractChangeDetector(SampleProducer sampleProducer,
-                                  Map<Param, Double> monitoredParams2delta,
+    public AbstractChangeDetector(Map<Param, Double> monitoredParams2delta,
                                   Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta){
-        sampleProducer.addListener(this);
+
         this.monitoredParams2delta = monitoredParams2delta;
         this.monitoredEvaluatedParams2delta = monitoredEvaluatedParams2delta;
         init();
     }
 
+
+    public abstract void samplePerformed(ProcessedSample sample);
 
     private void init(){
 
@@ -82,9 +85,9 @@ public abstract class AbstractChangeDetector implements SampleListener {
                 log.debug("variation: " + variation );
 
                 if( variation >= monitoredParams2delta.get(param) ){
-                    log.trace("Update the lastAvgAbortRate");
+                    log.trace("Updating lastAvgEvaluatedParams for " + param + " to: " + currentAvg);
                     lastAvgParams.put(param, currentAvg);
-                    log.info("BOUND REACHED (AbortRate)");
+                    log.info("BOUND REACHED (" + param.getKey() + ")" );
                     return true;
                 }
             }
@@ -115,7 +118,7 @@ public abstract class AbstractChangeDetector implements SampleListener {
                 log.debug("variation: " + variation );
 
                 if( variation >= monitoredEvaluatedParams2delta.get(param) ){
-                    log.trace("Updating lastAvgEvaluatedParams for param:" + param + " to: " + currentAvg);
+                    log.trace("Updating lastAvgEvaluatedParams for " + param + " to: " + currentAvg);
                     lastAvgEvaluatedParams.put(param, currentAvg);
                     log.info("BOUND REACHED (" + param.getKey() + ")" );
                     return true;
@@ -126,8 +129,8 @@ public abstract class AbstractChangeDetector implements SampleListener {
         return false;
     }
 
-    protected void add(ProcessedSample sample){
-        sampleSlideWindow.add(sample);
+    protected boolean add(ProcessedSample sample){
+        return sampleSlideWindow.add(sample);
     }
 
     public synchronized void addEventListener(WorkloadEventListener listener)  {
@@ -145,7 +148,4 @@ public abstract class AbstractChangeDetector implements SampleListener {
             i.next().workloadEventPerformed(event);
         }
     }
-
-
-
 }

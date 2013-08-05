@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager.statistics;
 
-import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
 import eu.cloudtm.wpm.logService.remote.observables.Handle;
@@ -16,9 +16,9 @@ public class WPMStatisticsRemoteListernerFactory {
 
     private StatsManager dispatcher;
     private WPMConnector connector;
-    private IPlatformConfiguration currentConfig;
+    private PlatformConfiguration currentConfig;
 
-    public WPMStatisticsRemoteListernerFactory(WPMConnector connector, StatsManager dispatcher, IPlatformConfiguration currentConfig){
+    public WPMStatisticsRemoteListernerFactory(WPMConnector connector, StatsManager dispatcher, PlatformConfiguration currentConfig){
         this.connector = connector;
         this.dispatcher = dispatcher;
         this.currentConfig = currentConfig;

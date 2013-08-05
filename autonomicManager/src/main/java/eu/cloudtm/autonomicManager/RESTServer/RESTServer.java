@@ -16,7 +16,7 @@ import java.net.URI;
 public class RESTServer {
 
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:1515/";
+    public static final String BASE_URI = "http://0.0.0.0:1515/";
 
     private final ResourceConfig rc;
 

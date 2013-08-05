@@ -1,10 +1,10 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
-import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
-import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
 import eu.cloudtm.autonomicManager.commons.State;
+import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +21,7 @@ public interface AbstractAutonomicManagerFactory {
 
     public PlatformTuning getPlatformTuning();
 
-    public IPlatformConfiguration getPlatformConfiguration();
+    public PlatformConfiguration getPlatformConfiguration();
 
     public IReconfigurator getReconfigurator();
 

@@ -5,7 +5,6 @@ import eu.cloudtm.autonomicManager.commons.dto.StatisticDTO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 import javax.inject.Singleton;
 import java.util.*;
 

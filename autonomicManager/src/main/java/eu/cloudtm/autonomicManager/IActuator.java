@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.actuators.ActuatorException;
+import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import org.apache.deltacloud.client.Instance;
 

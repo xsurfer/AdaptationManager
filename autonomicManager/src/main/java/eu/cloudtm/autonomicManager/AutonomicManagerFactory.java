@@ -85,7 +85,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     }
 
     @Override
-    public IPlatformConfiguration getPlatformConfiguration() {
+    public PlatformConfiguration getPlatformConfiguration() {
         if( this.platformConfiguration == null ){
             this.platformConfiguration = new PlatformConfiguration();
         }
@@ -98,7 +98,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
             String actuator = Config.getInstance().getString( KeyConfig.RADARGUN_ACTUATOR.key() );
 
             if(actuator.equals("JMX")){
-                radargunClient = new RadargunClientJMX( KeyConfig.RADARGUN_COMPONENT.key() );
+                radargunClient = new RadargunClientJMX( Config.getInstance().getString( KeyConfig.RADARGUN_COMPONENT.key() ) );
             } else {
                 // TO IMPLEMENT SLAVEKILLER CLIENT
                 throw new RuntimeException("TO IMPLEMENT");
@@ -131,7 +131,8 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
             String domain = Config.getInstance().getString( KeyConfig.ISPN_DOMAIN.key() );
             String cacheName = Config.getInstance().getString( KeyConfig.ISPN_CACHE_NAME.key() );
 
-            this.actuator = new CloudTMActuator( getDeltaCloudClient(), getRadargunClient(), jmxPort, imageId, flavorId, domain, cacheName );
+            //this.actuator = new CloudTMActuator( getDeltaCloudClient(), jmxPort, imageId, flavorId, domain, cacheName );
+            this.actuator = new CloudTMActuator( getDeltaCloudClient(), getRadargunClient(), jmxPort, imageId, flavorId, domain, cacheName ); // with radargun
         }
         return actuator;
     }

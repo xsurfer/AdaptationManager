@@ -1,9 +1,8 @@
 package eu.cloudtm.autonomicManager.statistics;
 
-import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,9 +26,9 @@ public class WPMStatsManagerFactory {
 
     private WPMViewChangeRemoteListener viewChangeRemoteListener;
 
-    private IPlatformConfiguration platformConfiguration;
+    private PlatformConfiguration platformConfiguration;
 
-    public WPMStatsManagerFactory(IPlatformConfiguration platformConfiguration){
+    public WPMStatsManagerFactory(PlatformConfiguration platformConfiguration){
         this.platformConfiguration = platformConfiguration;
 
     }

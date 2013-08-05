@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Created by: Fabio Perfetti
+ * Author: Fabio Perfetti (perfabio87 [at] gmail.com)
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */

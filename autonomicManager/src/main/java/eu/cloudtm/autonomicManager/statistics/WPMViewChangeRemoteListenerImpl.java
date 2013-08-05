@@ -5,7 +5,6 @@ import eu.cloudtm.wpm.logService.remote.events.PublishViewChangeEvent;
 import eu.cloudtm.wpm.logService.remote.events.SubscribeEvent;
 import eu.cloudtm.wpm.logService.remote.listeners.WPMViewChangeRemoteListener;
 import eu.cloudtm.wpm.logService.remote.observables.Handle;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,9 +45,10 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
     }
 
     @Override
-    public void onViewChange(PublishViewChangeEvent event) throws RemoteException {
+    public synchronized void onViewChange(PublishViewChangeEvent event) throws RemoteException {
 
         if(lastHandle != null){
+            log.trace("Removing previous StatisticsListener");
             connector.removeStatisticsRemoteListener(lastHandle);
         }
 

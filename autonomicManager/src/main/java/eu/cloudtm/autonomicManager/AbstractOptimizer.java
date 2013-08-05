@@ -1,6 +1,5 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.commons.IPlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
@@ -19,13 +18,13 @@ public abstract class AbstractOptimizer {
     private static Log log = LogFactory.getLog(AbstractOptimizer.class);
 
     protected PlatformTuning platformTuning;
-    protected IPlatformConfiguration platformConfiguration;
+    protected PlatformConfiguration platformConfiguration;
     protected IReconfigurator reconfigurator;
     protected SLAManager slaManager;
 
     public AbstractOptimizer(IReconfigurator reconfigurator,
                              SLAManager slaManager,
-                             IPlatformConfiguration platformConfiguration,
+                             PlatformConfiguration platformConfiguration,
                              PlatformTuning platformTuning){
         this.slaManager = slaManager;
         this.platformTuning = platformTuning;
@@ -42,7 +41,7 @@ public abstract class AbstractOptimizer {
 
     public abstract void optimize(ProcessedSample processedSample) throws OracleException;
 
-    protected IPlatformConfiguration createNextConfig(IPlatformConfiguration forecastedConfig){
+    protected PlatformConfiguration createNextConfig(PlatformConfiguration forecastedConfig){
         int size, repDegree;
         ReplicationProtocol repProt;
 

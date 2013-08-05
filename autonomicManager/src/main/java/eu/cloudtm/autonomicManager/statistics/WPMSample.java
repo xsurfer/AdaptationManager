@@ -2,7 +2,8 @@ package eu.cloudtm.autonomicManager.statistics;
 
 import eu.cloudtm.autonomicManager.commons.Param;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**

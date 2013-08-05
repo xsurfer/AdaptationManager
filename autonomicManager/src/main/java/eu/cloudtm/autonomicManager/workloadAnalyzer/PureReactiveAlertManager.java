@@ -37,14 +37,19 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
 
         if( !reconfigurator.isReconfiguring() ){
             if( reconfigurationLock.tryLock() ){
+                ControllerLogger.log.info("Lock successfully acquired");
                 try{
                     optimizer.optimize( event.getSample() );
                 } catch (OracleException e) {
                     ControllerLogger.log.warn("Exception thrown querying oracles");
+                    log.warn(e,e);
                 } finally {
+                    ControllerLogger.log.info("releasing lock");
                     reconfigurationLock.unlock();
                 }
             }
+        } else {
+            ControllerLogger.log.info("Reconfigurator busy! Skipping new reconf...");
         }
     }
 }

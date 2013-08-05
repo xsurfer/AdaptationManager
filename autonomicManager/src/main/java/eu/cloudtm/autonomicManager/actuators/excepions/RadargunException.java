@@ -1,7 +1,5 @@
 package eu.cloudtm.autonomicManager.actuators.excepions;
 
-import eu.cloudtm.actuators.exceptions.ActuatorException;
-
 /**
 * Created by: Fabio Perfetti
 * E-mail: perfabio87@gmail.com
