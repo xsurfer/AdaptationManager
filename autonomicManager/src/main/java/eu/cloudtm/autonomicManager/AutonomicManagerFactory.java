@@ -2,8 +2,8 @@ package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
 import eu.cloudtm.autonomicManager.actuators.CloudTMActuator;
-import eu.cloudtm.autonomicManager.actuators.RadargunClient;
-import eu.cloudtm.autonomicManager.actuators.RadargunClientJMX;
+import eu.cloudtm.autonomicManager.actuators.clients.RadargunClient;
+import eu.cloudtm.autonomicManager.actuators.clients.RadargunClientJMX;
 import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;

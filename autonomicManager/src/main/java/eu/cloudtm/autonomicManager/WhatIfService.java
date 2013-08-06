@@ -20,13 +20,13 @@ import java.util.*;
  * Date: 7/8/13
  * Time: 1:33 PM
  */
-public class WhatIf {
+public class WhatIfService {
 
-    private static Log log = LogFactory.getLog(WhatIf.class);
+    private static Log log = LogFactory.getLog(WhatIfService.class);
 
     private ProcessedSample processedSample;
 
-    public WhatIf(ProcessedSample processedSample){
+    public WhatIfService(ProcessedSample processedSample){
         this.processedSample = processedSample;
 
     }

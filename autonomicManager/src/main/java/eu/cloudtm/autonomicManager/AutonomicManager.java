@@ -59,7 +59,7 @@ public class AutonomicManager {
             log.info("1 - Prints current platform configuration");
             log.info("2 - Prints current tuning configurations");
             log.info("3 - Change configurations");
-            log.info("4 - WhatIf");
+            log.info("4 - WhatIfService");
             log.info("5 - Optimize now");
             log.info("6 - Enable/Disable WorkloadAnalyzer [ current: " + (workloadAnalyzer.isEnabled() ? "enabled" : "disabled")  + " ]");
             Scanner in = new Scanner(System.in);
@@ -146,7 +146,7 @@ public class AutonomicManager {
             return;
         }
 
-        WhatIf whatIf = new WhatIf(processedSample);
+        WhatIfService whatIfService = new WhatIfService(processedSample);
 
         WhatIfCustomParamDTO customParamDTO = new WhatIfCustomParamDTO();
         customParamDTO.addForecaster(Forecaster.ANALYTICAL);
@@ -154,7 +154,7 @@ public class AutonomicManager {
         customParamDTO.setReplicationDegree(4);
 
 
-        List<WhatIfDTO> result = whatIf.evaluate(customParamDTO);
+        List<WhatIfDTO> result = whatIfService.evaluate(customParamDTO);
 
         /* Stampa delle predizioni */
         for (WhatIfDTO whatIfRes : result){

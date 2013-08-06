@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
+import com.jcraft.jsch.JSchException;
 import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import org.apache.deltacloud.client.Instance;
@@ -19,7 +20,7 @@ public interface IActuator {
 
     public void startInstance() throws ActuatorException;
 
-    public List<Instance> runningInstances();
+    public List<String> runningInstances();
 
     public void switchProtocol(ReplicationProtocol repProtocol) throws ActuatorException;
 

@@ -1,10 +1,11 @@
-package eu.cloudtm.autonomicManager.actuators;
+package eu.cloudtm.autonomicManager.actuators.clients;
 
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
  * Date: 6/27/13
  */
+@Deprecated
 public class SlaveKillerResponse {
 
     // {

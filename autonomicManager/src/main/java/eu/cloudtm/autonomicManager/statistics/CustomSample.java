@@ -33,7 +33,7 @@ public class CustomSample extends ProcessedSample {
     public Object getParam(Param param) {
         Object retVal = customParam.get(param);
         if(retVal==null) {
-            log.info("WhatIf: user didn't set " + param + ", using the one measured");
+            log.info("WhatIfService: user didn't set " + param + ", using the one measured");
             retVal = sample.getParam(param);
         }
         return retVal;
@@ -45,7 +45,7 @@ public class CustomSample extends ProcessedSample {
         retVal = customEvaluatedParam.get(EvaluatedParam.ACF);
 
         if(retVal==null) {
-            log.info("WhatIf: user didn't set ACF, using the one measured");
+            log.info("WhatIfService: user didn't set ACF, using the one measured");
             Object retObject = sample.getEvaluatedParam(EvaluatedParam.ACF);
             if(retObject != null){
                 retVal =  retObject;

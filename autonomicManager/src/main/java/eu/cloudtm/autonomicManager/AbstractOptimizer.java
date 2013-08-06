@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public abstract class AbstractOptimizer {
+public abstract class AbstractOptimizer implements Optimizer {
 
     private static Log log = LogFactory.getLog(AbstractOptimizer.class);
 
@@ -39,7 +39,7 @@ public abstract class AbstractOptimizer {
         optimize(sample);
     }
 
-    public abstract void optimize(ProcessedSample processedSample) throws OracleException;
+
 
     protected PlatformConfiguration createNextConfig(PlatformConfiguration forecastedConfig){
         int size, repDegree;

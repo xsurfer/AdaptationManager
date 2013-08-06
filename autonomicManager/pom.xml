@@ -24,6 +24,13 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.50</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>eu.cloudtm</groupId>
             <artifactId>WPMConnector</artifactId>
             <version>1.0.0</version>

@@ -7,6 +7,7 @@ import eu.cloudtm.InfinispanClient.exception.InvocationException;
 import eu.cloudtm.InfinispanClient.exception.NoJmxProtocolRegisterException;
 import eu.cloudtm.autonomicManager.ControllerLogger;
 import eu.cloudtm.autonomicManager.IActuator;
+import eu.cloudtm.autonomicManager.actuators.clients.RadargunClient;
 import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
 import eu.cloudtm.autonomicManager.actuators.excepions.RadargunException;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
@@ -100,7 +101,7 @@ public class CloudTMActuator implements IActuator {
 
         ControllerLogger.log.info(" * Stopping an instance..." );
 
-        List<Instance> instances = runningInstances();
+        List<Instance> instances = runningDeltaCloudInstances();
         Instance instance = instances.get(0);
         if(isRadargun){
             ControllerLogger.log.info(" * Stopping radargun..." );
@@ -207,7 +208,19 @@ public class CloudTMActuator implements IActuator {
     }
 
     @Override
-    public List<Instance> runningInstances(){
+    public List<String> runningInstances(){
+
+        List<String> runningInstances = new ArrayList<String>();
+
+        for(Instance instance : runningDeltaCloudInstances()){
+            if(instance.getState()== StateAware.State.RUNNING)
+                runningInstances.add( instance.getPrivateAddresses().get(0) );
+        }
+        return runningInstances;
+    }
+
+
+    private List<Instance> runningDeltaCloudInstances(){
         List<Instance> allInstances;
         List<Instance> runningInstances = new ArrayList<Instance>();
 
@@ -219,7 +232,7 @@ public class CloudTMActuator implements IActuator {
 
         for(Instance instance : allInstances){
             if(instance.getState()== StateAware.State.RUNNING)
-                runningInstances.add(instance);
+                runningInstances.add( instance );
         }
         return runningInstances;
     }
@@ -227,7 +240,7 @@ public class CloudTMActuator implements IActuator {
 
     private Set<InfinispanMachine> instacesToIspnMachines() {
         Set<InfinispanMachine> ispnMachines = new HashSet<InfinispanMachine>();
-        for( Instance instance : runningInstances() ){
+        for( Instance instance : runningDeltaCloudInstances() ){
             String hostname = instance.getName();
             String address = instance.getPrivateAddresses().get(0);
             log.info("Mapping DeltaCloud instances to infinispan machines (" +  hostname + ", " + address + ")" );
@@ -236,6 +249,5 @@ public class CloudTMActuator implements IActuator {
         }
         return ispnMachines;
     }
-
 
 }

@@ -4,7 +4,7 @@
 //import com.sun.jersey.spi.resource.Singleton;
 //import eu.cloudtm.ControllerOld;
 //import eu.cloudtm.WPMStatsManagerOLD;
-//import eu.cloudtm.WhatIf;
+//import eu.cloudtm.WhatIfService;
 //import eu.cloudtm.oracles.OracleService;
 //import eu.cloudtm.wpm.parser.ResourceType;
 //import org.apache.commons.logging.Log;
@@ -120,7 +120,7 @@
 //
 //
 //
-//        WhatIfCustomParamDTO currentParamDTO = WhatIf.retrieveCurrentValues();
+//        WhatIfCustomParamDTO currentParamDTO = WhatIfService.retrieveCurrentValues();
 //
 //        lastSample = WPMStatsManagerOLD.getInstance().getLastSample();
 //

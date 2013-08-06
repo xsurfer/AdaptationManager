@@ -1,4 +1,4 @@
-package eu.cloudtm.autonomicManager.actuators;
+package eu.cloudtm.autonomicManager.actuators.clients;
 
 import com.google.gson.Gson;
 import eu.cloudtm.autonomicManager.actuators.excepions.RadargunException;

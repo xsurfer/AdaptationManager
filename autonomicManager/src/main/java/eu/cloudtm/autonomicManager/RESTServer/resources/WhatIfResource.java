@@ -1,7 +1,7 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
-import eu.cloudtm.autonomicManager.WhatIf;
+import eu.cloudtm.autonomicManager.WhatIfService;
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.commons.GsonFactory;
@@ -42,8 +42,8 @@ public class WhatIfResource extends AbstractResource {
 
         log.info("ACF: " + sample.getEvaluatedParam(EvaluatedParam.ACF));
 
-        WhatIf whatIf = new WhatIf(sample);
-        WhatIfCustomParamDTO customDTO = whatIf.retrieveCurrentValues();
+        WhatIfService whatIfService = new WhatIfService(sample);
+        WhatIfCustomParamDTO customDTO = whatIfService.retrieveCurrentValues();
 
         List<String> fieldExclusions = new ArrayList<String>();
         fieldExclusions.add("forecasters");
@@ -124,13 +124,13 @@ public class WhatIfResource extends AbstractResource {
         customParam.setAvgPrepareAsync(avgPrepareAsync);
 
         ProcessedSample sample = statsManager.getLastSample();
-        WhatIf whatIf = new WhatIf(sample);
+        WhatIfService whatIfService = new WhatIfService(sample);
         if(sample!=null)
             log.info("Sample: " + sample.getId() );
         else
             log.info("Sample is null");
 
-        List<WhatIfDTO> result = whatIf.evaluate(customParam);
+        List<WhatIfDTO> result = whatIfService.evaluate(customParam);
 
         Gson gson = new Gson();
         String json = gson.toJson(result);

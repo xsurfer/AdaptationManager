@@ -1,7 +1,7 @@
 //package eu.cloudtm.autonomicManager.newActuator.test;
 //
 //import eu.cloudtm.actuators.exceptions.ActuatorException;
-//import eu.cloudtm.autonomicManager.actuators.SlaveKillerClient;
+//import eu.cloudtm.autonomicManager.actuators.clients.SlaveKillerClient;
 //import org.apache.deltacloud.client.DeltaCloudClientException;
 //
 //import java.io.BufferedReader;
