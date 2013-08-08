@@ -25,16 +25,16 @@ public class AutonomicManager {
     private PlatformConfiguration platformConfiguration;
     private StatsManager statsManager;
     private WorkloadAnalyzer workloadAnalyzer;
-    private AbstractOptimizer optimizer;
-    private IReconfigurator reconfigurator;
+    private AbstractPlatformOptimizer optimizer;
+    private Reconfigurator reconfigurator;
 
 
     public AutonomicManager(PlatformConfiguration platformConfiguration,
                             PlatformTuning platformTuning,
                             StatsManager sampleManager,
                             WorkloadAnalyzer workloadAnalyzer,
-                            AbstractOptimizer optimizer,
-                            IReconfigurator reconfigurator){
+                            AbstractPlatformOptimizer optimizer,
+                            Reconfigurator reconfigurator){
         this.statsManager = sampleManager;
         this.platformConfiguration = platformConfiguration;
         this.platformTuning = platformTuning;

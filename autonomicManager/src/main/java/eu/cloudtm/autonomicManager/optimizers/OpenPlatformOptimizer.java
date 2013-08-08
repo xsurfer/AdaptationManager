@@ -1,8 +1,10 @@
-package eu.cloudtm.autonomicManager;
+package eu.cloudtm.autonomicManager.optimizers;
 
+import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
+import eu.cloudtm.autonomicManager.SLAManager;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
-import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
+import eu.cloudtm.autonomicManager.reconfigurators.PlatformReconfigurator;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,23 +14,23 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public abstract class OpenOptimizer extends AbstractOptimizer {
+public abstract class OpenPlatformOptimizer extends AbstractPlatformOptimizer {
 
-    private static Log log = LogFactory.getLog(OpenOptimizer.class);
+    private static Log log = LogFactory.getLog(OpenPlatformOptimizer.class);
 
     private final static int ARRIVAL_RATE_GUARANTEE_PERC = 50;
     private final static int ABORT_GUARANTEE_PERC = 5;
     private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
 
-    public OpenOptimizer(Reconfigurator reconfigurator,
-                         SLAManager slaManager,
-                         PlatformConfiguration platformConfiguration,
-                         PlatformTuning platformTuning) {
+    public OpenPlatformOptimizer(PlatformReconfigurator reconfigurator,
+                                 SLAManager slaManager,
+                                 PlatformConfiguration platformConfiguration,
+                                 PlatformTuning platformTuning) {
         super(reconfigurator, slaManager, platformConfiguration, platformTuning);
     }
 
 
-    public void optimize(ProcessedSample processedSample) throws OracleException{
+    public void optimize(ProcessedSample processedSample) {
 
     }
 

@@ -1,7 +1,7 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.AbstractOptimizer;
-import eu.cloudtm.autonomicManager.IReconfigurator;
+import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
+import eu.cloudtm.autonomicManager.Reconfigurator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,10 +16,10 @@ public abstract class AbstractAlertManager implements WorkloadEventListener {
         REACTIVE, PROACTIVE, MIX;
     }
 
-    protected AbstractOptimizer optimizer;
-    protected IReconfigurator reconfigurator;
+    protected AbstractPlatformOptimizer optimizer;
+    protected Reconfigurator reconfigurator;
 
-    public static AbstractAlertManager createInstance(String policyStr, AbstractOptimizer optimizer, IReconfigurator reconfigurator ){
+    public static AbstractAlertManager createInstance(String policyStr, AbstractPlatformOptimizer optimizer, Reconfigurator reconfigurator ){
         Policy policy = Policy.valueOf(policyStr);
 
         AbstractAlertManager alertManager = null;
@@ -38,7 +38,7 @@ public abstract class AbstractAlertManager implements WorkloadEventListener {
         return alertManager;
     }
 
-    public AbstractAlertManager(AbstractOptimizer optimizer, IReconfigurator reconfigurator){
+    public AbstractAlertManager(AbstractPlatformOptimizer optimizer, Reconfigurator reconfigurator){
         this.optimizer = optimizer;
         this.reconfigurator = reconfigurator;
     }

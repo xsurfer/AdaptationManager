@@ -26,4 +26,6 @@ public interface IActuator {
 
     public void switchDegree(int degree) throws ActuatorException;
 
+    public void triggerRebalancing(boolean enabled) throws ActuatorException;
+
 }

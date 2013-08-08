@@ -77,11 +77,11 @@ public class WhatIfService {
                     long platformSize = entry.getKey().platformSize();
                     OutputOracle currOut = entry.getValue();
 
-                    currWhatIfResult.addThroughputPoint( platformSize, currOut.throughput() );
+                    currWhatIfResult.addThroughputPoint( platformSize, currOut.throughput(0) );
                     log.warn("FIX TX CLASSES");
                     currWhatIfResult.addReadResponseTimePoint(platformSize, currOut.responseTime(0));
                     currWhatIfResult.addWriteResponseTimePoint(platformSize, currOut.responseTime(1));
-                    currWhatIfResult.addAbortRatePoint(platformSize, currOut.abortRate());
+                    currWhatIfResult.addAbortRatePoint(platformSize, currOut.abortRate(0));
                 }
 
             }

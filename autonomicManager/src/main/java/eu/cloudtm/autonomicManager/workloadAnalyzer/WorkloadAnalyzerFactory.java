@@ -1,7 +1,7 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.AbstractOptimizer;
-import eu.cloudtm.autonomicManager.IReconfigurator;
+import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
+import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.configs.Config;
@@ -19,8 +19,8 @@ import java.util.Map;
 public class WorkloadAnalyzerFactory {
 
     private SampleProducer statsManager;
-    private IReconfigurator reconfigurator;
-    private AbstractOptimizer optimizer;
+    private Reconfigurator reconfigurator;
+    private AbstractPlatformOptimizer optimizer;
 
     Map<Param, Double> param2delta = new HashMap<Param, Double>(){{
         put(Param.AvgNumPutsBySuccessfulLocalTx, 20D);
@@ -36,8 +36,8 @@ public class WorkloadAnalyzerFactory {
     }};
 
     public WorkloadAnalyzerFactory(SampleProducer statsManager,
-                                    IReconfigurator reconfigurator,
-                                    AbstractOptimizer optimizer){
+                                    Reconfigurator reconfigurator,
+                                    AbstractPlatformOptimizer optimizer){
         this.statsManager = statsManager;
         this.reconfigurator = reconfigurator;
         this.optimizer = optimizer;

@@ -1,14 +1,26 @@
 package eu.cloudtm.autonomicManager.actuators;
 
 import com.jcraft.jsch.*;
+import eu.cloudtm.InfinispanClient.InfinispanClient;
+import eu.cloudtm.InfinispanClient.InfinispanClientImpl;
 import eu.cloudtm.InfinispanClient.InfinispanMachine;
+import eu.cloudtm.InfinispanClient.exception.InvocationException;
+import eu.cloudtm.InfinispanClient.exception.NoJmxProtocolRegisterException;
+import eu.cloudtm.autonomicManager.ControllerLogger;
 import eu.cloudtm.autonomicManager.IActuator;
+import eu.cloudtm.autonomicManager.actuators.clients.RadargunClient;
 import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
+import eu.cloudtm.autonomicManager.actuators.excepions.RadargunException;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.deltacloud.client.DeltaCloudClient;
 import org.apache.deltacloud.client.Instance;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -17,6 +29,8 @@ import java.util.*;
  * Time: 10:54 AM
  */
 public class FutureGridActuator implements IActuator {
+
+    private static Log log = LogFactory.getLog(FutureGridActuator.class);
 
     private JSch jsch=new JSch();
 
@@ -28,8 +42,12 @@ public class FutureGridActuator implements IActuator {
 
     private Session session;
 
-    private Set<String> machines = Collections.unmodifiableSet( new HashSet<String>(){{
-        add("149.165.148.113"); add("149.165.148.242"); add("149.165.148.243"); add("149.165.148.244");
+    /* FUTUREGRID */
+
+    private final String rg_master = "149.165.148.113";
+
+    private Set<String> availableMachines = Collections.synchronizedSet ( new HashSet<String>(){{
+        add("149.165.148.242"); add("149.165.148.243"); add("149.165.148.244");
         add("149.165.148.245"); add("149.165.148.246"); add("149.165.148.247"); add("149.165.148.248");
         add("149.165.149.11");  add("149.165.149.12");  add("149.165.149.13");  add("149.165.149.100");
         add("149.165.149.101"); add("149.165.149.102"); add("149.165.149.103"); add("149.165.149.104");
@@ -39,57 +57,211 @@ public class FutureGridActuator implements IActuator {
         add("149.165.149.118"); add("149.165.149.119"); add("149.165.149.120"); add("149.165.149.121");
         add("149.165.149.122"); add("149.165.149.123"); add("149.165.149.124"); add("149.165.149.125");
         add("149.165.149.126"); add("149.165.149.127"); add("149.165.149.128"); add("149.165.149.129");
-    }});
+    }} );
 
-    private Set<String> runningMachines = new HashSet<String>();
+    private Set<String> runningMachines = Collections.synchronizedSet(new HashSet<String>());
+
+
+    /* RADARGUN CLIENT */
+    private final boolean isRadargun;
+
+    private final RadargunClient radargunClient;
+
+    protected final int jmxPort;
+
+
+    /* INFINISPAN CLIENT */
+    private final String ispnDomain;
+
+    private final String ispnCacheName;
 
 
 
-    private IActuator actuator;
+    public FutureGridActuator(int jmxPort,
+                              String ispnDomain,
+                              String ispnCacheName){
+        this.isRadargun = false;
+        this.radargunClient = null;
+        this.jmxPort = jmxPort;
+        this.ispnDomain = ispnDomain;
+        this.ispnCacheName = ispnCacheName;
 
-    public FutureGridActuator(IActuator actuator){
-        this.actuator = actuator;
+    }
+
+    public FutureGridActuator(RadargunClient radargunClient,
+                              int jmxPort,
+                              String ispnDomain,
+                              String ispnCacheName){
+        this.isRadargun = true;
+        this.radargunClient = radargunClient;
+        this.jmxPort = jmxPort;
+        this.ispnDomain = ispnDomain;
+        this.ispnCacheName = ispnCacheName;
+    }
+
+
+
+    @Override
+    public synchronized void stopInstance() throws ActuatorException {
+
+        final String command = "bash /root/AutonomicManager/scripts/node/nodeStop.sh";
+        final String machine = runningMachines.iterator().next();
+
+        if(isRadargun){
+            ControllerLogger.log.info(" * Stopping radargun..." );
+
+            try {
+                radargunClient.stop(machine, jmxPort);
+            } catch (RadargunException e) {
+                throw new ActuatorException(e);
+            }
+        }
+
+        try {
+            Session session = createSession( machine );
+            executeCommand(session, command);
+
+            if(runningMachines.remove(machine) ){
+                availableMachines.add(machine);
+            }
+
+            log.info("VM " + machine + " stopped!");
+
+        } catch (JSchException e) {
+            throw new ActuatorException(e);
+        } catch (IOException e) {
+            throw new ActuatorException(e);
+        }
+
+        log.info("available: " + availableMachines.size());
     }
 
     @Override
-    public void stopInstance() throws ActuatorException {
+    public synchronized void startInstance() throws ActuatorException {
+
+        final String command = "bash /root/AutonomicManager/scripts/node/nodeStart.sh";
+        final String machine = availableMachines.iterator().next();
+
+        try {
+            Session session = createSession( machine );
+            executeCommand(session, command);
+
+            if(availableMachines.remove(machine) ){
+                runningMachines.add(machine);
+            }
+            log.info("VM " + machine + " started!");
+
+        } catch (JSchException e) {
+            throw new ActuatorException(e);
+        } catch (IOException e) {
+            throw new ActuatorException(e);
+        }
+
+        log.info("available: " + availableMachines.size());
 
     }
 
     @Override
-    public void startInstance() throws ActuatorException {
-
-    }
-
-    @Override
-    public List<String> runningInstances() {
+    public synchronized List<String> runningInstances() {
         return new ArrayList<String>(runningMachines);
     }
 
     @Override
     public void switchProtocol(ReplicationProtocol repProtocol) throws ActuatorException {
-        actuator.switchProtocol(repProtocol);
+
+        Set<InfinispanMachine> ispnMachines = null;
+        try {
+            ispnMachines = instacesToIspnMachines();
+        } catch (UnknownHostException e) {
+            throw new ActuatorException(e);
+        }
+
+        if(ispnMachines.size()==0){
+            log.info("No instances. Skipping...");
+            return;
+        }
+
+        InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
+
+        try {
+            infinispanClient.triggerBlockingSwitchReplicationProtocol(repProtocol.getWpmValue(), false, false);
+
+        } catch (InvocationException e) {
+            throw new ActuatorException(e);
+        } catch (NoJmxProtocolRegisterException e) {
+            throw new ActuatorException(e);
+        }
     }
 
     @Override
     public void switchDegree(int degree) throws ActuatorException {
-        actuator.switchDegree(degree);
+        Set<InfinispanMachine> ispnMachines = null;
+        try {
+            ispnMachines = instacesToIspnMachines();
+        } catch (UnknownHostException e) {
+            throw new ActuatorException(e);
+        }
+
+        if(ispnMachines.size()==0){
+            log.info("No instances. Skipping...");
+            return;
+        }
+
+        InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
+
+        try {
+            infinispanClient.triggerBlockingSwitchReplicationDegree(degree);
+
+        } catch (InvocationException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        } catch (NoJmxProtocolRegisterException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        }
     }
 
-    private Session createSession() throws JSchException {
+    @Override
+    public void triggerRebalancing(boolean enabled) throws ActuatorException {
+        Set<InfinispanMachine> ispnMachines = null;
+        try {
+            ispnMachines = instacesToIspnMachines();
+        } catch (UnknownHostException e) {
+            throw new ActuatorException(e);
+        }
 
+        if(ispnMachines.size()==0){
+            log.info("No instances. Skipping...");
+            return;
+        }
+
+        InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
+
+        try {
+            infinispanClient.triggerRebalancing(enabled);
+
+        } catch (InvocationException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        } catch (NoJmxProtocolRegisterException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        }
+    }
+
+    private Session createSession(String host) throws JSchException {
 
         jsch.addIdentity(privateKey);
-        System.out.println("identity added ");
-        session = jsch.getSession(user, machines.iterator().next(), sshPort);
-        System.out.println("session created.");
+        log.trace("identity added ");
+        session = jsch.getSession(user, host, sshPort);
+        log.trace("session created.");
 
         java.util.Properties config = new java.util.Properties();
         config.put("StrictHostKeyChecking", "no");
         session.setConfig(config);
 
         session.connect();
-        System.out.println("session connected.....");
+        log.trace("session connected.....");
 
         return session;
     }
@@ -122,10 +294,10 @@ public class FutureGridActuator implements IActuator {
             while(in.available()>0){
                 int i=in.read(tmp, 0, 1024);
                 if(i<0)break;
-                System.out.print(new String(tmp, 0, i));
+                log.trace(new String(tmp, 0, i));
             }
             if(channel.isClosed()){
-                System.out.println("exit-status: "+channel.getExitStatus());
+                log.trace("exit-status: " + channel.getExitStatus());
                 break;
             }
             try {
@@ -135,6 +307,18 @@ public class FutureGridActuator implements IActuator {
             }
         }
         channel.disconnect();
+    }
+
+    private Set<InfinispanMachine> instacesToIspnMachines() throws UnknownHostException {
+        Set<InfinispanMachine> ispnMachines = new HashSet<InfinispanMachine>();
+        for( String machine : runningInstances() ){
+            String hostname = InetAddress.getByName(machine).getHostName();
+            String address = machine;
+            log.info("Mapping FutureGrid instances to infinispan machines (" +  hostname + ", " + address + ")" );
+
+            ispnMachines.add( new InfinispanMachine(hostname, jmxPort, address) );
+        }
+        return ispnMachines;
     }
 
 }

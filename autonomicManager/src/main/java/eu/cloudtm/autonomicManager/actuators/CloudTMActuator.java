@@ -208,6 +208,24 @@ public class CloudTMActuator implements IActuator {
     }
 
     @Override
+    public void triggerRebalancing(boolean enabled) throws ActuatorException {
+        Set<InfinispanMachine> ispnMachines = instacesToIspnMachines();
+        InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
+
+        try {
+            infinispanClient.triggerRebalancing(enabled);
+
+        } catch (InvocationException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        } catch (NoJmxProtocolRegisterException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        }
+
+    }
+
+    @Override
     public List<String> runningInstances(){
 
         List<String> runningInstances = new ArrayList<String>();

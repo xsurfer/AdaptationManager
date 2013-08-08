@@ -65,7 +65,7 @@ public class TestFakeOracle {
                         OutputOracle outputOracle = fake.forecast( inputOracle );
 
 
-                        if( outputOracle.throughput() > maxThroughput ){
+                        if( outputOracle.throughput(0) > maxThroughput ){
                             finalNumNodes = numNodes;
                             finalRepDegree = repDegree;
                             finalRepProt = protocol;

@@ -1,5 +1,9 @@
-package eu.cloudtm.autonomicManager;
+package eu.cloudtm.autonomicManager.optimizers;
 
+import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
+import eu.cloudtm.autonomicManager.ControllerLogger;
+import eu.cloudtm.autonomicManager.Reconfigurator;
+import eu.cloudtm.autonomicManager.SLAManager;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
 import eu.cloudtm.autonomicManager.oracles.OracleService;
@@ -13,25 +17,29 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public class MuleOptimizer extends AbstractOptimizer {
+public class MulePlatformOptimizer extends AbstractPlatformOptimizer {
 
-    private static Log log = LogFactory.getLog(MuleOptimizer.class);
+    private static Log log = LogFactory.getLog(MulePlatformOptimizer.class);
 
-    public MuleOptimizer(IReconfigurator reconfigurator,
-                         SLAManager slaManager,
-                         PlatformConfiguration platformConfiguration,
-                         PlatformTuning platformTuning) {
+    public MulePlatformOptimizer(Reconfigurator reconfigurator,
+                                 SLAManager slaManager,
+                                 PlatformConfiguration platformConfiguration,
+                                 PlatformTuning platformTuning) {
         super(reconfigurator, slaManager, platformConfiguration, platformTuning);
     }
 
 
-    public void optimize(ProcessedSample processedSample) throws OracleException {
+    public void optimize(ProcessedSample processedSample) {
 
         ControllerLogger.log.info("Mule Optimizer: Querying " + platformTuning.forecaster() + " oracle");
         OracleService oracleService = OracleService.getInstance(platformTuning.forecaster().getOracleClass());
 
-        PlatformConfiguration forecastedConfig;
-        forecastedConfig = oracleService.maximizeThroughput(processedSample);
+        PlatformConfiguration forecastedConfig = null;
+        try {
+            forecastedConfig = oracleService.maximizeThroughput(processedSample);
+        } catch (OracleException e) {
+            e.printStackTrace();
+        }
 
         if( forecastedConfig != null ){
             ControllerLogger.log.info(" »»» Configuration found «««" );

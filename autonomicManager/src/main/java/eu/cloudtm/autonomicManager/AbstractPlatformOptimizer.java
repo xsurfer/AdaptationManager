@@ -13,19 +13,19 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public abstract class AbstractOptimizer implements Optimizer {
+public abstract class AbstractPlatformOptimizer implements Optimizer {
 
-    private static Log log = LogFactory.getLog(AbstractOptimizer.class);
+    private static Log log = LogFactory.getLog(AbstractPlatformOptimizer.class);
 
     protected PlatformTuning platformTuning;
     protected PlatformConfiguration platformConfiguration;
-    protected IReconfigurator reconfigurator;
+    protected Reconfigurator reconfigurator;
     protected SLAManager slaManager;
 
-    public AbstractOptimizer(IReconfigurator reconfigurator,
-                             SLAManager slaManager,
-                             PlatformConfiguration platformConfiguration,
-                             PlatformTuning platformTuning){
+    public AbstractPlatformOptimizer(Reconfigurator reconfigurator,
+                                     SLAManager slaManager,
+                                     PlatformConfiguration platformConfiguration,
+                                     PlatformTuning platformTuning){
         this.slaManager = slaManager;
         this.platformTuning = platformTuning;
         this.reconfigurator = reconfigurator;

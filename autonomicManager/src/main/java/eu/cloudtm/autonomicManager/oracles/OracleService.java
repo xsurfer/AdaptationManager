@@ -52,7 +52,7 @@ public class OracleService implements IOracleService {
                                 double abortRateToGuarantee,
                                 double responseTimeToGuarantee ) {
 
-        if(outputOracle.abortRate() < abortRateToGuarantee){
+        if(outputOracle.abortRate(0) < abortRateToGuarantee){
             return false;
         }
 
@@ -142,7 +142,7 @@ public class OracleService implements IOracleService {
                     OutputOracle outputOracle = oracle.forecast( inputOracle );
 
 
-                    if( outputOracle.throughput() > maxThroughput ){
+                    if( outputOracle.throughput(0) > maxThroughput ){
                         finalNumNodes = numNodes;
                         finalRepDegree = repDegree;
                         finalRepProt = protocol;
@@ -198,7 +198,7 @@ public class OracleService implements IOracleService {
 //                    );
                     OutputOracle outputOracle = oracle.forecast( inputOracle );
 
-                    if( outputOracle.throughput() >= arrivalRateToGuarantee && outputOracle.abortRate() <= abortRateToGuarantee ){
+                    if( outputOracle.throughput(0) >= arrivalRateToGuarantee && outputOracle.abortRate(0) <= abortRateToGuarantee ){
                         found = true;
                         finalNumNodes = numNodes;
                         finalRepDegree = repDegree;

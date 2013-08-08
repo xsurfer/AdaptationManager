@@ -1,12 +1,15 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
+import eu.cloudtm.autonomicManager.actuators.ActuatorFactory;
 import eu.cloudtm.autonomicManager.actuators.CloudTMActuator;
 import eu.cloudtm.autonomicManager.actuators.clients.RadargunClient;
 import eu.cloudtm.autonomicManager.actuators.clients.RadargunClientJMX;
 import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
+import eu.cloudtm.autonomicManager.optimizers.MulePlatformOptimizer;
+import eu.cloudtm.autonomicManager.reconfigurators.PlatformReconfigurator;
 import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import eu.cloudtm.autonomicManager.statistics.WPMStatsManagerFactory;
@@ -26,22 +29,18 @@ import java.net.MalformedURLException;
  */
 public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory {
 
-    private State platformState;
-    private IReconfigurator reconfigurator;
-    private PlatformTuning platformTuning;
+    private ActuatorFactory actuatorFactory = new ActuatorFactory();
+
+    private State platformState = new State(PlatformState.RUNNING);
+    private Reconfigurator reconfigurator;
+    private PlatformTuning platformTuning = new PlatformTuning(Forecaster.ANALYTICAL, true);
     private PlatformConfiguration platformConfiguration;
-    private AbstractOptimizer optimizer;
+    private AbstractPlatformOptimizer optimizer;
     private SLAManager slaManager;
     private WorkloadAnalyzer workloadAnalyzer;
     private RESTServer restServer;
 
-    private IActuator actuator;
-    private RadargunClient radargunClient;
-
     private StatsManager wpmStatsManager;
-
-    private WPMStatsManagerFactory wpmStatsManagerFactory;
-    //private WorkloadAnalyzerFactory workloadAnalyzerFactory;
 
     public AutonomicManagerFactory(){
     }
@@ -53,7 +52,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
 
         AutonomicManager autonomicManager = new AutonomicManager(
                 getPlatformConfiguration(),
-                getPlatformTuning(),
+                platformTuning,
                 wpmStatsManager,
                 getWorkloadAnalyzer(),
                 getOptimizer(),
@@ -68,21 +67,6 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
         return autonomicManager;
     }
 
-    @Override
-    public State getPlatformState() {
-        if( this.platformState == null ){
-            this.platformState = new State(PlatformState.RUNNING);
-        }
-        return this.platformState;
-    }
-
-    @Override
-    public PlatformTuning getPlatformTuning() {
-        if( this.platformTuning==null ) {
-            this.platformTuning= new PlatformTuning(Forecaster.ANALYTICAL, true);
-        }
-        return this.platformTuning;
-    }
 
     @Override
     public PlatformConfiguration getPlatformConfiguration() {
@@ -92,64 +76,20 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
         return this.platformConfiguration;
     }
 
-    public RadargunClient getRadargunClient(){
-
-        if(radargunClient == null){
-            String actuator = Config.getInstance().getString( KeyConfig.RADARGUN_ACTUATOR.key() );
-
-            if(actuator.equals("JMX")){
-                radargunClient = new RadargunClientJMX( Config.getInstance().getString( KeyConfig.RADARGUN_COMPONENT.key() ) );
-            } else {
-                // TO IMPLEMENT SLAVEKILLER CLIENT
-                throw new RuntimeException("TO IMPLEMENT");
-            }
-        }
-        return radargunClient;
-    }
-
-    public DeltaCloudClient getDeltaCloudClient(){
-        String hostname = Config.getInstance().getString( KeyConfig.DELTACLOUD_URL.key() );
-        String username = Config.getInstance().getString( KeyConfig.DELTACLOUD_USER.key() );
-        String password = Config.getInstance().getString( KeyConfig.DELTACLOUD_PASSWORD.key() );
-        DeltaCloudClient deltaCloudClient;
-        try {
-            deltaCloudClient = new DeltaCloudClientImpl(hostname, username, password);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (DeltaCloudClientException e) {
-            throw new RuntimeException(e);
-        }
-        return deltaCloudClient;
-    }
-
-    public IActuator getActuator(){
-        if( this.actuator == null ){
-            int jmxPort = Config.getInstance().getInt( KeyConfig.ISPN_JMX_PORT.key() );
-            String imageId = Config.getInstance().getString( KeyConfig.DELTACLOUD_IMAGE.key() );
-            String flavorId = Config.getInstance().getString( KeyConfig.DELTACLOUD_FLAVOR.key() );
-
-            String domain = Config.getInstance().getString( KeyConfig.ISPN_DOMAIN.key() );
-            String cacheName = Config.getInstance().getString( KeyConfig.ISPN_CACHE_NAME.key() );
-
-            //this.actuator = new CloudTMActuator( getDeltaCloudClient(), jmxPort, imageId, flavorId, domain, cacheName );
-            this.actuator = new CloudTMActuator( getDeltaCloudClient(), getRadargunClient(), jmxPort, imageId, flavorId, domain, cacheName ); // with radargun
-        }
-        return actuator;
-    }
 
     @Override
-    public IReconfigurator getReconfigurator() {
+    public Reconfigurator getReconfigurator() {
         if( this.reconfigurator == null ){
-            this.reconfigurator = new Reconfigurator( getPlatformConfiguration(), getPlatformState(), getActuator());
+            this.reconfigurator = new PlatformReconfigurator( getPlatformConfiguration(), platformState, actuatorFactory.build()  );
         }
         return reconfigurator;
     }
 
     @Override
-    public AbstractOptimizer getOptimizer() {
+    public AbstractPlatformOptimizer getOptimizer() {
 
         if( this.optimizer == null ){
-            this.optimizer = new MuleOptimizer(getReconfigurator(), getSLAManager(), getPlatformConfiguration() ,getPlatformTuning());
+            this.optimizer = new MulePlatformOptimizer(getReconfigurator(), getSLAManager(), getPlatformConfiguration() ,platformTuning);
         }
         return this.optimizer;
     }

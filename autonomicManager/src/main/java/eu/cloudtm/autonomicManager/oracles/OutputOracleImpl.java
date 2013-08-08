@@ -20,18 +20,33 @@ public class OutputOracleImpl implements OutputOracle {
     }
 
     @Override
-    public double throughput() {
+    public double throughput(int txClassId) {
         return throughput;
     }
 
     @Override
-    public double abortRate() {
+    public double abortRate(int txClassId) {
         return abortProbability;
     }
 
     @Override
     public double responseTime(int txClassId) {
         return responseTimeRead;
+    }
+
+    @Override
+    public double getConfidenceThroughput(int txClassId) {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public double getConfidenceAbortRate(int txClassId) {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public double getConfidenceResponseTime(int txClassId) {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

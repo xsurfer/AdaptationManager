@@ -12,10 +12,13 @@ public enum KeyConfig {
     ALERT_MANAGER_POLICY("alertManager.policy"),
 
 
-    /* ******* CLOUD-TM ACTUATOR ******* */
+    /* ******* ACTUATOR ******* */
+
+    ACTUATOR_TYPE("actuator.type"),
+    ACTUATOR_IS_RADARGUN("actuator.isRadargun"),
+
     DELTACLOUD_MAX_RETRIES("deltacloud.maxRetries"),
     DELTACLOUD_SECONDS_BETWEEN_RETRY("deltacloud.timeBetweenRetry"),
-
 
     DELTACLOUD_URL("deltacloud.url"),
     DELTACLOUD_USER("deltacloud.user"),
@@ -34,7 +37,7 @@ public enum KeyConfig {
     ISPN_ACTUATOR_FORCE_STOP("infinispan.forceStop"),
     ISPN_ACTUATOR_ABORT_ON_STOP("infinispan.abortOnStop"),
 
-    RADARGUN_ACTUATOR("radargun.actuator"),
+    RADARGUN_CLIENT("radargun.client"),
     RADARGUN_COMPONENT("radargun.component"),
 
 

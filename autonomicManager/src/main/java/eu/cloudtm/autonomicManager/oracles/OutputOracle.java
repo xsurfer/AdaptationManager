@@ -7,9 +7,17 @@ package eu.cloudtm.autonomicManager.oracles;
  */
 public interface OutputOracle {
 
-    public double throughput();
+    public double throughput(int txClassId);
 
-    public double abortRate();
+    public double abortRate(int txClassId);
 
     public double responseTime(int txClassId);
+
+    public double getConfidenceThroughput(int txClassId);
+
+    public double getConfidenceAbortRate(int txClassId);
+
+    public double getConfidenceResponseTime(int txClassId);
+
+
 }

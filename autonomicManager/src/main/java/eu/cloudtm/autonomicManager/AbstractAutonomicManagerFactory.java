@@ -17,15 +17,11 @@ public interface AbstractAutonomicManagerFactory {
 
     public AutonomicManager build();
 
-    public State getPlatformState();
-
-    public PlatformTuning getPlatformTuning();
-
     public PlatformConfiguration getPlatformConfiguration();
 
-    public IReconfigurator getReconfigurator();
+    public Reconfigurator getReconfigurator();
 
-    public AbstractOptimizer getOptimizer();
+    public AbstractPlatformOptimizer getOptimizer();
 
     public SLAManager getSLAManager();
 

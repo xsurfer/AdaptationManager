@@ -1,8 +1,8 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.AbstractOptimizer;
+import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
 import eu.cloudtm.autonomicManager.ControllerLogger;
-import eu.cloudtm.autonomicManager.IReconfigurator;
+import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,8 +22,8 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
 
     private ReentrantLock reconfigurationLock = new ReentrantLock();
 
-    public PureReactiveAlertManager(AbstractOptimizer optimizer,
-                                    IReconfigurator reconfigurator) {
+    public PureReactiveAlertManager(AbstractPlatformOptimizer optimizer,
+                                    Reconfigurator reconfigurator) {
         super(optimizer, reconfigurator);
     }
 
@@ -40,16 +40,13 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
                 ControllerLogger.log.info("Lock successfully acquired");
                 try{
                     optimizer.optimize( event.getSample() );
-                } catch (OracleException e) {
-                    ControllerLogger.log.warn("Exception thrown querying oracles");
-                    log.warn(e,e);
                 } finally {
                     ControllerLogger.log.info("releasing lock");
                     reconfigurationLock.unlock();
                 }
             }
         } else {
-            ControllerLogger.log.info("Reconfigurator busy! Skipping new reconf...");
+            ControllerLogger.log.info("PlatformReconfigurator busy! Skipping new reconf...");
         }
     }
 }
