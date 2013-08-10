@@ -2,25 +2,15 @@ package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
 import eu.cloudtm.autonomicManager.actuators.ActuatorFactory;
-import eu.cloudtm.autonomicManager.actuators.CloudTMActuator;
-import eu.cloudtm.autonomicManager.actuators.clients.RadargunClient;
-import eu.cloudtm.autonomicManager.actuators.clients.RadargunClientJMX;
 import eu.cloudtm.autonomicManager.commons.*;
-import eu.cloudtm.autonomicManager.configs.Config;
-import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.optimizers.MulePlatformOptimizer;
-import eu.cloudtm.autonomicManager.reconfigurators.PlatformReconfigurator;
 import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import eu.cloudtm.autonomicManager.statistics.WPMStatsManagerFactory;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzerFactory;
-import org.apache.deltacloud.client.DeltaCloudClient;
-import org.apache.deltacloud.client.DeltaCloudClientException;
-import org.apache.deltacloud.client.DeltaCloudClientImpl;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 /**
  * Created by: Fabio Perfetti
@@ -80,7 +70,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     @Override
     public Reconfigurator getReconfigurator() {
         if( this.reconfigurator == null ){
-            this.reconfigurator = new PlatformReconfigurator( getPlatformConfiguration(), platformState, actuatorFactory.build()  );
+            this.reconfigurator = new ReconfiguratorImpl( getPlatformConfiguration(), platformState, actuatorFactory.build()  );
         }
         return reconfigurator;
     }

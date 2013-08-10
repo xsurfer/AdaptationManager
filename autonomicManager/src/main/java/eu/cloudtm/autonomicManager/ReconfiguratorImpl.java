@@ -1,20 +1,16 @@
-package eu.cloudtm.autonomicManager.reconfigurators;
+package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.ControllerLogger;
-import eu.cloudtm.autonomicManager.IActuator;
-import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
-import eu.cloudtm.autonomicManager.commons.InstanceConfig;
-import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.PlatformState;
-import eu.cloudtm.autonomicManager.commons.State;
+import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
+import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,11 +21,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public class PlatformReconfigurator implements Reconfigurator<PlatformConfiguration> {
+public class ReconfiguratorImpl implements Reconfigurator {
 
     private static int SECONDS_BETWEEN_RECONFIGURATIONS = Config.getInstance().getInt(KeyConfig.RECONFIGURATOR_SECONDS_BETWEEN_RECONFIGURATIONS.key() );
 
-    private final Log log = LogFactory.getLog(PlatformReconfigurator.class);
+    private final Log log = LogFactory.getLog(ReconfiguratorImpl.class);
 
     private Date lastReconfiguration;
 
@@ -39,7 +35,7 @@ public class PlatformReconfigurator implements Reconfigurator<PlatformConfigurat
 
     private final PlatformConfiguration current;
 
-    private volatile PlatformConfiguration request;
+    private volatile Map<OptimizerType, Object> request;
 
     private AtomicBoolean reconfiguring = new AtomicBoolean(false);
 
@@ -53,7 +49,7 @@ public class PlatformReconfigurator implements Reconfigurator<PlatformConfigurat
 
     private IActuator actuator;
 
-    public PlatformReconfigurator(PlatformConfiguration current, State platformState, IActuator actuator) {
+    public ReconfiguratorImpl(PlatformConfiguration current, State platformState, IActuator actuator) {
         this.current = current;
         this.platformState = platformState;
         this.actuator = actuator;
@@ -61,7 +57,7 @@ public class PlatformReconfigurator implements Reconfigurator<PlatformConfigurat
     }
 
     @Override
-    public void reconfigure(PlatformConfiguration toReconfigure) {
+    public void reconfigure(Map<OptimizerType, Object> toReconfigure) {
 
         // in case of error during the last reconfiguration, I'm throwing a RuntimeException
         if(error!=null){
@@ -96,57 +92,22 @@ public class PlatformReconfigurator implements Reconfigurator<PlatformConfigurat
     private void start(){
         ControllerLogger.log.info("#####################");
         ControllerLogger.log.info("Starting a new reconfigurarion request");
-        ControllerLogger.log.info(request);
+        //ControllerLogger.log.info(request);
         ControllerLogger.log.info("#####################");
-
 
         try{
             if(testing){
                 ControllerLogger.log.warn("Simulating reconfiguration...No instance will be changed!");
             } else {
 
-                try {
-                    actuator.triggerRebalancing(false);
-                    log.info("State transfer disabled..");
-                } catch (ActuatorException e) {
-                    throw new ReconfiguratorException(e);
+                PlatformConfiguration toReconfigurePlatform = (PlatformConfiguration) request.get(OptimizerType.PLATFORM);
+                if( toReconfigurePlatform!=null ){
+                    platformReconfiguration(toReconfigurePlatform);
+                } else {
+                    log.info("No reconfiguration platform found in the request!");
                 }
-
-
-                ControllerLogger.log.info("Reconfiguring degree");
-                reconfigureDegree();
-                ControllerLogger.log.info("Replication degree successfully switched to " + request.replicationDegree() + " !" );
-
-                ControllerLogger.log.info("Reconfiguring scale");
-                reconfigureSize();
-                ControllerLogger.log.info("Scale successfully switched to " + request.platformSize() + " !" );
-
-                // TODO CHECK THE NUM NODEs
-                log.info("Waiting 20 secs");
-                try {
-                    Thread.sleep(20000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    actuator.triggerRebalancing(true);
-                    log.info("State transfer enabled..");
-                } catch (ActuatorException e) {
-                    throw new ReconfiguratorException(e);
-                }
-
-                ControllerLogger.log.info("Reconfiguring protocol");
-                reconfigureProtocol();
-                ControllerLogger.log.info("Replication protocol successfully switched to " + request.replicationProtocol() + " !" );
-
-
             }
 
-            ControllerLogger.log.info("Updating Current Configuration");
-            current.setPlatformScale( request.platformSize(), InstanceConfig.MEDIUM );
-            current.setRepDegree( request.replicationDegree() );
-            current.setRepProtocol( request.replicationProtocol() );
             request = null;
 
         } catch (Exception e) {     // capturing all the exceptions because if ignoreError=false, AM must die
@@ -175,10 +136,56 @@ public class PlatformReconfigurator implements Reconfigurator<PlatformConfigurat
 
     }
 
-    private void reconfigureSize() throws ReconfiguratorException {
+
+    private void platformReconfiguration(PlatformConfiguration platformRequest) throws ReconfiguratorException {
+
+        try {
+            actuator.triggerRebalancing(false);
+            log.info("State transfer disabled..");
+        } catch (ActuatorException e) {
+            throw new ReconfiguratorException(e);
+        }
+
+
+        ControllerLogger.log.info("Reconfiguring degree");
+        reconfigureDegree(platformRequest.replicationDegree());
+        ControllerLogger.log.info("Replication degree successfully switched to " + platformRequest.replicationDegree() + " !" );
+
+        ControllerLogger.log.info("Reconfiguring scale");
+        reconfigureSize(platformRequest.platformSize());
+        ControllerLogger.log.info("Scale successfully switched to " + platformRequest.platformSize() + " !" );
+
+        // TODO CHECK THE NUM NODEs
+        log.info("Waiting 20 secs");
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            actuator.triggerRebalancing(true);
+            log.info("State transfer enabled..");
+        } catch (ActuatorException e) {
+            throw new ReconfiguratorException(e);
+        }
+
+        ControllerLogger.log.info("Reconfiguring protocol");
+        reconfigureProtocol(platformRequest.replicationProtocol());
+        ControllerLogger.log.info("Replication protocol successfully switched to " + platformRequest.replicationProtocol() + " !" );
+
+
+        ControllerLogger.log.info("Updating Current Configuration");
+        current.setPlatformScale( platformRequest.platformSize(), InstanceConfig.MEDIUM );
+        current.setRepDegree( platformRequest.replicationDegree() );
+        current.setRepProtocol( platformRequest.replicationProtocol() );
+
+    }
+
+    private void reconfigureSize(int platformSize) throws ReconfiguratorException {
 
         int currSize = actuator.runningInstances().size();
-        int numInstancesToChange = request.platformSize() - currSize; //  <<< COULD BE NEGATIVE, use Math.abs() >>>
+        int numInstancesToChange = platformSize - currSize; //  <<< COULD BE NEGATIVE, use Math.abs() >>>
         ControllerLogger.log.info("To change: " + numInstancesToChange );
 
 
@@ -203,20 +210,20 @@ public class PlatformReconfigurator implements Reconfigurator<PlatformConfigurat
 
     }
 
-    private void reconfigureProtocol() throws ReconfiguratorException {
+    private void reconfigureProtocol(ReplicationProtocol replicationProtocol) throws ReconfiguratorException {
         boolean forceStop = Config.getInstance().getBoolean( KeyConfig.ISPN_ACTUATOR_FORCE_STOP.key() );
         boolean abortOnStop = Config.getInstance().getBoolean( KeyConfig.ISPN_ACTUATOR_ABORT_ON_STOP.key() );
 
         try {
-            actuator.switchProtocol( request.replicationProtocol() );
+            actuator.switchProtocol(replicationProtocol);
         } catch (ActuatorException e) {
             throw new ReconfiguratorException(e);
         }
     }
 
-    private void reconfigureDegree() throws ReconfiguratorException {
+    private void reconfigureDegree(int replicationDegree) throws ReconfiguratorException {
         try {
-            actuator.switchDegree(request.replicationDegree());
+            actuator.switchDegree(replicationDegree);
         } catch (ActuatorException e) {
             throw new ReconfiguratorException(e);
         }

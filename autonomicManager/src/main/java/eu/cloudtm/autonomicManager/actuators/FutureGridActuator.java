@@ -12,10 +12,10 @@ import eu.cloudtm.autonomicManager.actuators.clients.RadargunClient;
 import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
 import eu.cloudtm.autonomicManager.actuators.excepions.RadargunException;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.deltacloud.client.DeltaCloudClient;
-import org.apache.deltacloud.client.Instance;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,16 +47,13 @@ public class FutureGridActuator implements IActuator {
     private final String rg_master = "149.165.148.113";
 
     private Set<String> availableMachines = Collections.synchronizedSet ( new HashSet<String>(){{
-        add("149.165.148.242"); add("149.165.148.243"); add("149.165.148.244");
-        add("149.165.148.245"); add("149.165.148.246"); add("149.165.148.247"); add("149.165.148.248");
-        add("149.165.149.11");  add("149.165.149.12");  add("149.165.149.13");  add("149.165.149.100");
-        add("149.165.149.101"); add("149.165.149.102"); add("149.165.149.103"); add("149.165.149.104");
-        add("149.165.149.105"); add("149.165.149.106"); add("149.165.149.107"); add("149.165.149.108");
-        add("149.165.149.109"); add("149.165.149.110"); add("149.165.149.111"); add("149.165.149.112");
-        add("149.165.149.113"); add("149.165.149.114"); add("149.165.149.115"); add("149.165.149.116");
-        add("149.165.149.118"); add("149.165.149.119"); add("149.165.149.120"); add("149.165.149.121");
-        add("149.165.149.122"); add("149.165.149.123"); add("149.165.149.124"); add("149.165.149.125");
-        add("149.165.149.126"); add("149.165.149.127"); add("149.165.149.128"); add("149.165.149.129");
+
+        List<String> nodes = Arrays.asList( Config.getInstance().getStringArray( KeyConfig.FUTUREGRID_NODES.key() ) );
+
+        for(String node : nodes){
+            add(node);
+        }
+
     }} );
 
     private Set<String> runningMachines = Collections.synchronizedSet(new HashSet<String>());
@@ -85,6 +82,7 @@ public class FutureGridActuator implements IActuator {
         this.jmxPort = jmxPort;
         this.ispnDomain = ispnDomain;
         this.ispnCacheName = ispnCacheName;
+        log.info("AvailableMachines: " + availableMachines.size());
 
     }
 
@@ -97,6 +95,7 @@ public class FutureGridActuator implements IActuator {
         this.jmxPort = jmxPort;
         this.ispnDomain = ispnDomain;
         this.ispnCacheName = ispnCacheName;
+        log.info("AvailableMachines: " + availableMachines.size());
     }
 
 
@@ -104,7 +103,7 @@ public class FutureGridActuator implements IActuator {
     @Override
     public synchronized void stopInstance() throws ActuatorException {
 
-        final String command = "bash /root/AutonomicManager/scripts/node/nodeStop.sh";
+        final String command = Config.getInstance().getString( KeyConfig.FUTUREGRID_STOP_SCRIPT.key() );
         final String machine = runningMachines.iterator().next();
 
         if(isRadargun){
@@ -139,7 +138,7 @@ public class FutureGridActuator implements IActuator {
     @Override
     public synchronized void startInstance() throws ActuatorException {
 
-        final String command = "bash /root/AutonomicManager/scripts/node/nodeStart.sh";
+        final String command = Config.getInstance().getString( KeyConfig.FUTUREGRID_START_SCRIPT.key() );
         final String machine = availableMachines.iterator().next();
 
         try {

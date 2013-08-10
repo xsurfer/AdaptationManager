@@ -1,5 +1,9 @@
 package eu.cloudtm.autonomicManager;
 
+import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
+
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: fabio
@@ -7,9 +11,9 @@ package eu.cloudtm.autonomicManager;
  * Time: 11:09 AM
  * To change this template use File | Settings | File Templates.
  */
-public interface Reconfigurator<T> {
+public interface Reconfigurator {
 
-    public void reconfigure(T toReconfigure);
+    public void reconfigure(Map<OptimizerType, Object> toReconfigure);
 
     public boolean isReconfiguring();
 

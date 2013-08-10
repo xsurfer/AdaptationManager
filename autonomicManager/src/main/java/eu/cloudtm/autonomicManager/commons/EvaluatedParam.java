@@ -13,6 +13,9 @@ public enum EvaluatedParam {
     CORE_PER_CPU                ( 1, "CORE_PER_CPU" ),
     MAX_ACTIVE_THREADS          ( 2, "MAX_ACTIVE_THREADS" ),
     SYSTEM_TYPE                 ( 3, "SYSTEM_TYPE" ),
+    DATA_ACCESS_FREQUENCIES     ( 4, "DATA_ACCESS_FREQUENCIES" ),
+    TX_INVOKER_FREQUENCY        ( 5, "TX_INVOKER_FREQUENCY" ),
+    TX_RESPONSE_TIME            ( 6, "TX_RESPONSE_TIME" ),
 
     ;
 

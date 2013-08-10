@@ -184,72 +184,72 @@ $(document).ready(
 		</table>
 		
 		<h3>Workload and Performance Monitor:</h3>
+				
+		<iframe src="http://127.0.0.1/stats2/index.php?rootFolder=csv" style="width: 100%; height: 900px"></iframe>
 		
-		<form id="plot">	
-		<fieldset>		
-			<legend>Manage plots</legend>
-				<div class="table">
-					<div class="row">
-						<div class="column">Instance</div>
-						<div class="column">Category</div>
-						<div class="column">Attribute</div>
-						<div class="column">Title</div>
-						<div class="column">Action</div>
-					</div>
-					<div class="row">
-						<div class="column">
-							<select>
-								<option value="SMALL">Cluster</option>
-							</select>
-						</div>
-						<div class="column">
-							<select>
-								<option value="SMALL">CAT</option>
-							</select>
-						</div>
-						<div class="column">
-							<select>
-								<option value="SMALL">ATTR</option>
-							</select>
-						</div>
-						<div class="column">
-							<input type="text" size="30" />
-						</div>
-						<div class="column">
-							<input type="button" value="Add" />
-						</div>
-					</div>					
-				</div>		
-			</fieldset>				
-		</form>
 		
-		<div>Double click to delete</div>
+<!-- 		<form id="plot">	 -->
+<!-- 		<fieldset>		 -->
+<!-- 			<legend>Manage plots</legend> -->
+<!-- 				<div class="table"> -->
+<!-- 					<div class="row"> -->
+<!-- 						<div class="column">Instance</div> -->
+<!-- 						<div class="column">Category</div> -->
+<!-- 						<div class="column">Attribute</div> -->
+<!-- 						<div class="column">Title</div> -->
+<!-- 						<div class="column">Action</div> -->
+<!-- 					</div> -->
+<!-- 					<div class="row"> -->
+<!-- 						<div class="column"> -->
+<%-- 							<select> --%>
+<!-- 								<option value="SMALL">Cluster</option> -->
+<%-- 							</select> --%>
+<!-- 						</div> -->
+<!-- 						<div class="column"> -->
+<%-- 							<select> --%>
+<!-- 								<option value="SMALL">CAT</option> -->
+<%-- 							</select> --%>
+<!-- 						</div> -->
+<!-- 						<div class="column"> -->
+<%-- 							<select> --%>
+<!-- 								<option value="SMALL">ATTR</option> -->
+<%-- 							</select> --%>
+<!-- 						</div> -->
+<!-- 						<div class="column"> -->
+<!-- 							<input type="text" size="30" /> -->
+<!-- 						</div> -->
+<!-- 						<div class="column"> -->
+<!-- 							<input type="button" value="Add" /> -->
+<!-- 						</div> -->
+<!-- 					</div>					 -->
+<!-- 				</div>		 -->
+<!-- 			</fieldset>				 -->
+<!-- 		</form> -->
+		
+<!-- 		<div>Double click to delete</div> -->
 					
-		<div id="container">
-			<div class="item">
-				<div class="plotTitle">Throughput</div>
-				<div id="placeholderThroughput" class="plot"></div>
-			</div>
-			<div class="item">
-				<div class="plotTitle">Nodes</div>
-				<div id="placeholderNodes" class="plot"></div>
-			</div>
-			<div class="item">
-				<div class="plotTitle">Write %</div>
-				<div id="placeholderWritePercentage" class="plot"></div>
-			</div>
-			<div class="item">
-				<div class="plotTitle">Abort Rate %</div>
-				<div id="placeholderAbortRate" class="plot"></div>
-			</div>
-		</div>	   				
+<!-- 		<div id="container"> -->
+<!-- 			<div class="item"> -->
+<!-- 				<div class="plotTitle">Throughput</div> -->
+<!-- 				<div id="placeholderThroughput" class="plot"></div> -->
+<!-- 			</div> -->
+<!-- 			<div class="item"> -->
+<!-- 				<div class="plotTitle">Nodes</div> -->
+<!-- 				<div id="placeholderNodes" class="plot"></div> -->
+<!-- 			</div> -->
+<!-- 			<div class="item"> -->
+<!-- 				<div class="plotTitle">Write %</div> -->
+<!-- 				<div id="placeholderWritePercentage" class="plot"></div> -->
+<!-- 			</div> -->
+<!-- 			<div class="item"> -->
+<!-- 				<div class="plotTitle">Abort Rate %</div> -->
+<!-- 				<div id="placeholderAbortRate" class="plot"></div> -->
+<!-- 			</div> -->
+<!-- 		</div>	   				 -->
 	   	
 	   		   		   			
 	   				
-	   	<!-- 			
-      	<a href="${pageContext.request.contextPath}/registration.jsp">Register</a>
-		 -->
-
+	   	
 		</div>
 		<!-- /col-text -->
 

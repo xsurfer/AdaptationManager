@@ -21,15 +21,13 @@ public class MulePlatformOptimizer extends AbstractPlatformOptimizer {
 
     private static Log log = LogFactory.getLog(MulePlatformOptimizer.class);
 
-    public MulePlatformOptimizer(Reconfigurator reconfigurator,
-                                 SLAManager slaManager,
-                                 PlatformConfiguration platformConfiguration,
+    public MulePlatformOptimizer(PlatformConfiguration platformConfiguration,
                                  PlatformTuning platformTuning) {
-        super(reconfigurator, slaManager, platformConfiguration, platformTuning);
+        super(platformConfiguration, platformTuning);
     }
 
 
-    public void optimize(ProcessedSample processedSample) {
+    public PlatformConfiguration optimize(ProcessedSample processedSample) {
 
         ControllerLogger.log.info("Mule Optimizer: Querying " + platformTuning.forecaster() + " oracle");
         OracleService oracleService = OracleService.getInstance(platformTuning.forecaster().getOracleClass());
@@ -38,14 +36,19 @@ public class MulePlatformOptimizer extends AbstractPlatformOptimizer {
         try {
             forecastedConfig = oracleService.maximizeThroughput(processedSample);
         } catch (OracleException e) {
-            e.printStackTrace();
+            if( log.isDebugEnabled() ){
+                log.debug(e, e);
+            } else {
+                log.warn(e);
+            }
         }
 
         if( forecastedConfig != null ){
             ControllerLogger.log.info(" »»» Configuration found «««" );
-            reconfigurator.reconfigure(createNextConfig(forecastedConfig));
+            return createNextConfig(forecastedConfig);
         } else {
             ControllerLogger.log.info(" »»» Configuration not found «««" );
+            return null;
         }
     }
 }

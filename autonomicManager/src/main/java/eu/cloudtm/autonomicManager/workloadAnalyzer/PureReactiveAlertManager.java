@@ -2,6 +2,7 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
 import eu.cloudtm.autonomicManager.ControllerLogger;
+import eu.cloudtm.autonomicManager.Optimizer;
 import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
@@ -22,7 +23,7 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
 
     private ReentrantLock reconfigurationLock = new ReentrantLock();
 
-    public PureReactiveAlertManager(AbstractPlatformOptimizer optimizer,
+    public PureReactiveAlertManager(Optimizer optimizer,
                                     Reconfigurator reconfigurator) {
         super(optimizer, reconfigurator);
     }
@@ -46,7 +47,7 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
                 }
             }
         } else {
-            ControllerLogger.log.info("PlatformReconfigurator busy! Skipping new reconf...");
+            ControllerLogger.log.info("ReconfiguratorImpl busy! Skipping new reconf...");
         }
     }
 }

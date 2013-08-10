@@ -4,7 +4,6 @@ import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
 import eu.cloudtm.autonomicManager.SLAManager;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
-import eu.cloudtm.autonomicManager.reconfigurators.PlatformReconfigurator;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public abstract class OpenPlatformOptimizer extends AbstractPlatformOptimizer {
+public class OpenPlatformOptimizer extends AbstractPlatformOptimizer {
 
     private static Log log = LogFactory.getLog(OpenPlatformOptimizer.class);
 
@@ -22,16 +21,18 @@ public abstract class OpenPlatformOptimizer extends AbstractPlatformOptimizer {
     private final static int ABORT_GUARANTEE_PERC = 5;
     private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
 
-    public OpenPlatformOptimizer(PlatformReconfigurator reconfigurator,
-                                 SLAManager slaManager,
+    private SLAManager slaManager;
+
+    public OpenPlatformOptimizer(SLAManager slaManager,
                                  PlatformConfiguration platformConfiguration,
                                  PlatformTuning platformTuning) {
-        super(reconfigurator, slaManager, platformConfiguration, platformTuning);
+        super(platformConfiguration, platformTuning);
+        this.slaManager = slaManager;
     }
 
 
-    public void optimize(ProcessedSample processedSample) {
-
+    public PlatformConfiguration optimize(ProcessedSample processedSample) {
+        throw new RuntimeException("TO IMPLEMENT");
     }
 
 

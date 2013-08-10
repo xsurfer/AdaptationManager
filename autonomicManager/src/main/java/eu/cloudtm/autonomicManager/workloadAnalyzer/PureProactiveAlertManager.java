@@ -1,7 +1,7 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
-import eu.cloudtm.autonomicManager.reconfigurators.PlatformReconfigurator;
+import eu.cloudtm.autonomicManager.ReconfiguratorImpl;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,7 +14,7 @@ public class PureProactiveAlertManager extends AbstractAlertManager {
 
     public PureProactiveAlertManager(AbstractChangeDetector changeDetector,
                                      AbstractPlatformOptimizer optimizer,
-                                     PlatformReconfigurator reconfigurator) {
+                                     ReconfiguratorImpl reconfigurator) {
         super(optimizer, reconfigurator);
         throw new RuntimeException("NOT IMPLEMENTED YET");
         // TODO implement this
