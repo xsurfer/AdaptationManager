@@ -46,9 +46,11 @@ public abstract class ProcessedSample implements Sample {
         evaluatedParams.put( EvaluatedParam.ACF, getACF() );
         evaluatedParams.put( EvaluatedParam.CORE_PER_CPU, getCoreCPU() );
         evaluatedParams.put( EvaluatedParam.SYSTEM_TYPE, getSystemType() );
-        evaluatedParams.put( EvaluatedParam.DATA_ACCESS_FREQUENCIES, getDataAccessFrequencies() );
-        evaluatedParams.put( EvaluatedParam.TX_INVOKER_FREQUENCY, getTxInvokeFrequency() );
-        evaluatedParams.put( EvaluatedParam.TX_RESPONSE_TIME, getTxResponseTime() );
+
+        log.warn("STOYAN's CODE COMMENTED in ProcessedSample! ");
+        //evaluatedParams.put( EvaluatedParam.DATA_ACCESS_FREQUENCIES, getDataAccessFrequencies() );
+        //evaluatedParams.put( EvaluatedParam.TX_INVOKER_FREQUENCY, getTxInvokeFrequency() );
+        //evaluatedParams.put( EvaluatedParam.TX_RESPONSE_TIME, getTxResponseTime() );
 
     }
 

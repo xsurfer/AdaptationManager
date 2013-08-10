@@ -25,10 +25,11 @@ public class OptimizerImpl implements Optimizer {
     private static Log log = LogFactory.getLog(OptimizerImpl.class);
     private Reconfigurator reconfigurator;
 
-    private List<OptimizerFilter> optimizerFilters = new ArrayList<OptimizerFilter>();
+    private List<OptimizerFilter> optimizerFilters;
 
-    public OptimizerImpl(Reconfigurator reconfigurator){
+    public OptimizerImpl(Reconfigurator reconfigurator, List<OptimizerFilter> optimizerFilters){
         this.reconfigurator = reconfigurator;
+        this.optimizerFilters = optimizerFilters;
     }
 
     @Override

@@ -3,6 +3,7 @@ package eu.cloudtm.autonomicManager;
 import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
@@ -10,7 +11,9 @@ import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -25,7 +28,7 @@ public class AutonomicManager {
     private PlatformConfiguration platformConfiguration;
     private StatsManager statsManager;
     private WorkloadAnalyzer workloadAnalyzer;
-    private AbstractPlatformOptimizer optimizer;
+    private Optimizer optimizer;
     private Reconfigurator reconfigurator;
 
 
@@ -33,7 +36,7 @@ public class AutonomicManager {
                             PlatformTuning platformTuning,
                             StatsManager sampleManager,
                             WorkloadAnalyzer workloadAnalyzer,
-                            AbstractPlatformOptimizer optimizer,
+                            Optimizer optimizer,
                             Reconfigurator reconfigurator){
         this.statsManager = sampleManager;
         this.platformConfiguration = platformConfiguration;
@@ -97,7 +100,7 @@ public class AutonomicManager {
 
     private void customConfiguration(){
 
-        PlatformConfiguration configuration = new PlatformConfiguration();
+        PlatformConfiguration platformConfiguration = new PlatformConfiguration();
 
 
 
@@ -106,22 +109,26 @@ public class AutonomicManager {
 
             log.info("Nodes: ");
             int nodes = in.nextInt();
-            configuration.setPlatformScale(nodes, InstanceConfig.MEDIUM);
+            platformConfiguration.setPlatformScale(nodes, InstanceConfig.MEDIUM);
 
 
             log.info("Degree: ");
             int degree = in.nextInt();
-            configuration.setRepDegree(degree);
+            platformConfiguration.setRepDegree(degree);
 
             log.info("Protocol {2PC, TO, PB}: ");
             String protocolString = in.next();
             ReplicationProtocol protocol = ReplicationProtocol.valueOf(protocolString);
-            configuration.setRepProtocol(protocol);
+            platformConfiguration.setRepProtocol(protocol);
 
         } catch (IllegalArgumentException e){
             log.info("Illegal value for replication protocol!");
             return;
         }
+
+        Map<OptimizerType, Object> configuration = new HashMap<OptimizerType, Object>();
+        configuration.put(OptimizerType.PLATFORM, platformConfiguration);
+        configuration.put(OptimizerType.LARD, null);
 
         reconfigurator.reconfigure( configuration );
     }
@@ -131,11 +138,7 @@ public class AutonomicManager {
     }
 
     private void optimizeNow(){
-        try {
-            optimizer.doOptimize( statsManager.getLastSample() );
-        } catch (OracleException e) {
-            log.warn("Error while querying oracle", e);
-        }
+            optimizer.optimize( statsManager.getLastSample() );
     }
 
     private void whatIf(){

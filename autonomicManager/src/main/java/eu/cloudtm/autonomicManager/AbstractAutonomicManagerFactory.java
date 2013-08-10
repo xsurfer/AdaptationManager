@@ -21,7 +21,7 @@ public interface AbstractAutonomicManagerFactory {
 
     public Reconfigurator getReconfigurator();
 
-    public AbstractPlatformOptimizer getOptimizer();
+    public Optimizer getOptimizer();
 
     public SLAManager getSLAManager();
 

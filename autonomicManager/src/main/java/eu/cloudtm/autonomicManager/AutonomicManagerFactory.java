@@ -3,14 +3,22 @@ package eu.cloudtm.autonomicManager;
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
 import eu.cloudtm.autonomicManager.actuators.ActuatorFactory;
 import eu.cloudtm.autonomicManager.commons.*;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.optimizers.MulePlatformOptimizer;
+import eu.cloudtm.autonomicManager.optimizers.OptimizerFilter;
+import eu.cloudtm.autonomicManager.optimizers.OptimizerImpl;
 import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import eu.cloudtm.autonomicManager.statistics.WPMStatsManagerFactory;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by: Fabio Perfetti
@@ -19,13 +27,15 @@ import java.io.IOException;
  */
 public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory {
 
+    private static Log log = LogFactory.getLog(AutonomicManagerFactory.class);
+
     private ActuatorFactory actuatorFactory = new ActuatorFactory();
 
     private State platformState = new State(PlatformState.RUNNING);
     private Reconfigurator reconfigurator;
     private PlatformTuning platformTuning = new PlatformTuning(Forecaster.ANALYTICAL, true);
     private PlatformConfiguration platformConfiguration;
-    private AbstractPlatformOptimizer optimizer;
+    private Optimizer optimizer;
     private SLAManager slaManager;
     private WorkloadAnalyzer workloadAnalyzer;
     private RESTServer restServer;
@@ -76,10 +86,22 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     }
 
     @Override
-    public AbstractPlatformOptimizer getOptimizer() {
+    public Optimizer getOptimizer() {
 
         if( this.optimizer == null ){
-            this.optimizer = new MulePlatformOptimizer(getReconfigurator(), getSLAManager(), getPlatformConfiguration() ,platformTuning);
+            List<OptimizerFilter> optimizerFilters = new ArrayList<OptimizerFilter>();
+
+
+            String platformOptimizerStr = Config.getInstance().getString( KeyConfig.OPTIMIZER_PLATFORM.key() );
+
+            AbstractPlatformOptimizer platformOptimizer = null;
+            if( platformOptimizerStr.equals("MULE") ){
+                log.trace("Platform Optimizer type: MulePlatformOptimizer");
+                platformOptimizer = new MulePlatformOptimizer(getPlatformConfiguration() ,platformTuning);
+            }
+            optimizerFilters.add(platformOptimizer);
+
+            this.optimizer = new OptimizerImpl(getReconfigurator(), optimizerFilters);
         }
         return this.optimizer;
     }

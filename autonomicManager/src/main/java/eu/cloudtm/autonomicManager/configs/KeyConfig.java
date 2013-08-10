@@ -11,6 +11,11 @@ public enum KeyConfig {
 
     ALERT_MANAGER_POLICY("alertManager.policy"),
 
+    /* ******* OPTIMIZER ******* */
+    OPTIMIZER_PLATFORM("optimizer.platform"),
+    OPTIMIZER_LARD("optimizer.lard"),
+
+
 
     /* ******* ACTUATOR ******* */
 
