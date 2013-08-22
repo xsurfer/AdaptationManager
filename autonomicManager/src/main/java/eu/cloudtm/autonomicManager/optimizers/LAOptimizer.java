@@ -20,6 +20,9 @@ public class LAOptimizer implements OptimizerFilter {
     private LinkedHashMap<Integer,String> reverseTxIDMap;// LDA_tx_ID - txID
     private LinkedHashMap<Integer,String> reverseDomainIDMap;//  LDA_DomClass_ID - domClass
     private LinkedHashMap<Integer,Float> clusterWeight;//normalized load (sum of all loads = 1) expected to be generated in every cluster
+    private LinkedHashMap<String,Integer> primaryDataClusters;// domClass - primary cluster ID
+    private LinkedHashMap<String,Integer> secondaryDataClusters;// domClass - secondary cluster ID
+
 
 
     @Override
@@ -93,7 +96,18 @@ public class LAOptimizer implements OptimizerFilter {
         }
 
         txClusterMap = new LinkedHashMap<String,Integer>();
-        txIDClusterMap = LDA.generateOptimalLDA(ldaInput);
+        LDA_ExtendedResult ldaResult = LDA.generateOptimalLDAResult(ldaInput);
+        //txIDClusterMap = LDA.generateOptimalLDA(ldaInput);
+        txIDClusterMap = ldaResult.getTransactionClusters();
+        int[][] domainDataPlacement = ldaResult.getTop2DataPlacementClusters();//int[numberOfDomainTypes][2]
+        primaryDataClusters = new LinkedHashMap<String,Integer>();
+        secondaryDataClusters = new LinkedHashMap<String,Integer>();
+        
+        for (int i = 0; i < domainDataPlacement.length; i++) {
+            primaryDataClusters.put(reverseDomainIDMap.get(i+1), domainDataPlacement[i][0]);
+            secondaryDataClusters.put(reverseDomainIDMap.get(i+1), domainDataPlacement[i][1]);
+        }
+        
 
         int t = 0;
         int clusters = 0;
