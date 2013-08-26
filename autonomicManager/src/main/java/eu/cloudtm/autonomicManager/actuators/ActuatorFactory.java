@@ -11,7 +11,12 @@ import org.apache.deltacloud.client.DeltaCloudClient;
 import org.apache.deltacloud.client.DeltaCloudClientException;
 import org.apache.deltacloud.client.DeltaCloudClientImpl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Author: Fabio Perfetti (perfabio87 [at] gmail.com)
@@ -37,7 +42,7 @@ public class ActuatorFactory {
     }
 
     public IActuator build(){
-        IActuator actuator;
+
         switch (type){
             case CLOUD_TM:
                 return createCloudTM();
@@ -60,10 +65,36 @@ public class ActuatorFactory {
     private IActuator createFutureGrid(){
         log.info("Creating FutureGrid actuator...");
         if(isRadargun){
-            return  new FutureGridActuator(createRadargunClient(), jmxPort, domain, cacheName ); // with radargun
+            return  new FutureGridActuator(createRadargunClient(), jmxPort, domain, cacheName, availableMachines() ); // with radargun
         } else {
-            return  new FutureGridActuator( jmxPort, domain, cacheName );
+            return  new FutureGridActuator( jmxPort, domain, cacheName, availableMachines() );
         }
+    }
+
+    private Set<String> availableMachines(){
+        Set<String> availableMachines = new HashSet<String>();
+        Scanner sc = null;
+        try {
+            sc = new Scanner(new File( Config.getInstance().getString( KeyConfig.FUTUREGRID_FILE_NODES.key() ) ) );
+        } catch (FileNotFoundException e) {
+            log.warn(e);
+            throw new RuntimeException(e);
+        }
+        while (sc.hasNextLine()) {
+            String aLine = sc.nextLine();
+            if(aLine.length()<=0){
+                continue;
+            }
+
+            if( aLine.startsWith("SLAVE:") ){
+                String machine = aLine.split(":")[1];
+                log.trace("Found available machine: " + machine);
+                availableMachines.add(machine);
+            } else {
+                log.trace("Not valid slave machine (" + aLine + ")" );
+            }
+        }
+        return availableMachines;
     }
 
     private DeltaCloudClient createDeltaCloudClient(){

@@ -46,15 +46,7 @@ public class FutureGridActuator implements IActuator {
 
     private final String rg_master = "149.165.148.113";
 
-    private Set<String> availableMachines = Collections.synchronizedSet ( new HashSet<String>(){{
-
-        List<String> nodes = Arrays.asList( Config.getInstance().getStringArray( KeyConfig.FUTUREGRID_NODES.key() ) );
-
-        for(String node : nodes){
-            add(node);
-        }
-
-    }} );
+    private final Set<String> availableMachines = Collections.synchronizedSet ( new HashSet<String>() );
 
     private Set<String> runningMachines = Collections.synchronizedSet(new HashSet<String>());
 
@@ -76,26 +68,32 @@ public class FutureGridActuator implements IActuator {
 
     public FutureGridActuator(int jmxPort,
                               String ispnDomain,
-                              String ispnCacheName){
+                              String ispnCacheName,
+                              Set<String> availableMachines){
         this.isRadargun = false;
         this.radargunClient = null;
         this.jmxPort = jmxPort;
         this.ispnDomain = ispnDomain;
         this.ispnCacheName = ispnCacheName;
-        log.info("AvailableMachines: " + availableMachines.size());
+
+        this.availableMachines.addAll(availableMachines);
+        log.info("AvailableMachines: " + this.availableMachines.size());
 
     }
 
     public FutureGridActuator(RadargunClient radargunClient,
                               int jmxPort,
                               String ispnDomain,
-                              String ispnCacheName){
+                              String ispnCacheName,
+                              Set<String> availableMachines){
         this.isRadargun = true;
         this.radargunClient = radargunClient;
         this.jmxPort = jmxPort;
         this.ispnDomain = ispnDomain;
         this.ispnCacheName = ispnCacheName;
-        log.info("AvailableMachines: " + availableMachines.size());
+
+        this.availableMachines.addAll(availableMachines);
+        log.info("AvailableMachines: " + this.availableMachines.size());
     }
 
 

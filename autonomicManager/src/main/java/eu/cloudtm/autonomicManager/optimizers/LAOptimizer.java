@@ -1,12 +1,10 @@
 package eu.cloudtm.autonomicManager.optimizers;
 
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
-import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
-import pt.ist.clustering.LDA.*;
+import pt.ist.clustering.LDA.LDA;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
 
 public class LAOptimizer implements OptimizerFilter {
