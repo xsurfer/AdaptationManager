@@ -9,8 +9,8 @@ package eu.cloudtm.autonomicManager.commons;
 public enum Forecaster {
     NONE(false, null),
     COMMITTEE(true, ""),
-    ANALYTICAL(true, "eu.cloudtm.autonomicManager.oracles.FakeOracle"),
-    SIMULATOR(true, "Simulator"),
+    ANALYTICAL(true, "tasOracle.TasOracle"),
+    SIMULATOR(true, "eu.cloudtm.autonomicManager.oracles.FakeOracle"),
     MACHINE_LEARNING(true, "Morpher");
 
     private final boolean autoTuning;

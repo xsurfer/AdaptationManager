@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,15 +36,28 @@ public class OracleService implements IOracleService {
         if (oracleName.indexOf('.') < 0) {
             oracleName = "eu.cloudtm.autonomicManager.oracles." + oracleName;
         }
+
+
         try {
             Oracle obj;
             Constructor c = Class.forName(oracleName).getConstructor();
             obj = (Oracle) c.newInstance();
             OracleService oracleService = new OracleService(obj);
             return oracleService;
-        } catch (Exception e) {
-            String s = "Could not create oracle of type: " + oracleName;
-            log.error(s);
+        } catch (ClassNotFoundException e) {
+            log.error(e);
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            log.error(e);
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            log.error(e);
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            log.error(e);
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            log.error(e);
             throw new RuntimeException(e);
         }
     }

@@ -38,7 +38,7 @@ public class WPMStatsManager extends SampleProducer implements StatsManager {
         }
         stack.push(wpmProcessedSample);
         notifyListeners(wpmProcessedSample);
-        log.trace("New stas added: " + wpmProcessedSample.getId());
+        log.info("New stas added: " + wpmProcessedSample.getId());
     }
 
     @Override
