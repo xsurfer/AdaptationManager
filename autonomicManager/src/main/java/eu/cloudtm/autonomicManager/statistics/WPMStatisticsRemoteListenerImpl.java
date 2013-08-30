@@ -29,6 +29,7 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
     private Processor processor;
 
     public WPMStatisticsRemoteListenerImpl(WPMConnector connector, StatsManager statsManager, SubscribeEvent subscribeEvent, Processor processor){
+        log.trace("Creating WPMStatisticsRemoteListenerImpl");
         this.processor = processor;
 
         this.statsManager = statsManager;

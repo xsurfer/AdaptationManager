@@ -70,7 +70,7 @@ public class WhatIfService {
             } else {
                 OracleService oracleService = OracleService.getInstance( forecaster.getOracleClass() );
                 CustomSample customSample = new CustomSample(processedSample, customParam, customEvaluatedParam);
-                TreeMap<PlatformConfiguration, OutputOracle> currForecast = new TreeMap<PlatformConfiguration, OutputOracle>();
+                TreeMap<PlatformConfiguration, OutputOracle> currForecast;
                 currForecast = oracleService.whatIf( customSample, customParamDTO.getReplicationProtocol(), customParamDTO.getReplicationDegree() );
 
                 for (Map.Entry<PlatformConfiguration, OutputOracle> entry : currForecast.entrySet()){

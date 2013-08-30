@@ -84,9 +84,6 @@ public class WhatIfResource extends AbstractResource {
             @DefaultValue("2")@FormParam("repDegree") Integer repDegree,
             @DefaultValue("TWOPC") @FormParam("repProtocol") ReplicationProtocol repProtocol
     ){
-
-        Double a = new Double("3");
-
         log.trace("acf: " + acf);
         log.trace("percentageSuccessWriteTransactions: " + percentageSuccessWriteTransactions);
         log.trace("avgNumPutsBySuccessfulLocalTx: " + avgNumPutsBySuccessfulLocalTx);

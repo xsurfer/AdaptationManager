@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
+import com.google.gson.Gson;
 import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
@@ -151,20 +152,30 @@ public class AutonomicManager {
 
         WhatIfService whatIfService = new WhatIfService(processedSample);
 
-        WhatIfCustomParamDTO customParamDTO = new WhatIfCustomParamDTO();
+        /* retrieving current values */
+        WhatIfCustomParamDTO customParamDTO = whatIfService.retrieveCurrentValues();
+
+        /* adding whatIf options */
         customParamDTO.addForecaster(Forecaster.ANALYTICAL);
         customParamDTO.setReplicationProtocol(ReplicationProtocol.TWOPC);
-        customParamDTO.setReplicationDegree(4);
-
+        customParamDTO.setReplicationDegree(2);
 
         List<WhatIfDTO> result = whatIfService.evaluate(customParamDTO);
 
-        /* Stampa delle predizioni */
-        for (WhatIfDTO whatIfRes : result){
-            log.info("Forecaster: " + whatIfRes.getForecaster());
-            log.info("to reimplement");
+//        /* Stampa delle predizioni */
+//        for (WhatIfDTO whatIfRes : result){
+//            log.info("Forecaster: " + whatIfRes.getForecaster());
+//            log.info("to reimplement");
+//
+//        }
 
-        }
+        Gson gson = new Gson();
+        String json = gson.toJson(result);
+
+        log.trace("RESULT: " + json);
+
+
+
     }
 
     private void currentConfiguration(){
