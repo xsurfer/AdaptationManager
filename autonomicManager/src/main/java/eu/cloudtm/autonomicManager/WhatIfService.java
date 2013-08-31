@@ -24,7 +24,7 @@ public class WhatIfService {
 
     private static Log log = LogFactory.getLog(WhatIfService.class);
 
-    private ProcessedSample processedSample;
+    private final ProcessedSample processedSample;
 
     public WhatIfService(ProcessedSample processedSample){
         this.processedSample = processedSample;
@@ -69,16 +69,29 @@ public class WhatIfService {
                 throw new RuntimeException("Not yet implemented");
             } else {
                 OracleService oracleService = OracleService.getInstance( forecaster.getOracleClass() );
+                log.info("Querying " + forecaster);
+
+                /* creating custom Sample, with custom maps */
                 CustomSample customSample = new CustomSample(processedSample, customParam, customEvaluatedParam);
-                TreeMap<PlatformConfiguration, OutputOracle> currForecast;
-                currForecast = oracleService.whatIf( customSample, customParamDTO.getReplicationProtocol(), customParamDTO.getReplicationDegree() );
+
+                /* invoking OracleService, which returns a map of configurations-output */
+                TreeMap<PlatformConfiguration, OutputOracle> currForecast = oracleService.whatIf( customSample,
+                        customParamDTO.getReplicationProtocol(),
+                        customParamDTO.getReplicationDegree() );
 
                 for (Map.Entry<PlatformConfiguration, OutputOracle> entry : currForecast.entrySet()){
                     long platformSize = entry.getKey().platformSize();
                     OutputOracle currOut = entry.getValue();
 
-                    currWhatIfResult.addThroughputPoint( platformSize, currOut.throughput(0) );
+                    if(currOut==null){
+                        log.info("Forecaster " + forecaster + " returned a null OutputOracle for PlatformConfiguration " + platformSize);
+                        continue;
+                    }
+
+                    //TODO FIX TX CLASSES
                     log.warn("FIX TX CLASSES");
+
+                    currWhatIfResult.addThroughputPoint( platformSize, currOut.throughput(0) );
                     currWhatIfResult.addReadResponseTimePoint(platformSize, currOut.responseTime(0));
                     currWhatIfResult.addWriteResponseTimePoint(platformSize, currOut.responseTime(1));
                     currWhatIfResult.addAbortRatePoint(platformSize, currOut.abortRate(0));
@@ -93,22 +106,38 @@ public class WhatIfService {
     private Map<Param, Object> extractCustomParam(WhatIfCustomParamDTO whatIfCustomParam){
         Map<Param, Object> customParam = new HashMap<Param, Object>();
         if( whatIfCustomParam!=null ){
+            log.trace("Extracting AvgCommitAsync, whatIfCustomParam contains: " + whatIfCustomParam.getAvgCommitAsync());
             customParam.put(Param.AvgCommitAsync, whatIfCustomParam.getAvgCommitAsync());
+
+            log.trace("Extracting AvgPrepareAsync, whatIfCustomParam contains: " + whatIfCustomParam.getAvgPrepareAsync());
             customParam.put(Param.AvgPrepareAsync, whatIfCustomParam.getAvgPrepareAsync());
+
+            log.trace("Extracting AvgPrepareCommandSize, whatIfCustomParam contains: " + whatIfCustomParam.getAvgPrepareCommandSize());
             customParam.put(Param.AvgPrepareCommandSize, whatIfCustomParam.getAvgPrepareCommandSize() );
+
+            log.trace("Extracting AvgNumPutsBySuccessfulLocalTx, whatIfCustomParam contains: " + whatIfCustomParam.getAvgCommitAsync());
             customParam.put(Param.AvgNumPutsBySuccessfulLocalTx, whatIfCustomParam.getAvgNumPutsBySuccessfulLocalTx() );
+
+            log.trace("Extracting PercentageSuccessWriteTransactions, whatIfCustomParam contains: " + whatIfCustomParam.getPercentageSuccessWriteTransactions());
             customParam.put(Param.PercentageSuccessWriteTransactions, whatIfCustomParam.getPercentageSuccessWriteTransactions() );
+
+            log.trace("Extracting LocalUpdateTxLocalServiceTime, whatIfCustomParam contains: " + whatIfCustomParam.getLocalUpdateTxLocalServiceTime());
             customParam.put(Param.LocalUpdateTxLocalServiceTime, whatIfCustomParam.getLocalUpdateTxLocalServiceTime() );
+
+            log.trace("Extracting LocalReadOnlyTxLocalServiceTime, whatIfCustomParam contains: " + whatIfCustomParam.getLocalReadOnlyTxLocalServiceTime());
             customParam.put(Param.LocalReadOnlyTxLocalServiceTime, whatIfCustomParam.getLocalReadOnlyTxLocalServiceTime() );
         }
+        log.trace("extractCustomParam has extracted " + customParam.size() + " params");
         return customParam;
     }
 
     private Map<EvaluatedParam, Object> extractCustomEvaluatedParam(WhatIfCustomParamDTO whatIfCustomParam){
         Map<EvaluatedParam, Object> customParam = new HashMap<EvaluatedParam, Object>();
         if( whatIfCustomParam!=null ){
+            log.trace("Extracting ACF, whatIfCustomParam contains: " + whatIfCustomParam.getACF());
             customParam.put(EvaluatedParam.ACF, whatIfCustomParam.getACF());
         }
+        log.trace("extractCustomEvaluatedParam has extracted " + customParam.size() + " params");
         return customParam;
     }
 

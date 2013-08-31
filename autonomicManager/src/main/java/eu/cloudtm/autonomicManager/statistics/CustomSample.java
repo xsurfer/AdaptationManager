@@ -19,8 +19,8 @@ public class CustomSample extends ProcessedSample {
     private static Log log = LogFactory.getLog(CustomSample.class);
 
     private ProcessedSample sample;
-    private Map<Param, Object> customParam;
-    private Map<EvaluatedParam, Object> customEvaluatedParam;
+    private final Map<Param, Object> customParam;
+    private final Map<EvaluatedParam, Object> customEvaluatedParam;
 
     public CustomSample(ProcessedSample sample, Map<Param, Object> customParam, Map<EvaluatedParam, Object> customEvaluatedParam ) {
         super(sample);
@@ -32,15 +32,31 @@ public class CustomSample extends ProcessedSample {
     @Override
     public Object getParam(Param param) {
         Object retVal = customParam.get(param);
-        if(retVal==null) {
+        if( retVal == null ) {
             retVal = sample.getParam(param);
             log.info("User didn't set " + param + ", using the one measured ( " + retVal + " )");
+        } else {
+            log.info("Using customParam value for " + param + " ( " + retVal + " )");
         }
+
         return retVal;
     }
 
+//    @Override
+//    public Object getEvaluatedParam(EvaluatedParam param) {
+//        Object retVal = customEvaluatedParam.get(param);
+//        if( retVal == null ) {
+//            retVal = sample.getEvaluatedParam(param);
+//            log.info("User didn't set " + param + ", using the one measured ( " + retVal + " )");
+//        } else {
+//            log.info("Using customParam value for " + param + " ( " + retVal + " )");
+//        }
+//
+//        return retVal;
+//    }
+
     @Override
-    public Double getACF() {
+    protected Double getACF() {
         Object retVal;
         retVal = customEvaluatedParam.get(EvaluatedParam.ACF);
 
@@ -55,5 +71,7 @@ public class CustomSample extends ProcessedSample {
             return (Double) retVal;
         return null;
     }
+
+
 
 }

@@ -17,17 +17,17 @@ public class WhatIfCustomParamDTO {
     private Set<Forecaster> forecasters = new HashSet<Forecaster>();
     private ReplicationProtocol replProtocol = ReplicationProtocol.TWOPC;
 
-    private Double ACF = -1D;
-    private double AvgGetsPerWrTransaction = -1; //  # GET per write transaction
-    private Long AvgGetsPerROTransaction = -1L;   // #GET per read only transaction
-    private Long AvgRemoteGetRtt = -1L;  //  Remote get latency
-    private Long LocalReadOnlyTxLocalServiceTime = -1L; // Read Only transaction demand
-    private Long LocalUpdateTxLocalServiceTime = -1L;  // Write transaction demand
-    private Double PercentageSuccessWriteTransactions = -1D;  // Write Transactions Percentage
-    private Double AvgNumPutsBySuccessfulLocalTx = -1D;  // #put per write tx
-    private Long AvgPrepareCommandSize = -1L; // size of prepare msg
-    private Long AvgPrepareAsync = -1L;   // prepare latency
-    private Long AvgCommitAsync = -1L;    // commit latency
+    private Double acf = -1D;
+    private double avgGetsPerWrTransaction = -1; //  # GET per write transaction
+    private Long avgGetsPerROTransaction = -1L;   // #GET per read only transaction
+    private Long avgRemoteGetRtt = -1L;  //  Remote get latency
+    private Long localReadOnlyTxLocalServiceTime = -1L; // Read Only transaction demand
+    private Long localUpdateTxLocalServiceTime = -1L;  // Write transaction demand
+    private Double percentageSuccessWriteTransactions = -1D;  // Write Transactions Percentage
+    private Double avgNumPutsBySuccessfulLocalTx = -1D;  // #put per write tx
+    private Long avgPrepareCommandSize = -1L; // size of prepare msg
+    private Long avgPrepareAsync = -1L;   // prepare latency
+    private Long avgCommitAsync = -1L;    // commit latency
 
     public void setReplicationDegree(Integer val){
         if(val<=0)
@@ -60,91 +60,91 @@ public class WhatIfCustomParamDTO {
     }
 
     public double getACF() {
-        return ACF;
+        return acf;
     }
 
-    public void setACF(double ACF) {
-        this.ACF = ACF;
+    public void setACF(double acf) {
+        this.acf = acf;
     }
 
     public double getAvgGetsPerWrTransaction() {
-        return AvgGetsPerWrTransaction;
+        return avgGetsPerWrTransaction;
     }
 
     public void setAvgGetsPerWrTransaction(double avgGetsPerWrTransaction) {
-        AvgGetsPerWrTransaction = avgGetsPerWrTransaction;
+        this.avgGetsPerWrTransaction = avgGetsPerWrTransaction;
     }
 
     public double getAvgGetsPerROTransaction() {
-        return AvgGetsPerROTransaction;
+        return avgGetsPerROTransaction;
     }
 
     public void setAvgGetsPerROTransaction(Long avgGetsPerROTransaction) {
-        AvgGetsPerROTransaction = avgGetsPerROTransaction;
+        this.avgGetsPerROTransaction = avgGetsPerROTransaction;
     }
 
     public double getAvgRemoteGetRtt() {
-        return AvgRemoteGetRtt;
+        return avgRemoteGetRtt;
     }
 
     public void setAvgRemoteGetRtt(Long avgRemoteGetRtt) {
-        AvgRemoteGetRtt = avgRemoteGetRtt;
+        this.avgRemoteGetRtt = avgRemoteGetRtt;
     }
 
     public Long getLocalReadOnlyTxLocalServiceTime() {
-        return LocalReadOnlyTxLocalServiceTime;
+        return localReadOnlyTxLocalServiceTime;
     }
 
     public void setLocalReadOnlyTxLocalServiceTime(Long localReadOnlyTxLocalServiceTime) {
-        LocalReadOnlyTxLocalServiceTime = localReadOnlyTxLocalServiceTime;
+        this.localReadOnlyTxLocalServiceTime = localReadOnlyTxLocalServiceTime;
     }
 
     public Long getLocalUpdateTxLocalServiceTime() {
-        return LocalUpdateTxLocalServiceTime;
+        return localUpdateTxLocalServiceTime;
     }
 
     public void setLocalUpdateTxLocalServiceTime(Long localUpdateTxLocalServiceTime) {
-        LocalUpdateTxLocalServiceTime = localUpdateTxLocalServiceTime;
+        this.localUpdateTxLocalServiceTime = localUpdateTxLocalServiceTime;
     }
 
     public Double getPercentageSuccessWriteTransactions() {
-        return PercentageSuccessWriteTransactions;
+        return percentageSuccessWriteTransactions;
     }
 
     public void setPercentageSuccessWriteTransactions(Double percentageSuccessWriteTransactions) {
-        PercentageSuccessWriteTransactions = percentageSuccessWriteTransactions;
+        this.percentageSuccessWriteTransactions = percentageSuccessWriteTransactions;
     }
 
     public Double getAvgNumPutsBySuccessfulLocalTx() {
-        return AvgNumPutsBySuccessfulLocalTx;
+        return avgNumPutsBySuccessfulLocalTx;
     }
 
     public void setAvgNumPutsBySuccessfulLocalTx(Double avgNumPutsBySuccessfulLocalTx) {
-        AvgNumPutsBySuccessfulLocalTx = avgNumPutsBySuccessfulLocalTx;
+        this.avgNumPutsBySuccessfulLocalTx = avgNumPutsBySuccessfulLocalTx;
     }
 
     public Long getAvgPrepareCommandSize() {
-        return AvgPrepareCommandSize;
+        return avgPrepareCommandSize;
     }
 
     public void setAvgPrepareCommandSize(Long avgPrepareCommandSize) {
-        AvgPrepareCommandSize = avgPrepareCommandSize;
+        this.avgPrepareCommandSize = avgPrepareCommandSize;
     }
 
     public double getAvgPrepareAsync() {
-        return AvgPrepareAsync;
+        return avgPrepareAsync;
     }
 
     public void setAvgPrepareAsync(Long avgPrepareAsync) {
-        this.AvgPrepareAsync = avgPrepareAsync;
+        this.avgPrepareAsync = avgPrepareAsync;
     }
 
     public Long getAvgCommitAsync() {
-        return AvgCommitAsync;
+        return avgCommitAsync;
     }
 
     public void setAvgCommitAsync(Long avgCommitAsync) {
-        AvgCommitAsync = avgCommitAsync;
+        this.avgCommitAsync = avgCommitAsync;
     }
 
 

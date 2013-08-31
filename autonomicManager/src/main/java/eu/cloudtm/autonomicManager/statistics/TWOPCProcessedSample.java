@@ -37,7 +37,8 @@ public class TWOPCProcessedSample extends ProcessedSample {
 //                timeWindow).evaluate();
         Random rnd = new Random();
 
-        return rnd.nextDouble();
+        //return rnd.nextDouble();
+        return 0.0D;
     }
 
 }

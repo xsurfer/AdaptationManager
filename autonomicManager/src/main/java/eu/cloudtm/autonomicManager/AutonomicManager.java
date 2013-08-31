@@ -174,8 +174,6 @@ public class AutonomicManager {
 
         log.trace("RESULT: " + json);
 
-
-
     }
 
     private void currentConfiguration(){

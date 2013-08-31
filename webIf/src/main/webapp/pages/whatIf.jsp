@@ -52,24 +52,24 @@
 							<fieldset>
 								<legend>Data Access Pattern:</legend>
 									<div class="param">
-										<label for="ACF">Application Contention Factor:</label>
-										<input type="text" id="ACF" name="acf" size="5" />
+										<label for="acf">Application Contention Factor:</label>
+										<input type="text" id="acf" name="acf" size="5" />
 									</div>
 									<div class="param">
-										<label for="PercentageSuccessWriteTransactions">Write Transactions Percentage:</label>
-										<input type="text" name="PercentageSuccessWriteTransactions" id="PercentageSuccessWriteTransactions" size="5" />
+										<label for="percentageSuccessWriteTransactions">Write Transactions Percentage:</label>
+										<input type="text" name="percentageSuccessWriteTransactions" id="percentageSuccessWriteTransactions" size="5" />
 									</div>
 									<div class="param">
-										<label for="AvgNumPutsBySuccessfulLocalTx"># PUT per write transaction:</label>
-										<input type="text" name="AvgNumPutsBySuccessfulLocalTx" id="AvgNumPutsBySuccessfulLocalTx" size="5" />
+										<label for="avgNumPutsBySuccessfulLocalTx"># PUT per write transaction:</label>
+										<input type="text" name="avgNumPutsBySuccessfulLocalTx" id="avgNumPutsBySuccessfulLocalTx" size="5" />
 									</div>
 									<div class="param">
-										<label for="AvgGetsPerWrTransaction"># GET per write transaction:</label>
-										<input type="text" name="AvgGetsPerWrTransaction" id="AvgGetsPerWrTransaction" size="5" />
+										<label for="avgGetsPerWrTransaction"># GET per write transaction:</label>
+										<input type="text" name="avgGetsPerWrTransaction" id="avgGetsPerWrTransaction" size="5" />
 									</div>
 									<div class="param">
-										<label for="AvgGetsPerROTransaction"># GET per read only transaction:</label>
-										<input type="text" name="AvgGetsPerROTransaction" id="AvgGetsPerROTransaction" size="5" />
+										<label for="avgGetsPerROTransaction"># GET per read only transaction:</label>
+										<input type="text" name="avgGetsPerROTransaction" id="avgGetsPerROTransaction" size="5" />
 									</div>
 									<div class="param">
 									</div>							
@@ -81,12 +81,12 @@
 							<fieldset>
 								<legend>CPU Costs:</legend>
 									<div class="param">
-										<label for="LocalUpdateTxLocalServiceTime">Write transaction demand:</label>
-										<input type="text" name="LocalUpdateTxLocalServiceTime" id="LocalUpdateTxLocalServiceTime" size="5" />
+										<label for="localUpdateTxLocalServiceTime">Write transaction demand:</label>
+										<input type="text" name="localUpdateTxLocalServiceTime" id="localUpdateTxLocalServiceTime" size="5" />
 									</div>
 									<div class="param">
-										<label for="LocalReadOnlyTxLocalServiceTime">Read Only transaction demand:</label>
-										<input type="text" name="LocalReadOnlyTxLocalServiceTime" id="LocalReadOnlyTxLocalServiceTime" size="5" />																	
+										<label for="localReadOnlyTxLocalServiceTime">Read Only transaction demand:</label>
+										<input type="text" name="localReadOnlyTxLocalServiceTime" id="localReadOnlyTxLocalServiceTime" size="5" />																	
 									</div>
 									<div class="param">
 									</div>
@@ -100,20 +100,20 @@
 								<legend>NET Costs:</legend>
 									<div class="param">
 										<div class="line"></div>
-										<label for="AvgPrepareCommandSize">Size of prepare message:</label>										
-										<input type="text" name="AvgPrepareCommandSize" id="AvgPrepareCommandSize" size="5" />
+										<label for="avgPrepareCommandSize">Size of prepare message:</label>										
+										<input type="text" name="avgPrepareCommandSize" id="avgPrepareCommandSize" size="5" />
 									</div>
 									<div class="param">
-										<label for="AvgPrepareAsync">Prepare latency:</label>
-										<input type="text" name="AvgPrepareAsync" id="AvgPrepareAsync" size="5" />
+										<label for="avgPrepareAsync">Prepare latency:</label>
+										<input type="text" name="avgPrepareAsync" id="avgPrepareAsync" size="5" />
 									</div>
 									<div class="param">
-										<label for="AvgCommitAsync">Commit latency:</label>
-										<input type="text" name="AvgCommitAsync" id="AvgCommitAsync" size="5" />
+										<label for="avgCommitAsync">Commit latency:</label>
+										<input type="text" name="avgCommitAsync" id="avgCommitAsync" size="5" />
 									</div>
 									<div class="param">
-										<label for="AvgRemoteGetRtt">Remote get latency:</label>
-										<input type="text" name="AvgRemoteGetRtt" id="AvgRemoteGetRtt" size="5" />
+										<label for="avgRemoteGetRtt">Remote get latency:</label>
+										<input type="text" name="avgRemoteGetRtt" id="avgRemoteGetRtt" size="5" />
 									</div>
 									<div class="param">
 									</div>

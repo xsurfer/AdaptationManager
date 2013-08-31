@@ -119,6 +119,7 @@ public class OracleService implements IOracleService {
                 currOutputOracle = oracle.forecast(inputOracle);
             } catch (OracleException e) {
                 log.warn("Oracle exception during what if analysis...skipping that configuration");
+                log.warn(e,e);
             }
             result.put(currConf, currOutputOracle);
         }

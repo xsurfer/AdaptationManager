@@ -46,7 +46,7 @@ public abstract class ProcessedSample implements Sample {
         evaluatedParams.put( EvaluatedParam.ACF, getACF() );
         evaluatedParams.put( EvaluatedParam.CORE_PER_CPU, getCoreCPU() );
         evaluatedParams.put( EvaluatedParam.SYSTEM_TYPE, getSystemType() );
-        evaluatedParams.put( EvaluatedParam.MAX_ACTIVE_THREADS, 2 );
+        evaluatedParams.put( EvaluatedParam.MAX_ACTIVE_THREADS, 1 );
 
         log.warn("STOYAN's CODE COMMENTED in ProcessedSample! ");
         //evaluatedParams.put( EvaluatedParam.DATA_ACCESS_FREQUENCIES, getDataAccessFrequencies() );

@@ -67,18 +67,18 @@ public class WhatIfResource extends AbstractResource {
     public synchronized Response whatIf(
 
             @DefaultValue("-1") @FormParam("acf") Double acf,
-            @DefaultValue("-1") @FormParam("PercentageSuccessWriteTransactions") Double percentageSuccessWriteTransactions,
-            @DefaultValue("-1") @FormParam("AvgNumPutsBySuccessfulLocalTx") Double avgNumPutsBySuccessfulLocalTx,
-            @DefaultValue("-1") @FormParam("AvgGetsPerWrTransaction") Double avgGetsPerWrTransaction,
-            @DefaultValue("-1") @FormParam("AvgGetsPerROTransaction") Long avgGetsPerROTransaction,
+            @DefaultValue("-1") @FormParam("percentageSuccessWriteTransactions") Double percentageSuccessWriteTransactions,
+            @DefaultValue("-1") @FormParam("avgNumPutsBySuccessfulLocalTx") Double avgNumPutsBySuccessfulLocalTx,
+            @DefaultValue("-1") @FormParam("avgGetsPerWrTransaction") Double avgGetsPerWrTransaction,
+            @DefaultValue("-1") @FormParam("avgGetsPerROTransaction") Long avgGetsPerROTransaction,
 
-            @DefaultValue("-1") @FormParam("LocalUpdateTxLocalServiceTime") Long localUpdateTxLocalServiceTime,
-            @DefaultValue("-1") @FormParam("LocalReadOnlyTxLocalServiceTime") Long localReadOnlyTxLocalServiceTime,
+            @DefaultValue("-1") @FormParam("localUpdateTxLocalServiceTime") Long localUpdateTxLocalServiceTime,
+            @DefaultValue("-1") @FormParam("localReadOnlyTxLocalServiceTime") Long localReadOnlyTxLocalServiceTime,
 
-            @DefaultValue("-1") @FormParam("AvgPrepareCommandSize") Long avgPrepareCommandSize,
-            @DefaultValue("-1") @FormParam("AvgPrepareAsync") Long avgPrepareAsync,
-            @DefaultValue("-1") @FormParam("AvgCommitAsync") Long avgCommitAsync,
-            @DefaultValue("-1") @FormParam("AvgRemoteGetRtt") Long avgRemoteGetRtt,
+            @DefaultValue("-1") @FormParam("avgPrepareCommandSize") Long avgPrepareCommandSize,
+            @DefaultValue("-1") @FormParam("avgPrepareAsync") Long avgPrepareAsync,
+            @DefaultValue("-1") @FormParam("avgCommitAsync") Long avgCommitAsync,
+            @DefaultValue("-1") @FormParam("avgRemoteGetRtt") Long avgRemoteGetRtt,
 
             @FormParam("oracoles") List<String> fores,
             @DefaultValue("2")@FormParam("repDegree") Integer repDegree,
