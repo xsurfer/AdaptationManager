@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager.RESTServer;
 
+import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -10,8 +11,8 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class RESTApplication extends ResourceConfig {
 
-    public RESTApplication(StatsManager statsManager) {
-        register(new Binder(statsManager));
+    public RESTApplication(StatsManager statsManager, AutonomicManager autonomicManager) {
+        register(new Binder(statsManager, autonomicManager));
         packages(true, "eu.cloudtm.autonomicManager.RESTServer.resources");
     }
 

@@ -25,6 +25,7 @@ public class AutonomicManager {
 
     private static Log log = LogFactory.getLog(AutonomicManager.class);
 
+    private State state;
     private PlatformTuning platformTuning;
     private PlatformConfiguration platformConfiguration;
     private StatsManager statsManager;
@@ -33,12 +34,14 @@ public class AutonomicManager {
     private Reconfigurator reconfigurator;
 
 
-    public AutonomicManager(PlatformConfiguration platformConfiguration,
+    public AutonomicManager(State state,
+                            PlatformConfiguration platformConfiguration,
                             PlatformTuning platformTuning,
                             StatsManager sampleManager,
                             WorkloadAnalyzer workloadAnalyzer,
                             Optimizer optimizer,
                             Reconfigurator reconfigurator){
+        this.state = state;
         this.statsManager = sampleManager;
         this.platformConfiguration = platformConfiguration;
         this.platformTuning = platformTuning;
@@ -55,7 +58,7 @@ public class AutonomicManager {
         System.exit(0);
     }
 
-    public void menu(){
+    private void menu(){
         int selected = -1;
         while (selected!=0){
             log.info("Actions:");
@@ -72,7 +75,7 @@ public class AutonomicManager {
         }
     }
 
-    public void processInput(int selection){
+    private void processInput(int selection){
         switch (selection){
             case 0:
                 break;
@@ -102,8 +105,6 @@ public class AutonomicManager {
     private void customConfiguration(){
 
         PlatformConfiguration platformConfiguration = new PlatformConfiguration();
-
-
 
         try {
             Scanner in = new Scanner(System.in);
@@ -155,10 +156,25 @@ public class AutonomicManager {
         /* retrieving current values */
         WhatIfCustomParamDTO customParamDTO = whatIfService.retrieveCurrentValues();
 
-        /* adding whatIf options */
-        customParamDTO.addForecaster(Forecaster.ANALYTICAL);
-        customParamDTO.setReplicationProtocol(ReplicationProtocol.TWOPC);
-        customParamDTO.setReplicationDegree(2);
+        /* reading and setting whatIf options */
+        Scanner in = new Scanner(System.in);
+
+        /* forecaster */
+        log.info("Oracle {ANALYTICAL, SIMULATOR, MACHINE_LEARNING}: ");
+        String forecasterStr = in.next();
+        Forecaster forecaster = Forecaster.valueOf(forecasterStr);
+        customParamDTO.addForecaster(forecaster);
+
+        /* replication protocol */
+        log.info("Replication Protocol {TWOPC, TO, PB}: ");
+        String replicationProtocolStr = in.next();
+        ReplicationProtocol replicationProtocol = ReplicationProtocol.valueOf(replicationProtocolStr);
+        customParamDTO.setReplicationProtocol(replicationProtocol);
+
+        /* replication degree */
+        log.info("Replication Degree: ");
+        int repDegree = in.nextInt();
+        customParamDTO.setReplicationDegree(repDegree);
 
         List<WhatIfDTO> result = whatIfService.evaluate(customParamDTO);
 
@@ -182,5 +198,31 @@ public class AutonomicManager {
         log.info("");
     }
 
+    /**
+     * Returns a copy of current PlatformTuning
+     * @return a copy of current PlatformTuning
+     */
+    public PlatformTuning platformTuning(){
+        log.info("Cloning platformTuning...");
+        return platformTuning.cloneThroughJson();
+    }
+
+    /**
+     * Returns a copy of current PlatformConfiguration
+     * @return a copy of current PlatformConfiguration
+     */
+    public PlatformConfiguration platformConfiguration(){
+        log.info("Cloning platformConfiguration...");
+        return platformConfiguration.cloneThroughJson();
+    }
+
+    /**
+     * Returns a copy of current State
+     * @return a copy of current State
+     */
+    public State state(){
+        log.info("Cloning state...");
+        return state.cloneThroughJson();
+    }
 
 }

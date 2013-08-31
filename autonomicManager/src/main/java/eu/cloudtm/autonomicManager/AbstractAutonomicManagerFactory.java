@@ -27,6 +27,6 @@ public interface AbstractAutonomicManagerFactory {
 
     public WorkloadAnalyzer getWorkloadAnalyzer();
 
-    public RESTServer getRESTServer();
+    public RESTServer getRESTServer(AutonomicManager autonomicManager);
 
 }

@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager.RESTServer;
 
+import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
@@ -12,10 +13,12 @@ import javax.inject.Singleton;
  */
 public class Binder extends AbstractBinder {
 
-    private StatsManager statsManager;
+    private final StatsManager statsManager;
+    private final AutonomicManager autonomicManager;
 
-    public Binder(StatsManager statsManager){
+    public Binder(StatsManager statsManager, AutonomicManager autonomicManager){
         this.statsManager = statsManager;
+        this.autonomicManager = autonomicManager;
     }
 
     @Override
@@ -23,6 +26,10 @@ public class Binder extends AbstractBinder {
         //singleton binding
         bind(StatsManager.class).in(Singleton.class);
         bind(statsManager).to(StatsManager.class);
+
+        //singleton binding
+        bind(AutonomicManager.class).in(Singleton.class);
+        bind(autonomicManager).to(AutonomicManager.class);
     }
 
 

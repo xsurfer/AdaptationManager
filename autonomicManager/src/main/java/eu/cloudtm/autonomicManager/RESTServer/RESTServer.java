@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager.RESTServer;
 
+import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.ControllerLogger;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -22,8 +23,8 @@ public class RESTServer {
 
     private HttpServer httpServer;
 
-    public RESTServer(StatsManager statsManager){
-        rc = new RESTApplication(statsManager);
+    public RESTServer(StatsManager statsManager, AutonomicManager autonomicManager){
+        rc = new RESTApplication(statsManager, autonomicManager);
     }
 
     /**

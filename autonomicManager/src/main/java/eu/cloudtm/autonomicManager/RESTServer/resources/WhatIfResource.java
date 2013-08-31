@@ -37,8 +37,10 @@ public class WhatIfResource extends AbstractResource {
 
         if(sample!=null)
             log.info("Sample: " + sample.getId() );
-        else
+        else {
             log.info("Sample is null");
+            throw new IllegalArgumentException("Sample is null");
+        }
 
         log.info("ACF: " + sample.getEvaluatedParam(EvaluatedParam.ACF));
 

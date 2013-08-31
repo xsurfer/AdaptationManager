@@ -60,10 +60,9 @@ public class PlatformTuning {
         return autoProtocol.get();
     }
 
-    public PlatformTuning toJSON() {
-        log.info("TO IMPLEMENT");
+    public PlatformTuning cloneThroughJson() {
         Gson gson = new Gson();
-        PlatformTuning state = gson.fromJson(gson.toJson(this), PlatformTuning.class);
-        return state;
+        String json = gson.toJson(this);
+        return gson.fromJson(json, PlatformTuning.class);
     }
 }

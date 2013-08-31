@@ -1,6 +1,9 @@
 package eu.cloudtm.autonomicManager.commons;
 
 
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
+
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
@@ -9,9 +12,9 @@ package eu.cloudtm.autonomicManager.commons;
 public enum Forecaster {
     NONE(false, null),
     COMMITTEE(true, ""),
-    ANALYTICAL(true, "tasOracle.TasOracle"),
-    SIMULATOR(true, "eu.cloudtm.autonomicManager.oracles.FakeOracle"),
-    MACHINE_LEARNING(true, "Morpher");
+    ANALYTICAL( true, Config.getInstance().getString( KeyConfig.FORECASTER_ANALYTICAL.key() ) ),
+    SIMULATOR( true, Config.getInstance().getString( KeyConfig.FORECASTER_SIMULATOR.key() ) ),
+    MACHINE_LEARNING(true, Config.getInstance().getString( KeyConfig.FORECASTER_MACHINE_LEARNING.key() ));
 
     private final boolean autoTuning;
     private final String oracleClass;

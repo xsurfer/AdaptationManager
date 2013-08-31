@@ -51,6 +51,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
         wpmStatsManager = new WPMStatsManagerFactory( getPlatformConfiguration() ).build();
 
         AutonomicManager autonomicManager = new AutonomicManager(
+                platformState,
                 getPlatformConfiguration(),
                 platformTuning,
                 wpmStatsManager,
@@ -59,7 +60,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
                 getReconfigurator());
 
         try {
-            getRESTServer().startServer();
+            getRESTServer(autonomicManager).startServer();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -124,9 +125,9 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     }
 
     @Override
-    public RESTServer getRESTServer() {
+    public RESTServer getRESTServer(AutonomicManager autonomicManager) {
         if( this.restServer == null ){
-            this.restServer = new RESTServer(wpmStatsManager);
+            this.restServer = new RESTServer(wpmStatsManager, autonomicManager);
         }
         return this.restServer;
     }

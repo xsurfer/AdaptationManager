@@ -3,6 +3,9 @@ package eu.cloudtm.autonomicManager.commons;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
@@ -25,7 +28,7 @@ public class PlatformConfiguration implements Comparable<PlatformConfiguration> 
     private int replicationDegree = 2;
 
     /* DATA PLACEMENT */
-    private Boolean dataPlacement = false;
+    private AtomicBoolean dataPlacement = new AtomicBoolean(false);
 
     public PlatformConfiguration(){
     }
@@ -60,7 +63,7 @@ public class PlatformConfiguration implements Comparable<PlatformConfiguration> 
     }
 
     public boolean isDataPlacement(){
-        return dataPlacement;
+        return dataPlacement.get();
     }
 
     /* ************************ *** */
@@ -100,7 +103,7 @@ public class PlatformConfiguration implements Comparable<PlatformConfiguration> 
     /* ********************************* *** */
 
     public void setDataPlacement(boolean enabled){
-        dataPlacement = true;
+        dataPlacement.set(enabled);
     }
 
 
@@ -115,12 +118,10 @@ public class PlatformConfiguration implements Comparable<PlatformConfiguration> 
         return builder.toString();
     }
 
-
-    public PlatformConfiguration toJSON() {
-        log.info("TO IMPLEMENT");
+    public PlatformConfiguration cloneThroughJson() {
         Gson gson = new Gson();
-        PlatformConfiguration state = gson.fromJson(gson.toJson(this), PlatformConfiguration.class);
-        return state;
+        String json = gson.toJson(this);
+        return gson.fromJson(json, PlatformConfiguration.class);
     }
 
     @Override

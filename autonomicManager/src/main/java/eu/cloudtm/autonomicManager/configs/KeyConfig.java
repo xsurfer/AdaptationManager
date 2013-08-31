@@ -59,6 +59,11 @@ public enum KeyConfig {
     /* ******* CHANGE DETECTORs ******* */
     SLIDE_WINDOW_SIZE("changeDetector.slideWindowSize"),
 
+    /* ******* FORECASTERs ******* */
+    FORECASTER_ANALYTICAL("forecaster.analytical"),
+    FORECASTER_SIMULATOR("forecaster.simulator"),
+    FORECASTER_MACHINE_LEARNING("forecaster.machineLearning"),
+
     ;
 
     private final String key;

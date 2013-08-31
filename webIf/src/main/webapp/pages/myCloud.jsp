@@ -13,18 +13,18 @@
     <link href="${pageContext.request.contextPath}/assets/css/per_page/myCloud.css" type="text/css" media="screen" rel="stylesheet" />
 
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/packery.pkgd.min.js" ></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/draggabilly.js" ></script>
+<!-- <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/packery.pkgd.min.js" ></script> -->
+<!-- <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/draggabilly.js" ></script> -->
 <!-- <script type="text/javascript" src="http://packery.metafizzy.co/packery.pkgd.min.js" ></script> -->
 <!-- <script type="text/javascript" src="http://draggabilly.desandro.com/draggabilly.pkgd.min.js" ></script> -->
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/jquery.flot.min.js" ></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/curvedLines.js" ></script>    
+<!-- <script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/jquery.flot.min.js" ></script> -->
+<!-- <script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/curvedLines.js" ></script> -->    
 <script type="text/javascript">
 	var REST_HOST = '<s:property value="getRestHost()" />';
 	var REST_PORT = '<s:property value="getRestPort()" />';
 </script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/myCloud.js"></script>
+<!-- <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/myCloud.js"></script> -->
 
     
 <script type="text/javascript">
@@ -185,7 +185,7 @@ $(document).ready(
 		
 		<h3>Workload and Performance Monitor:</h3>
 				
-		<iframe src="http://127.0.0.1/stats2/index.php?rootFolder=csv" style="width: 100%; height: 900px"></iframe>
+		<!-- <iframe src="http://127.0.0.1/stats2/index.php?rootFolder=csv" style="width: 100%; height: 900px"></iframe>  -->
 		
 		
 <!-- 		<form id="plot">	 -->
