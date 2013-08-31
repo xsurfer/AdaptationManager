@@ -32,6 +32,12 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
 import java.util.Map;
 
 
@@ -47,7 +53,7 @@ public class WPMInputOracleDumper {
       this.input = input;
    }
 
-   public void dump(String toFile) throws ParserConfigurationException {
+   public void dump(String toFile) throws ParserConfigurationException, TransformerException {
 
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -105,7 +111,14 @@ public class WPMInputOracleDumper {
       rootElement.appendChild(aggregated);
 
 
-      doc.
+      TransformerFactory tFactory =
+              TransformerFactory.newInstance();
+      Transformer transformer =
+              tFactory.newTransformer();
+
+      DOMSource source = new DOMSource(doc);
+      StreamResult result = new StreamResult(new File(toFile));
+      transformer.transform(source, result);
 
    }
 
