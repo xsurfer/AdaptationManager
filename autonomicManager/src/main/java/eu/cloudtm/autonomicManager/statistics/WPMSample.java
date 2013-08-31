@@ -7,39 +7,43 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- *
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com
  * Date: 6/10/13
  */
 public class WPMSample implements Sample {
 
-    private static AtomicLong counter = new AtomicLong(0);
+   private static AtomicLong counter = new AtomicLong(0);
+   private final long id;
+   private final Map<String, Object> aggregatedFromWPM;
 
-    private final long id;
+   public WPMSample(long _id, Map<String, Object> aggregated) {
+      this.id = _id;
+      this.aggregatedFromWPM = aggregated;
+   }
 
-    private final Map<String, Object> aggregatedFromWPM;
+   public static WPMSample getInstance(Map<String, Object> params2values) {
+      WPMSample sample = new WPMSample(
+              counter.getAndIncrement(),
+              new HashMap<String, Object>(params2values)
+      );
 
-    public static WPMSample getInstance(Map<String, Object> params2values){
-        WPMSample sample = new WPMSample(
-                counter.getAndIncrement(),
-                new HashMap<String, Object>(params2values)
-        );
+      return sample;
+   }
 
-        return sample;
-    }
+   public Map<String, Object> getParams() {
+      return aggregatedFromWPM;
+   }
 
-    public WPMSample(long _id, Map<String, Object> aggregated){
-        this.id = _id;
-        this.aggregatedFromWPM = aggregated;
-    }
+   public long getId() {
+      return id;
+   }
 
-    public long getId(){ return id; }
+   @Override
+   public Object getParam(Param param) {
+      return aggregatedFromWPM.get(param.getKey());
+   }
 
-    @Override
-    public Object getParam(Param param) {
-        return aggregatedFromWPM.get(param.getKey());
-    }
 
 }
 

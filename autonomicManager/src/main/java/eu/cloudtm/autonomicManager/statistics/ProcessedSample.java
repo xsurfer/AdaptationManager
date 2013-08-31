@@ -32,6 +32,14 @@ public abstract class ProcessedSample implements Sample {
 
     private Map<EvaluatedParam, Object> evaluatedParams = new HashMap<EvaluatedParam, Object>();
 
+   public Map<EvaluatedParam, Object> getEvaluatedParams(){
+      return this.evaluatedParams;
+   }
+
+   public Sample getInnerSample(){
+      return this.sample;
+   }
+
     public ProcessedSample(Sample sample){
         this.sample = sample;
     }
