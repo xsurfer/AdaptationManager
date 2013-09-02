@@ -131,7 +131,22 @@ public class PlatformConfiguration implements Comparable<PlatformConfiguration> 
             return 1;
         } else if(platformSize() < o.platformSize() ){
             return -1;
-        } else
-            return 0;
+        } else {
+            if( replicationDegree() > o.replicationDegree() ){
+                return 1;
+            } else if( replicationDegree() < o.replicationDegree() ){
+                return -1;
+            } else {
+                if( replicationProtocol().getId() > o.replicationProtocol().getId() ){
+                    return 1;
+                } else if( replicationProtocol().getId() < o.replicationProtocol().getId() ){
+                    return -1;
+                } else {
+                    return 0;
+                }
+
+            }
+        }
+
     }
 }

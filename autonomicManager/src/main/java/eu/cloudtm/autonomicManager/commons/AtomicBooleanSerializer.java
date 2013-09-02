@@ -17,6 +17,6 @@ public class AtomicBooleanSerializer implements JsonSerializer<AtomicBoolean> {
 
     @Override
     public JsonElement serialize(AtomicBoolean atomicBoolean, Type type, JsonSerializationContext jsonSerializationContext) {
-        return new JsonPrimitive(atomicBoolean.toString());
+        return new JsonPrimitive(atomicBoolean.get());
     }
 }

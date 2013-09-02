@@ -42,6 +42,7 @@ public class CustomSample extends ProcessedSample {
         return retVal;
     }
 
+
 //    @Override
 //    public Object getEvaluatedParam(EvaluatedParam param) {
 //        Object retVal = customEvaluatedParam.get(param);

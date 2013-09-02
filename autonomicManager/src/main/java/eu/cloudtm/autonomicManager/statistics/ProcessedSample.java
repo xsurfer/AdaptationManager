@@ -68,6 +68,10 @@ public abstract class ProcessedSample implements Sample {
         return sample.getParam(param);
     }
 
+    public Map<String, Object> getParams() {
+        return sample.getParams();
+    }
+
 
     public synchronized Object getEvaluatedParam(EvaluatedParam param) {
         if(initialized.compareAndSet(false, true)){

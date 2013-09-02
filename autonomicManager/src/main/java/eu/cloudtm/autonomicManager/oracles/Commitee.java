@@ -26,7 +26,7 @@ public class Commitee implements IOracleService {
 
     private Oracle analytical = new OracleTAS();
     private Oracle simulator = new Simulator();
-    private Oracle morpher = new Morpher();
+    private Oracle morpher = new FakeMLOracle();
 
     private ReplicationProtocol defaultProt = ReplicationProtocol.TWOPC;
 

@@ -34,7 +34,7 @@
 			<!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
 
 			<!-- FORECASTER FORM -->
-			<form id="forecaster">
+			<form id="forecaster" action="">
 
 				<div class="resource">
 					<fieldset class="resource">
@@ -57,7 +57,7 @@
 									<div class="conf_tuning">
 										<fieldset name="forecaster_tuning_self">
 											<!-- <label for="wr_tx_local_exec_time">Forecasting method:</label> -->
-											<select name="rep_protocol_forecasting" class="forecasting">
+											<select name="forecaster" class="forecasting">
 												<option selected value="ANALYTICAL">Analytical</option>
 												<option value="SIMULATOR">Simulator</option>
 												<option value="MACHINE_LEARNING">Machine Learning</option>
@@ -104,7 +104,7 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="scale_tuning" value="FALSE">
+										<input type="radio" name="scale_tuning" value="FALSE" />
 										Manual tuning
 									</div>
 									<div class="conf_tuning">
@@ -121,7 +121,7 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="scale_tuning" value="TRUE">Self-tuning
+										<input type="radio" name="scale_tuning" value="TRUE" />Self-tuning
 									</div>																	
 								</li>
 							</ol>
@@ -136,7 +136,7 @@
 			</form>
 
 			<!-- REPLICATION DEGREE FORM -->
-			<form>
+			<form id="degree" action="" >
 			
 				<!-- RESOURCE -->
 				<div class="resource">
@@ -162,7 +162,7 @@
 							<ol>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_degree_tuning" value="FALSE">
+										<input type="radio" name="rep_degree_tuning" value="FALSE" />
 										Manual tuning
 									</div>
 									<div class="conf_tuning">
@@ -175,7 +175,7 @@
 								</li>
 								<li>
 									<div class="radio_tuning">
-										<input type="radio" name="rep_degree_tuning" value="TRUE">Self-tuning
+										<input type="radio" name="rep_degree_tuning" value="TRUE" />Self-tuning
 									</div>
 								</li>
 							</ol>
@@ -190,7 +190,7 @@
 			</form>
 
 			<!-- PROTOCOL SWITCHING FORM -->
-			<form>
+			<form id="protocol" action="" >
 			
 				<!-- RESOURCE -->
 				<div class="resource">
@@ -278,7 +278,7 @@
 										
 									</div>
 									<div class="conf_tuning">
-										<input type="checkbox" name="data_placement_tuning" value="Bike">Self-tuning										
+										<input type="checkbox" name="data_placement_tuning" value="Bike" />Self-tuning										
 									</div>									
 								</li>
 							</ol>
@@ -299,8 +299,8 @@
 	<!-- /col -->
 	<div id="col-bottom"></div>
 
-	<hr class="noscreen">
-	<hr class="noscreen">
+	<hr class="noscreen" />
+	<hr class="noscreen" />
 </body>
 </html>
 

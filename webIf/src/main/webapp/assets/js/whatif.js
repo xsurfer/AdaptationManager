@@ -57,6 +57,8 @@ var series = {
 $(document).ready( 
 
 		function(){
+			
+			init_radioBtn();
 
 			$("body").on({
 				// When ajaxStart is fired, add 'loading' to body class
@@ -134,6 +136,59 @@ $(document).ready(
 /* Out of main */
 /* *********** */
 
+function init_radioBtn(){	
+	var $radio = $('input:radio[name=xaxis]');
+
+	// INIT		
+	if($radio.is(':checked') === false) {
+		$radio.filter('[value=NODES]').prop('checked', true);
+		disableFieldset($radio);
+	}
+
+	// LISTENER
+	$radio.change(function(){
+		disableFieldset($(this));
+	});	      
+
+}
+
+function disableFieldset($radio){
+	
+	$("[id^=fixed]").attr('readonly', false);
+	
+	console.log('A ' + $radio.val()); // nodes	
+	console.log('B ' + $radio.attr("name")); // xaxis
+	// seleziono tutte le fieldset che non si chiamano in quel modo e le disattivo
+	
+	// name + '_' + value
+	
+	var fieldsetName = 'fixed' + $radio.attr("value");
+	console.log('C ' + fieldsetName);
+	var enabled = disabled = fieldsetName;
+	
+	$("#" + fieldsetName ).attr('readonly', true);	
+	/*
+	if($radio.attr("value")=="TRUE"){
+		//enabled += 'self';
+		disabled += 'manual';
+		console.log("disabled: " + disabled);
+		$('fieldset[name="'+ disabled +'"]').children().attr("disabled", "disabled");
+	} else {
+		enabled += 'manual';
+		console.log("enabled: " + enabled);
+		$('fieldset[name="'+ enabled +'"]').children().removeAttr("disabled");
+		//disabled += 'self';
+	}	
+	*/		
+}
+
+
+
+
+
+
+
+
 function serie(label,data)
 {
 	this.label = label;
@@ -155,9 +210,9 @@ function getAllAndUpdate() {
 		type: "POST",
 		crossDomain: true,
 		data: dataToBeSent,	
-		
+
 		success: function(json) {	 
-				          
+
 			console.log(json);
 			console.log("risorse: " + resources.length);
 			console.log("predizione fatta da: " + json.length + " oracoli");
@@ -165,11 +220,11 @@ function getAllAndUpdate() {
 			for ( var resLen = 0; resLen < resources.length; resLen++) {				
 				var param = resources[resLen];
 				var currPlot = plots[param];
-				
+
 				console.log("creando grafico per risorsa: " + param);
-				
+
 				var dataseries = [];
-						
+
 				for(var forecastIter=0; forecastIter < json.length; forecastIter++){
 					var forecast = json[forecastIter];
 					console.log("analizzando oracolo: " + forecast.forecaster);
@@ -177,7 +232,7 @@ function getAllAndUpdate() {
 					console.log("nuova serie: " + currSerie);
 					dataseries.push(currSerie);
 				}
-				
+
 				// updating the plot 
 				currPlot.setData(dataseries);
 				currPlot.setupGrid();
@@ -249,6 +304,7 @@ function drawPlots() {
 						// max : 10
 					},
 					legend : {
+						position: "nw", // or "nw" or "se" or "sw"
 						show : true
 					},
 					series: {

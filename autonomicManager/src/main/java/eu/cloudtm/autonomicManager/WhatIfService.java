@@ -63,7 +63,7 @@ public class WhatIfService {
         List<WhatIfDTO> result = new ArrayList<WhatIfDTO>();
 
         for(Forecaster forecaster : customParamDTO.getForecasters()){
-            WhatIfDTO currWhatIfResult = new WhatIfDTO(forecaster);
+            WhatIfDTO currWhatIfResult = new WhatIfDTO(forecaster, customParamDTO.getXaxis());
 
             if(forecaster.equals(Forecaster.COMMITTEE)){
                 throw new RuntimeException("Not yet implemented");
@@ -75,26 +75,61 @@ public class WhatIfService {
                 CustomSample customSample = new CustomSample(processedSample, customParam, customEvaluatedParam);
 
                 /* invoking OracleService, which returns a map of configurations-output */
-                TreeMap<PlatformConfiguration, OutputOracle> currForecast = oracleService.whatIf( customSample,
-                        customParamDTO.getReplicationProtocol(),
-                        customParamDTO.getReplicationDegree() );
+
+                TreeMap<PlatformConfiguration, OutputOracle> currForecast;
+
+                switch (customParamDTO.getXaxis()){
+                    case NODES:
+                        log.info("Nodes on x-axis");
+                        currForecast = oracleService.whatIf( customSample,
+                                customParamDTO.getFixedProtocol(),
+                                customParamDTO.getFixedDegree() );
+                        break;
+                    case DEGREE:
+                        log.info("Degrees on x-axis");
+                        currForecast = oracleService.whatIf( customSample,
+                                customParamDTO.getFixedNodes(),
+                                customParamDTO.getFixedProtocol() );
+                        break;
+                    case PROTOCOL:
+                        log.info("Protocols on x-axis");
+                        currForecast = oracleService.whatIf( customSample,
+                                customParamDTO.getFixedNodes(),
+                                customParamDTO.getFixedDegree() );
+                        break;
+                    default:
+                        throw new IllegalStateException("Xaxis can't be null!");
+                }
 
                 for (Map.Entry<PlatformConfiguration, OutputOracle> entry : currForecast.entrySet()){
-                    long platformSize = entry.getKey().platformSize();
+
+                    long xaxis = 0;
+                    switch ( customParamDTO.getXaxis() ){
+                        case NODES:
+                            xaxis = entry.getKey().platformSize();
+                            break;
+                        case DEGREE:
+                            xaxis = entry.getKey().replicationDegree();
+                            break;
+                        case PROTOCOL:
+                            xaxis = entry.getKey().replicationProtocol().getId();
+                            break;
+                    }
                     OutputOracle currOut = entry.getValue();
 
                     if(currOut==null){
-                        log.info("Forecaster " + forecaster + " returned a null OutputOracle for PlatformConfiguration " + platformSize);
+                        log.info("Forecaster " + forecaster + " returned a null OutputOracle for PlatformConfiguration " + xaxis);
                         continue;
                     }
 
                     //TODO FIX TX CLASSES
                     log.warn("FIX TX CLASSES");
 
-                    currWhatIfResult.addThroughputPoint( platformSize, currOut.throughput(0) );
-                    currWhatIfResult.addReadResponseTimePoint(platformSize, currOut.responseTime(0));
-                    currWhatIfResult.addWriteResponseTimePoint(platformSize, currOut.responseTime(1));
-                    currWhatIfResult.addAbortRatePoint(platformSize, currOut.abortRate(0));
+
+                    currWhatIfResult.addThroughputPoint( xaxis, currOut.throughput(0) );
+                    currWhatIfResult.addReadResponseTimePoint(xaxis, currOut.responseTime(0));
+                    currWhatIfResult.addWriteResponseTimePoint(xaxis, currOut.responseTime(1));
+                    currWhatIfResult.addAbortRatePoint(xaxis, currOut.abortRate(0));
                 }
 
             }

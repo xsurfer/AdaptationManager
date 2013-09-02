@@ -3,6 +3,7 @@ package eu.cloudtm.autonomicManager.statistics;
 import eu.cloudtm.autonomicManager.commons.Param;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,5 +17,7 @@ public interface Sample extends Serializable {
     public long getId();
 
     public Object getParam(Param param);
+
+    public Map<String, Object> getParams();
 
 }

@@ -1,9 +1,10 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
+import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.commons.InstanceConfig;
-import eu.cloudtm.autonomicManager.commons.PlatformTuning;
+import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -20,34 +21,38 @@ public class TuningResource extends AbstractResource {
     private Gson gson = new Gson();
 
     @Inject
-    private PlatformTuning platformTuning;
+    private AutonomicManager autonomicManager;
 
 
-    @PUT
+    @POST
     @Path("/forecaster")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public synchronized Response setForecaster(
-            @DefaultValue("ANALYTICAL") @FormParam("scale_autotuning") Forecaster forecaster
+            @DefaultValue("ANALYTICAL") @FormParam("forecaster") Forecaster forecaster
     ) {
 
-        /** UPDATING STATE **/
-        //ControllerOld.getInstance().updateScale(runningInstancesSize, instanceType, tuning);
+        try {
+            log.info("updating forecaster");
+            autonomicManager.updateForecaster(forecaster);
+            //String json = gson.toJson(ControllerOld.getInstance().getState());
 
-        //TODO sistemare qui sotto
-        //
+            String json = "{ \"result\" : \"done\" }";
+            Response.ResponseBuilder builder = Response.ok(json);
+            return makeCORS(builder);
 
-        platformTuning.setForecaster(forecaster);
-        //String json = gson.toJson(ControllerOld.getInstance().getState());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
-        String json = "{ \"result\" : \"done\" }";
+        String json = "{ \"result\" : \"fail\" }";
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }
 
 
 
-    @PUT
+    @POST
     @Path("/scale")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
@@ -57,22 +62,94 @@ public class TuningResource extends AbstractResource {
             @DefaultValue("MEDIUM") @FormParam("instance_type") InstanceConfig instanceType
     ) {
 
-        if(autotuning){
-        } else{
-            if(!(size>=0 && instanceType!=null)){
-                throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        try{
+            if(autotuning){
+                log.info("AutoScale req");
+                autonomicManager.updateScale(true, -1, InstanceConfig.MEDIUM);
+            } else{
+                log.info("!AutoScale req");
+                if(!(size>=0 && instanceType!=null)){
+                    throw new WebApplicationException(Response.Status.BAD_REQUEST);
+                }
+                autonomicManager.updateScale(false, size, instanceType);
             }
 
-
+            String json = "{ \"todo\" : \"da impl\" }";
+            Response.ResponseBuilder builder = Response.ok(json);
+            return makeCORS(builder);
         }
-
-        /** UPDATING STATE **/
-
-        //TODO sistemare qui sotto String json = gson.toJson(ControllerOld.getInstance().getState());
-
-        String json = "{ \"todo\" : \"da impl\" }";
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        String json = "{ \"result\" : \"fail\" }";
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);
     }
 
+
+    @POST
+    @Path("/degree")
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+    public synchronized Response setDegree(
+            @DefaultValue("TRUE") @FormParam("rep_degree_tuning") Boolean autotuning,
+            @DefaultValue("-1") @FormParam("rep_degree_size") int degree
+    ) {
+
+        try{
+            if(autotuning){
+                log.info("AutoDegree req");
+                autonomicManager.updateDegree(true, -1);
+            } else{
+                log.info("!AutoDegree req");
+                if( degree<0 ){
+                    throw new WebApplicationException(Response.Status.BAD_REQUEST);
+                }
+                autonomicManager.updateDegree(false, degree);
+            }
+
+            String json = "{ \"todo\" : \"done\" }";
+            Response.ResponseBuilder builder = Response.ok(json);
+            return makeCORS(builder);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        String json = "{ \"result\" : \"fail\" }";
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
+    }
+
+    @POST
+    @Path("/protocol")
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+    public synchronized Response setProtocol(
+            @DefaultValue("TRUE") @FormParam("rep_protocol_tuning") Boolean autotuning,
+            @DefaultValue("TWOPC") @FormParam("rep_protocol") ReplicationProtocol protocol
+    ) {
+
+        try{
+            if(autotuning){
+                log.info("AutoProtocol req");
+                autonomicManager.updateProtocol(true, null);
+            } else{
+                log.info("!AutoProtocol req");
+                if( protocol==null ){
+                    throw new WebApplicationException(Response.Status.BAD_REQUEST);
+                }
+                autonomicManager.updateProtocol(false, protocol);
+            }
+
+            String json = "{ \"todo\" : \"done\" }";
+            Response.ResponseBuilder builder = Response.ok(json);
+            return makeCORS(builder);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        String json = "{ \"result\" : \"fail\" }";
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
+    }
 }

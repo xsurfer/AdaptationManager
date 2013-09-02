@@ -82,9 +82,12 @@ public class WhatIfResource extends AbstractResource {
             @DefaultValue("-1") @FormParam("avgCommitAsync") Long avgCommitAsync,
             @DefaultValue("-1") @FormParam("avgRemoteGetRtt") Long avgRemoteGetRtt,
 
-            @FormParam("oracoles") List<String> fores,
-            @DefaultValue("2")@FormParam("repDegree") Integer repDegree,
-            @DefaultValue("TWOPC") @FormParam("repProtocol") ReplicationProtocol repProtocol
+            @DefaultValue("NODES") @FormParam("xaxis") WhatIfCustomParamDTO.Xaxis xaxis,
+            @DefaultValue("-1")@FormParam("fixed_nodes") int fixedNodes,
+            @DefaultValue("-1")@FormParam("fixed_degree") int fixedDegree,
+            @DefaultValue("TWOPC") @FormParam("fixed_protocol") ReplicationProtocol fixedProtocol,
+
+            @FormParam("oracoles") List<String> fores
     ){
         log.trace("acf: " + acf);
         log.trace("percentageSuccessWriteTransactions: " + percentageSuccessWriteTransactions);
@@ -97,8 +100,15 @@ public class WhatIfResource extends AbstractResource {
         log.trace("avgPrepareAsync: " + avgPrepareAsync);
         log.trace("avgCommitAsync: " + avgCommitAsync);
         log.trace("avgRemoteGetRtt: " + avgRemoteGetRtt);
+
+        log.trace("xaxis: " + xaxis);
+
+        log.trace("fixed_nodes: " + fixedNodes);
+        log.trace("fixed_degree: " + fixedDegree);
+        log.trace("fixed_protocol: " + fixedProtocol);
+
         log.trace("fores: " + fores);
-        log.trace("repDegree: " + repDegree);
+
 
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
 
@@ -107,8 +117,12 @@ public class WhatIfResource extends AbstractResource {
             Forecaster forecaster = Forecaster.valueOf(forecasterString);
             customParam.addForecaster(forecaster);
         }
-        customParam.setReplicationDegree(repDegree);
-        customParam.setReplicationProtocol(repProtocol);
+
+        customParam.setXaxis(xaxis);
+
+        customParam.setFixedNodes(fixedNodes);
+        customParam.setFixedDegree(fixedDegree);
+        customParam.setFixedProtocol(fixedProtocol);
 
         customParam.setACF( acf );
         customParam.setAvgCommitAsync(avgCommitAsync);

@@ -12,15 +12,17 @@ import java.util.Collection;
  */
 public class WhatIfDTO {
 
-    private Forecaster forecaster;
+    private final WhatIfCustomParamDTO.Xaxis xaxis;
+    private final Forecaster forecaster;
 
-    private Collection<Collection<Double>> throughput = new ArrayList<Collection<Double>>();
-    private Collection<Collection<Double>> readResponseTime = new ArrayList<Collection<Double>>();
-    private Collection<Collection<Double>> writeResponseTime = new ArrayList<Collection<Double>>();
-    private Collection<Collection<Double>> abortRate = new ArrayList<Collection<Double>>();
+    private final Collection<Collection<Double>> throughput = new ArrayList<Collection<Double>>();
+    private final Collection<Collection<Double>> readResponseTime = new ArrayList<Collection<Double>>();
+    private final Collection<Collection<Double>> writeResponseTime = new ArrayList<Collection<Double>>();
+    private final Collection<Collection<Double>> abortRate = new ArrayList<Collection<Double>>();
 
-    public WhatIfDTO(Forecaster forecaster){
+    public WhatIfDTO(Forecaster forecaster, WhatIfCustomParamDTO.Xaxis xaxis){
          this.forecaster = forecaster;
+        this.xaxis = xaxis;
     }
 
     public Forecaster getForecaster(){

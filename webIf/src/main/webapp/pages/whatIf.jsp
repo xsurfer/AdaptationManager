@@ -21,7 +21,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/assets/flot/curvedLines.js" ></script>    
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/whatif.js"></script>
-	<script src="http://malsup.github.com/jquery.form.js"></script>
+	<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
 </head>
 
 <body>
@@ -44,7 +44,7 @@
 			<!--  <a href="${pageContext.request.contextPath}/registration.jsp">Register</a>  -->
 
 
-			<form id="whatif">
+			<form id="whatif" action="">
 			
 				<div class="table">
 					<div class="row">
@@ -126,16 +126,50 @@
 						<div class="column">
 							<fieldset>
 								<legend>Forecasting:</legend>
+								
+									<div class="param">
+										<fieldset>
+										<legend>X-axis:</legend>
+											<div class="line"></div>
+											<label class="close" for="xaxisNodes">Nodes</label>																						
+											<input id="xaxisNodes" type="radio" name="xaxis" value="NODES" />
+																						
+											<input id="fixedNODES" type="text" name="fixed_nodes" size="2" value="2" />
+											<br />
+											
+											<label class="close" for="xaxisDegree">Rep. Degree</label>
+											<input id="xaxisDegree" type="radio" name="xaxis" value="DEGREE" />
+											
+											<input id="fixedDEGREE" type="text" name="fixed_degree" size="2" value="2" />
+											<br />											
+											
+											<label class="close" for="xaxisProtocol">Rep. Protocol</label>																															
+											<input id="xaxisProtocol" type="radio" name="xaxis" value="PROTOCOL" />
+											
+											<select id="fixedPROTOCOL" name="fixed_protocol">
+												<option value="TWOPC">2PC</option>
+												<option value="TO">TO</option>
+												<option value="PB">PB</option>
+											</select>
+											<br />
+												 
+										</fieldset>										
+									</div>
+									
 									<div class="param">
 										<div class="line"></div>
-										<input type="checkbox" name="oracoles" value="ANALYTICAL">Analytical<br>
+										<fieldset>
+										<legend>Predictors:</legend>
+											<div class="line"></div>
+											<input type="checkbox" name="oracoles" value="ANALYTICAL" />Analytical<br />
+											<input type="checkbox" name="oracoles" value="SIMULATOR" />Simulator<br />
+											<input type="checkbox" name="oracoles" value="MACHINE_LEARNING" />Machine Learning<br />	
+										</fieldset>										
 									</div>
+									
 									<div class="param">
-										<input type="checkbox" name="oracoles" value="SIMULATOR">Simulator<br>										
 									</div>
-									<div class="param">
-										<input type="checkbox" name="oracoles" value="MACHINE_LEARNING">Machine Learning<br>										
-									</div>
+<!-- 
 									<div class="param">
 										<input type="text" id="repDegree" name="repDegree" value="2">
 										
@@ -149,6 +183,7 @@
 									</div>
 									<div class="param">
 									</div>
+ -->									
 								</fieldset>											
 						</div>
 					</div>					
@@ -171,19 +206,19 @@
 			
 			<div id="container">
 				<div class="item">
-					<div class="plotTitle">Throughput</div>
+					<div class="plotTitle">Throughput (tx/sec)</div>
 					<div id="placeholderThroughput" class="plot"></div>
 				</div>
 				<div class="item">
-					<div class="plotTitle">Read Response Time</div>
+					<div class="plotTitle">Read Response Time (msec)</div>
 					<div id="placeholderReadResponseTime" class="plot"></div>
 				</div>
 				<div class="item">
-					<div class="plotTitle">Write Response Time</div>
+					<div class="plotTitle">Write Response Time (msec)</div>
 					<div id="placeholderWriteResponseTime" class="plot"></div>
 				</div>
 				<div class="item">
-					<div class="plotTitle">AbortRate %</div>
+					<div class="plotTitle">AbortRate (%)</div>
 					<div id="placeholderAbortRate" class="plot"></div>
 				</div>
 			</div>	   				
@@ -197,8 +232,8 @@
 	<!-- /col -->
 	<div id="col-bottom"></div>
 
-	<hr class="noscreen">
-	<hr class="noscreen">
+	<hr class="noscreen" />
+	<hr class="noscreen" />
 	<div class="modal"></div>
 </body>
 </html>

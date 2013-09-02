@@ -74,52 +74,46 @@ $(document).ready(
         });  
     	*/
     }
-    
-/**
-{
-   "status":"WORKING",
-   "scale":{
-      "small":0,
-      "medium":0,
-      "large":0,
-      "type":"AUTO",
-      "method":"ANALYTICAL"
-   },
-   "replicationProtocol":{
-      "protocol":"TWOPC",
-      "type":"AUTO",
-      "method":"ANALYTICAL"
-   },
-   "replicationDegree":{
-      "degree":2,
-      "type":"AUTO",
-      "method":"ANALYTICAL"
-   },
-   "dataPlacement":{
-      "type":"AUTO",
-      "method":"ANALYTICAL"
-   }
-}
-*/
+    /*
+    {
+      "currentState":"RUNNING",
+      "tuning":{
+        "forecaster":"ANALYTICAL",
+        "autoScale":"true",
+        "autoDegree":"true",
+        "autoProtocol":"true"
+      },
+
+      "configuration":{
+        "platformSize":2,
+        "threadPerNode":2,
+        "nodesConfig":"MEDIUM",
+        "replicationProtocol":"TWOPC",
+        "replicationDegree":2,
+        "dataPlacement":false
+      }
+    }
+   */
+
     
     var Update = function(json) {
     	console.log(json); 
 		
-		$("span#status").text(json.state);
+		$("span#status").text(json.currentState);
 		
+		$("#forecaster_info").text(json.tuning.forecaster);
 		
 		/* SCALE */
-		$("p#scale_tuning").text( (json.scale.forecaster == "NONE") ? "MANUAL" : json.scale.forecaster );			
+		$("p#scale_tuning").text( (json.tuning.autoScale ) ? "Self-tuned (" + json.tuning.forecaster + ")" : "MANUAL" );					
+		$("p#scale_conf").text( $.trim(json.configuration.platformSize) + " " + $.trim(json.configuration.nodesConfig));
 		
-		$("p#scale_conf").text( $.trim(json.scale.nodes) + " " + $.trim(json.scale.configuration));
+		$("p#rep_degree_tuning").text( (json.tuning.autoDegree ) ? "Self-tuned (" + json.tuning.forecaster + ")" : "MANUAL" );	
+		$("p#rep_degree_conf").text( $.trim(json.configuration.replicationDegree) );
 		
-		$("p#rep_degree_tuning").text( (json.replication_degree.forecaster == "NONE") ? "MANUAL" : json.replication_degree.forecaster );	
-		$("p#rep_degree_conf").text( $.trim(json.replication_degree.degree) );
+		$("p#rep_prot_tuning").text( (json.tuning.autoProtocol ) ? "Self-tuned (" + json.tuning.forecaster + ")" : "MANUAL" );		
+		$("p#rep_prot_conf").text( $.trim(json.configuration.replicationProtocol) );
 		
-		$("p#rep_prot_tuning").text( (json.replication_protocol.forecaster == "NONE") ? "MANUAL" : json.replication_protocol.forecaster );		
-		$("p#rep_prot_conf").text( $.trim(json.replication_protocol.protocol) );
-		
-		$("p#placement_tuning").text( $.trim(json.data_placement) );
+		$("p#placement_tuning").text( (json.tuning.dataPlacement ) ? "ENABLED" : "DISABLED" );			
 		
 	};
 
@@ -143,16 +137,14 @@ $(document).ready(
         <h3>State: <span style="display: inline;" id="status"></span></h3>
         
         <!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
-	   				
-	   				
-	   				
+	   					
 		<table id="box-table-a" summary="Employee Pay Sheet">
 		    <thead>
 		    	<tr>
-		        	<th scope="col">Autotuned Feature</th>
-		            <th scope="col">Status</th>
-		            <th scope="col">Current</th>
-		            <th scope="col">Optimal</th>
+		        	<th scope="col">Selftunable Feature</th>
+		            <th scope="col">Tuning Status</th>
+		            <th scope="col">Current Config.</th>
+		            <th scope="col">Optimal Predicted Config<br/> using <span id="forecaster_info"></span> </th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -183,9 +175,13 @@ $(document).ready(
 		    </tbody>
 		</table>
 		
+		<form id="forecaster" action="">
+			<input class="submit" type="submit" value="Update predicted optimal" />
+		</form>
+		
 		<h3>Workload and Performance Monitor:</h3>
 				
-		<!-- <iframe src="http://127.0.0.1/stats2/index.php?rootFolder=csv" style="width: 100%; height: 900px"></iframe>  -->
+		<iframe src="http://cloudtm.ist.utl.pt/ziparo/stats2/index.php?rootFolder=csv" style="width: 100%; height: 900px"></iframe> 
 		
 		
 <!-- 		<form id="plot">	 -->

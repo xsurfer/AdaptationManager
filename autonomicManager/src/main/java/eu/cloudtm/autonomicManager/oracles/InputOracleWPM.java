@@ -4,6 +4,7 @@ import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.ForecastParam;
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
+import eu.cloudtm.autonomicManager.statistics.Sample;
 import eu.cloudtm.autonomicManager.statistics.WPMSample;
 
 import java.util.Map;
@@ -47,7 +48,7 @@ public class InputOracleWPM implements InputOracle {
    }
 
    public Map<String, Object> getParamMap() {
-      WPMSample s = (WPMSample) processedSample.getInnerSample();
+      Sample s = processedSample.getInnerSample();
       return s.getParams();
    }
 

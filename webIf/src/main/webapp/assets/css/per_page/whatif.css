@@ -137,6 +137,11 @@ div.param label {
 	display: inline-block;
 }
 
+div.param label.close {
+	/*border-bottom: 1px dashed;*/
+	width: 100px;		
+}
+
 div.param input {
 	/*border-bottom: 1px dashed;*/
 	width: 50;	

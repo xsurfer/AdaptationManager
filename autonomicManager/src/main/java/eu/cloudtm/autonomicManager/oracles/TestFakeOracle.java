@@ -22,7 +22,7 @@ public class TestFakeOracle {
 
         int imin = 2, imax = 10;
 
-        FakeOracle fake = new FakeOracle();
+        FakeAnalyticalOracle fake = new FakeAnalyticalOracle();
 
 
         for(int i = 0; i<=20;i++){

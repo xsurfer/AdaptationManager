@@ -24,8 +24,6 @@ public class StatusResource extends AbstractResource {
 
     private static Log log = LogFactory.getLog(StatusResource.class);
 
-
-
     @Inject
     private AutonomicManager autonomicManager;
 
@@ -53,7 +51,7 @@ public class StatusResource extends AbstractResource {
     @Produces("application/json")
     public Response getState() {
 
-        log.info("Generating state to send...");
+        log.trace("Generating state to send...");
 
         //Gson gson = new Gson();
         GsonBuilder gson = new GsonBuilder();
@@ -66,7 +64,7 @@ public class StatusResource extends AbstractResource {
         );
 
         String json = gson.create().toJson(statusDTO);
-        log.info("state: " + json);
+        log.trace("state: " + json);
 
         Response.ResponseBuilder builder = Response.ok(json);
         return makeCORS(builder);

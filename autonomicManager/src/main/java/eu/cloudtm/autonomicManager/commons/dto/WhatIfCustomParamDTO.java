@@ -13,9 +13,15 @@ import java.util.Set;
  */
 public class WhatIfCustomParamDTO {
 
-    private Integer replicationDegree = 2;
+    public enum Xaxis {
+        NODES, DEGREE, PROTOCOL
+    }
+
+    private Xaxis xaxis = Xaxis.NODES;
+    private Integer fixedDegree = 2;
+    private Integer fixedNodes = 10;
+    private ReplicationProtocol fixedProtocol = ReplicationProtocol.TWOPC;
     private Set<Forecaster> forecasters = new HashSet<Forecaster>();
-    private ReplicationProtocol replProtocol = ReplicationProtocol.TWOPC;
 
     private Double acf = -1D;
     private double avgGetsPerWrTransaction = -1; //  # GET per write transaction
@@ -29,22 +35,38 @@ public class WhatIfCustomParamDTO {
     private Long avgPrepareAsync = -1L;   // prepare latency
     private Long avgCommitAsync = -1L;    // commit latency
 
-    public void setReplicationDegree(Integer val){
+    public Xaxis getXaxis() {
+        return xaxis;
+    }
+
+    public void setXaxis(Xaxis xaxis) {
+        this.xaxis = xaxis;
+    }
+
+    public Integer getFixedNodes() {
+        return fixedNodes;
+    }
+
+    public void setFixedNodes(Integer fixedNodes) {
+        this.fixedNodes = fixedNodes;
+    }
+
+    public void setFixedDegree(Integer val){
         if(val<=0)
             throw new IllegalArgumentException("Replication degree must be >0");
-        replicationDegree = val;
+        fixedDegree = val;
     }
 
-    public int getReplicationDegree(){
-        return replicationDegree;
+    public int getFixedDegree(){
+        return fixedDegree;
     }
 
-    public void setReplicationProtocol(ReplicationProtocol repProt){
-        this.replProtocol = repProt;
+    public void setFixedProtocol(ReplicationProtocol repProt){
+        this.fixedProtocol = repProt;
     }
 
-    public ReplicationProtocol getReplicationProtocol(){
-        return replProtocol;
+    public ReplicationProtocol getFixedProtocol(){
+        return fixedProtocol;
     }
 
     public void addForecaster(Forecaster forecaster){
@@ -146,8 +168,5 @@ public class WhatIfCustomParamDTO {
     public void setAvgCommitAsync(Long avgCommitAsync) {
         this.avgCommitAsync = avgCommitAsync;
     }
-
-
-
 
 }

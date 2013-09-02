@@ -25,6 +25,8 @@ import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.ForecastParam;
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.oracles.InputOracleWPM;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,79 +49,91 @@ import java.util.Map;
  */
 public class WPMInputOracleDumper {
 
-   private InputOracleWPM input;
+    private static Log log = LogFactory.getLog(WPMInputOracleDumper.class);
 
-   public WPMInputOracleDumper(InputOracleWPM input) {
-      this.input = input;
-   }
+    private InputOracleWPM input;
 
-   public void dump(String toFile) throws ParserConfigurationException, TransformerException {
+    public WPMInputOracleDumper(InputOracleWPM input) {
+        this.input = input;
+    }
 
-      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+    public void dump(String toFile) throws ParserConfigurationException, TransformerException {
 
-      // root elements
-      Document doc = docBuilder.newDocument();
-      Element rootElement = doc.createElement("FileInputOracle");
-      doc.appendChild(rootElement);
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-      Element forecast = doc.createElement("ForecastParams");
-      Map<ForecastParam, Object> forecastM = this.input.getForecastParamMap();
-      for (Map.Entry<ForecastParam, Object> entry : forecastM.entrySet()) {
-         Element fp = doc.createElement("ForecastParam");
-         rootElement.appendChild(fp);
-         Attr name = doc.createAttribute("name");
-         name.setValue(entry.getKey().getKey());
-         Attr type = doc.createAttribute("type");
-         type.setValue(entry.getKey().getClazz().toString());
-         Attr value = doc.createAttribute("value");
-         value.setValue(entry.getValue().toString());
-         forecast.appendChild(fp);
-      }
-      rootElement.appendChild(forecast);
+        // root elements
+        Document doc = docBuilder.newDocument();
+        Element rootElement = doc.createElement("FileInputOracle");
+        doc.appendChild(rootElement);
 
-      Map<EvaluatedParam, Object> evaluatedM = input.getEvaluatedParamMap();
-      Element evaluated = doc.createElement("EvaluatedParams");
-      for (Map.Entry<EvaluatedParam, Object> entry : evaluatedM.entrySet()) {
-         Element fp = doc.createElement("EvaluatedParam");
-         rootElement.appendChild(fp);
-         Attr name = doc.createAttribute("name");
-         name.setValue(entry.getKey().getKey());
-         Attr type = doc.createAttribute("type");
-         type.setValue(Double.class.toString());
-         Attr value = doc.createAttribute("value");
-         value.setValue(entry.getValue().toString());
-         forecast.appendChild(fp);
-      }
-      rootElement.appendChild(evaluated);
+        Element forecast = doc.createElement("ForecastParams");
+        Map<ForecastParam, Object> forecastM = this.input.getForecastParamMap();
+        for (Map.Entry<ForecastParam, Object> entry : forecastM.entrySet()) {
+            Element fp = doc.createElement("ForecastParam");
+            rootElement.appendChild(fp);
 
-      Map<String, Object> paramM = input.getParamMap();
-      Element aggregated = doc.createElement("AggregatedParams");
-      for (Map.Entry<String, Object> entry : paramM.entrySet()) {
-         Element fp = doc.createElement("AggregatedParam");
-         rootElement.appendChild(fp);
-         Attr name = doc.createAttribute("name");
-         String nameK = entry.getKey();
-         name.setValue(nameK);
-         Attr type = doc.createAttribute("type");
-         Class clazz = Param.getByName(nameK).getClazz();
-         type.setValue(clazz.toString());
-         Attr value = doc.createAttribute("value");
-         value.setValue(entry.getValue().toString());
-         forecast.appendChild(fp);
-      }
-      rootElement.appendChild(aggregated);
+            fp.setAttribute("name", entry.getKey().getKey() );
+
+            fp.setAttribute("type", entry.getKey().getClazz().toString() );
+
+            fp.setAttribute("value", entry.getValue().toString() );
+
+            forecast.appendChild(fp);
+        }
+        rootElement.appendChild(forecast);
+
+        Map<EvaluatedParam, Object> evaluatedM = input.getEvaluatedParamMap();
+        Element evaluated = doc.createElement("EvaluatedParams");
+        for (Map.Entry<EvaluatedParam, Object> entry : evaluatedM.entrySet()) {
+            Element fp = doc.createElement("EvaluatedParam");
+            rootElement.appendChild(fp);
+
+            fp.setAttribute("name", entry.getKey().getKey() );
+
+            fp.setAttribute("type", Double.class.toString() );
+
+            fp.setAttribute("value", entry.getValue().toString() );
+
+            evaluated.appendChild(fp);
+        }
+        rootElement.appendChild(evaluated);
+
+        Map<String, Object> paramM = input.getParamMap();
+        Element aggregated = doc.createElement("AggregatedParams");
+        for ( Map.Entry<String, Object> entry : paramM.entrySet() ) {
+            Element fp = doc.createElement("AggregatedParam");
+            rootElement.appendChild(fp);
+
+            fp.setAttribute("name", entry.getKey() );
+
+            Param param = Param.getByName( entry.getKey() );
+            Class clazz;
+            if(param == null){
+                log.warn("Parameter not found in Params: " + entry.getKey() + ". Setting Double as default...");
+                clazz = Double.class;
+            } else {
+                clazz = param.getClazz();
+            }
+
+            fp.setAttribute("type", clazz.toString() );
+
+            fp.setAttribute("value", entry.getValue().toString() );
+
+            aggregated.appendChild(fp);
+        }
+        rootElement.appendChild(aggregated);
 
 
-      TransformerFactory tFactory =
-              TransformerFactory.newInstance();
-      Transformer transformer =
-              tFactory.newTransformer();
+        TransformerFactory tFactory =
+                TransformerFactory.newInstance();
+        Transformer transformer =
+                tFactory.newTransformer();
 
-      DOMSource source = new DOMSource(doc);
-      StreamResult result = new StreamResult(new File(toFile));
-      transformer.transform(source, result);
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File(toFile));
+        transformer.transform(source, result);
 
-   }
+    }
 
 }

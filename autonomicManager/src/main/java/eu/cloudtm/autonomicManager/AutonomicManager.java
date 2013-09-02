@@ -5,7 +5,6 @@ import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
-import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
@@ -169,12 +168,12 @@ public class AutonomicManager {
         log.info("Replication Protocol {TWOPC, TO, PB}: ");
         String replicationProtocolStr = in.next();
         ReplicationProtocol replicationProtocol = ReplicationProtocol.valueOf(replicationProtocolStr);
-        customParamDTO.setReplicationProtocol(replicationProtocol);
+        customParamDTO.setFixedProtocol(replicationProtocol);
 
         /* replication degree */
         log.info("Replication Degree: ");
         int repDegree = in.nextInt();
-        customParamDTO.setReplicationDegree(repDegree);
+        customParamDTO.setFixedDegree(repDegree);
 
         List<WhatIfDTO> result = whatIfService.evaluate(customParamDTO);
 
@@ -203,7 +202,7 @@ public class AutonomicManager {
      * @return a copy of current PlatformTuning
      */
     public PlatformTuning platformTuning(){
-        log.info("Cloning platformTuning...");
+        log.trace("Cloning platformTuning...");
         return platformTuning.cloneThroughJson();
     }
 
@@ -212,7 +211,7 @@ public class AutonomicManager {
      * @return a copy of current PlatformConfiguration
      */
     public PlatformConfiguration platformConfiguration(){
-        log.info("Cloning platformConfiguration...");
+        log.trace("Cloning platformConfiguration...");
         return platformConfiguration.cloneThroughJson();
     }
 
@@ -221,8 +220,44 @@ public class AutonomicManager {
      * @return a copy of current State
      */
     public State state(){
-        log.info("Cloning state...");
+        log.trace("Cloning state...");
         return state.cloneThroughJson();
     }
 
-}
+    public void updateForecaster(Forecaster forecaster){
+        log.info("Updating forecaster from:" + platformTuning().forecaster() + " to " + forecaster);
+        platformTuning.setForecaster(forecaster);
+    }
+
+    public void updateScale(boolean tuning, int size, InstanceConfig instanceConfig){
+        log.info("Updating scale");
+
+        platformTuning.autoScale(tuning);
+        if(!tuning){
+            log.info("Triggering reconfiguration (" + size + ")");
+            platformConfiguration.setPlatformScale(size, instanceConfig);
+        }
+
+    }
+
+    public void updateDegree(boolean tuning, int degree){
+        log.info("Updating degree");
+
+        platformTuning.autoDegree(tuning);
+        if(!tuning){
+            log.info("Triggering reconfiguration (" + degree + ")");
+            platformConfiguration.setRepDegree(degree);
+        }
+    }
+
+    public void updateProtocol(boolean tuning, ReplicationProtocol protocol){
+        log.info("Updating protocol");
+
+        platformTuning.autoProtocol(tuning);
+        if(!tuning){
+            log.info("Triggering reconfiguration (" + protocol + ")");
+            platformConfiguration.setRepProtocol(protocol);
+        }
+    }
+
+    }

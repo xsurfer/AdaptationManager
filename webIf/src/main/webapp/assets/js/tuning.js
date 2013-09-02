@@ -18,8 +18,11 @@ var featureToField = {
 	  };
 
 var REST_STATUS = 'http://' + REST_HOST + ':' + REST_PORT +'/status';
-var REST_SET_SCALE = 'http://' + REST_HOST + ':' + REST_PORT +'/scale';
+var REST_SET_SCALE = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/scale';
+var REST_SET_DEGREE = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/degree';
+var REST_SET_PROTOCOL = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/protocol';
 
+var REST_SET_FORECASTER = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/forecaster';
 
 $(document).ready( 
     		
@@ -28,8 +31,24 @@ $(document).ready(
     			init(); 
     			$('.fancybox').fancybox();
 
+    			$('#forecaster').submit(function() {
+    				alert("forecaster");
+                    sendForecaster(); 
+                    return false;
+                });
+    			
     			$('#scale').submit(function() { 
                     sendScale(); 
+                    return false;
+                });
+    			
+    			$('#degree').submit(function() { 
+                    sendDegree(); 
+                    return false;
+                });
+    			
+    			$('#protocol').submit(function() { 
+                    sendProtocol(); 
                     return false;
                 });
 
@@ -129,42 +148,131 @@ function disableFieldset($radio){
 	}			
 }
 
+function sendForecaster() {
+	var dataToBeSent = $("form#forecaster").serialize();
+	console.log("forecaster - dataToBeSent: " + dataToBeSent);
+	
+	//$('#form#forecaster').ajaxForm();
+	
+	$.ajax({
+		dataType: "json",
+		contentType: "application/x-www-form-urlencoded",		
+		url: REST_SET_FORECASTER,
+		type: "POST",
+		crossDomain: true,
+		data: dataToBeSent,	
+
+		success: function(data) {	        
+	        alert('ok!');
+	    },
+		error: function(xhr, status) {
+			console.log(xhr);
+			alert(status);
+		}
+	});
+	
+	
+//	$.ajax({
+//	    url: REST_SET_FORECASTER,
+//	    type: 'PUT',
+//	    crossDomain: true,
+//	    data: dataToBeSent,
+//	    dataType: 'json',
+//	    success: function(data) {	        
+//	        alert('ok!');
+//	    }
+//	});
+}
+
 function sendScale() {
 	var dataToBeSent = $("form#scale").serialize();
 	$('#form#scale').ajaxForm();
 	
 	$.ajax({
-	    url: REST_SET_SCALE,
-	    type: 'PUT',
-	    crossDomain: true,
-	    data: dataToBeSent,
-	    dataType: 'json',
-	    success: function(data) {	        
-	        alert('ok!');
-	    }
+		dataType: "json",
+		contentType: "application/x-www-form-urlencoded",		
+		url: REST_SET_SCALE,
+		type: "POST",
+		crossDomain: true,
+		data: dataToBeSent,	
+
+		success: function(data) {	        
+	        alert('ok! ' + data);
+	    },
+		error: function(xhr, status) {
+			console.log(xhr);
+			alert(status);
+		}
 	});
 	
-	
-	//$.post(REST_SET_SCALE, dataToBeSent);
-	/*
-	console.log("DATA_TO_SENT" + dataToBeSent);
-	$.ajax({
-        type: 'PUT',
-        crossDomain: true,
-        data: {}
-        //dataType: 'json',
-        url: REST_SET_SCALE,
-        success: function (data) {
-        	alert("Thank you for your comment!");
-        },
-        error: function (request, status, error) {
-//        	setTimeout(function(){
-//        		document.location.reload(true);	
-//        	}, 5000);
-        console.log(status);
-        console.log(error);            	
-        }
-    });	
-    */
 }
+
+function sendDegree() {
+	var dataToBeSent = $("form#degree").serialize();
+	$('#form#degree').ajaxForm();
+	
+	$.ajax({
+		dataType: "json",
+		contentType: "application/x-www-form-urlencoded",		
+		url: REST_SET_DEGREE,
+		type: "POST",
+		crossDomain: true,
+		data: dataToBeSent,	
+
+		success: function(data) {	        
+	        alert('ok! ' + data);
+	    },
+		error: function(xhr, status) {
+			console.log(xhr);
+			alert(status);
+		}
+	});
+	
+}
+
+
+function sendProtocol() {
+	var dataToBeSent = $("form#protocol").serialize();
+	$('#form#protocol').ajaxForm();
+	
+	$.ajax({
+		dataType: "json",
+		contentType: "application/x-www-form-urlencoded",		
+		url: REST_SET_PROTOCOL,
+		type: "POST",
+		crossDomain: true,
+		data: dataToBeSent,	
+
+		success: function(data) {	        
+	        alert('ok! ' + data);
+	    },
+		error: function(xhr, status) {
+			console.log(xhr);
+			alert(status);
+		}
+	});
+	
+}
+
+//$.post(REST_SET_SCALE, dataToBeSent);
+/*
+console.log("DATA_TO_SENT" + dataToBeSent);
+$.ajax({
+    type: 'PUT',
+    crossDomain: true,
+    data: {}
+    //dataType: 'json',
+    url: REST_SET_SCALE,
+    success: function (data) {
+    	alert("Thank you for your comment!");
+    },
+    error: function (request, status, error) {
+//    	setTimeout(function(){
+//    		document.location.reload(true);	
+//    	}, 5000);
+    console.log(status);
+    console.log(error);            	
+    }
+});	
+*/
 	
