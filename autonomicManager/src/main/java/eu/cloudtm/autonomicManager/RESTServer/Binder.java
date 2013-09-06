@@ -13,23 +13,21 @@ import javax.inject.Singleton;
  */
 public class Binder extends AbstractBinder {
 
-    private final StatsManager statsManager;
     private final AutonomicManager autonomicManager;
 
-    public Binder(StatsManager statsManager, AutonomicManager autonomicManager){
-        this.statsManager = statsManager;
+    public Binder(AutonomicManager autonomicManager){
         this.autonomicManager = autonomicManager;
     }
 
     @Override
     protected void configure() {
         //singleton binding
-        bind(StatsManager.class).in(Singleton.class);
-        bind(statsManager).to(StatsManager.class);
+        bind( StatsManager.class ).in( Singleton.class );
+        bind( autonomicManager.getStatsManager() ).to( StatsManager.class );
 
         //singleton binding
-        bind(AutonomicManager.class).in(Singleton.class);
-        bind(autonomicManager).to(AutonomicManager.class);
+        bind( AutonomicManager.class ).in(Singleton.class);
+        bind( autonomicManager ).to( AutonomicManager.class );
     }
 
 

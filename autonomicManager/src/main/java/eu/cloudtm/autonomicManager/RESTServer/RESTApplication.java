@@ -11,8 +11,8 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class RESTApplication extends ResourceConfig {
 
-    public RESTApplication(StatsManager statsManager, AutonomicManager autonomicManager) {
-        register(new Binder(statsManager, autonomicManager));
+    public RESTApplication(AutonomicManager autonomicManager) {
+        register(new Binder(autonomicManager));
         packages(true, "eu.cloudtm.autonomicManager.RESTServer.resources");
     }
 

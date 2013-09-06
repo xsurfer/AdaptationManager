@@ -156,9 +156,9 @@ public class ReconfiguratorImpl implements Reconfigurator {
         ControllerLogger.log.info("Scale successfully switched to " + platformRequest.platformSize() + " !" );
 
         // TODO CHECK THE NUM NODEs
-        log.info("Waiting 20 secs");
+        log.info("Waiting 5 secs");
         try {
-            Thread.sleep(20000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

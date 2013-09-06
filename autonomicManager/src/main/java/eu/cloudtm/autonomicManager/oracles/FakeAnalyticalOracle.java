@@ -4,6 +4,8 @@ import eu.cloudtm.autonomicManager.commons.ForecastParam;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * To change this template use File | Settings | File Templates.
  */
 public class FakeAnalyticalOracle implements Oracle {
+
+    private static Log log = LogFactory.getLog(FakeAnalyticalOracle.class);
 
     private static AtomicInteger partialCounter = new AtomicInteger(0);
     private static AtomicInteger counter = new AtomicInteger(0);
@@ -82,6 +86,7 @@ public class FakeAnalyticalOracle implements Oracle {
     @Override
     public OutputOracle forecast(InputOracle input) throws OracleException {
 
+        log.info( "counter: " + counter.get() );
         OutputOracle toReturn = counter2plat.get( getCurr() );
 
         counter.incrementAndGet();

@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class WPMStatsManagerFactory {
 
-    private WPMStatsManagerFactory instance;
+    private WPMStatsManager wpmStatsManager;
 
     private static Log log = LogFactory.getLog(WPMStatsManagerFactory.class);
 
@@ -30,29 +30,33 @@ public class WPMStatsManagerFactory {
 
     public WPMStatsManagerFactory(PlatformConfiguration platformConfiguration){
         this.platformConfiguration = platformConfiguration;
-
     }
 
     public WPMStatsManager build(){
-        WPMConnector connector = null;
 
-        while(connector == null){
-            try {
-                connector = new WPMConnector();
-            } catch (Exception e) {
-                log.warn("Check if the LogService is running and press enter to retry...");
+        if( wpmStatsManager == null ){
+
+            WPMConnector connector = null;
+
+            while(connector == null){
                 try {
-                    System.in.read();
-                } catch (IOException e1) {
-                    throw new RuntimeException(e);
+                    connector = new WPMConnector();
+                } catch (Exception e) {
+                    log.warn("Check if the LogService is running and press enter to retry...");
+                    try {
+                        System.in.read();
+                    } catch (IOException e1) {
+                        throw new RuntimeException(e);
+                    }
+                    connector = null;
                 }
-                connector = null;
             }
-        }
 
-        WPMStatsManager wpmStatsManager = new WPMStatsManager();
-        this.statisticsRemoteListernerFactory = new WPMStatisticsRemoteListernerFactory(connector, wpmStatsManager, platformConfiguration);
-        viewChangeRemoteListener = new WPMViewChangeRemoteListenerImpl(connector, statisticsRemoteListernerFactory);
+            wpmStatsManager = new WPMStatsManager();
+            this.statisticsRemoteListernerFactory = new WPMStatisticsRemoteListernerFactory(connector, wpmStatsManager, platformConfiguration);
+            viewChangeRemoteListener = new WPMViewChangeRemoteListenerImpl(connector, statisticsRemoteListernerFactory);
+
+        }
 
         return wpmStatsManager;
     }

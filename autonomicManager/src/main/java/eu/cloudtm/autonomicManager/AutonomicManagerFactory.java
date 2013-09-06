@@ -10,6 +10,7 @@ import eu.cloudtm.autonomicManager.optimizers.OptimizerFilter;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerImpl;
 import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
+import eu.cloudtm.autonomicManager.statistics.WPMStatsManager;
 import eu.cloudtm.autonomicManager.statistics.WPMStatsManagerFactory;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzerFactory;
@@ -38,9 +39,8 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     private Optimizer optimizer;
     private SLAManager slaManager;
     private WorkloadAnalyzer workloadAnalyzer;
-    private RESTServer restServer;
 
-    private StatsManager wpmStatsManager;
+    private WPMStatsManager wpmStatsManager;
 
     public AutonomicManagerFactory(){
     }
@@ -48,26 +48,27 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
 
     public AutonomicManager build(){
 
-        wpmStatsManager = new WPMStatsManagerFactory( getPlatformConfiguration() ).build();
-
         AutonomicManager autonomicManager = new AutonomicManager(
                 platformState,
                 getPlatformConfiguration(),
                 platformTuning,
-                wpmStatsManager,
+                getStatsManager(),
                 getWorkloadAnalyzer(),
                 getOptimizer(),
                 getReconfigurator());
 
-        try {
-            getRESTServer(autonomicManager).startServer();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         return autonomicManager;
     }
 
+    public WPMStatsManager getStatsManager(){
+
+        if(wpmStatsManager==null){
+            WPMStatsManagerFactory wpmStatsManagerFactory = new WPMStatsManagerFactory( getPlatformConfiguration() );
+            wpmStatsManager = wpmStatsManagerFactory.build();
+        }
+
+        return wpmStatsManager;
+    }
 
     @Override
     public PlatformConfiguration getPlatformConfiguration() {
@@ -118,18 +119,12 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     @Override
     public WorkloadAnalyzer getWorkloadAnalyzer() {
         if( this.workloadAnalyzer == null ){
-            WorkloadAnalyzerFactory workloadAnalyzerFactory = new WorkloadAnalyzerFactory((SampleProducer) wpmStatsManager, getReconfigurator(), getOptimizer());
+            WorkloadAnalyzerFactory workloadAnalyzerFactory = new WorkloadAnalyzerFactory((SampleProducer) getStatsManager(), getReconfigurator(), getOptimizer());
             this.workloadAnalyzer = workloadAnalyzerFactory.build();
         }
         return this.workloadAnalyzer;
     }
 
-    @Override
-    public RESTServer getRESTServer(AutonomicManager autonomicManager) {
-        if( this.restServer == null ){
-            this.restServer = new RESTServer(wpmStatsManager, autonomicManager);
-        }
-        return this.restServer;
-    }
+
 
 }

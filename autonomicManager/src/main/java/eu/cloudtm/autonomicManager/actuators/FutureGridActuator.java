@@ -148,14 +148,16 @@ public class FutureGridActuator implements IActuator {
             }
             log.info("VM " + machine + " started!");
 
+
         } catch (JSchException e) {
             throw new ActuatorException(e);
         } catch (IOException e) {
             throw new ActuatorException(e);
+        } finally {
+            session.disconnect();
         }
 
         log.info("available: " + availableMachines.size());
-
     }
 
     @Override

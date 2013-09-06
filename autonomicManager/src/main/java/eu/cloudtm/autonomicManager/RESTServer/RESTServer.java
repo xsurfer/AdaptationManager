@@ -23,8 +23,8 @@ public class RESTServer {
 
     private HttpServer httpServer;
 
-    public RESTServer(StatsManager statsManager, AutonomicManager autonomicManager){
-        rc = new RESTApplication(statsManager, autonomicManager);
+    public RESTServer(AutonomicManager autonomicManager){
+        rc = new RESTApplication(autonomicManager);
     }
 
     /**
