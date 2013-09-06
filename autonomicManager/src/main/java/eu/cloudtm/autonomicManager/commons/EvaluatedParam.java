@@ -16,6 +16,7 @@ public enum EvaluatedParam {
     DATA_ACCESS_FREQUENCIES     ( 4, "DATA_ACCESS_FREQUENCIES" ),
     TX_INVOKER_FREQUENCY        ( 5, "TX_INVOKER_FREQUENCY" ),
     TX_RESPONSE_TIME            ( 6, "TX_RESPONSE_TIME" ),
+    ISOLATION_LEVEL             ( 7, "ISOLATION_LEVEL"),
 
     ;
 

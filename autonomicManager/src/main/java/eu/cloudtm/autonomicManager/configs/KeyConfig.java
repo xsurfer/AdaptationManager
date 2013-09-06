@@ -7,14 +7,21 @@ package eu.cloudtm.autonomicManager.configs;
  */
 public enum KeyConfig {
 
+    /* ****** ENVIRONMENT ****** */
+
+    ENVIRONMENT_ISOLATION_LEVEL ("environment.isolationLevel"),
+
+
+    /* ****** WORKLOAD ANALYZER ****** */
+
     WORKLOAD_ANALYZER_AUTOSTART("workloadAnalyzer.autoStart"),
 
     ALERT_MANAGER_POLICY("alertManager.policy"),
 
+
     /* ******* OPTIMIZER ******* */
     OPTIMIZER_PLATFORM("optimizer.platform"),
     OPTIMIZER_LARD("optimizer.lard"),
-
 
 
     /* ******* ACTUATOR ******* */
@@ -55,6 +62,10 @@ public enum KeyConfig {
     RECONFIGURATOR_SIMULATE("reconfigurator.simulate"),
     RECONFIGURATOR_SECONDS_BETWEEN_RECONFIGURATIONS("reconfigurator.timeBetweenReconfiguration"),
 
+    RECONFIGURATOR_SWITCH_REBALANCING ("reconfigurator.switchRebalancing"),
+    RECONFIGURATOR_RECONFIGURE_NODES("reconfigurator.reconfigureNodes"),
+    RECONFIGURATOR_RECONFIGURE_DEGREE("reconfigurator.reconfigureDegree"),
+    RECONFIGURATOR_RECONFIGURE_PROTOCOL("reconfigurator.reconfigureProtocol"),
 
     /* ******* CHANGE DETECTORs ******* */
     SLIDE_WINDOW_SIZE("changeDetector.slideWindowSize"),

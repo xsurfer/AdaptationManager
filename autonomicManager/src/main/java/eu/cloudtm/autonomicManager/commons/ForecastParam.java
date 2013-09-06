@@ -9,7 +9,10 @@ public enum ForecastParam {
 
    ReplicationProtocol(0, "REP_PROT", eu.cloudtm.autonomicManager.commons.ReplicationProtocol.class),
    ReplicationDegree(1, "REP_DEGREE", Integer.class),
-   NumNodes(2, "NUM_NODES", Integer.class),;
+   NumNodes(2, "NUM_NODES", Integer.class),
+
+    ;
+
    private final int id;
    private final String key;
    private final Class clazz;

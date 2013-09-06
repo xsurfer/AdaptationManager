@@ -139,21 +139,33 @@ public class ReconfiguratorImpl implements Reconfigurator {
 
     private void platformReconfiguration(PlatformConfiguration platformRequest) throws ReconfiguratorException {
 
-        try {
-            actuator.triggerRebalancing(false);
-            log.info("State transfer disabled..");
-        } catch (ActuatorException e) {
-            throw new ReconfiguratorException(e);
+
+        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_SWITCH_REBALANCING.key() ) ){
+            try {
+                actuator.triggerRebalancing(false);
+                log.info("State transfer disabled..");
+            } catch (ActuatorException e) {
+                throw new ReconfiguratorException(e);
+            }
+        } else {
+            ControllerLogger.log.info("Skipping triggerRebalancing(false) because disabled!");
         }
 
+        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_DEGREE.key() ) ){
+            ControllerLogger.log.info("Reconfiguring degree");
+            reconfigureDegree(platformRequest.replicationDegree());
+            ControllerLogger.log.info("Replication degree successfully switched to " + platformRequest.replicationDegree() + " !" );
+        } else {
+            ControllerLogger.log.info("Skipping reconfiguring replication degree because disabled!");
+        }
 
-        ControllerLogger.log.info("Reconfiguring degree");
-        reconfigureDegree(platformRequest.replicationDegree());
-        ControllerLogger.log.info("Replication degree successfully switched to " + platformRequest.replicationDegree() + " !" );
-
+        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_NODES.key() ) ){
         ControllerLogger.log.info("Reconfiguring scale");
         reconfigureSize(platformRequest.platformSize());
         ControllerLogger.log.info("Scale successfully switched to " + platformRequest.platformSize() + " !" );
+        } else {
+            ControllerLogger.log.info("Skipping reconfiguring scale because disabled!");
+        }
 
         // TODO CHECK THE NUM NODEs
         log.info("Waiting 5 secs");
@@ -163,16 +175,25 @@ public class ReconfiguratorImpl implements Reconfigurator {
             e.printStackTrace();
         }
 
-        try {
-            actuator.triggerRebalancing(true);
-            log.info("State transfer enabled..");
-        } catch (ActuatorException e) {
-            throw new ReconfiguratorException(e);
+        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_SWITCH_REBALANCING.key() ) ){
+            try {
+                actuator.triggerRebalancing(true);
+                log.info("State transfer enabled..");
+            } catch (ActuatorException e) {
+                throw new ReconfiguratorException(e);
+            }
+        } else {
+            ControllerLogger.log.info("Skipping triggerRebalancing(false) because disabled!");
         }
 
-        ControllerLogger.log.info("Reconfiguring protocol");
-        reconfigureProtocol(platformRequest.replicationProtocol());
-        ControllerLogger.log.info("Replication protocol successfully switched to " + platformRequest.replicationProtocol() + " !" );
+
+        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_PROTOCOL.key() ) ){
+            ControllerLogger.log.info("Reconfiguring protocol");
+            reconfigureProtocol(platformRequest.replicationProtocol());
+            ControllerLogger.log.info("Replication protocol successfully switched to " + platformRequest.replicationProtocol() + " !" );
+        } else {
+            ControllerLogger.log.info("Skipping replication protocol because disabled!");
+        }
 
 
         ControllerLogger.log.info("Updating Current Configuration");

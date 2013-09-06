@@ -1,8 +1,11 @@
 package eu.cloudtm.autonomicManager.statistics;
 
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
+import eu.cloudtm.autonomicManager.commons.IsolationLevel;
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.commons.SystemType;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,6 +58,7 @@ public abstract class ProcessedSample implements Sample {
         evaluatedParams.put( EvaluatedParam.CORE_PER_CPU, getCoreCPU() );
         evaluatedParams.put( EvaluatedParam.SYSTEM_TYPE, getSystemType() );
         evaluatedParams.put( EvaluatedParam.MAX_ACTIVE_THREADS, 1 );
+        evaluatedParams.put( EvaluatedParam.ISOLATION_LEVEL, getIsolationLevel() );
 
         log.warn("STOYAN's CODE COMMENTED in ProcessedSample! ");
         //evaluatedParams.put( EvaluatedParam.DATA_ACCESS_FREQUENCIES, getDataAccessFrequencies() );
@@ -82,6 +86,18 @@ public abstract class ProcessedSample implements Sample {
             return ret;
         else
             throw new IllegalArgumentException("param " + param + " is not present" );
+    }
+
+    private final IsolationLevel getIsolationLevel(){
+
+        String isolationLevelStr = Config.getInstance().getString(KeyConfig.ENVIRONMENT_ISOLATION_LEVEL.key());
+        IsolationLevel isolationLevel = IsolationLevel.valueOf(isolationLevelStr);
+
+        if(isolationLevel==null){
+            throw new IllegalArgumentException("Wrong isolation level. Available values: " + IsolationLevel.values() );
+        }
+
+        return isolationLevel;
     }
 
     protected abstract Double getACF();
