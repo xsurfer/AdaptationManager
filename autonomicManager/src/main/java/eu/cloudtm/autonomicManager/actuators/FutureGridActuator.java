@@ -105,7 +105,7 @@ public class FutureGridActuator implements IActuator {
         final String machine = runningMachines.iterator().next();
 
         if(isRadargun){
-            ControllerLogger.log.info(" * Stopping radargun..." );
+            ControllerLogger.log.info(" * Stopping application on machine " + machine );
 
             try {
                 radargunClient.stop(machine, jmxPort);

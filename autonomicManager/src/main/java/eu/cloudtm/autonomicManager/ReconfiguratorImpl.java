@@ -160,7 +160,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
         }
 
         if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_NODES.key() ) ){
-        ControllerLogger.log.info("Reconfiguring scale");
+        ControllerLogger.log.info("Reconfiguring scale from " + current.platformSize() + " to " + platformRequest.platformSize() + " nodes");
         reconfigureSize(platformRequest.platformSize());
         ControllerLogger.log.info("Scale successfully switched to " + platformRequest.platformSize() + " !" );
         } else {
@@ -207,7 +207,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
 
         int currSize = actuator.runningInstances().size();
         int numInstancesToChange = platformSize - currSize; //  <<< COULD BE NEGATIVE, use Math.abs() >>>
-        ControllerLogger.log.info("To change: " + numInstancesToChange );
+        //ControllerLogger.log.info("To change: " + numInstancesToChange );
 
 
 
