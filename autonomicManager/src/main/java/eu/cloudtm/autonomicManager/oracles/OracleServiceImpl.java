@@ -39,37 +39,6 @@ public class OracleServiceImpl implements OracleService {
         this.oracle = oracle;
     }
 
-    public static OracleServiceImpl getInstance(String oracleName) {
-        if (oracleName.indexOf('.') < 0) {
-            oracleName = "eu.cloudtm.autonomicManager.oracles." + oracleName;
-        }
-
-
-        try {
-            Oracle obj;
-            Constructor c = Class.forName(oracleName).getConstructor();
-            obj = (Oracle) c.newInstance();
-            OracleServiceImpl oracleService = new OracleServiceImpl(obj);
-            return oracleService;
-        } catch (ClassNotFoundException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        }
-    }
-
-
     public final PlatformConfiguration minimizeCosts(ProcessedSample sample,
                                                      double arrivalRateToGuarantee,
                                                      double abortRateToGuarantee,

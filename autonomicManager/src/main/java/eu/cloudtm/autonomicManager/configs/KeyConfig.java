@@ -78,6 +78,7 @@ public enum KeyConfig {
 
     /* ******* FORECASTERs ******* */
 
+    FORECASTER_COMMITTEE("forecaster.committee"),
     FORECASTER_ANALYTICAL("forecaster.analytical"),
     FORECASTER_SIMULATOR("forecaster.simulator"),
     FORECASTER_MACHINE_LEARNING("forecaster.machineLearning"),

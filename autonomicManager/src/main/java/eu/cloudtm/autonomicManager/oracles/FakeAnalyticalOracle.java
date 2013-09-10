@@ -72,15 +72,15 @@ public class FakeAnalyticalOracle implements Oracle {
     // THIS HAS BEEN USED TO MAKE SNAPSHOTs
 
     private Map<Integer, OutputOracleImpl> counter2plat = new HashMap<Integer, OutputOracleImpl>(){{
-        put(0,  new OutputOracleImpl(500, 0.3, 18, 23.4 ) );
-        put(1,  new OutputOracleImpl(820, 0.42, 20, 26 ) );
-        put(2,  new OutputOracleImpl(930, 0.54, 22, 28.6 ) );
-        put(3,  new OutputOracleImpl(965, 0.59, 28, 36.4 ) );
-        put(4,  new OutputOracleImpl(1010, 0.65, 34, 44.2 ) );
-        put(5,  new OutputOracleImpl(1120, 0.74, 44, 57.2 ) );
-        put(6,  new OutputOracleImpl(1210, 0.81, 50, 65 ) );
-        put(7,  new OutputOracleImpl(1290, 0.87, 57, 74.1 ) );
-        put(8,  new OutputOracleImpl(1350, 0.93, 62, 80.6 ) );
+        put(0,  new OutputOracleImpl(500, 500, 0.3, 0.3, 18, 23.4 ) );
+        put(1,  new OutputOracleImpl(820, 820, 0.42, 0.42, 20, 26 ) );
+        put(2,  new OutputOracleImpl(930, 930, 0.54, 0.54, 22, 28.6 ) );
+        put(3,  new OutputOracleImpl(965, 965, 0.59, 0.59, 28, 36.4 ) );
+        put(4,  new OutputOracleImpl(1010, 1010, 0.65, 0.65, 34, 44.2 ) );
+        put(5,  new OutputOracleImpl(1120, 1120, 0.74, 0.74, 44, 57.2 ) );
+        put(6,  new OutputOracleImpl(1210, 1210, 0.81, 0.81, 50, 65 ) );
+        put(7,  new OutputOracleImpl(1290, 1290, 0.87, 0.87, 57, 74.1 ) );
+        put(8,  new OutputOracleImpl(1350, 1350, 0.93, 0.93, 62, 80.6 ) );
     }};
 
     @Override

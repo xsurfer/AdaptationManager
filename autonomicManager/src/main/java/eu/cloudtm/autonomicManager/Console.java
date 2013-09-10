@@ -134,7 +134,7 @@ public class Console {
 
 
         /* forecaster */
-        log.info("Oracle {ANALYTICAL, SIMULATOR, MACHINE_LEARNING}: ");
+        log.info("Oracle {ANALYTICAL, SIMULATOR, MACHINE_LEARNING, COMMITTEE}: ");
         String forecasterStr = in.next();
         Forecaster forecaster = Forecaster.valueOf(forecasterStr);
 
