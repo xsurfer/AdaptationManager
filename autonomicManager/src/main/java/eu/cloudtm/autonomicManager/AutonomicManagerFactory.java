@@ -1,15 +1,14 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
 import eu.cloudtm.autonomicManager.actuators.ActuatorFactory;
 import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
+import eu.cloudtm.autonomicManager.optimizers.LAOptimizer;
 import eu.cloudtm.autonomicManager.optimizers.MulePlatformOptimizer;
-import eu.cloudtm.autonomicManager.optimizers.OptimizerFilter;
+import eu.cloudtm.autonomicManager.optimizers.OptimizerComponent;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerImpl;
 import eu.cloudtm.autonomicManager.statistics.SampleProducer;
-import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import eu.cloudtm.autonomicManager.statistics.WPMStatsManager;
 import eu.cloudtm.autonomicManager.statistics.WPMStatsManagerFactory;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
@@ -17,7 +16,6 @@ import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,19 +89,18 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
     public Optimizer getOptimizer() {
 
         if( this.optimizer == null ){
-            List<OptimizerFilter> optimizerFilters = new ArrayList<OptimizerFilter>();
+            List<OptimizerComponent> optimizerFilters = new ArrayList<OptimizerComponent>();
 
 
-            String platformOptimizerStr = Config.getInstance().getString( KeyConfig.OPTIMIZER_PLATFORM.key() );
+            String platformOptimizerStr = Config.getInstance().getString( KeyConfig.ENVIRONMENT_SYSTEM_TYPE.key() );
 
             AbstractPlatformOptimizer platformOptimizer = null;
             if( platformOptimizerStr.equals("MULE") ){
                 log.trace("Platform Optimizer type: MulePlatformOptimizer");
                 platformOptimizer = new MulePlatformOptimizer(getPlatformConfiguration() ,platformTuning);
             }
-            optimizerFilters.add(platformOptimizer);
 
-            this.optimizer = new OptimizerImpl(getReconfigurator(), optimizerFilters);
+            this.optimizer = new OptimizerImpl(platformOptimizer, new LAOptimizer());
         }
         return this.optimizer;
     }

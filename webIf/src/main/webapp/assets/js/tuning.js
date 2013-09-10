@@ -2,7 +2,7 @@ var resources = [
                  "scale",
                  "rep_degree",
                  "rep_protocol",
-                 "data_placement"
+                 "autoplacer"
                  ];
 
 var resourceToFeature = { "scale":"scale", 
@@ -23,6 +23,8 @@ var REST_SET_DEGREE = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/degree';
 var REST_SET_PROTOCOL = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/protocol';
 
 var REST_SET_FORECASTER = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/forecaster';
+
+var REST_UPDATE_ALL = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/updateAll';
 
 $(document).ready( 
     		
@@ -51,6 +53,16 @@ $(document).ready(
                     sendProtocol(); 
                     return false;
                 });
+    			
+    			$('#autoplacer').submit(function() {                     
+                    return false;
+                });
+    			
+    			
+    			$('#updateAll').click(function() { 
+                    updateAll(); 
+                    return false;
+                });
 
 
     			
@@ -61,16 +73,25 @@ $(document).ready(
 
 function init(){
 	init_radioBtn();
-	//initCurrentConfig();
+	initCurrentConfig();
 }
 
 /*
 {
-	"status":"WORKING",
-	"scale":{"size":0,"tuning":"AUTO","forecaster":"ANALYTICAL"},
-	"replicationProtocol":{"protocol":"TWOPC","tuning":"AUTO","forecaster":"ANALYTICAL"},
-	"replicationDegree":{"degree":2,"tuning":"AUTO","forecaster":"ANALYTICAL"},
-	"dataPlacement":{"tuning":"AUTO","forecaster":"ANALYTICAL"}
+	"currentState":"RUNNING",
+	"tuning":{
+		"forecaster":"ANALYTICAL",
+		"autoScale":true,
+		"autoDegree":true,
+		"autoProtocol":true
+	}, 
+	"configuration":{
+		"platformSize":2,"threadPerNode":3,
+		"nodesConfig":"MEDIUM",
+		"replicationProtocol":"TWOPC",
+		"replicationDegree":2,
+		"dataPlacement":false
+	}
 }
 */
 
@@ -78,24 +99,30 @@ function initCurrentConfig(){
 	var current = 'current_';
 	var currentOpt = 'current_opt_';
 	
-	$.getJSON( REST_STATUS, function(data){
-				
-		var items = [];
-		$.each(data, function(key, val) {
-			var htmlField = resourceToFeature[key];
-			
-			if(htmlField){	
-				console.log("htmlField: " + htmlField);
-				console.log("val:" + val);
-				var field = featureToField[htmlField];
-				console.log("field:" + field);
-				console.log("valore:" + val[field]);
-				$('span#' + current + htmlField ).text(val[field]);
-				$('span#' + currentOpt + htmlField ).text("OPT");				
-			}						
-		});
-		//alert(items);
+	$.getJSON( REST_STATUS, function(json){
+		console.log(json);
+		
+		$('span#current_forecaster').text( json.tuning.forecaster );
+		$('span#current_scale').text( json.configuration.platformSize );
+		$('span#current_rep_degree').text( json.configuration.replicationDegree );
+		$('span#current_rep_protocol').text( json.configuration.replicationProtocol );
+		
 	});
+	
+	/*
+	 * {"platformSize":10,"threadPerNode":2,"nodesConfig":"MEDIUM","replicationProtocol":"PB","replicationDegree":10,"dataPlacement":{"value":0}}
+	 */
+	
+	$.getJSON( REST_UPDATE_ALL, function(json){
+		console.log(json);
+		
+		$('span#current_opt_scale').text( json.platformSize );
+		$('span#current_opt_rep_degree').text( json.replicationDegree );
+		$('span#current_opt_rep_protocol').text( json.replicationProtocol );
+		
+				
+		});
+
 	
 }
 
@@ -106,16 +133,23 @@ function init_radioBtn(){
 	for (var i = 0; i < resources.length; i++) {		
 		console.log(resources.length);
 		element = resources[i];
-		if(element == 'data_placement')
-			break;
+		
 		
 		var $radios = $('input:radio[name='+element+'_tuning]');
 				
-		// INIT		
-	    if($radios.is(':checked') === false) {
-	        $radios.filter('[value=FALSE]').prop('checked', true);
-	        disableFieldset($radios);
-	    }
+		// INIT
+		if(element != 'autoplacer'){		
+			if($radios.is(':checked') === false) {
+				$radios.filter('[value=FALSE]').prop('checked', true);
+				disableFieldset($radios);
+			}
+		} else {
+			if($radios.is(':checked') === false) {
+				$radios.filter('[value=TRUE]').prop('checked', true);
+				disableFieldset($radios);
+			}
+			
+		}
 	    
 	    // LISTENER
 	    $radios.change(function(){
@@ -127,8 +161,8 @@ function init_radioBtn(){
 function disableFieldset($radio){
 
 	
-	console.log($radio.val()); // manual o self	
-	console.log($radio.attr("name"));
+	console.log("radio val: " + $radio.val()); // TRUE o FALSE	
+	console.log("radio name: " +$radio.attr("name"));
 	// seleziono tutte le fieldset che non si chiamano in quel modo e le disattivo
 	
 	// name + '_' + value
@@ -138,12 +172,12 @@ function disableFieldset($radio){
 	if($radio.attr("value")=="TRUE"){
 		//enabled += 'self';
 		disabled += 'manual';
-		console.log("disabled: " + disabled);
-		$('fieldset[name="'+ disabled +'"]').children().attr("disabled", "disabled");
+		console.log("disabled fieldset: " + disabled);
+		$('fieldset[name="'+ disabled +'"]').attr("disabled", "disabled");
 	} else {
 		enabled += 'manual';
-		console.log("enabled: " + enabled);
-		$('fieldset[name="'+ enabled +'"]').children().removeAttr("disabled");
+		console.log("enabled fieldset: " + enabled);
+		$('fieldset[name="'+ enabled +'"]').removeAttr("disabled");
 		//disabled += 'self';
 	}			
 }
@@ -203,8 +237,26 @@ function sendScale() {
 			console.log(xhr);
 			alert(status);
 		}
-	});
+	});	
+}
+
+function updateAll() {
 	
+	$.ajax({
+		dataType: "json",
+		contentType: "application/x-www-form-urlencoded",		
+		url: REST_UPDATE_ALL,
+		type: "GET",
+		crossDomain: true,
+
+		success: function(data) {	        
+	        console.log(data);
+	    },
+		error: function(xhr, status) {
+			console.log(xhr);
+			alert(status);
+		}
+	});
 }
 
 function sendDegree() {

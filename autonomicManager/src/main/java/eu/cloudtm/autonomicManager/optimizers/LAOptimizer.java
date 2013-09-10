@@ -7,7 +7,7 @@ import pt.ist.clustering.LDA.LDA;
 import java.util.LinkedHashMap;
 
 
-public class LAOptimizer implements OptimizerFilter {
+public class LAOptimizer implements OptimizerComponent {
     private boolean clustered = false;
     //private int numberOfClusters;//to be established through LDA+Silhouette optimization after calling the generateClustering
     private int numberOfAvailableNodes;//number of available nodes for processing requests. to be updated at runtime
@@ -22,11 +22,11 @@ public class LAOptimizer implements OptimizerFilter {
 
     @Override
     public OptimizerType getType() {
-        return OptimizerType.LARD;
+        return OptimizerType.AUTOPLACER;
     }
 
     @Override
-    public Object doOptimize(ProcessedSample processedSample) {
+    public Object doOptimize(ProcessedSample processedSample, boolean purePrediction) {
         LinkedHashMap<String,Integer> txInvokeFrequency = (LinkedHashMap<String, Integer>) processedSample.getEvaluatedParam(EvaluatedParam.TX_INVOKER_FREQUENCY);
         LinkedHashMap<String,Float> txResponseTime = (LinkedHashMap<String, Float>) processedSample.getEvaluatedParam(EvaluatedParam.TX_RESPONSE_TIME);
         LinkedHashMap<String,Float> txWeight = calculateTxWeight(txInvokeFrequency, txResponseTime);

@@ -2,11 +2,9 @@ package eu.cloudtm.autonomicManager.optimizers;
 
 import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
 import eu.cloudtm.autonomicManager.ControllerLogger;
-import eu.cloudtm.autonomicManager.Reconfigurator;
-import eu.cloudtm.autonomicManager.SLAManager;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
-import eu.cloudtm.autonomicManager.oracles.OracleService;
+import eu.cloudtm.autonomicManager.oracles.OracleServiceImpl;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -27,10 +25,15 @@ public class MulePlatformOptimizer extends AbstractPlatformOptimizer {
     }
 
 
-    public PlatformConfiguration optimize(ProcessedSample processedSample) {
+    public PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction) {
+
+        if(processedSample==null) {
+            log.info("Sample is null. Skipping...");
+            return null;
+        }
 
         ControllerLogger.log.info("Mule Optimizer: Querying " + platformTuning.forecaster() + " oracle");
-        OracleService oracleService = OracleService.getInstance(platformTuning.forecaster().getOracleClass());
+        OracleServiceImpl oracleService = OracleServiceImpl.getInstance(platformTuning.forecaster().getOracleClass());
 
         PlatformConfiguration forecastedConfig = null;
         try {
@@ -44,8 +47,13 @@ public class MulePlatformOptimizer extends AbstractPlatformOptimizer {
         }
 
         if( forecastedConfig != null ){
+
             ControllerLogger.log.info(" »»» Configuration found «««" );
-            return createNextConfig(forecastedConfig);
+            if(purePrediction){
+                return forecastedConfig;
+            } else {
+                return createNextConfig(forecastedConfig);
+            }
         } else {
             ControllerLogger.log.info(" »»» Configuration not found «««" );
             return null;

@@ -1,6 +1,5 @@
 package eu.cloudtm.autonomicManager;
 
-import com.google.gson.Gson;
 import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
@@ -11,10 +10,10 @@ import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * User: Fabio Perfetti perfabio87 [at] gmail.com
@@ -31,6 +30,13 @@ public class AutonomicManager {
     private WorkloadAnalyzer workloadAnalyzer;
     private Optimizer optimizer;
     private Reconfigurator reconfigurator;
+
+
+    private final static int INTERVAL_BETWEEN_FORECAST = 60;
+    private Date lastForecastTimestamp;
+    private volatile PlatformConfiguration lastForecast;
+    private ReentrantLock forecastLock = new ReentrantLock();
+
 
 
     public AutonomicManager(State state,
@@ -63,8 +69,37 @@ public class AutonomicManager {
         workloadAnalyzer.enable( !workloadAnalyzer.isEnabled() );
     }
 
-    public void optimizeNow(){
-        optimizer.optimize( statsManager.getLastSample() );
+    public PlatformConfiguration forecast(){
+        if( forecastLock.tryLock() ){
+            try {
+                if(lastForecastTimestamp!=null){
+                    long timeDiff = Math.abs( new Date().getTime() - lastForecastTimestamp.getTime() ) / 1000;
+                    if( timeDiff < INTERVAL_BETWEEN_FORECAST ){
+                        ControllerLogger.log.info("Not enough time elapsed between forecast...returning previous forecast result");
+                        return lastForecast;
+                    }
+                }
+                lastForecastTimestamp = new Date();
+                lastForecast = optimizer.optimizePlatform(statsManager.getLastSample(), true);
+            } finally {
+                forecastLock.unlock();
+            }
+        } else {
+            log.info("Another thread is forecasting...");
+        }
+        return lastForecast;
+    }
+
+    public void optimizeAndReconfigureNow(){
+        optimizeAndReconfigure(statsManager.getLastSample());
+    }
+
+    public void optimizeAndReconfigure(ProcessedSample sample){
+
+        if( reconfigurator.isReconfiguring() ){
+            ControllerLogger.log.info("ReconfiguratorImpl busy! Skipping new reconf...");
+
+        }
     }
 
     public List<WhatIfDTO> whatIf(List<Forecaster> forecasters, ReplicationProtocol protocol, int degree, WhatIfCustomParamDTO customParamDTO ){
@@ -110,7 +145,7 @@ public class AutonomicManager {
     }
 
     private PlatformConfiguration currentConfiguration(){
-        log.trace("Cloning platformConfiguration...");
+        //log.trace("Cloning platformConfiguration...");
         return platformConfiguration();
     }
 
@@ -119,7 +154,7 @@ public class AutonomicManager {
      * @return a copy of current PlatformTuning
      */
     public PlatformTuning platformTuning(){
-        log.trace("Cloning platformTuning...");
+        //log.trace("Cloning platformTuning...");
         return platformTuning.cloneThroughJson();
     }
 
@@ -128,7 +163,7 @@ public class AutonomicManager {
      * @return a copy of current PlatformConfiguration
      */
     public PlatformConfiguration platformConfiguration(){
-        log.trace("Cloning platformConfiguration...");
+        //log.trace("Cloning platformConfiguration...");
         return platformConfiguration.cloneThroughJson();
     }
 
@@ -137,7 +172,7 @@ public class AutonomicManager {
      * @return a copy of current State
      */
     public State state(){
-        log.trace("Cloning state...");
+        //log.trace("Cloning state...");
         return state.cloneThroughJson();
     }
 

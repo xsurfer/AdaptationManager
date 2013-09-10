@@ -1,0 +1,14 @@
+throughput.
+
+MemoryInfo_used: continuous.
+AvgGetsPerROTransaction: continuous.
+AvgGetsPerWrTransaction: continuous.
+AvgPutsPerWrTransaction: continuous.
+LocalUpdateTxLocalServiceTime: continuous.
+ReplicationDegree: continuous.
+AvgClusteredGetCommandReplySize: continuous.
+AvgPrepareCommandSize: continuous.
+PercentageWriteTransactions: continuous.
+NumNodes: continuous.
+throughput: continuous.
+

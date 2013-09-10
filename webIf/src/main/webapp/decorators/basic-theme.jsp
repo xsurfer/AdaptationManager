@@ -49,7 +49,8 @@
         	<li>
         		<a href="javascript:void(0)" onclick="window.open('http://html.it/articoli/esempi/articoli_pro/esempio_11_a.htm', 'Console', 'resizable=0,top=10,left=10,width=600,height=200')">Console</a>
         	</li>
-            <li><a href="myCloud">MyCloud</a></li> <!-- Active page -->
+            <li><a href="overview">Overview</a></li> <!-- Active page -->
+            <li><a href="#">Workload and Performance Monitor</a></li>
             <li><a href="tuning">Tuning</a></li>
             <li><a href="whatIf">What-if Analysis</a></li>            
             <li><a href="workloadAnalysis">Workload Analysis</a></li>

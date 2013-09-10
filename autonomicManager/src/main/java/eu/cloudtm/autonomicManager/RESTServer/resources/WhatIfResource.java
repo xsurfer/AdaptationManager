@@ -1,11 +1,9 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
 import com.google.gson.Gson;
+import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.WhatIfService;
-import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
-import eu.cloudtm.autonomicManager.commons.Forecaster;
-import eu.cloudtm.autonomicManager.commons.GsonFactory;
-import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
@@ -27,6 +25,9 @@ public class WhatIfResource extends AbstractResource {
 
     @Inject
     private StatsManager statsManager;
+
+    @Inject
+    private AutonomicManager autonomicManager;
 
 
     @GET @Path("/values")
@@ -61,6 +62,21 @@ public class WhatIfResource extends AbstractResource {
         Response.ResponseBuilder builder = Response.ok( json );
         return makeCORS(builder);
     }
+
+    @GET @Path("/forecast")
+    @Produces(MediaType.APPLICATION_JSON)
+    public synchronized Response forecast(){
+        PlatformConfiguration platformConfigurationPredicted = autonomicManager.forecast();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(platformConfigurationPredicted);
+
+        log.info("platformConfigurationPredicted: " + json);
+
+        Response.ResponseBuilder builder = Response.ok( json );
+        return makeCORS(builder);
+    }
+
 
 
     @POST

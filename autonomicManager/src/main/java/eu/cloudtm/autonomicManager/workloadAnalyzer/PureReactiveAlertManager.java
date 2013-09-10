@@ -1,13 +1,15 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
+import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.ControllerLogger;
 import eu.cloudtm.autonomicManager.Optimizer;
 import eu.cloudtm.autonomicManager.Reconfigurator;
-import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
+import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -21,13 +23,10 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
 
     private static Log log = LogFactory.getLog(PureReactiveAlertManager.class);
 
-    private ReentrantLock reconfigurationLock = new ReentrantLock();
 
-    public PureReactiveAlertManager(Optimizer optimizer,
-                                    Reconfigurator reconfigurator) {
+    public PureReactiveAlertManager(Optimizer optimizer, Reconfigurator reconfigurator) {
         super(optimizer, reconfigurator);
     }
-
 
     @Override
     public void workloadEventPerformed(WorkloadEvent event) {
@@ -36,18 +35,14 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
             return;
         }
 
-        if( !reconfigurator.isReconfiguring() ){
-            if( reconfigurationLock.tryLock() ){
-                ControllerLogger.log.info("Lock successfully acquired");
-                try{
-                    optimizer.optimize( event.getSample() );
-                } finally {
-                    ControllerLogger.log.info("releasing lock");
-                    reconfigurationLock.unlock();
-                }
+        if( isTimeToReconfigure() ){
+            Map<OptimizerType, Object> optimization = optimizer.optimizeAll(event.getSample(), false);
+            if(optimization!=null){
+                reconfigurator.reconfigure(optimization);
+            } else {
+                log.info("Optimization result is null!!");
             }
-        } else {
-            ControllerLogger.log.info("ReconfiguratorImpl busy! Skipping new reconf...");
         }
+
     }
 }

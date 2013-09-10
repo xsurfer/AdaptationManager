@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by: Fabio Perfetti
@@ -23,11 +24,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ReconfiguratorImpl implements Reconfigurator {
 
-    private static int SECONDS_BETWEEN_RECONFIGURATIONS = Config.getInstance().getInt(KeyConfig.RECONFIGURATOR_SECONDS_BETWEEN_RECONFIGURATIONS.key() );
-
     private final Log log = LogFactory.getLog(ReconfiguratorImpl.class);
 
-    private Date lastReconfiguration;
 
     private AtomicInteger reconfigurationCounter = new AtomicInteger(0);
 
@@ -49,6 +47,8 @@ public class ReconfiguratorImpl implements Reconfigurator {
 
     private IActuator actuator;
 
+    private ReentrantLock reconfigurationLock = new ReentrantLock();
+
     public ReconfiguratorImpl(PlatformConfiguration current, State platformState, IActuator actuator) {
         this.current = current;
         this.platformState = platformState;
@@ -65,23 +65,23 @@ public class ReconfiguratorImpl implements Reconfigurator {
             throw new RuntimeException(error);
         }
 
-        if(lastReconfiguration != null){
-            long timeDiff = Math.abs( new Date().getTime() - lastReconfiguration.getTime() ) / 1000;
-            if( timeDiff < SECONDS_BETWEEN_RECONFIGURATIONS ){
-                ControllerLogger.log.info("Not enough time elapsed between reconfigurations...Skipping");
-                return;
-            }
-        }
-
-        if( reconfiguring.compareAndSet(false, true) ){
-            request = toReconfigure;
-            ControllerLogger.log.info("Reconfiguration request ACCEPTED...");
-            executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    start();
+        if( reconfigurationLock.tryLock() ){
+            ControllerLogger.log.info("Lock successfully acquired");
+            try{
+                if( reconfiguring.compareAndSet(false, true) ){
+                    request = toReconfigure;
+                    ControllerLogger.log.info("Reconfiguration request ACCEPTED...");
+                    executorService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            start();
+                        }
+                    });
                 }
-            });
+            } finally {
+                ControllerLogger.log.info("releasing lock");
+                reconfigurationLock.unlock();
+            }
         }
     }
 
@@ -128,8 +128,6 @@ public class ReconfiguratorImpl implements Reconfigurator {
             }
         }
 
-        lastReconfiguration = new Date();
-
         ControllerLogger.log.info("*********************");
         ControllerLogger.log.info("Reconfiguration #" + reconfigurationCounter.incrementAndGet() + " ended");
         ControllerLogger.log.info("*********************");
@@ -160,9 +158,9 @@ public class ReconfiguratorImpl implements Reconfigurator {
         }
 
         if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_NODES.key() ) ){
-        ControllerLogger.log.info("Reconfiguring scale from " + current.platformSize() + " to " + platformRequest.platformSize() + " nodes");
-        reconfigureSize(platformRequest.platformSize());
-        ControllerLogger.log.info("Scale successfully switched to " + platformRequest.platformSize() + " !" );
+            ControllerLogger.log.info("Reconfiguring scale from " + current.platformSize() + " to " + platformRequest.platformSize() + " nodes");
+            reconfigureSize(platformRequest.platformSize());
+            ControllerLogger.log.info("Scale successfully switched to " + platformRequest.platformSize() + " !" );
         } else {
             ControllerLogger.log.info("Skipping reconfiguring scale because disabled!");
         }

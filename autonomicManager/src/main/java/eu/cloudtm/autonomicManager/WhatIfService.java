@@ -6,7 +6,9 @@ import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.oracles.CommiteeService;
 import eu.cloudtm.autonomicManager.oracles.OracleService;
+import eu.cloudtm.autonomicManager.oracles.OracleServiceImpl;
 import eu.cloudtm.autonomicManager.oracles.OutputOracle;
 import eu.cloudtm.autonomicManager.statistics.CustomSample;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
@@ -65,10 +67,14 @@ public class WhatIfService {
         for(Forecaster forecaster : customParamDTO.getForecasters()){
             WhatIfDTO currWhatIfResult = new WhatIfDTO(forecaster, customParamDTO.getXaxis());
 
+            OracleService oracleService;
+
             if(forecaster.equals(Forecaster.COMMITTEE)){
-                throw new RuntimeException("Not yet implemented");
+                //throw new RuntimeException("Not yet implemented");
+                oracleService = new CommiteeService();
+//                        Com.getInstance( forecaster.getOracleClass() );
             } else {
-                OracleService oracleService = OracleService.getInstance( forecaster.getOracleClass() );
+                oracleService = OracleServiceImpl.getInstance(forecaster.getOracleClass());
                 log.info("Querying " + forecaster);
 
                 /* creating custom Sample, with custom maps */
@@ -76,7 +82,7 @@ public class WhatIfService {
 
                 /* invoking OracleService, which returns a map of configurations-output */
 
-                TreeMap<PlatformConfiguration, OutputOracle> currForecast;
+                Map<PlatformConfiguration, OutputOracle> currForecast;
 
                 switch (customParamDTO.getXaxis()){
                     case NODES:

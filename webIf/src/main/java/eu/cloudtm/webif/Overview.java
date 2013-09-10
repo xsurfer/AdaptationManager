@@ -7,9 +7,9 @@ import org.apache.commons.logging.LogFactory;
 /**
  * <code>Set welcome message.</code>
  */
-public class MyCloud extends BaseAction {
+public class Overview extends BaseAction {
 
-	private static Log log = LogFactory.getLog(MyCloud.class);
+	private static Log log = LogFactory.getLog(Overview.class);
 
 	public String execute() throws Exception {
 		log.info("MyCloud execute()");

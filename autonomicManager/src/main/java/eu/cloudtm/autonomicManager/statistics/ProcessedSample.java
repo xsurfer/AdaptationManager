@@ -26,9 +26,6 @@ public abstract class ProcessedSample implements Sample {
 
     private static Log log = LogFactory.getLog(ProcessedSample.class);
 
-    private static final int CORE_PER_CPU = 8;
-    private static final SystemType DEFAULT_SYSTEM_TYPE = SystemType.MULE;
-
     protected Sample sample;
 
     private AtomicBoolean initialized = new AtomicBoolean(false);
@@ -57,7 +54,7 @@ public abstract class ProcessedSample implements Sample {
         evaluatedParams.put( EvaluatedParam.ACF, getACF() );
         evaluatedParams.put( EvaluatedParam.CORE_PER_CPU, getCoreCPU() );
         evaluatedParams.put( EvaluatedParam.SYSTEM_TYPE, getSystemType() );
-        evaluatedParams.put( EvaluatedParam.MAX_ACTIVE_THREADS, 1 );
+        evaluatedParams.put( EvaluatedParam.MAX_ACTIVE_THREADS, getMaxActiveThreads() );
         evaluatedParams.put( EvaluatedParam.ISOLATION_LEVEL, getIsolationLevel() );
 
         log.warn("STOYAN's CODE COMMENTED in ProcessedSample! ");
@@ -103,11 +100,20 @@ public abstract class ProcessedSample implements Sample {
     protected abstract Double getACF();
 
     protected final int getCoreCPU(){
-        return CORE_PER_CPU;
+        int corePerCpu = Config.getInstance().getInt(KeyConfig.ENVIRONMENT_CORE_PER_CPU.key());
+        return corePerCpu;
     }
 
+    protected final int getMaxActiveThreads(){
+        int maxActiveThreads = Config.getInstance().getInt( KeyConfig.ENVIRONMENT_MAX_ACTIVE_THREADS_PER_NODE.key() );
+        return maxActiveThreads;
+    }
+
+
     protected final SystemType getSystemType(){
-        return DEFAULT_SYSTEM_TYPE;
+        String systemTypeStr = Config.getInstance().getString(KeyConfig.ENVIRONMENT_SYSTEM_TYPE.key());
+        SystemType systemType = SystemType.valueOf(systemTypeStr);
+        return systemType;
     }
 
     private LinkedHashMap<String,LinkedHashMap<String,Integer>> getDataAccessFrequencies() {

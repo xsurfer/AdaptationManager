@@ -2,6 +2,8 @@
 	clear: both;
 }
 
+
+
 div.resource {
 	/*border: 1px dashed;*/
 	width: 100%;				
@@ -10,15 +12,18 @@ div.resource {
 
 fieldset.resource{	
 	border: 1px solid #ddd;
-	padding: 0 1.4em 1.4em 1.4em;
-	margin: 0 0 1.5em 0;
-	border-radius: 8px;	
+	margin: 0 0 1.5em 0;	
 	width: 880px;
 	margin: 0 auto;	
 	padding: 5px;
 }
 
-
+fieldset.autoplacer {
+	border: 1px solid #ddd;
+	margin: 0 0 1.5em 0;
+	border-radius: 8px;	
+	/*padding: 5px;*/
+}
 
 
 
@@ -29,16 +34,40 @@ fieldset.resource div.current{
 	/*background-color: red;*/
 	display: inline-block;
 	vertical-align: middle;
-	width: 400px;
+	width: 300px;
+}
+
+fieldset.resource div.current.autoplacer{
+	/*border: 1px dashed red;*/	
+	/*background-color: red;*/
+	display: inline-block;
+	vertical-align: middle;
+	width: 270px;
+}
+
+fieldset.resource div.update{
+	/*background-color: yellow;*/
+	/*margin-left: 10px;*/
+	/*border: 1px dashed;*/
+	display: inline-block;
+	vertical-align: middle;
+	text-align: left;
+	width: 170px;
 }
 
 fieldset.resource div.tuning{	
 	/*border: 1px dashed;*/		
 	/*background-color: blue;*/
-	margin-left: 150px;
-	width: 260px;	
+	margin-left: 130px;
+	width: 200px;	
 	display: inline-block;
 	vertical-align: middle;
+}
+
+fieldset.resource div.tuning.autoplacer{
+	/*border: 1px dashed;*/	
+	margin-left: 5px;
+	width: 530px;	
 }
 
 fieldset.resource div.control{
@@ -50,6 +79,8 @@ fieldset.resource div.control{
 	text-align: right;
 }
 
+
+
 /** END CURRENT, CONTROL and TUNING **/
 
 fieldset.resource div.current p {
@@ -59,6 +90,11 @@ fieldset.resource div.current p {
 }
 
 fieldset.resource div.current p.label {
+	/*border: 1px dashed red;*/	
+	width: 130px;
+}
+
+fieldset.resource div.current p.label.autoplacer {
 	/*border: 1px dashed red;*/	
 	width: 200px;
 }
@@ -94,13 +130,46 @@ div.tuning div.radio_tuning{
 	width: 100px;	
 }
 
+div.tuning div.radio_tuning.autoplacer{
+	/*border: 1px dotted blue;*/
+	width: 235px;	
+}
+
+div.radio_tuning.autoplacer label{
+	/*border: 1px solid;*/
+	display: inline-block;	
+	width: 160px;
+	
+}
+
+
+div.tuning div.autoplacer_tuning{
+	/*border: 1px dotted blue;*/
+	display: inline-block;
+	/*width: 100px;*/	
+}
+
 
 div.tuning div.conf_tuning{
 	/*border: 1px solid red;*/
 	margin-left: 10px;	
 	display: inline-block;
-	width: 135px;
+	width: 60px;
 }
+
+div.tuning div.conf_tuning.autoplacer{
+	/*border: 1px solid red;*/
+	margin-left: 0px;
+	width: 270px;
+}
+
+div.conf_tuning.autoplacer label{
+	/*border: 1px solid;*/
+	display: inline-block;	
+	width: 205px;
+	
+}
+
 
 div.tuning div.conf_tuning select.forecasting{
 	/*border: 1px solid blue;*/
@@ -122,8 +191,13 @@ fieldset.resource li {
 	margin: 0;
 }
 
-/* INPUT */
+form#scale, form#forecaster, form#degree, form#protocol, form#autoplacer{
+	display: inline;	
+}
 
+
+
+/* INPUT */
 
 .submit {
 	-moz-box-shadow:inset 0px 1px 0px 0px #cae3fc;
@@ -161,7 +235,7 @@ input {
     /*font-size: 12px;*/
     border: 1px solid #d5d5d5;
 	color: #333;
-	border-radius: 4px 4px 4px 4px !important;
+	border-radius: 4px 4px 4px 4px !important;	
 }
 
 select {
@@ -179,3 +253,7 @@ select:disabled {
 
 
 /* END INPUT */
+
+.submit.update{
+	width: 170px;
+}

@@ -30,8 +30,8 @@ public class OpenPlatformOptimizer extends AbstractPlatformOptimizer {
         this.slaManager = slaManager;
     }
 
-
-    public PlatformConfiguration optimize(ProcessedSample processedSample) {
+    @Override
+    public PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction) {
         throw new RuntimeException("TO IMPLEMENT");
     }
 

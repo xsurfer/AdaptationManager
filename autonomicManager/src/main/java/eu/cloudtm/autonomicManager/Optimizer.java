@@ -1,7 +1,11 @@
 package eu.cloudtm.autonomicManager;
 
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
+import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
+
+import java.util.Map;
 
 /**
  * Author: Fabio Perfetti (perfabio87 [at] gmail.com)
@@ -10,6 +14,10 @@ import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
  */
 public interface Optimizer {
 
-    public abstract void optimize(ProcessedSample processedSample);
+    public Map<OptimizerType, Object> optimizeAll(ProcessedSample processedSample, boolean pureForecast);
+
+    public PlatformConfiguration optimizePlatform(ProcessedSample processedSample, boolean pureForecast);
+
+    public <T> T optimizeAutoPlacer(ProcessedSample processedSample, boolean pureForecast);
 
 }

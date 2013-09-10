@@ -30,30 +30,38 @@
 <script type="text/javascript">
 
 var REST_STATUS = 'http://' + REST_HOST + ':' + REST_PORT +'/status';
+var REST_UPDATE_ALL = 'http://' + REST_HOST + ':' + REST_PORT +'/tuning/updateAll';
 
-$(document).ready(
-		function(){
-			Retrieve();
+$(document).ready( function(){
+		Retrieve();
 			
 			//$.plot($("#placeholder"), [ [[0, 0], [1, 1]] ], { yaxis: { max: 1 } });
-		}    		
-);
+});
     
-    var Polling = function(){
-    	setTimeout(Retrieve, 5000);
-    }
+var Polling = function(){
+	setTimeout(Retrieve, 60000);
+}
     
-    var Retrieve = function(){
-    	
-    	$.getJSON( REST_STATUS, function(data){Update(data)})
-    		.complete(function(){
+var Retrieve = function(){
+   	
+	$.getJSON( REST_STATUS, function(data){
+		Update(data)
+		})
+	.complete(function(){
     			Polling();
     		})
-    		.fail(function() { 
+    .fail(function() { 
     			setTimeout(function(){
             		document.location.reload(true);	
             	}, 5000);
     		});
+    	
+	$.getJSON( REST_UPDATE_ALL, function(data){
+		UpdateOpt(data)
+		});    		
+};
+
+    	
     	/*
     	$.ajax({
             type: 'GET',
@@ -73,7 +81,7 @@ $(document).ready(
             complete: Polling
         });  
     	*/
-    }
+    
     /*
     {
       "currentState":"RUNNING",
@@ -116,6 +124,21 @@ $(document).ready(
 		$("p#placement_tuning").text( (json.tuning.dataPlacement ) ? "ENABLED" : "DISABLED" );			
 		
 	};
+	
+	var UpdateOpt = function(json) {
+    	console.log(json); 
+		
+    	
+    	/*
+    	{"platformSize":10,"threadPerNode":3,"nodesConfig":"MEDIUM","replicationProtocol":"PB","replicationDegree":10,"dataPlacement":{"value":0}}
+    	*/
+    	
+		/* SCALE */					
+		$("p#scale_opt").text( $.trim(json.platformSize) );
+		$("p#rep_degree_opt").text( $.trim(json.replicationDegree) );
+		$("p#rep_protocol_opt").text( $.trim(json.replicationProtocol) );
+				
+	};
 
     </script>
     
@@ -133,7 +156,7 @@ $(document).ready(
     
   	<div id="col-text">
         
-        <h2><s:property value="message"/></h2>
+        <h2>Overview</h2>
         <h3>State: <span style="display: inline;" id="status"></span></h3>
         
         <!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
@@ -144,31 +167,31 @@ $(document).ready(
 		        	<th scope="col">Selftunable Feature</th>
 		            <th scope="col">Tuning Status</th>
 		            <th scope="col">Current Config.</th>
-		            <th scope="col">Optimal Predicted Config<br/> using <span id="forecaster_info"></span> </th>
+		            <th scope="col">Optimal Predicted Config.<br /> using <span id="forecaster_info">N/A</span> </th>
 		        </tr>
 		    </thead>
 		    <tbody>
 		    	<tr>
 		        	<td>Scale</td>
-		            <td><p id="scale_tuning"></p></td>
-		            <td><p id="scale_conf"></p></td>
-		            <td>OPT</td>
+		            <td><p id="scale_tuning">N/A</p></td>
+		            <td><p id="scale_conf">N/A</p></td>
+		            <td><p id="scale_opt">N/A</p></td>
 		        </tr>
 		        <tr>
 		        	<td>Replication Degree</td>
-		            <td><p id="rep_degree_tuning"></p></td>
-		            <td><p id="rep_degree_conf"></p></td>
-		            <td>OPT</td>
+		            <td><p id="rep_degree_tuning">N/A</p></td>
+		            <td><p id="rep_degree_conf">N/A</p></td>
+		            <td><p id="rep_degree_opt">N/A</p></td>
 		        </tr>
 		        <tr>
-		        	<td>Protocol Switching</td>
-		            <td><p id="rep_prot_tuning"></p></td>
-		            <td><p id="rep_prot_conf"></p></td>
-		            <td>OPT</td>
+		        	<td>Replication Protocol</td>
+		            <td><p id="rep_prot_tuning">N/A</p></td>
+		            <td><p id="rep_prot_conf">N/A</p></td>
+		            <td><p id="rep_protocol_opt">N/A</p></td>
 		        </tr>
 		        <tr>
-		        	<td>Data Placement</td>
-		            <td><p id="placement_tuning"></p></td>
+		        	<td>Auto-Placer</td>
+		            <td><p id="placement_tuning">N/A</p></td>
 		            <td>--</td>
 		            <td>--</td>
 		        </tr>
@@ -179,9 +202,9 @@ $(document).ready(
 			<input class="submit" type="submit" value="Update predicted optimal" />
 		</form>
 		
-		<h3>Workload and Performance Monitor:</h3>
+<!-- 		<h3>Workload and Performance Monitor:</h3> -->
 				
-		<iframe src="http://cloudtm.ist.utl.pt/ziparo/stats2/index.php?rootFolder=csv" style="width: 100%; height: 900px"></iframe> 
+<!--	<iframe src="http://cloudtm.ist.utl.pt/ziparo/stats2/index.php?rootFolder=csv" style="width: 100%; height: 900px"></iframe>  --> 
 		
 		
 <!-- 		<form id="plot">	 -->

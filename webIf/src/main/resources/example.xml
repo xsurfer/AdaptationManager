@@ -17,9 +17,9 @@
   	</global-exception-mappings>
   
     
-    <!-- <default-action-ref name="myCloud" />  -->
+    <!-- <default-action-ref name="overview" />  -->
     
-    <action name="myCloud" class="eu.cloudtm.webif.MyCloud">
+    <action name="overview" class="eu.cloudtm.webif.Overview">
       <result>/pages/myCloud.jsp</result>
     </action>
     

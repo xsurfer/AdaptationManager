@@ -20,13 +20,9 @@ import java.util.Set;
  * Time: 4:44 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Commitee implements IOracleService {
+public class CommiteeService implements OracleService {
 
-    private static Log log = LogFactory.getLog(Commitee.class);
-
-    private Oracle analytical = new OracleTAS();
-    private Oracle simulator = new Simulator();
-    private Oracle morpher = new FakeMLOracle();
+    private static Log log = LogFactory.getLog(CommiteeService.class);
 
     private ReplicationProtocol defaultProt = ReplicationProtocol.TWOPC;
 
@@ -44,7 +40,7 @@ public class Commitee implements IOracleService {
 
         for (Forecaster forecaster : forecasters){
 
-            OracleService oracleService = OracleService.getInstance(forecaster.getOracleClass());
+            OracleServiceImpl oracleService = OracleServiceImpl.getInstance(forecaster.getOracleClass());
             PlatformConfiguration forecastedConfig = null;
             try {
                 forecastedConfig = oracleService.minimizeCosts(sample,
@@ -60,15 +56,35 @@ public class Commitee implements IOracleService {
         return doVoting(forecaster2conf);
     }
 
+
     @Override
-    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, ReplicationProtocol repProtocol, int repDegree){
-        throw new RuntimeException("TO IMPLEMENT");
+    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int fixedNodes, int fixedDegree) {
+        throw new RuntimeException("NOT IMPLEMENTED!");
+    }
+
+    @Override
+    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, ReplicationProtocol repProtocol, int repDegree) {
+        throw new RuntimeException("NOT IMPLEMENTED!");
+    }
+
+
+    /**
+     * What-if with Degree on X-axis
+     * @param sample
+     * @param fixedNodes
+     * @param fixedProtocol
+     * @return
+     */
+    @Override
+    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int fixedNodes, ReplicationProtocol fixedProtocol) {
+        throw new RuntimeException("NOT IMPLEMENTED!");
     }
 
     @Override
     public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
-        throw new RuntimeException("TO IMPLEMENT");
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
 
     private PlatformConfiguration doVoting(Map<Forecaster, PlatformConfiguration> forecaster2conf){
 
@@ -99,12 +115,13 @@ public class Commitee implements IOracleService {
             replicationProtocol = defaultProt;
         }
 
-        log.info("Configurazione scelta:");
+        log.info("Chosen configuration:");
         log.info("runningInstancesSize: " + size);
         log.info("degree: " + degree);
         log.info("repProt: " + replicationProtocol);
 
         return new PlatformConfiguration(size, degree, replicationProtocol);
     }
+
 
 }

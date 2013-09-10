@@ -56,19 +56,19 @@
 										<input type="text" id="acf" name="acf" size="5" />
 									</div>
 									<div class="param">
-										<label for="percentageSuccessWriteTransactions">Write Transactions Percentage:</label>
+										<label for="percentageSuccessWriteTransactions">Write TX Percentage:</label>
 										<input type="text" name="percentageSuccessWriteTransactions" id="percentageSuccessWriteTransactions" size="5" />
 									</div>
 									<div class="param">
-										<label for="avgNumPutsBySuccessfulLocalTx"># PUT per write transaction:</label>
+										<label for="avgNumPutsBySuccessfulLocalTx"># PUT per Write TX:</label>
 										<input type="text" name="avgNumPutsBySuccessfulLocalTx" id="avgNumPutsBySuccessfulLocalTx" size="5" />
 									</div>
 									<div class="param">
-										<label for="avgGetsPerWrTransaction"># GET per write transaction:</label>
+										<label for="avgGetsPerWrTransaction"># GET per Write TX:</label>
 										<input type="text" name="avgGetsPerWrTransaction" id="avgGetsPerWrTransaction" size="5" />
 									</div>
 									<div class="param">
-										<label for="avgGetsPerROTransaction"># GET per read only transaction:</label>
+										<label for="avgGetsPerROTransaction"># GET per ReadOnly TX:</label>
 										<input type="text" name="avgGetsPerROTransaction" id="avgGetsPerROTransaction" size="5" />
 									</div>
 									<div class="param">
@@ -81,11 +81,11 @@
 							<fieldset>
 								<legend>CPU Costs:</legend>
 									<div class="param">
-										<label for="localUpdateTxLocalServiceTime">Write transaction demand:</label>
+										<label for="localUpdateTxLocalServiceTime">Write TX demand (ms):</label>
 										<input type="text" name="localUpdateTxLocalServiceTime" id="localUpdateTxLocalServiceTime" size="5" />
 									</div>
 									<div class="param">
-										<label for="localReadOnlyTxLocalServiceTime">Read Only transaction demand:</label>
+										<label for="localReadOnlyTxLocalServiceTime">ReadOnly TX demand (ms):</label>
 										<input type="text" name="localReadOnlyTxLocalServiceTime" id="localReadOnlyTxLocalServiceTime" size="5" />																	
 									</div>
 									<div class="param">
@@ -104,15 +104,15 @@
 										<input type="text" name="avgPrepareCommandSize" id="avgPrepareCommandSize" size="5" />
 									</div>
 									<div class="param">
-										<label for="avgPrepareAsync">Prepare latency:</label>
+										<label for="avgPrepareAsync">Prepare latency (ms):</label>
 										<input type="text" name="avgPrepareAsync" id="avgPrepareAsync" size="5" />
 									</div>
 									<div class="param">
-										<label for="avgCommitAsync">Commit latency:</label>
+										<label for="avgCommitAsync">Commit latency (ms):</label>
 										<input type="text" name="avgCommitAsync" id="avgCommitAsync" size="5" />
 									</div>
 									<div class="param">
-										<label for="avgRemoteGetRtt">Remote get latency:</label>
+										<label for="avgRemoteGetRtt">Remote get latency (ms):</label>
 										<input type="text" name="avgRemoteGetRtt" id="avgRemoteGetRtt" size="5" />
 									</div>
 									<div class="param">

@@ -5,10 +5,8 @@ import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.commons.InstanceConfig;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
-import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
-import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,6 +37,7 @@ public class Console {
             log.info("4 - WhatIfService");
             log.info("5 - Optimize now");
             log.info("6 - Enable/Disable WorkloadAnalyzer [ current: " + (autonomicManager.isWorkloadAnalyzerEnabled() ? "enabled" : "disabled")  + " ]");
+            log.info("7 - Forecast (w/o reconfigure)");
             Scanner in = new Scanner(System.in);
             selected = in.nextInt();
             processInput(selected);
@@ -65,6 +64,9 @@ public class Console {
                 break;
             case 6:
                 switchWorkloadAnalyzer();
+                break;
+            case 7:
+                forecast();
                 break;
             default:
                 log.info("Unexpected input");
@@ -106,9 +108,16 @@ public class Console {
 
         Map<OptimizerType, Object> configuration = new HashMap<OptimizerType, Object>();
         configuration.put(OptimizerType.PLATFORM, platformConfiguration);
-        configuration.put(OptimizerType.LARD, null);
+        configuration.put(OptimizerType.AUTOPLACER, null);
 
         autonomicManager.customConfiguration(configuration);
+    }
+
+    private void forecast(){
+        Gson gson = new Gson();
+
+        log.info( gson.toJson(autonomicManager.forecast() ) );
+
     }
 
     private void switchWorkloadAnalyzer(){
@@ -116,7 +125,7 @@ public class Console {
     }
 
     private void optimizeNow(){
-        autonomicManager.optimizeNow();
+        autonomicManager.optimizeAndReconfigureNow();
     }
 
     private void whatIf(){

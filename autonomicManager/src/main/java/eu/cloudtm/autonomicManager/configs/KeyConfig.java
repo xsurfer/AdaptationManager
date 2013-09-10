@@ -10,6 +10,9 @@ public enum KeyConfig {
     /* ****** ENVIRONMENT ****** */
 
     ENVIRONMENT_ISOLATION_LEVEL ("environment.isolationLevel"),
+    ENVIRONMENT_MAX_ACTIVE_THREADS_PER_NODE ("environment.max_active_threads_per_node"),
+    ENVIRONMENT_SYSTEM_TYPE("environment.system_type"),
+    ENVIRONMENT_CORE_PER_CPU ("environment.core_per_cpu"),
 
 
     /* ****** WORKLOAD ANALYZER ****** */
@@ -17,10 +20,10 @@ public enum KeyConfig {
     WORKLOAD_ANALYZER_AUTOSTART("workloadAnalyzer.autoStart"),
 
     ALERT_MANAGER_POLICY("alertManager.policy"),
+    ALERT_MANAGER_SECONDS_BETWEEN_RECONFIGURATIONS("alertManager.timeBetweenReconfiguration"),
 
 
     /* ******* OPTIMIZER ******* */
-    OPTIMIZER_PLATFORM("optimizer.platform"),
     OPTIMIZER_LARD("optimizer.lard"),
 
 
@@ -58,19 +61,23 @@ public enum KeyConfig {
 
 
     /* ******* RECONFIGURATOR ******* */
+
     RECONFIGURATOR_IGNORE_ERROR("reconfigurator.ignoreError"),
     RECONFIGURATOR_SIMULATE("reconfigurator.simulate"),
-    RECONFIGURATOR_SECONDS_BETWEEN_RECONFIGURATIONS("reconfigurator.timeBetweenReconfiguration"),
 
     RECONFIGURATOR_SWITCH_REBALANCING ("reconfigurator.switchRebalancing"),
     RECONFIGURATOR_RECONFIGURE_NODES("reconfigurator.reconfigureNodes"),
     RECONFIGURATOR_RECONFIGURE_DEGREE("reconfigurator.reconfigureDegree"),
     RECONFIGURATOR_RECONFIGURE_PROTOCOL("reconfigurator.reconfigureProtocol"),
 
+
     /* ******* CHANGE DETECTORs ******* */
+
     SLIDE_WINDOW_SIZE("changeDetector.slideWindowSize"),
 
+
     /* ******* FORECASTERs ******* */
+
     FORECASTER_ANALYTICAL("forecaster.analytical"),
     FORECASTER_SIMULATOR("forecaster.simulator"),
     FORECASTER_MACHINE_LEARNING("forecaster.machineLearning"),

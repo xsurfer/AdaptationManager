@@ -86,7 +86,7 @@ public class FakeAnalyticalOracle implements Oracle {
     @Override
     public OutputOracle forecast(InputOracle input) throws OracleException {
 
-        log.info( "counter: " + counter.get() );
+        //log.trace( "counter: " + counter.get() );
         OutputOracle toReturn = counter2plat.get( getCurr() );
 
         counter.incrementAndGet();

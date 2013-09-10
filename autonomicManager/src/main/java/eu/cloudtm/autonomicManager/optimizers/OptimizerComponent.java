@@ -7,10 +7,10 @@ import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
  * Date: 8/10/13
  * Time: 11:35 AM
  */
-public interface OptimizerFilter<T>{
+public interface OptimizerComponent<T>{
 
     public OptimizerType getType();
 
-    public T doOptimize(ProcessedSample processedSample);
+    public T doOptimize(ProcessedSample processedSample, boolean pureForecast);
 
 }

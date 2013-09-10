@@ -1,6 +1,8 @@
 package eu.cloudtm.autonomicManager.commons;
 
 import com.google.gson.Gson;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -18,7 +20,7 @@ public class PlatformConfiguration implements Comparable<PlatformConfiguration> 
 
     /* SCALE */
     private int platformSize = 2;
-    private int threadPerNode = 2;
+    private int threadPerNode = Config.getInstance().getInt( KeyConfig.ENVIRONMENT_MAX_ACTIVE_THREADS_PER_NODE.key() );
     private InstanceConfig nodesConfig = InstanceConfig.MEDIUM;
 
     /* REP PROT */

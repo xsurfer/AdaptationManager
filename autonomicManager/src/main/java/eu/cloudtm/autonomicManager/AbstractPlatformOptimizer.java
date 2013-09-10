@@ -3,9 +3,8 @@ package eu.cloudtm.autonomicManager;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
-import eu.cloudtm.autonomicManager.optimizers.OptimizerFilter;
+import eu.cloudtm.autonomicManager.optimizers.OptimizerComponent;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
-import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
  * E-mail: perfabio87@gmail.com
  * Date: 6/16/13
  */
-public abstract class AbstractPlatformOptimizer implements OptimizerFilter<PlatformConfiguration> {
+public abstract class AbstractPlatformOptimizer implements OptimizerComponent<PlatformConfiguration> {
 
     private static Log log = LogFactory.getLog(AbstractPlatformOptimizer.class);
 
@@ -29,14 +28,17 @@ public abstract class AbstractPlatformOptimizer implements OptimizerFilter<Platf
         this.platformConfiguration = platformConfiguration;
     }
 
-    public PlatformConfiguration doOptimize(ProcessedSample sample) {
-        if(!platformTuning.forecaster().isAutoTuning()){
-            return null;
+    @Override
+    public PlatformConfiguration doOptimize(ProcessedSample sample, boolean purePrediction) {
+        if(!purePrediction){
+            if(!platformTuning.forecaster().isAutoTuning()){
+                return null;
+            }
         }
-        return optimize(sample);
+        return optimize(sample, purePrediction);
     }
 
-    protected abstract PlatformConfiguration optimize(ProcessedSample processedSample);
+    protected abstract PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction);
 
 
     protected PlatformConfiguration createNextConfig(PlatformConfiguration forecastedConfig){

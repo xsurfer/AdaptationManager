@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.commons.InstanceConfig;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +51,28 @@ public class TuningResource extends AbstractResource {
         return makeCORS(builder);
     }
 
+    @GET
+    @Path("/updateAll")
+    @Produces("application/json")
+    public synchronized Response updateAllForecasters() {
 
+        log.info("updating all forecasters");
+        PlatformConfiguration platformConfiguration = autonomicManager.forecast();
+        //String json = gson.toJson(ControllerOld.getInstance().getState());
+
+        if(platformConfiguration!=null){
+            log.info("platformConfiguration not null");
+            String json = gson.toJson(platformConfiguration);
+            Response.ResponseBuilder builder = Response.ok(json);
+            return makeCORS(builder);
+        }
+
+        log.info("platformConfiguration null");
+
+        String json = "{ \"result\" : \"fail\" }";
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
+    }
 
     @POST
     @Path("/scale")

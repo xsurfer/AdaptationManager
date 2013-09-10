@@ -1,6 +1,9 @@
 package eu.cloudtm.autonomicManager.statistics;
 
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Created by: Fabio Perfetti
@@ -9,6 +12,8 @@ import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
  */
 public class StatsProcessor implements Processor {
 
+    private static Log log = LogFactory.getLog(StatsProcessor.class);
+
     private PlatformConfiguration currentConfig;
 
     public StatsProcessor(PlatformConfiguration currentConfig){
@@ -16,8 +21,26 @@ public class StatsProcessor implements Processor {
     }
 
     public ProcessedSample process(Sample rawSample){
-        // TODO processare in base al protocollo o altro... per ora solo 2pc
-        ProcessedSample processedSample = new TWOPCProcessedSample(rawSample);
+        ProcessedSample processedSample = null;
+
+        switch (currentConfig.replicationProtocol()){
+
+            case TWOPC:
+                log.trace("Processing wpm sample in TWOPCProcessedSample");
+                processedSample = new TWOPCProcessedSample(rawSample);
+                break;
+            case TO:
+                log.trace("Processing wpm sample in TOProcessedSample");
+                processedSample = new TWOPCProcessedSample(rawSample);
+                break;
+            case PB:
+                log.trace("Processing wpm sample in PBProcessedSample");
+                processedSample = new TWOPCProcessedSample(rawSample);
+                break;
+            default:
+                throw new RuntimeException("Invalid replication protocol!");
+
+        }
         return processedSample;
     }
 

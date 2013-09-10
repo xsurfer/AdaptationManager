@@ -7,6 +7,6 @@ package eu.cloudtm.autonomicManager.optimizers;
  */
 public enum OptimizerType {
 
-    PLATFORM, LARD;
+    PLATFORM, AUTOPLACER;
 
 }

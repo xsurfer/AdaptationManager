@@ -34,7 +34,7 @@
 			<!-- <h2 id="slogan"><span><s:property value="message"/></span></h2> -->
 
 			<!-- FORECASTER FORM -->
-			<form id="forecaster" action="">
+			
 
 				<div class="resource">
 					<fieldset class="resource">
@@ -45,16 +45,24 @@
 							<ol>
 								<li>
 									<p class="label">Current configuration:</p>
-									<p class="config"><span id="current_forecaster">ANALYTICAL</span></p>								
+									<p class="config"><span id="current_forecaster">N/A</span></p>								
 								</li>
 							</ol>
-						</div>						
+						</div>		
+						
+						<!-- UPDATE -->
+						<div class="update">	
+							<form id="updateAll">
+								<input class="submit update" type="button" value="Update all forecasts" />
+							</form>						
+						</div>				
 						
 						<!-- TUNING -->
+						<form id="forecaster" action="">
 						<div class="tuning">
 							<ol>							
 								<li>
-									<div class="conf_tuning">
+									<div class="">
 										<fieldset name="forecaster_tuning_self">
 											<!-- <label for="wr_tx_local_exec_time">Forecasting method:</label> -->
 											<select name="forecaster" class="forecasting">
@@ -73,13 +81,14 @@
 						<div class="control">
 							<input class="submit" type="submit" value="Set" />
 						</div>
+						</form>
 					</fieldset>
 				</div>
-			</form>
+			
 				
 				
 			<!-- SCALE FORM -->
-			<form id="scale">
+			
 				<!-- RESOURCE -->
 				<div class="resource">
 					<fieldset class="resource">
@@ -90,17 +99,31 @@
 							<ol>
 								<li>
 									<p class="label">Current configuration:</p>
-									<p class="config"><span id="current_scale">5</span>instances</p>								
+									<p class="config"><span id="current_scale">N/A</span>instances</p>								
 								</li>
 								<li>
-									<p class="label">Current optimal configuration:</p>
-									<p class="config"><span id="current_opt_scale">7</span>instances</p>								
+									<p class="label">Optimal configuration:</p>
+									<p class="config"><span id="current_opt_scale">N/A</span>instances</p>								
 								</li>
 							</ol>
-						</div>						
+						</div>	
+						
+						<!-- UPDATE -->
+						<div class="update">
+						<form id="updateScale" action="#">
+							<input name="xaxis" type="hidden" value="NODES" />						
+							<input name="fixed_degree" type="hidden" value="2" />
+							<input name="fixed_protocol" type="hidden" value="TWOPC" />
+						
+							<button class="submit update"> 
+								Update Prediction<br /> Optimal Scale
+							</button>		
+						</form>
+						</div>					
 						
 						<!-- TUNING -->
-						<div class="tuning">
+						<form id="scale">
+						<div class="tuning">							
 							<ol>
 								<li>
 									<div class="radio_tuning">
@@ -110,11 +133,11 @@
 									<div class="conf_tuning">
 										<fieldset name="scale_tuning_manual">
 											<input type="text" name="scale_size" id=scale_size size="3" />
-											<select name="instance_type">
-												<option value="SMALL">Small</option>
-												<option selected value="MEDIUM">Medium</option>
-												<option value="LARGE">Large</option>
-											</select>
+<%-- 											<select name="instance_type"> --%>
+<!-- 												<option value="SMALL">Small</option> -->
+<!-- 												<option selected value="MEDIUM">Medium</option> -->
+<!-- 												<option value="LARGE">Large</option> -->
+<%-- 											</select> --%>
 										</fieldset>
 									</div>		
 
@@ -131,12 +154,12 @@
 						<div class="control">
 							<input class="submit" type="submit" value="Set" />
 						</div>
+						</form>
 					</fieldset>
-				</div>
-			</form>
+				</div>			
 
 			<!-- REPLICATION DEGREE FORM -->
-			<form id="degree" action="" >
+			
 			
 				<!-- RESOURCE -->
 				<div class="resource">
@@ -148,16 +171,26 @@
 							<ol>
 								<li>
 									<p class="label">Current configuration:</p>
-									<p class="config"><span id="current_rep_degree">5</span>replicas per object</p>								
+									<p class="config"><span id="current_rep_degree">N/A</span>replicas per object</p>								
 								</li>
 								<li>
-									<p class="label">Current optimal configuration:</p>
-									<p class="config"><span id="current_opt_rep_degree">7</span>replicas per object</p>
+									<p class="label">Optimal configuration:</p>
+									<p class="config"><span id="current_opt_rep_degree">N/A</span>replicas per object</p>
 								</li>
 							</ol>
-						</div>									
+						</div>		
+						
+						<!-- UPDATE -->
+						<div class="update">	
+							<form>
+								<button class="submit update"> 
+									Update Prediction<br /> Optimal Rep. Degree
+								</button>
+							</form>						
+						</div>							
 						
 						<!-- TUNING -->
+						<form id="degree" action="" >
 						<div class="tuning">
 							<ol>
 								<li>
@@ -185,12 +218,13 @@
 						<div class="control">
 							<input class="submit" type="submit" value="Set" />
 						</div>
+						</form>
 					</fieldset>
 				</div>
-			</form>
+			
 
 			<!-- PROTOCOL SWITCHING FORM -->
-			<form id="protocol" action="" >
+			
 			
 				<!-- RESOURCE -->
 				<div class="resource">
@@ -202,16 +236,26 @@
 							<ol>
 								<li>
 									<p class="label">Current configuration:</p>
-									<p class="config"><span id="current_rep_protocol">TO</span></p>								
+									<p class="config"><span id="current_rep_protocol">N/A</span></p>								
 								</li>
 								<li>
-									<p class="label">Current optimal configuration:</p>
-									<p class="config"><span id="current_opt_rep_protocol">2PC</span></p>
+									<p class="label">Optimal configuration:</p>
+									<p class="config"><span id="current_opt_rep_protocol">N/A</span></p>
 								</li>
 							</ol>
+						</div>
+						
+						<!-- UPDATE -->
+						<div class="update">							
+							<form>
+								<button class="submit update"> 
+									Update Prediction<br /> Optimal Rep. Scheme
+								</button>								
+							</form>						
 						</div>												
 						
 						<!-- TUNING -->
+						<form id="protocol" action="#" >
 						<div class="tuning">
 							<ol>
 								<li>
@@ -244,42 +288,104 @@
 						<div class="control">
 							<input class="submit" type="submit" value="Set" />
 						</div>
+						</form>
 					</fieldset>
 				</div>
-			</form>
+			
 
-			<!-- DATA PLACEMENT FORM -->
-			<form>
+			<!-- DATA PLACEMENT FORM -->			
 			
 				<!-- RESOURCE -->
 				<div class="resource">
 					<fieldset class="resource">
-						<legend>Data Placement:</legend>
+						<legend>Auto-Placer:</legend>
 												
 						<!-- CURRENT -->
-						<div class="current">
+						<div class="current autoplacer">
 							<ol>
 								<li>
-									<p class="label">AVG Remote OPS/TX [%]:</p>
-									<p class="config"><span id="current_data_placement">20</span></p>								
+									<p class="label autoplacer">AVG Remote OPS/ReadOnly TX:</p>
+									<p class="config"><span id="current_data_placement">393.4</span></p>								
 								</li>
 								<li>
-									<p class="label">AVG Nodes involved in TX:</p>
-									<p class="config"><span id="current_opt_data_placement">30</span></p>
+									<p class="label autoplacer">AVG Remote OPS/Update TX:</p>
+									<p class="config"><span id="current_data_placement">23.24</span></p>								
+								</li>
+								<li>
+									<p class="label autoplacer">AVG Nodes involved in TX:</p>
+									<p class="config"><span id="current_opt_data_placement">3.95</span></p>
 								</li>
 							</ol>
-						</div>						
+						</div>	
+						
+<!-- 						UPDATE -->
+<!-- 						<div class="update">													 -->
+<!-- 						</div>						 -->
 						
 						<!-- TUNING -->
-						<div class="tuning">
+						<form id="autoplacer" action="#">
+						<div class="tuning autoplacer">
 							<ol>
 								<li>
-									<div class="radio_tuning">
+									<div class="autoplacer_tuning">										
+										<input type="radio" id="autoplacer_tuning_manual" name="autoplacer_tuning" value="TRUE" />
+										<label for="autoplacer_tuning_manual">Perform Single Optimization Round</label>										
+									</div>
+								
+								
+								
+
+<!-- 									<div class="conf_tuning"> -->
+<!-- 										<input type="checkbox" name="data_placement_tuning" value="Bike" />Self-tuning										 -->
+<!-- 									</div>									 -->
+								</li>
+								<li>
+									<div class="autoplacer_tuning">
+										<input type="radio" id="autoplacer_tuning_self" name="autoplacer_tuning" value="FALSE" />
+										<label for="autoplacer_tuning_self">Trigger automatically when:</label>
 										
 									</div>
-									<div class="conf_tuning">
-										<input type="checkbox" name="data_placement_tuning" value="Bike" />Self-tuning										
-									</div>									
+									<div>
+										<fieldset class="autoplacer" name="autoplacer_tuning_manual">
+											<div class="radio_tuning autoplacer">
+											<ol>
+												<li>
+													<input type="checkbox" />
+													<label>Remote Ops (RO TX) ></label>
+													<input type="text" name="rep_degree_size" id=degree_conf size="3" />																						
+												</li>
+												<li>
+													<input type="checkbox" />
+													<label>Remote Ops (UP TX) ></label>
+													<input type="text" name="rep_degree_size" id=asd size="3" />																						
+												</li>
+												<li>
+													<input type="checkbox" />
+													<label>AVG #Nodes in TX ></label>
+													<input type="text" name="rep_degree_size" id=asd size="3" />																						
+												</li>
+												
+											</ol>
+											</div>
+											<div class="conf_tuning autoplacer">
+											<ol>
+												<li>
+													<label>Time b/t Rounds (mins):</label>
+													<input type="text" name="rep_degree_size" id=asd size="3" />
+												</li>
+												<li>
+													<label>Keys shifted per Round (per Node):</label>
+													<input type="text" name="rep_degree_size" id=asd size="3" />
+												</li>
+												<li>
+													<label>Max #Rounds:</label>
+													<input type="text" name="rep_degree_size" id=asd size="3" />
+												</li>
+											</ol>
+											</div>
+																						
+										</fieldset>
+									</div>
 								</li>
 							</ol>
 						</div>
@@ -288,9 +394,10 @@
 						<div class="control">
 							<input class="submit" type="submit" value="Set" />
 						</div>
+						</form>
 					</fieldset>
 				</div>
-			</form>
+			
 
 		</div>
 		<!-- /col-text -->
