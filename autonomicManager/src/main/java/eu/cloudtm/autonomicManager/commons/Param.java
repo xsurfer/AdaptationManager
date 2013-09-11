@@ -199,7 +199,7 @@ public enum Param {
 
     public static Param getByName(String name){
         for( Param param : values() ){
-            if( param.getKey() == name )
+            if(param.getKey().equals(name))
                 return param;
         }
         return null;
