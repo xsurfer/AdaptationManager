@@ -23,23 +23,23 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>eu.cloudtm</groupId>
-            <artifactId>MorphR</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>eu.cloudtm</groupId>-->
+            <!--<artifactId>MorphR</artifactId>-->
+            <!--<version>1.0.0</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>eu.cloudtm</groupId>
-            <artifactId>SimulatorConnector</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>eu.cloudtm</groupId>-->
+            <!--<artifactId>SimulatorConnector</artifactId>-->
+            <!--<version>1.0.0</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>TasOracle</groupId>
-            <artifactId>TasOracle</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>TasOracle</groupId>-->
+            <!--<artifactId>TasOracle</artifactId>-->
+            <!--<version>1.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>stoyan</groupId>
@@ -142,69 +142,69 @@
 
         <plugins>
 
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <configuration>
-                            <tasks>
+            <!--<plugin>-->
+                <!--<artifactId>maven-antrun-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>install</phase>-->
+                        <!--<configuration>-->
+                            <!--<tasks>-->
 
-                                <copy todir="${project.build.directory}">
-                                    <fileset dir="src/main/resources">
-                                        <include name="**/*" />
-                                    </fileset>
-                                </copy>
+                                <!--<copy todir="${project.build.directory}">-->
+                                    <!--<fileset dir="src/main/resources">-->
+                                        <!--<include name="**/*" />-->
+                                    <!--</fileset>-->
+                                <!--</copy>-->
 
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+                            <!--</tasks>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>run</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                <!--<inherited>true</inherited>-->
+                <!--<configuration>-->
+                    <!--<source>1.6</source>-->
+                    <!--<target>1.6</target>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>eu.cloudtm.autonomicManager.Main</mainClass>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>exec-maven-plugin</artifactId>-->
+                <!--<version>1.1</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>java</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<configuration>-->
+                    <!--<mainClass>eu.cloudtm.autonomicManager.Main</mainClass>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
-            <plugin>
-                <!-- Build an executable JAR -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>eu.cloudtm.autonomicManager.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--&lt;!&ndash; Build an executable JAR &ndash;&gt;-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<classpathPrefix>lib/</classpathPrefix>-->
+                            <!--<mainClass>eu.cloudtm.autonomicManager.Main</mainClass>-->
+                        <!--</manifest>-->
+                    <!--</archive>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
             <!--<plugin>-->
                 <!--<artifactId>maven-assembly-plugin</artifactId>-->
@@ -282,95 +282,101 @@
             <!--</plugin>-->
 
 
-            <!--<plugin>-->
-                <!--<groupId>com.github.goldin</groupId>-->
-                <!--<artifactId>copy-maven-plugin</artifactId>-->
-                <!--<version>0.3-SNAPSHOT</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>create-archive</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<resources>-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--&lt;!&ndash; Copy resources &ndash;&gt;-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~ &ndash;&gt;-->
+            <plugin>
+                <groupId>com.github.goldin</groupId>
+                <artifactId>copy-maven-plugin</artifactId>
+                <version>0.3-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>create-archive</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <!-- ~~~~~~~~~~~~~~ -->
+                                <!-- Copy resources -->
+                                <!-- ~~~~~~~~~~~~~~ -->
+                                <resource>
+                                    <targetPath>${project.build.directory}/AdaptationManager</targetPath>
+                                    <directory>${project.basedir}/src/main/resources</directory>
+                                    <preservePath>true</preservePath>
+                                </resource>
+                                <resource>
+                                    <targetPath>${project.build.directory}/AdaptationManager/lib</targetPath>
+                                    <file>${project.basedir}/src/main/resources/lib/DAGSwithCubist.zip</file>
+                                    <unpack>true</unpack>
+                                    <chmod>755</chmod>
+                                </resource>
+                                <resource>
+                                    <targetPath>${project.build.directory}/AdaptationManager/lib</targetPath>
+                                    <file>${project.basedir}/src/main/resources/lib/MorphR.zip</file>
+                                    <unpack>true</unpack>
+                                    <chmod>755</chmod>
+                                </resource>
                                 <!--<resource>-->
-                                    <!--<targetPath>${project.build.outputDirectory}</targetPath>-->
-                                    <!--<directory>${project.basedir}/src/main/resources</directory>-->
-                                    <!--<preservePath>true</preservePath>-->
+                                    <!--<targetPath>${project.build.outputDirectory}/scripts</targetPath>-->
+                                    <!--<directory>${project.basedir}/conf</directory>-->
+                                    <!--<include>resources, scripts</include>-->
                                 <!--</resource>-->
+                                <!-- ~~~~~~~~~~~~~~ -->
+                                <!-- Copy directory -->
+                                <!-- ~~~~~~~~~~~~~~ -->
                                 <!--<resource>-->
-                                    <!--<targetPath>${project.build.outputDirectory}/lib</targetPath>-->
-                                    <!--<file>${project.basedir}/src/main/resources/lib/DAGSwithCubist.zip</file>-->
-                                    <!--<unpack>true</unpack>-->
-                                    <!--<chmod>755</chmod>-->
+                                    <!--<targetPath>${project.build.outputDirectory}/spring</targetPath>-->
+                                    <!--<directory>${project.basedir}/src/main/resources/spring</directory>-->
                                 <!--</resource>-->
-                                <!--<resource>-->
-                                    <!--<targetPath>${project.build.outputDirectory}/lib</targetPath>-->
-                                    <!--<file>${project.basedir}/src/main/resources/lib/MorphR.zip</file>-->
-                                    <!--<unpack>true</unpack>-->
-                                    <!--<chmod>755</chmod>-->
-                                <!--</resource>-->
-                                <!--&lt;!&ndash;<resource>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<targetPath>${project.build.outputDirectory}/scripts</targetPath>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<directory>${project.basedir}/conf</directory>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<include>resources, scripts</include>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</resource>&ndash;&gt;-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--&lt;!&ndash; Copy directory &ndash;&gt;-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--&lt;!&ndash;<resource>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<targetPath>${project.build.outputDirectory}/spring</targetPath>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<directory>${project.basedir}/src/main/resources/spring</directory>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</resource>&ndash;&gt;-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--&lt;!&ndash; Copy "compile" dependencies &ndash;&gt;-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--<resource>-->
-                                    <!--<targetPath>${project.build.outputDirectory}/lib</targetPath>-->
-                                    <!--<dependency>-->
-                                        <!--<includeScope>compile</includeScope>-->
-                                    <!--</dependency>-->
-                                <!--</resource>-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--&lt;!&ndash; Unpack two data archives &ndash;&gt;-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--&lt;!&ndash;<resource>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<targetPath>${project.build.outputDirectory}/data</targetPath>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<dependencies>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<dependency>&ndash;&gt;-->
-                                            <!--&lt;!&ndash;<groupId>someData</groupId>&ndash;&gt;-->
-                                            <!--&lt;!&ndash;<artifactId>dependencyArchive</artifactId>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;</dependency>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<dependency>&ndash;&gt;-->
-                                            <!--&lt;!&ndash;<groupId>anotherData</groupId>&ndash;&gt;-->
-                                            <!--&lt;!&ndash;<artifactId>dependencyArchive</artifactId>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;</dependency>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;</dependencies>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<unpack>true</unpack>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</resource>&ndash;&gt;-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--&lt;!&ndash; Create final archive and attach it as Maven artifact &ndash;&gt;-->
-                                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                                <!--<resource>-->
-                                    <!--<targetPath>${project.build.directory}/AdaptationManager.tar.gz</targetPath>-->
-                                    <!--<directory>${project.build.outputDirectory}</directory>-->
-                                    <!--<pack>true</pack>-->
-                                    <!--&lt;!&ndash; <attachArtifact>true</attachArtifact> &ndash;&gt;-->
-                                    <!--<preservePath>true</preservePath>-->
-                                    <!--<chmod>755</chmod>-->
+                                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                                <!-- Copy "compile" dependencies -->
+                                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                                <resource>
+                                    <targetPath>${project.build.directory}/AdaptationManager/lib</targetPath>
+                                    <dependency>
+                                        <includeScope>compile</includeScope>
+                                    </dependency>
+                                </resource>
 
-                                <!--</resource>-->
+                                <resource>
+                                    <targetPath>${project.build.directory}/AdaptationManager</targetPath>
+                                    <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                                </resource>
 
-                            <!--</resources>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+                                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                                <!-- Unpack two data archives -->
+                                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                                <!--<resource>-->
+                                    <!--<targetPath>${project.build.outputDirectory}/data</targetPath>-->
+                                    <!--<dependencies>-->
+                                        <!--<dependency>-->
+                                            <!--<groupId>someData</groupId>-->
+                                            <!--<artifactId>dependencyArchive</artifactId>-->
+                                        <!--</dependency>-->
+                                        <!--<dependency>-->
+                                            <!--<groupId>anotherData</groupId>-->
+                                            <!--<artifactId>dependencyArchive</artifactId>-->
+                                        <!--</dependency>-->
+                                    <!--</dependencies>-->
+                                    <!--<unpack>true</unpack>-->
+                                <!--</resource>-->
+                                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                                <!-- Create final archive and attach it as Maven artifact -->
+                                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                                <resource>
+                                    <targetPath>${project.build.directory}/AdaptationManager.tar.gz</targetPath>
+                                    <directory>${project.build.directory}/AdaptationManager</directory>
+                                    <pack>true</pack>
+                                    <!-- <attachArtifact>true</attachArtifact> -->
+                                    <preservePath>true</preservePath>
+                                    <chmod>755</chmod>
+
+                                </resource>
+
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
 
         </plugins>
