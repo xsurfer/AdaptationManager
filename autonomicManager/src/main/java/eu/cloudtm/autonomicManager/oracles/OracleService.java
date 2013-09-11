@@ -1,6 +1,6 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.autonomicManager.WPMInputOracleDumper;
+import eu.cloudtm.autonomicManager.debug.WPMInputOracleDumper;
 import eu.cloudtm.autonomicManager.commons.ForecastParam;
 import eu.cloudtm.autonomicManager.commons.InstanceConfig;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;

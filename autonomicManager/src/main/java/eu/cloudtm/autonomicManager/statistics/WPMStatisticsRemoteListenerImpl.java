@@ -107,6 +107,8 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     }
 
+
+
     @Override
     public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
 

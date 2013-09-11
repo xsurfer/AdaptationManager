@@ -25,6 +25,8 @@ public enum ReplicationProtocol {
         throw new RuntimeException("No protocol available with wpmValue=" + wpmValue );
     }
 
+
+
     public int getId(){
         return id;
     }

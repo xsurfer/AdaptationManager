@@ -33,7 +33,7 @@ public enum ForecastParam {
 
    public static ForecastParam getByName(String name) {
       for (ForecastParam param : values()) {
-         if (param.getKey() == name)
+         if (param.getKey().equals(name))
             return param;
       }
       return null;
