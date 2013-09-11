@@ -1,16 +1,12 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.AutonomicManager;
-import eu.cloudtm.autonomicManager.ControllerLogger;
 import eu.cloudtm.autonomicManager.Optimizer;
 import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created with IntelliJ IDEA.

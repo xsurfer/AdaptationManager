@@ -9,7 +9,6 @@ import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

@@ -5,12 +5,16 @@ import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.commons.InstanceConfig;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Created by: Fabio Perfetti
@@ -129,35 +133,81 @@ public class Console {
     }
 
     private void whatIf(){
+
+        WhatIfCustomParamDTO customParamDTO = new WhatIfCustomParamDTO();
+
         /* reading and setting whatIf options */
         Scanner in = new Scanner(System.in);
 
-
         /* forecaster */
-        log.info("Oracle {ANALYTICAL, SIMULATOR, MACHINE_LEARNING, COMMITTEE}: ");
+        log.info("Oracle: [ ANALYTICAL | SIMULATOR | MACHINE_LEARNING | COMMITTEE ] ");
         String forecasterStr = in.next();
         Forecaster forecaster = Forecaster.valueOf(forecasterStr);
+        customParamDTO.addForecaster(forecaster);
 
-        List<Forecaster> forecasters = new ArrayList<Forecaster>();
-        forecasters.add(forecaster);
+        log.info("X-axis: [ NODES | DEGREE | PROTOCOL ]");
+        String xaxisString = in.next();
+        WhatIfCustomParamDTO.Xaxis xaxis = WhatIfCustomParamDTO.Xaxis.valueOf(xaxisString);
+        customParamDTO.setXaxis(xaxis);
 
-        /* replication protocol */
-        log.info("Replication Protocol {TWOPC, TO, PB}: ");
-        String replicationProtocolStr = in.next();
-        ReplicationProtocol replicationProtocol = ReplicationProtocol.valueOf(replicationProtocolStr);
 
-        /* replication degree */
-        log.info("Replication Degree: ");
-        int repDegree = in.nextInt();
+        switch (xaxis){
+            case NODES:
+                log.info("minNodes: [2-10]");
+                int min = in.nextInt();
+                customParamDTO.setFixedNodesMin(min);
 
-        List<WhatIfDTO> result = autonomicManager.whatIf(forecasters, replicationProtocol, repDegree, null);
+                log.info("maxNodes: [" + min + "-10]");
+                int max = in.nextInt();
+                customParamDTO.setFixedNodesMax(max);
 
-//        /* Stampa delle predizioni */
-//        for (WhatIfDTO whatIfRes : result){
-//            log.info("Forecaster: " + whatIfRes.getForecaster());
-//            log.info("to reimplement");
-//
-//        }
+                /* replication degree */
+                log.info("Fixed Rep. Degree: ");
+                int repDegree = in.nextInt();
+                customParamDTO.setFixedDegreeMax(repDegree);
+
+                /* replication protocol */
+                log.info("Replication Protocol: [ TWOPC | TO | PB ] ");
+                String replicationProtocolStr = in.next();
+                ReplicationProtocol replicationProtocol = ReplicationProtocol.valueOf(replicationProtocolStr);
+                customParamDTO.setFixedProtocol(replicationProtocol);
+
+                break;
+            case DEGREE:
+                log.info("Fixed Num. nodes: [2-10]");
+                int nodes = in.nextInt();
+                customParamDTO.setFixedNodesMax(nodes);
+
+                log.info("minDegree: [2-" + nodes + "]");
+                min = in.nextInt();
+                customParamDTO.setFixedDegreeMin(min);
+
+                log.info("maxDegree: [" + min + "-" + nodes + "]");
+                max = in.nextInt();
+                customParamDTO.setFixedDegreeMax(max);
+
+                /* replication protocol */
+                log.info("Replication Protocol: [ TWOPC | TO | PB ] ");
+                replicationProtocolStr = in.next();
+                replicationProtocol = ReplicationProtocol.valueOf(replicationProtocolStr);
+                customParamDTO.setFixedProtocol(replicationProtocol);
+
+                break;
+            case PROTOCOL:
+                log.info("Fixed num. nodes: [2-10]");
+                nodes = in.nextInt();
+                customParamDTO.setFixedNodesMax(nodes);
+
+                log.info("Fixed Rep. Degree: ");
+                repDegree = in.nextInt();
+                customParamDTO.setFixedDegreeMax(repDegree);
+
+                break;
+            default:
+                throw new IllegalArgumentException("Not valid X-axis param");
+        }
+
+        List<WhatIfDTO> result = autonomicManager.whatIf(customParamDTO);
 
         Gson gson = new Gson();
         String json = gson.toJson(result);

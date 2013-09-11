@@ -1,7 +1,6 @@
 package eu.cloudtm.autonomicManager.statistics;
 
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

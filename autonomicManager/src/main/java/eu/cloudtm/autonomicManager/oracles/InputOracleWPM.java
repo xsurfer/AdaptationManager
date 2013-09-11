@@ -5,7 +5,6 @@ import eu.cloudtm.autonomicManager.commons.ForecastParam;
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.Sample;
-import eu.cloudtm.autonomicManager.statistics.WPMSample;
 
 import java.util.Map;
 

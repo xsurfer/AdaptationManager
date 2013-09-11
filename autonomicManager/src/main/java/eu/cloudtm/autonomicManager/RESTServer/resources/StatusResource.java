@@ -1,11 +1,9 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.commons.AtomicBooleanSerializer;
 import eu.cloudtm.autonomicManager.commons.dto.StatusDTO;
-import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

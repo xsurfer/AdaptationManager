@@ -6,214 +6,46 @@ import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
-import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * User: Fabio Perfetti perfabio87 [at] gmail.com
- * Date: 7/10/13
+ * Created by: Fabio Perfetti
+ * E-mail: perfabio87@gmail.com
+ * Date: 9/11/13
  */
-public class AutonomicManager {
+public interface AutonomicManager {
 
-    private static Log log = LogFactory.getLog(AutonomicManager.class);
+    List<WhatIfDTO> whatIf(WhatIfCustomParamDTO customParamDTO );
 
-    private State state;
-    private PlatformTuning platformTuning;
-    private PlatformConfiguration platformConfiguration;
-    private StatsManager statsManager;
-    private WorkloadAnalyzer workloadAnalyzer;
-    private Optimizer optimizer;
-    private Reconfigurator reconfigurator;
+    void updateProtocol(boolean tuning, ReplicationProtocol protocol);
 
+    void updateDegree(boolean tuning, int degree);
 
-    private final static int INTERVAL_BETWEEN_FORECAST = 60;
-    private Date lastForecastTimestamp;
-    private volatile PlatformConfiguration lastForecast;
-    private ReentrantLock forecastLock = new ReentrantLock();
+    void updateScale(boolean tuning, int size, InstanceConfig instanceConfig);
 
+    void updateForecaster(Forecaster forecaster);
 
+    State state();
 
-    public AutonomicManager(State state,
-                            PlatformConfiguration platformConfiguration,
-                            PlatformTuning platformTuning,
-                            StatsManager sampleManager,
-                            WorkloadAnalyzer workloadAnalyzer,
-                            Optimizer optimizer,
-                            Reconfigurator reconfigurator){
-        this.state = state;
-        this.statsManager = sampleManager;
-        this.platformConfiguration = platformConfiguration;
-        this.platformTuning = platformTuning;
+    PlatformConfiguration platformConfiguration();
 
-        this.workloadAnalyzer = workloadAnalyzer;
-        this.optimizer = optimizer;
-        this.reconfigurator = reconfigurator;
-    }
+    PlatformTuning platformTuning();
 
-    public void customConfiguration( Map<OptimizerType, Object> configuration){
-        reconfigurator.reconfigure( configuration );
-    }
+    PlatformConfiguration currentConfiguration();
 
-    public boolean isWorkloadAnalyzerEnabled(){
-        return workloadAnalyzer.isEnabled();
-    }
+    void optimizeAndReconfigure(ProcessedSample sample);
 
+    void optimizeAndReconfigureNow();
 
-    public void switchWorkloadAnalyzer(){
-        workloadAnalyzer.enable( !workloadAnalyzer.isEnabled() );
-    }
+    PlatformConfiguration forecast();
 
-    public PlatformConfiguration forecast(){
-        if( forecastLock.tryLock() ){
-            try {
-                if(lastForecastTimestamp!=null){
-                    long timeDiff = Math.abs( new Date().getTime() - lastForecastTimestamp.getTime() ) / 1000;
-                    if( timeDiff < INTERVAL_BETWEEN_FORECAST ){
-                        ControllerLogger.log.info("Not enough time elapsed between forecast...returning previous forecast result");
-                        return lastForecast;
-                    }
-                }
-                lastForecastTimestamp = new Date();
-                lastForecast = optimizer.optimizePlatform(statsManager.getLastSample(), true);
-            } finally {
-                forecastLock.unlock();
-            }
-        } else {
-            log.info("Another thread is forecasting...");
-        }
-        return lastForecast;
-    }
+    void switchWorkloadAnalyzer();
 
-    public void optimizeAndReconfigureNow(){
-        optimizeAndReconfigure(statsManager.getLastSample());
-    }
+    boolean isWorkloadAnalyzerEnabled();
 
-    public void optimizeAndReconfigure(ProcessedSample sample){
+    void customConfiguration(Map<OptimizerType, Object> configuration);
 
-        if( reconfigurator.isReconfiguring() ){
-            ControllerLogger.log.info("ReconfiguratorImpl busy! Skipping new reconf...");
-
-        }
-    }
-
-    public List<WhatIfDTO> whatIf(List<Forecaster> forecasters, ReplicationProtocol protocol, int degree, WhatIfCustomParamDTO customParamDTO ){
-
-        ProcessedSample processedSample = statsManager.getLastSample();
-        if(processedSample==null) {
-            log.warn("No sample in the StatsManager");
-            //return null;
-        }
-
-        WhatIfService whatIfService = new WhatIfService(processedSample);
-
-        /* retrieving current values */
-        if(customParamDTO == null){
-            customParamDTO = whatIfService.retrieveCurrentValues();
-        }
-
-        /* forecaster */
-        for(Forecaster forecaster : forecasters){
-            customParamDTO.addForecaster(forecaster);
-        }
-
-        /* replication protocol */
-        customParamDTO.setFixedProtocol(protocol);
-
-        /* replication degree */
-        customParamDTO.setFixedDegreeMin(degree);
-
-        List<WhatIfDTO> result = whatIfService.evaluate(customParamDTO);
-
-//        /* Stampa delle predizioni */
-//        for (WhatIfDTO whatIfRes : result){
-//            log.info("Forecaster: " + whatIfRes.getForecaster());
-//            log.info("to reimplement");
-//        }
-
-//        Gson gson = new Gson();
-//        String json = gson.toJson(result);
-
-//        log.trace("RESULT: " + json);
-
-        return result;
-    }
-
-    private PlatformConfiguration currentConfiguration(){
-        //log.trace("Cloning platformConfiguration...");
-        return platformConfiguration();
-    }
-
-    /**
-     * Returns a copy of current PlatformTuning
-     * @return a copy of current PlatformTuning
-     */
-    public PlatformTuning platformTuning(){
-        //log.trace("Cloning platformTuning...");
-        return platformTuning.cloneThroughJson();
-    }
-
-    /**
-     * Returns a copy of current PlatformConfiguration
-     * @return a copy of current PlatformConfiguration
-     */
-    public PlatformConfiguration platformConfiguration(){
-        //log.trace("Cloning platformConfiguration...");
-        return platformConfiguration.cloneThroughJson();
-    }
-
-    /**
-     * Returns a copy of current State
-     * @return a copy of current State
-     */
-    public State state(){
-        //log.trace("Cloning state...");
-        return state.cloneThroughJson();
-    }
-
-    public void updateForecaster(Forecaster forecaster){
-        log.info("Updating forecaster from:" + platformTuning().forecaster() + " to " + forecaster);
-        platformTuning.setForecaster(forecaster);
-    }
-
-    public void updateScale(boolean tuning, int size, InstanceConfig instanceConfig){
-        log.info("Updating scale");
-
-        platformTuning.autoScale(tuning);
-        if(!tuning){
-            log.info("Triggering reconfiguration (" + size + ")");
-            platformConfiguration.setPlatformScale(size, instanceConfig);
-        }
-
-    }
-
-    public void updateDegree(boolean tuning, int degree){
-        log.info("Updating degree");
-
-        platformTuning.autoDegree(tuning);
-        if(!tuning){
-            log.info("Triggering reconfiguration (" + degree + ")");
-            platformConfiguration.setRepDegree(degree);
-        }
-    }
-
-    public void updateProtocol(boolean tuning, ReplicationProtocol protocol){
-        log.info("Updating protocol");
-
-        platformTuning.autoProtocol(tuning);
-        if(!tuning){
-            log.info("Triggering reconfiguration (" + protocol + ")");
-            platformConfiguration.setRepProtocol(protocol);
-        }
-    }
-
-    public StatsManager getStatsManager(){
-        return statsManager;
-    }
-
+    StatsManager getStatsManager();
 }

@@ -6,13 +6,19 @@ import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
-import eu.cloudtm.autonomicManager.oracles.*;
+import eu.cloudtm.autonomicManager.oracles.Oracle;
+import eu.cloudtm.autonomicManager.oracles.OracleService;
+import eu.cloudtm.autonomicManager.oracles.OracleServiceImpl;
+import eu.cloudtm.autonomicManager.oracles.OutputOracle;
 import eu.cloudtm.autonomicManager.statistics.CustomSample;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: Fabio Perfetti perfabio87 [at] gmail.com
@@ -27,7 +33,6 @@ public class WhatIfService {
 
     public WhatIfService(ProcessedSample processedSample){
         this.processedSample = processedSample;
-
     }
 
     public WhatIfCustomParamDTO retrieveCurrentValues(){

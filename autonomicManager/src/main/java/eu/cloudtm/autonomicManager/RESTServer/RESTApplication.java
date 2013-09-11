@@ -1,7 +1,6 @@
 package eu.cloudtm.autonomicManager.RESTServer;
 
 import eu.cloudtm.autonomicManager.AutonomicManager;
-import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**

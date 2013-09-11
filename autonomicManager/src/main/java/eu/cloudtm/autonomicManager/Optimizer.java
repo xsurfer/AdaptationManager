@@ -2,7 +2,6 @@ package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
-import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 
 import java.util.Map;

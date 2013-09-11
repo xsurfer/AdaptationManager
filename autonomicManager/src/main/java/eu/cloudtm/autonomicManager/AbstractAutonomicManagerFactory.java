@@ -1,9 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.PlatformTuning;
-import eu.cloudtm.autonomicManager.commons.State;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 
 /**

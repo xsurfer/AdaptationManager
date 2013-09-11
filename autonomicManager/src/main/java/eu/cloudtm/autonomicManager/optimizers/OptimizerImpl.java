@@ -2,14 +2,12 @@ package eu.cloudtm.autonomicManager.optimizers;
 
 import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
 import eu.cloudtm.autonomicManager.Optimizer;
-import eu.cloudtm.autonomicManager.Reconfigurator;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -46,7 +46,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
 
     public AutonomicManager build(){
 
-        AutonomicManager autonomicManager = new AutonomicManager(
+        AutonomicManager autonomicManager = new AutonomicManagerImpl(
                 platformState,
                 getPlatformConfiguration(),
                 platformTuning,

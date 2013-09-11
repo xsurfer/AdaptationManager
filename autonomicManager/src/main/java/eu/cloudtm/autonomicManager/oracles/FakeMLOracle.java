@@ -4,7 +4,6 @@ import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

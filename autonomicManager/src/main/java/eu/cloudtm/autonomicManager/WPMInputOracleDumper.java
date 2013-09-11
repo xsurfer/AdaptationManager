@@ -27,7 +27,6 @@ import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.oracles.InputOracleWPM;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

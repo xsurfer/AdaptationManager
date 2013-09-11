@@ -3,8 +3,6 @@ package eu.cloudtm.autonomicManager.oracles;
 import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 
-import java.util.List;
-
 /**
  * Created by: Fabio Perfetti
  * E-mail: perfabio87@gmail.com

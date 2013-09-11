@@ -1,8 +1,5 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.autonomicManager.commons.ForecastParam;
-import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -3,7 +3,6 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
-import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 
 import java.util.Map;
 

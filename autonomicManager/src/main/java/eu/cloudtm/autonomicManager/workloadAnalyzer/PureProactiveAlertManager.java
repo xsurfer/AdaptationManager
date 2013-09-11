@@ -1,6 +1,5 @@
 package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
-import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
 import eu.cloudtm.autonomicManager.Optimizer;
 import eu.cloudtm.autonomicManager.ReconfiguratorImpl;
 

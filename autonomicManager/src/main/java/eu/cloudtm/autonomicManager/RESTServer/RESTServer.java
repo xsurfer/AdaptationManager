@@ -2,7 +2,6 @@ package eu.cloudtm.autonomicManager.RESTServer;
 
 import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.ControllerLogger;
-import eu.cloudtm.autonomicManager.statistics.StatsManager;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;

@@ -23,7 +23,7 @@ public class Binder extends AbstractBinder {
     protected void configure() {
         //singleton binding
         bind( StatsManager.class ).in( Singleton.class );
-        bind( autonomicManager.getStatsManager() ).to( StatsManager.class );
+        bind( autonomicManager.getStatsManager() ).to(StatsManager.class);
 
         //singleton binding
         bind( AutonomicManager.class ).in(Singleton.class);

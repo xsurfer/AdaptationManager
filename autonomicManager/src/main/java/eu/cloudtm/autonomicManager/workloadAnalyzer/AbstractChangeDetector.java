@@ -5,8 +5,6 @@ import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
-import eu.cloudtm.autonomicManager.statistics.SampleListener;
-import eu.cloudtm.autonomicManager.statistics.SampleProducer;
 import org.apache.commons.collections15.Buffer;
 import org.apache.commons.collections15.BufferUtils;
 import org.apache.commons.collections15.buffer.CircularFifoBuffer;
