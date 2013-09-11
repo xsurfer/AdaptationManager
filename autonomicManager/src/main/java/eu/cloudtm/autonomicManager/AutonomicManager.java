@@ -126,7 +126,7 @@ public class AutonomicManager {
         customParamDTO.setFixedProtocol(protocol);
 
         /* replication degree */
-        customParamDTO.setFixedDegree(degree);
+        customParamDTO.setFixedDegreeMin(degree);
 
         List<WhatIfDTO> result = whatIfService.evaluate(customParamDTO);
 

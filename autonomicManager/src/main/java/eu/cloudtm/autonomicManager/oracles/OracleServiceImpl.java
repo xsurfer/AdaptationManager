@@ -223,7 +223,7 @@ public class OracleServiceImpl implements OracleService {
      * @return
      */
     @Override
-    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int fixedNodes, ReplicationProtocol fixedProtocol) {
+    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumDegree, int maxNumDegree, int fixedNodes, ReplicationProtocol fixedProtocol) {
 
         TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
         if(fixedNodes <= 1)
@@ -231,7 +231,14 @@ public class OracleServiceImpl implements OracleService {
         if(fixedProtocol == null)
             throw new IllegalArgumentException("fixedProtocol must be not null");
 
-        for( int degree = degreeMin; degree<=fixedNodes; degree++){
+        if( minNumDegree < degreeMin){
+            minNumDegree = degreeMin;
+        }
+        if( maxNumDegree > fixedNodes ){
+            maxNumDegree = fixedNodes;
+        }
+
+        for( int degree = minNumDegree; degree<=maxNumDegree; degree++){
 
             log.info("Querying with <" + fixedNodes + "," + degree + "," + fixedProtocol + ">");
             PlatformConfiguration currConf = new PlatformConfiguration(fixedNodes, degree, fixedProtocol);
@@ -282,7 +289,7 @@ public class OracleServiceImpl implements OracleService {
      * @return
      */
     @Override
-    public final Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, ReplicationProtocol fixedProtocol, int fixedDegree) {
+    public final Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumNodes, int maxNumNodes, ReplicationProtocol fixedProtocol, int fixedDegree) {
 
         TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
         if(fixedDegree <= 0)
@@ -290,16 +297,29 @@ public class OracleServiceImpl implements OracleService {
         if(fixedProtocol == null)
             throw new IllegalArgumentException("fixedDegree must be not null");
 
+        if( minNumNodes < nodesMin){
+            minNumNodes = nodesMin;
+        }
+        if( maxNumNodes > nodesMax ){
+            maxNumNodes = nodesMax;
+        }
 
-        for( int nodes = nodesMin; nodes<= nodesMax; nodes++){
+        int degree = 0;
+        for( int nodes = minNumNodes; nodes<= maxNumNodes; nodes++){
 
-            log.info("Querying with <" + nodes + "," + fixedDegree + "," + fixedProtocol + ">");
+            if(fixedDegree > nodes ){
+                degree = nodes;
+            } else {
+                degree = fixedDegree;
+            }
 
-            PlatformConfiguration currConf = new PlatformConfiguration(nodes, fixedDegree, fixedProtocol);
+            log.info("Querying with <" + nodes + "," + degree + "," + fixedProtocol + ">");
+
+            PlatformConfiguration currConf = new PlatformConfiguration(nodes, degree, fixedProtocol);
 
             Map<ForecastParam, Object> forecastParam = new HashMap<ForecastParam, Object>();
             forecastParam.put(ForecastParam.NumNodes, nodes );
-            forecastParam.put(ForecastParam.ReplicationDegree, fixedDegree );
+            forecastParam.put(ForecastParam.ReplicationDegree, degree );
             forecastParam.put(ForecastParam.ReplicationProtocol, fixedProtocol );
 
             InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParam);

@@ -79,6 +79,25 @@ public class WhatIfResource extends AbstractResource {
 
 
 
+    /*
+    acf=0
+    percentageSuccessWriteTransactions=0.10016601852864385
+    avgNumPutsBySuccessfulLocalTx=10
+    avgGetsPerWrTransaction=10
+    avgGetsPerROTransaction=10
+    localUpdateTxLocalServiceTime=244
+    localReadOnlyTxLocalServiceTime=122
+    avgPrepareCommandSize=5546
+    avgPrepareAsync=0
+    avgCommitAsync=5
+    avgRemoteGetRtt=0
+    xaxis=NODES
+    fixed_nodes_min=2
+    fixed_nodes_max=10
+    fixed_degree_max=10
+    fixed_protocol=TWOPC
+     */
+
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
@@ -99,8 +118,13 @@ public class WhatIfResource extends AbstractResource {
             @DefaultValue("-1") @FormParam("avgRemoteGetRtt") Long avgRemoteGetRtt,
 
             @DefaultValue("NODES") @FormParam("xaxis") WhatIfCustomParamDTO.Xaxis xaxis,
-            @DefaultValue("-1")@FormParam("fixed_nodes") int fixedNodes,
-            @DefaultValue("-1")@FormParam("fixed_degree") int fixedDegree,
+
+            @DefaultValue("-1")@FormParam("fixed_nodes_min") int fixedNodesMin,
+            @DefaultValue("-1")@FormParam("fixed_nodes_max") int fixedNodesMax,
+
+            @DefaultValue("-1")@FormParam("fixed_degree_min") int fixedDegreeMin,
+            @DefaultValue("-1")@FormParam("fixed_degree_max") int fixedDegreeMax,
+
             @DefaultValue("TWOPC") @FormParam("fixed_protocol") ReplicationProtocol fixedProtocol,
 
             @FormParam("oracoles") List<String> fores
@@ -119,8 +143,12 @@ public class WhatIfResource extends AbstractResource {
 
         log.trace("xaxis: " + xaxis);
 
-        log.trace("fixed_nodes: " + fixedNodes);
-        log.trace("fixed_degree: " + fixedDegree);
+        log.trace("fixed_nodes_min: " + fixedNodesMin);
+        log.trace("fixed_nodes_max: " + fixedNodesMax);
+
+        log.trace("fixed_degree_min: " + fixedDegreeMin);
+        log.trace("fixed_degree_max " + fixedDegreeMax);
+
         log.trace("fixed_protocol: " + fixedProtocol);
 
         log.trace("fores: " + fores);
@@ -136,9 +164,27 @@ public class WhatIfResource extends AbstractResource {
 
         customParam.setXaxis(xaxis);
 
-        customParam.setFixedNodes(fixedNodes);
-        customParam.setFixedDegree(fixedDegree);
-        customParam.setFixedProtocol(fixedProtocol);
+        switch (xaxis){
+            case NODES:
+                customParam.setFixedNodesMin(fixedNodesMin);
+                customParam.setFixedNodesMax(fixedNodesMax);
+                customParam.setFixedDegreeMax(fixedDegreeMax);
+                customParam.setFixedProtocol(fixedProtocol);
+                break;
+            case DEGREE:
+                customParam.setFixedNodesMax(fixedNodesMax);
+                customParam.setFixedDegreeMin(fixedDegreeMin);
+                customParam.setFixedDegreeMax(fixedDegreeMax);
+                customParam.setFixedProtocol(fixedProtocol);
+                break;
+            case PROTOCOL:
+                customParam.setFixedNodesMax(fixedNodesMax);
+                customParam.setFixedDegreeMax(fixedDegreeMax);
+                customParam.setFixedProtocol(fixedProtocol);
+                break;
+            default:
+                throw new IllegalStateException("Never should reach this point!");
+        }
 
         customParam.setACF( acf );
         customParam.setAvgCommitAsync(avgCommitAsync);

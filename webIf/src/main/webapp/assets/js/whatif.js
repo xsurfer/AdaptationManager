@@ -153,20 +153,30 @@ function init_radioBtn(){
 }
 
 function disableFieldset($radio){
+	var $fieldsets = $("fieldset[name^=fixed]");
+	$fieldsets.children().filter('.disable').prop('disabled', "disabled");
+		
 	
-	$("[id^=fixed]").attr('readonly', false);
+	if( $("input[name=xaxis]:checked").val() === "PROTOCOL" ) {	
+		$fieldsets.filter('[name=fixedPROTOCOL]').prop('disabled', "disabled");		
+	} else {
+		$fieldsets.filter('[name=fixedPROTOCOL]').removeAttr("disabled");				
+	}
 	
-	console.log('A ' + $radio.val()); // nodes	
+	console.log('A ' + $radio.val()); // DEGREE	
 	console.log('B ' + $radio.attr("name")); // xaxis
 	// seleziono tutte le fieldset che non si chiamano in quel modo e le disattivo
 	
 	// name + '_' + value
 	
 	var fieldsetName = 'fixed' + $radio.attr("value");
-	console.log('C ' + fieldsetName);
+	console.log('C ' + fieldsetName); // fixedDEGREE
 	var enabled = disabled = fieldsetName;
 	
-	$("#" + fieldsetName ).attr('readonly', true);	
+	$("fieldset[name='" + fieldsetName + "']" ).children(".disable").removeAttr("disabled");
+	
+	
+	
 	/*
 	if($radio.attr("value")=="TRUE"){
 		//enabled += 'self';
@@ -198,9 +208,9 @@ function serie(label,data)
 }
 
 function getAllAndUpdate() {
-	var dataToBeSent = $("form#whatif").serialize();
+	var dataToBeSent = $("form#whatif").serialize();	
 	console.log("dataToBeSent: " + dataToBeSent);
-
+	
 	var url = REST_GET_WHATIF;
 
 	$.ajax({

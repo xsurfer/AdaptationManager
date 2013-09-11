@@ -57,13 +57,33 @@ form#whatif div.first {
 	padding-top: 0px;
 }
 
-form#whatif fieldset {  
+fieldset.section {  
 	border: 1px solid #ddd;
-	padding: 0 1.4em 1.4em 1.4em;
-	margin: 0 0 1.5em 0;
+	padding: 10px;
+	margin: 0 0 10px 0;
 	border-radius: 8px;
 	margin: 0 5px;
 	height: 100%;    
+}
+
+fieldset.subsection {
+	margin: 0;
+	border: 1px solid #ddd;
+	padding: 0 10px 10px 10px;
+	border-radius: 8px;
+	height: 100%;    
+}
+
+fieldset.inner {  
+	/*border: 1px solid #ddd;*/
+	/*padding: 5px;*/
+	margin: 0;
+	border-radius: 8px;
+	/*margin: 0 5px;*/
+	/*height: 100%;*/    
+}
+
+fieldset.inner label {
 }
 
 form#whatif div.action {
@@ -131,7 +151,7 @@ div.param {
 	vertical-align: top;
 }
 
-div.param label {
+div.param label.parameter {
 	/*border-bottom: 1px dashed;*/
 	width: 200px;	
 	display: inline-block;

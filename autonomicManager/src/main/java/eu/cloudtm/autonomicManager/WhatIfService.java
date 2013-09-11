@@ -81,20 +81,24 @@ public class WhatIfService {
                 case NODES:
                     log.info("Nodes on x-axis");
                     currForecast = oracleService.whatIf( customSample,
+                            customParamDTO.getFixedNodesMin(),
+                            customParamDTO.getFixedNodesMax(),
                             customParamDTO.getFixedProtocol(),
-                            customParamDTO.getFixedDegree() );
+                            customParamDTO.getFixedDegreeMax() );
                     break;
                 case DEGREE:
                     log.info("Degrees on x-axis");
                     currForecast = oracleService.whatIf( customSample,
-                            customParamDTO.getFixedNodes(),
+                            customParamDTO.getFixedDegreeMin(),
+                            customParamDTO.getFixedDegreeMax(),
+                            customParamDTO.getFixedNodesMax(),
                             customParamDTO.getFixedProtocol() );
                     break;
                 case PROTOCOL:
                     log.info("Protocols on x-axis");
                     currForecast = oracleService.whatIf( customSample,
-                            customParamDTO.getFixedNodes(),
-                            customParamDTO.getFixedDegree() );
+                            customParamDTO.getFixedNodesMax(),
+                            customParamDTO.getFixedDegreeMax() );
                     break;
                 default:
                     throw new IllegalStateException("Xaxis can't be null!");

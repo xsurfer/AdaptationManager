@@ -1,4 +1,0 @@
-<oracle.CubistOracle.common.CubistConfig
-            pathToCubist="conf/tas/gmu/to/cubist/data"
-            model="remoteGetRtt"
-            targetFeature="remoteGetRtt"/>
