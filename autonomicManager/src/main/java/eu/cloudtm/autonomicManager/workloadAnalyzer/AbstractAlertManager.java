@@ -41,7 +41,7 @@ public abstract class AbstractAlertManager implements WorkloadEventListener {
             case MIX:
                 break;
             default:
-                throw new RuntimeException("Parameter not valid: " + policyStr);
+                throw new IllegalArgumentException("Parameter not valid: " + policyStr);
         }
 
         return alertManager;

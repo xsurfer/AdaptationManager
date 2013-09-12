@@ -1,6 +1,8 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.RESTServer.RESTServer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 
 import java.io.IOException;

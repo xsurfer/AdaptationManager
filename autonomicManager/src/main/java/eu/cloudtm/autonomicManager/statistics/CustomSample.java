@@ -34,27 +34,16 @@ public class CustomSample extends ProcessedSample {
         Object retVal = customParam.get(param);
         if( retVal == null ) {
             retVal = sample.getParam(param);
-            log.info("User didn't set " + param + ", using the one measured ( " + retVal + " )");
+            if(retVal == null){
+                throw new RuntimeException("Param " + param + " not set!!" );
+            }
+            log.trace("User didn't set " + param + ", using the one measured ( " + retVal + " )");
         } else {
-            log.info("Using customParam value for " + param + " ( " + retVal + " )");
+            log.trace("Using customParam value for " + param + " ( " + retVal + " )");
         }
 
         return retVal;
     }
-
-
-//    @Override
-//    public Object getEvaluatedParam(EvaluatedParam param) {
-//        Object retVal = customEvaluatedParam.get(param);
-//        if( retVal == null ) {
-//            retVal = sample.getEvaluatedParam(param);
-//            log.info("User didn't set " + param + ", using the one measured ( " + retVal + " )");
-//        } else {
-//            log.info("Using customParam value for " + param + " ( " + retVal + " )");
-//        }
-//
-//        return retVal;
-//    }
 
     @Override
     protected Double getACF() {
@@ -62,17 +51,15 @@ public class CustomSample extends ProcessedSample {
         retVal = customEvaluatedParam.get(EvaluatedParam.ACF);
 
         if(retVal==null) {
-            Object retObject = sample.getEvaluatedParam(EvaluatedParam.ACF);
-            if(retObject != null){
-                retVal =  retObject;
-                log.info("User didn't set ACF, using the one measured ( " + retVal + " )");
+            retVal = sample.getEvaluatedParam(EvaluatedParam.ACF);
+            if(retVal == null){
+                throw new RuntimeException("Param " + EvaluatedParam.ACF + " not set!!" );
             }
+            log.trace("User didn't set ACF, using the one measured ( " + retVal + " )");
         }
-        if(retVal!=null)
-            return (Double) retVal;
-        return null;
+
+        return (Double) retVal;
+
     }
-
-
 
 }

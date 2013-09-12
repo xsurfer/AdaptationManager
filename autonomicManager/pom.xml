@@ -294,6 +294,7 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
+
                             <resources>
                                 <!-- ~~~~~~~~~~~~~~ -->
                                 <!-- Copy resources -->
@@ -366,10 +367,7 @@
                                     <targetPath>${project.build.directory}/AdaptationManager.tar.gz</targetPath>
                                     <directory>${project.build.directory}/AdaptationManager</directory>
                                     <pack>true</pack>
-                                    <!-- <attachArtifact>true</attachArtifact> -->
-                                    <preservePath>true</preservePath>
-                                    <chmod>755</chmod>
-
+                                    <include>**/*.*|755</include>
                                 </resource>
 
                             </resources>

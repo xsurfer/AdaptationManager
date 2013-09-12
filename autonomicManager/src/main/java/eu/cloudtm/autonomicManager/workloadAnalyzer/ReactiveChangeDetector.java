@@ -27,6 +27,7 @@ public class ReactiveChangeDetector extends AbstractChangeDetector {
 
         boolean reconfigure = evaluateParam() || evaluateEvaluatedParam();
         if(reconfigure){
+
             fireEvent( WorkloadEvent.WorkloadEventType.WORKLOAD_CHANGED, sample );
         }
     }

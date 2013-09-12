@@ -29,14 +29,17 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
 
         if( !event.getEventType().equals(WorkloadEvent.WorkloadEventType.WORKLOAD_CHANGED) ){
             return;
+        } else {
+            log.trace("Received WORKLOAD_CHANGED event! Going ahead... ");
         }
 
         if( isTimeToReconfigure() ){
+            log.trace("It's safe reconfigure...");
             Map<OptimizerType, Object> optimization = optimizer.optimizeAll(event.getSample(), false);
             if(optimization!=null){
                 reconfigurator.reconfigure(optimization);
             } else {
-                log.info("Optimization result is null!!");
+                log.trace("Optimization result is null!!");
             }
         }
 

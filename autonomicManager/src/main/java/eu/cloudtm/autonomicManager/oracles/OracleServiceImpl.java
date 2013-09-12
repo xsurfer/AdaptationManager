@@ -1,10 +1,10 @@
 package eu.cloudtm.autonomicManager.oracles;
 
-import eu.cloudtm.autonomicManager.WPMInputOracleDumper;
 import eu.cloudtm.autonomicManager.commons.ForecastParam;
 import eu.cloudtm.autonomicManager.commons.InstanceConfig;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.debug.WPMInputOracleDumper;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -52,11 +52,8 @@ public class OracleServiceImpl implements OracleService {
                                                   double abortRateToGuarantee,
                                                   double responseTimeToGuarantee) throws OracleException{
 
-        int finalNumNodes = 0;
-        int finalRepDegree = 0;
-        ReplicationProtocol finalRepProt = null;
+        PlatformConfiguration finalConfiguration = null;
         boolean found = false;
-
         int numNodes= nodesMin;
 
         while(numNodes<= nodesMax && !found){
@@ -64,25 +61,14 @@ public class OracleServiceImpl implements OracleService {
             while(repDegree<=numNodes && !found){
                 for(ReplicationProtocol protocol : ReplicationProtocol.values()){
 
-                    Map<ForecastParam, Object> forecastParams = new HashMap<ForecastParam, Object>();
-                    forecastParams.put(ForecastParam.ReplicationProtocol, protocol);
-                    forecastParams.put(ForecastParam.ReplicationDegree, repDegree);
-                    forecastParams.put(ForecastParam.NumNodes, numNodes);
+                    log.trace("Preparing query for <" + numNodes + ", " + repDegree  + ", " + protocol + ">");
 
-                    InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParams);
-
-//                    ControllerLogger.log.info("Forecasting with: " +
-//                            "nodes "      + numNodes + ", " +
-//                            "repDegree "    + repDegree + ", " +
-//                            "repProt "      + protocol
-//                    );
-                    OutputOracle outputOracle = oracle.forecast(inputOracle);
+                    PlatformConfiguration currConf = new PlatformConfiguration(numNodes, repDegree, protocol);
+                    OutputOracle outputOracle = doForecast(currConf, sample);
 
                     if( outputOracle.throughput(0) >= arrivalRateToGuarantee && outputOracle.abortRate(0) <= abortRateToGuarantee ){
                         found = true;
-                        finalNumNodes = numNodes;
-                        finalRepDegree = repDegree;
-                        finalRepProt = protocol;
+                        finalConfiguration = new PlatformConfiguration(numNodes, repDegree, protocol);
                         break;
                     }
                 }
@@ -91,23 +77,14 @@ public class OracleServiceImpl implements OracleService {
             numNodes++;
         }
 
-        PlatformConfiguration configuration = null;
-        if(found){
-            configuration = new PlatformConfiguration();
-            configuration.setPlatformScale(finalNumNodes, InstanceConfig.MEDIUM);
-            configuration.setRepDegree(finalRepDegree);
-            configuration.setRepProtocol(finalRepProt);
-        }
-        return configuration;
+        return finalConfiguration;
     }
 
 
     @Override
     public final PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
 
-        int finalNumNodes = 0;
-        int finalRepDegree = 0;
-        ReplicationProtocol finalRepProt = null;
+        PlatformConfiguration finalConfiguration = null;
         boolean found = false;
         double maxThroughput = 0;
 
@@ -118,41 +95,20 @@ public class OracleServiceImpl implements OracleService {
             while( repDegree<=numNodes ){
                 for(ReplicationProtocol protocol : ReplicationProtocol.values()){
 
-                    Map<ForecastParam, Object> forecastParams = new HashMap<ForecastParam, Object>();
-                    forecastParams.put(ForecastParam.ReplicationProtocol, protocol);
-                    forecastParams.put(ForecastParam.ReplicationDegree, repDegree);
-                    forecastParams.put(ForecastParam.NumNodes, numNodes);
+                    log.trace("Preparing query for <" + numNodes + ", " + repDegree  + ", " + protocol + ">");
 
-                    InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParams);
-
-//                    ControllerLogger.log.info("Forecasting with: " +
-//                            "nodes "      + numNodes + ", " +
-//                            "repDegree "    + repDegree + ", " +
-//                            "repProt "      + protocol
-//                    );
-                    OutputOracle outputOracle = oracle.forecast(inputOracle);
-
+                    PlatformConfiguration currConf = new PlatformConfiguration(numNodes, repDegree, protocol);
+                    OutputOracle outputOracle = doForecast(currConf, sample);
 
                     if( outputOracle.throughput(0) > maxThroughput ){
-                        finalNumNodes = numNodes;
-                        finalRepDegree = repDegree;
-                        finalRepProt = protocol;
+                        finalConfiguration = new PlatformConfiguration(numNodes, repDegree, protocol);
                     }
                 }
                 repDegree++;
             }
             numNodes++;
         }
-
-        PlatformConfiguration configuration = null;
-
-        configuration = new PlatformConfiguration();
-        configuration.setPlatformScale(finalNumNodes, InstanceConfig.MEDIUM);
-        configuration.setRepDegree(finalRepDegree);
-        configuration.setRepProtocol(finalRepProt);
-
-        return configuration;
-
+        return finalConfiguration;
     }
 
 
@@ -174,39 +130,10 @@ public class OracleServiceImpl implements OracleService {
 
         for( ReplicationProtocol protocol : ReplicationProtocol.values() ){
 
-            log.info("Querying with <" + fixedNodes + "," + fixedDegree + "," + protocol + ">");
+            log.trace("Preparing query for <" + fixedNodes + ", " + fixedDegree + ", " + protocol + ">");
 
             PlatformConfiguration currConf = new PlatformConfiguration(fixedNodes, fixedDegree, protocol);
-
-            Map<ForecastParam, Object> forecastParam = new HashMap<ForecastParam, Object>();
-            forecastParam.put(ForecastParam.NumNodes, fixedNodes );
-            forecastParam.put(ForecastParam.ReplicationDegree, fixedDegree );
-            forecastParam.put(ForecastParam.ReplicationProtocol, protocol );
-
-            InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParam);
-
-            if(dump){
-                WPMInputOracleDumper dumper = new WPMInputOracleDumper(inputOracle);
-                try {
-                    dumper.dump("dump_protocol_" + protocol);
-                } catch (ParserConfigurationException e) {
-                    log.warn(e,e);
-                    throw new RuntimeException(e);
-                } catch (TransformerException e) {
-                    log.warn(e,e);
-                    throw new RuntimeException(e);
-                }
-            }
-
-            OutputOracle currOutputOracle = null;
-            try {
-                currOutputOracle = oracle.forecast(inputOracle);
-            } catch (OracleException e) {
-                log.warn("Oracle exception during what if analysis...skipping that configuration");
-                if( log.isDebugEnabled() ){
-                    log.debug(e,e);
-                }
-            }
+            OutputOracle currOutputOracle = doForecast(currConf, sample);
             result.put(currConf, currOutputOracle);
         }
         return result;
@@ -221,7 +148,8 @@ public class OracleServiceImpl implements OracleService {
      * @return
      */
     @Override
-    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumDegree, int maxNumDegree, int fixedNodes, ReplicationProtocol fixedProtocol) {
+    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumDegree, int maxNumDegree,
+                                                           int fixedNodes, ReplicationProtocol fixedProtocol) {
 
         TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
         if(fixedNodes <= 1)
@@ -238,42 +166,10 @@ public class OracleServiceImpl implements OracleService {
 
         for( int degree = minNumDegree; degree<=maxNumDegree; degree++){
 
-            log.info("Querying with <" + fixedNodes + "," + degree + "," + fixedProtocol + ">");
+            log.trace("Preparing query for <" + fixedNodes + ", " + degree  + ", " + fixedProtocol + ">");
+
             PlatformConfiguration currConf = new PlatformConfiguration(fixedNodes, degree, fixedProtocol);
-
-            Map<ForecastParam, Object> forecastParam = new HashMap<ForecastParam, Object>();
-            forecastParam.put(ForecastParam.NumNodes, fixedNodes );
-            forecastParam.put(ForecastParam.ReplicationDegree, degree );
-            forecastParam.put(ForecastParam.ReplicationProtocol, fixedProtocol );
-
-            InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParam);
-
-            if(dump){
-                WPMInputOracleDumper dumper = new WPMInputOracleDumper(inputOracle);
-                try {
-                    dumper.dump("dump_degree_" + degree);
-                } catch (ParserConfigurationException e) {
-                    log.warn(e,e);
-                    throw new RuntimeException(e);
-                } catch (TransformerException e) {
-                    log.warn(e,e);
-                    throw new RuntimeException(e);
-                }
-            }
-
-            OutputOracle currOutputOracle = null;
-            try {
-                currOutputOracle = oracle.forecast(inputOracle);
-            } catch (OracleException e) {
-                log.warn("Oracle exception during what if analysis...skipping that configuration");
-                log.warn(e,e);
-            }
-            if(currOutputOracle != null){
-                log.info("currConf: " + currConf + " - currOutputOracle: " + currOutputOracle);
-            } else {
-                log.info("NULL returned!!");
-            }
-
+            OutputOracle currOutputOracle = doForecast(currConf, sample);
             result.put(currConf, currOutputOracle);
         }
         return result;
@@ -287,7 +183,9 @@ public class OracleServiceImpl implements OracleService {
      * @return
      */
     @Override
-    public final Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumNodes, int maxNumNodes, ReplicationProtocol fixedProtocol, int fixedDegree) {
+    public final Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumNodes,
+                                                                 int maxNumNodes, ReplicationProtocol fixedProtocol,
+                                                                 int fixedDegree) {
 
         TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
         if(fixedDegree <= 0)
@@ -311,61 +209,51 @@ public class OracleServiceImpl implements OracleService {
                 degree = fixedDegree;
             }
 
-            log.info("Querying with <" + nodes + "," + degree + "," + fixedProtocol + ">");
+            log.trace("Preparing query for <" + nodes + ", " + degree  + ", " + fixedProtocol + ">");
 
             PlatformConfiguration currConf = new PlatformConfiguration(nodes, degree, fixedProtocol);
-
-            Map<ForecastParam, Object> forecastParam = new HashMap<ForecastParam, Object>();
-            forecastParam.put(ForecastParam.NumNodes, nodes );
-            forecastParam.put(ForecastParam.ReplicationDegree, degree );
-            forecastParam.put(ForecastParam.ReplicationProtocol, fixedProtocol );
-
-            InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParam);
-
-            if(dump){
-                WPMInputOracleDumper dumper = new WPMInputOracleDumper(inputOracle);
-                try {
-                    dumper.dump("dump_nodes_" + nodes);
-                } catch (ParserConfigurationException e) {
-                    log.warn(e,e);
-                    throw new RuntimeException(e);
-                } catch (TransformerException e) {
-                    log.warn(e,e);
-                    throw new RuntimeException(e);
-                }
-            }
-
-            OutputOracle currOutputOracle = null;
-            try {
-                currOutputOracle = oracle.forecast(inputOracle);
-            } catch (OracleException e) {
-                log.warn("Oracle exception during what if analysis...skipping that configuration");
-                log.warn(e,e);
-            }
+            OutputOracle currOutputOracle = doForecast(currConf, sample);
             result.put(currConf, currOutputOracle);
         }
         return result;
     }
 
 
+    private OutputOracle doForecast(PlatformConfiguration currConf, ProcessedSample sample){
+
+        Map<ForecastParam, Object> forecastParam = new HashMap<ForecastParam, Object>();
+        forecastParam.put(ForecastParam.NumNodes, currConf.platformSize() );
+        forecastParam.put(ForecastParam.ReplicationDegree, currConf.replicationDegree() );
+        forecastParam.put(ForecastParam.ReplicationProtocol, currConf.replicationProtocol() );
+
+        InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParam);
+
+        if(dump){
+            WPMInputOracleDumper dumper = new WPMInputOracleDumper(inputOracle);
+            try {
+                dumper.dump("dump_nodes_" + currConf.platformSize());
+            } catch (ParserConfigurationException e) {
+                log.warn(e,e);
+                throw new RuntimeException(e);
+            } catch (TransformerException e) {
+                log.warn(e,e);
+                throw new RuntimeException(e);
+            }
+        }
+
+        OutputOracle currOutputOracle = null;
+        try {
+            log.info("Forecasting for " + currConf);
+            currOutputOracle = oracle.forecast(inputOracle);
+        } catch (OracleException e) {
+            log.warn("An error occured during the forecasting. The configuration " + currConf + " will be skipped!");
+
+            if(log.isDebugEnabled()){
+                log.debug(e,e);
+            }
+        }
+        return currOutputOracle;
+    }
+
+
 }
-
-
-
-//    private boolean evaluateKPI(OutputOracle outputOracle,
-//                                double abortRateToGuarantee,
-//                                double responseTimeToGuarantee ) {
-//
-//        if(outputOracle.abortRate(0) < abortRateToGuarantee){
-//            return false;
-//        }
-//
-//        log.warn("WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN");
-//        log.warn("EDITO RESPONSE TIME");
-//        log.warn("WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN");
-//        if(responseTimeToGuarantee < responseTimeToGuarantee){
-//            return false;
-//        }
-//        return true;
-//    }
-

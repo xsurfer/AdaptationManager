@@ -78,11 +78,11 @@ public abstract class ProcessedSample implements Sample {
         if(initialized.compareAndSet(false, true)){
             init();
         }
-        Object ret = evaluatedParams.get(param);
-        if(ret != null)
-            return ret;
-        else
+        Object retVal = evaluatedParams.get(param);
+        if(retVal == null){
             throw new IllegalArgumentException("param " + param + " is not present" );
+        }
+        return retVal;
     }
 
     private final IsolationLevel getIsolationLevel(){

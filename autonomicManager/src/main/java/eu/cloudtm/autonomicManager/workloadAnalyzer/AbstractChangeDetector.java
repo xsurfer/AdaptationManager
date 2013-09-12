@@ -140,6 +140,7 @@ public abstract class AbstractChangeDetector {
     }
 
     protected synchronized void fireEvent(WorkloadEvent.WorkloadEventType type, ProcessedSample sample) {
+        log.info("Sending new event...");
         WorkloadEvent event = new WorkloadEvent(this, type, sample);
         Iterator<WorkloadEventListener> i = listeners.iterator();
         while(i.hasNext())  {

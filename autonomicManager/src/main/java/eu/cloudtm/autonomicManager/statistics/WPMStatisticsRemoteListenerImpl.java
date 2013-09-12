@@ -46,12 +46,12 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
     @Override
     public void onNewPerVMStatistics(PublishStatisticsEvent publishStatisticsEvent) throws RemoteException {
-        log.info("onNewPerVMStatistics");
+        log.trace("onNewPerVMStatistics");
     }
 
     @Override
     public void onNewPerSubscriptionStatistics(PublishStatisticsEvent event) throws RemoteException {
-        log.info("onNewPerSubscriptionStatistics");
+        log.trace("onNewPerSubscriptionStatistics");
 
 //        Set<String> ips = event.getIps();
 //        log.trace("Received statistics from wpm instances " + ips.toString());

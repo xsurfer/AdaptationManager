@@ -165,11 +165,11 @@ public class ReconfiguratorImpl implements Reconfigurator {
         }
 
         // TODO CHECK THE NUM NODEs
-        log.info("Waiting 5 secs");
+        log.info("Waiting 10 secs");
         try {
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn("Thread Interrupted!");
         }
 
         if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_SWITCH_REBALANCING.key() ) ){

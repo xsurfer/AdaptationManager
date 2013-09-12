@@ -41,7 +41,11 @@ public class WPMSample implements Sample {
 
    @Override
    public Object getParam(Param param) {
-      return aggregatedFromWPM.get(param.getKey());
+      Object retVal = aggregatedFromWPM.get(param.getKey());
+      if (retVal == null) {
+         throw new IllegalArgumentException("Param " + param + " is null!!");
+      }
+      return retVal;
    }
 
 

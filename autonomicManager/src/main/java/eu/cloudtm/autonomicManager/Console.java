@@ -91,16 +91,16 @@ public class Console {
         try {
             Scanner in = new Scanner(System.in);
 
-            log.info("Nodes: ");
+            log.info("Num. Nodes: ");
             int nodes = in.nextInt();
             platformConfiguration.setPlatformScale(nodes, InstanceConfig.MEDIUM);
 
 
-            log.info("Degree: ");
+            log.info("Replication Degree: ");
             int degree = in.nextInt();
             platformConfiguration.setRepDegree(degree);
 
-            log.info("Protocol {2PC, TO, PB}: ");
+            log.info("Protocol: [ TWOPC | TO | PB ] ");
             String protocolString = in.next();
             ReplicationProtocol protocol = ReplicationProtocol.valueOf(protocolString);
             platformConfiguration.setRepProtocol(protocol);
@@ -207,6 +207,13 @@ public class Console {
                 throw new IllegalArgumentException("Not valid X-axis param");
         }
 
+        log.info("Executing what-if analysis with: [ " +
+                "X-axis: " + customParamDTO.getXaxis() + ", " +
+                "minNodes: " + customParamDTO.getFixedNodesMin() + ", " +
+                "minNodes: " + customParamDTO.getFixedNodesMax() + ", " +
+                "fixedDegree: " + customParamDTO.getFixedDegreeMax() + ", " +
+                "fixedProtocol: " + customParamDTO.getFixedProtocol() + "] "
+        );
         List<WhatIfDTO> result = autonomicManager.whatIf(customParamDTO);
 
         Gson gson = new Gson();

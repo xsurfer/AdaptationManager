@@ -33,36 +33,137 @@ public class WhatIfService {
 
     public WhatIfService(ProcessedSample processedSample){
         this.processedSample = processedSample;
+        log.trace("WhatIfService instanced");
     }
 
     public WhatIfCustomParamDTO retrieveCurrentValues(){
 
+        log.trace("B Retrieving current values");
+
         WhatIfCustomParamDTO customParam = new WhatIfCustomParamDTO();
 
-        Double acf = null;
         Object acfObj = processedSample.getEvaluatedParam(EvaluatedParam.ACF);
         if(acfObj != null){
-            acf = (Double) acfObj;
+            customParam.setACF( (Double) acfObj  );
+        } else {
+            log.warn("ACF is not set!");
+            customParam.setACF(0.0);
         }
-        customParam.setACF( acf  );
-        customParam.setAvgCommitAsync((Long) processedSample.getParam(Param.AvgCommitAsync));
-        customParam.setAvgPrepareAsync((Long) processedSample.getParam(Param.AvgPrepareAsync));
-        customParam.setAvgPrepareCommandSize((Long) processedSample.getParam(Param.AvgPrepareCommandSize));
-        customParam.setAvgNumPutsBySuccessfulLocalTx((Double) processedSample.getParam(Param.AvgNumPutsBySuccessfulLocalTx));
-        customParam.setPercentageSuccessWriteTransactions((Double) processedSample.getParam(Param.PercentageSuccessWriteTransactions));
-        customParam.setLocalUpdateTxLocalServiceTime( (Long) processedSample.getParam( Param.LocalUpdateTxLocalServiceTime ) );
-        customParam.setLocalReadOnlyTxLocalServiceTime( (Long) processedSample.getParam( Param.LocalReadOnlyTxLocalServiceTime ) );
-        customParam.setAvgRemoteGetRtt( (Long) processedSample.getParam( Param.AvgRemoteGetRtt ) );
-        customParam.setAvgGetsPerWrTransaction( (Long) processedSample.getParam( Param.AvgGetsPerWrTransaction ) );
-        customParam.setAvgGetsPerROTransaction( (Long) processedSample.getParam( Param.AvgGetsPerROTransaction ) );
+
+        Object avgCommitAsync = processedSample.getParam(Param.AvgCommitAsync);
+        if(avgCommitAsync != null ){
+
+            double val = ((Number) avgCommitAsync).doubleValue();
+            customParam.setAvgCommitAsync( val );
+
+        } else {
+            log.warn("AvgCommitAsync is not set!");
+            customParam.setAvgCommitAsync(0);
+        }
+
+        Object avgPrepareAsync = processedSample.getParam(Param.AvgPrepareAsync);
+        if(avgPrepareAsync != null ){
+            double val = ((Number) avgPrepareAsync).doubleValue();
+            customParam.setAvgPrepareAsync( val );
+        } else {
+            log.warn("AvgPrepareAsync is not set!");
+            customParam.setAvgPrepareAsync(0);
+        }
+
+        Object avgPrepareCommandSize = processedSample.getParam(Param.AvgPrepareCommandSize);
+        if(avgPrepareCommandSize != null ){
+
+            double val = ((Number) avgPrepareCommandSize).doubleValue();
+            customParam.setAvgPrepareCommandSize( val );
+        } else {
+            log.warn("AvgPrepareCommandSize is not set!");
+            customParam.setAvgPrepareCommandSize(0);
+        }
+
+        Object avgNumPutsBySuccessfulLocalTx = processedSample.getParam(Param.AvgNumPutsBySuccessfulLocalTx);
+        if(avgNumPutsBySuccessfulLocalTx != null ){
+
+            double val = ((Number) avgNumPutsBySuccessfulLocalTx).doubleValue();
+            customParam.setAvgNumPutsBySuccessfulLocalTx( val );
+        } else {
+            log.warn("AvgNumPutsBySuccessfulLocalTx is not set!");
+            customParam.setAvgNumPutsBySuccessfulLocalTx(0.0);
+        }
+
+        Object percentageSuccessWriteTransactions = processedSample.getParam(Param.PercentageSuccessWriteTransactions);
+        if(percentageSuccessWriteTransactions != null ){
+
+            double val = ((Number) percentageSuccessWriteTransactions).doubleValue();
+            customParam.setPercentageSuccessWriteTransactions( val );
+        } else {
+            log.warn("PercentageSuccessWriteTransactions is not set!");
+            customParam.setPercentageSuccessWriteTransactions(0.0);
+        }
+
+        Object localUpdateTxLocalServiceTime = processedSample.getParam(Param.LocalUpdateTxLocalServiceTime);
+        if(localUpdateTxLocalServiceTime != null ){
+
+            double val = ((Number) localUpdateTxLocalServiceTime).doubleValue();
+            customParam.setLocalUpdateTxLocalServiceTime( val );
+        } else {
+            log.warn("LocalUpdateTxLocalServiceTime is not set!");
+            customParam.setLocalUpdateTxLocalServiceTime(0.0);
+        }
+
+        Object localReadOnlyTxLocalServiceTime = processedSample.getParam(Param.LocalReadOnlyTxLocalServiceTime);
+        if(localReadOnlyTxLocalServiceTime != null ){
+
+            double val = ((Number) localReadOnlyTxLocalServiceTime).doubleValue();
+            customParam.setLocalReadOnlyTxLocalServiceTime( val );
+        } else {
+            log.warn("LocalReadOnlyTxLocalServiceTime is not set!");
+            customParam.setLocalReadOnlyTxLocalServiceTime(0);
+        }
+
+        Object avgRemoteGetRtt = processedSample.getParam(Param.AvgRemoteGetRtt);
+        if(avgRemoteGetRtt != null ){
+
+            double val = ((Number) avgRemoteGetRtt).doubleValue();
+            customParam.setAvgRemoteGetRtt( val );
+        } else {
+            log.warn("AvgRemoteGetRtt is not set!");
+            customParam.setAvgRemoteGetRtt(0);
+        }
+
+        Object avgGetsPerWrTransaction = processedSample.getParam(Param.AvgGetsPerWrTransaction);
+        if(avgGetsPerWrTransaction != null ){
+
+            double val = ((Number) avgGetsPerWrTransaction).doubleValue();
+            customParam.setAvgGetsPerWrTransaction( val );
+        } else {
+            log.warn("AvgGetsPerWrTransaction is not set!");
+            customParam.setAvgGetsPerWrTransaction(0.0);
+        }
+
+        Object avgGetsPerROTransaction = processedSample.getParam(Param.AvgGetsPerROTransaction);
+        if(avgGetsPerROTransaction != null ){
+
+            double val = ((Number) avgGetsPerROTransaction).doubleValue();
+            customParam.setAvgGetsPerROTransaction( val );
+        } else {
+            log.warn("AvgGetsPerROTransaction is not set!");
+            customParam.setAvgGetsPerROTransaction(0);
+        }
+
+
+        log.trace("retrieving current values done!");
         return customParam;
     }
 
 
     public List<WhatIfDTO> evaluate(WhatIfCustomParamDTO customParamDTO){
 
+        log.trace("evaluating what-if analysis");
+
         Map<Param, Object> customParam = extractCustomParam(customParamDTO);
         Map<EvaluatedParam, Object> customEvaluatedParam = extractCustomEvaluatedParam(customParamDTO);
+
+        log.trace("Custom params extracted");
 
         List<WhatIfDTO> result = new ArrayList<WhatIfDTO>();
 

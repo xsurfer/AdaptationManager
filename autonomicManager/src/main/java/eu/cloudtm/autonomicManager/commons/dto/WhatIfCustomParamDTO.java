@@ -31,15 +31,15 @@ public class WhatIfCustomParamDTO {
 
     private double acf = -1D;
     private double avgGetsPerWrTransaction = -1; //  # GET per write transaction
-    private long avgGetsPerROTransaction = -1L;   // #GET per read only transaction
-    private long avgRemoteGetRtt = -1L;  //  Remote get latency
-    private long localReadOnlyTxLocalServiceTime = -1L; // Read Only transaction demand
-    private long localUpdateTxLocalServiceTime = -1L;  // Write transaction demand
+    private double avgGetsPerROTransaction = -1L;   // #GET per read only transaction
+    private double avgRemoteGetRtt = -1L;  //  Remote get latency
+    private double localReadOnlyTxLocalServiceTime = -1L; // Read Only transaction demand
+    private double localUpdateTxLocalServiceTime = -1L;  // Write transaction demand
     private double percentageSuccessWriteTransactions = -1D;  // Write Transactions Percentage
     private double avgNumPutsBySuccessfulLocalTx = -1D;  // #put per write tx
-    private long avgPrepareCommandSize = -1L; // size of prepare msg
-    private long avgPrepareAsync = -1L;   // prepare latency
-    private long avgCommitAsync = -1L;    // commit latency
+    private double avgPrepareCommandSize = -1L; // size of prepare msg
+    private double avgPrepareAsync = -1L;   // prepare latency
+    private double avgCommitAsync = -1L;    // commit latency
 
     public Xaxis getXaxis() {
         return xaxis;
@@ -140,7 +140,7 @@ public class WhatIfCustomParamDTO {
         return avgGetsPerROTransaction;
     }
 
-    public void setAvgGetsPerROTransaction(long avgGetsPerROTransaction) {
+    public void setAvgGetsPerROTransaction(double avgGetsPerROTransaction) {
         this.avgGetsPerROTransaction = avgGetsPerROTransaction;
     }
 
@@ -148,27 +148,27 @@ public class WhatIfCustomParamDTO {
         return avgRemoteGetRtt;
     }
 
-    public void setAvgRemoteGetRtt(long avgRemoteGetRtt) {
+    public void setAvgRemoteGetRtt(double avgRemoteGetRtt) {
         this.avgRemoteGetRtt = avgRemoteGetRtt;
     }
 
-    public Long getLocalReadOnlyTxLocalServiceTime() {
+    public double getLocalReadOnlyTxLocalServiceTime() {
         return localReadOnlyTxLocalServiceTime;
     }
 
-    public void setLocalReadOnlyTxLocalServiceTime(long localReadOnlyTxLocalServiceTime) {
+    public void setLocalReadOnlyTxLocalServiceTime(double localReadOnlyTxLocalServiceTime) {
         this.localReadOnlyTxLocalServiceTime = localReadOnlyTxLocalServiceTime;
     }
 
-    public Long getLocalUpdateTxLocalServiceTime() {
+    public double getLocalUpdateTxLocalServiceTime() {
         return localUpdateTxLocalServiceTime;
     }
 
-    public void setLocalUpdateTxLocalServiceTime(long localUpdateTxLocalServiceTime) {
+    public void setLocalUpdateTxLocalServiceTime(double localUpdateTxLocalServiceTime) {
         this.localUpdateTxLocalServiceTime = localUpdateTxLocalServiceTime;
     }
 
-    public Double getPercentageSuccessWriteTransactions() {
+    public double getPercentageSuccessWriteTransactions() {
         return percentageSuccessWriteTransactions;
     }
 
@@ -176,7 +176,7 @@ public class WhatIfCustomParamDTO {
         this.percentageSuccessWriteTransactions = percentageSuccessWriteTransactions;
     }
 
-    public Double getAvgNumPutsBySuccessfulLocalTx() {
+    public double getAvgNumPutsBySuccessfulLocalTx() {
         return avgNumPutsBySuccessfulLocalTx;
     }
 
@@ -184,11 +184,11 @@ public class WhatIfCustomParamDTO {
         this.avgNumPutsBySuccessfulLocalTx = avgNumPutsBySuccessfulLocalTx;
     }
 
-    public Long getAvgPrepareCommandSize() {
+    public double getAvgPrepareCommandSize() {
         return avgPrepareCommandSize;
     }
 
-    public void setAvgPrepareCommandSize(long avgPrepareCommandSize) {
+    public void setAvgPrepareCommandSize(double avgPrepareCommandSize) {
         this.avgPrepareCommandSize = avgPrepareCommandSize;
     }
 
@@ -196,15 +196,15 @@ public class WhatIfCustomParamDTO {
         return avgPrepareAsync;
     }
 
-    public void setAvgPrepareAsync(long avgPrepareAsync) {
+    public void setAvgPrepareAsync(double avgPrepareAsync) {
         this.avgPrepareAsync = avgPrepareAsync;
     }
 
-    public Long getAvgCommitAsync() {
+    public double getAvgCommitAsync() {
         return avgCommitAsync;
     }
 
-    public void setAvgCommitAsync(long avgCommitAsync) {
+    public void setAvgCommitAsync(double avgCommitAsync) {
         this.avgCommitAsync = avgCommitAsync;
     }
 

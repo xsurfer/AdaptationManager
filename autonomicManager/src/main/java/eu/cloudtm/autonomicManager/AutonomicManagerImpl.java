@@ -32,7 +32,7 @@ public class AutonomicManagerImpl implements AutonomicManager {
     private Reconfigurator reconfigurator;
 
 
-    private final static int INTERVAL_BETWEEN_FORECAST = 60;
+    private final static int INTERVAL_BETWEEN_FORECAST = 300;
     private Date lastForecastTimestamp;
     private volatile PlatformConfiguration lastForecast;
     private ReentrantLock forecastLock = new ReentrantLock();
@@ -101,10 +101,14 @@ public class AutonomicManagerImpl implements AutonomicManager {
     @Override
     public void optimizeAndReconfigure(ProcessedSample sample){
 
-        if( reconfigurator.isReconfiguring() ){
-            ControllerLogger.log.info("ReconfiguratorImpl busy! Skipping new reconf...");
+        if( !reconfigurator.isReconfiguring() ){
+            Map<OptimizerType, Object> optimization = optimizer.optimizeAll(sample, false);
+            reconfigurator.reconfigure(optimization);
 
+        } else {
+            ControllerLogger.log.info("Reconfigurator busy! Skipping...");
         }
+
     }
 
     @Override
@@ -115,15 +119,31 @@ public class AutonomicManagerImpl implements AutonomicManager {
             return null;
         }
 
+        log.trace("Instancing what-if service");
+
         WhatIfService whatIfService = new WhatIfService(processedSample);
 
-        /* retrieving current values */
-        WhatIfCustomParamDTO paramDTO = whatIfService.retrieveCurrentValues();
+        if(whatIfService==null) {
+            log.trace("whatIfService == null");
+        }
+        log.trace("A retrieving current param");
 
-        log.info("MERGING customParamDTO to paramDTO...");
+        /* retrieving current values */
+        WhatIfCustomParamDTO paramDTO = null;
+        try {
+            paramDTO = whatIfService.retrieveCurrentValues();
+        } catch (Exception e){
+            log.fatal(e,e);
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+
+        log.trace("MERGING customParamDTO to paramDTO...");
 
         /* forecaster */
         for(Forecaster forecaster : customParamDTO.getForecasters()){
+            log.trace("Adding forecaster: " + forecaster );
             paramDTO.addForecaster(forecaster);
         }
         /* X-axis */
@@ -142,6 +162,7 @@ public class AutonomicManagerImpl implements AutonomicManager {
 
         /* merge all the others params if not default */
 
+        log.trace("Custom params merged!");
 
         List<WhatIfDTO> result = whatIfService.evaluate(paramDTO);
         return result;

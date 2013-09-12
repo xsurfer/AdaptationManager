@@ -39,7 +39,8 @@ public interface OracleService {
      * @param fixedDegree
      * @return
      */
-    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumNodes, int maxNumNodes, ReplicationProtocol fixedProtocol, int fixedDegree);
+    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumNodes, int maxNumNodes,
+                                                           ReplicationProtocol fixedProtocol, int fixedDegree);
 
     /**
      * What-if with Degree on X-axis
@@ -48,8 +49,8 @@ public interface OracleService {
      * @param fixedProtocol
      * @return
      */
-    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumDegree, int maxNumDegree, int fixedNodes, ReplicationProtocol fixedProtocol);
-
+    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumDegree, int maxNumDegree,
+                                                           int fixedNodes, ReplicationProtocol fixedProtocol);
 
 
     public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException;

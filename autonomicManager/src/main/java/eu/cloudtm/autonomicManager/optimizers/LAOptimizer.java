@@ -3,6 +3,7 @@ package eu.cloudtm.autonomicManager.optimizers;
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import pt.ist.clustering.LDA.LDA;
+import pt.ist.clustering.LDA.LDA_ExtendedResult;
 
 import java.util.LinkedHashMap;
 
@@ -61,60 +62,60 @@ public class LAOptimizer implements OptimizerComponent {
 
     //<TransactionID,<DomainClassID,AccessFrequency>>
     private void generateClusters(LinkedHashMap<String,LinkedHashMap<String,Integer>> dataAccessFrequencies) {
-        int txLDA = 0;
-        int domainLDA = 1;
-        int numberOfClusters = 0;
-
-        LinkedHashMap<Integer,LinkedHashMap<Integer,Integer>> ldaInput = new LinkedHashMap<Integer,LinkedHashMap<Integer,Integer>>();
-        LinkedHashMap<Integer,Integer> temp;
-
-        txIDMap = new LinkedHashMap<String,Integer>();
-        domainIDMap = new LinkedHashMap<String,Integer>();
-        reverseTxIDMap = new LinkedHashMap<Integer,String>();
-        reverseDomainIDMap = new LinkedHashMap<Integer,String>();
-
-        for (String txID : dataAccessFrequencies.keySet()) {
-            txIDMap.put(txID, txLDA);
-            reverseTxIDMap.put(txLDA, txID);
-
-            temp = new LinkedHashMap<Integer,Integer>();
-
-            for (String domainClass : dataAccessFrequencies.get(txID).keySet()) {
-                if (!domainIDMap.containsKey(domainClass)) {
-                    domainIDMap.put(domainClass, domainLDA);
-                    reverseDomainIDMap.put(domainLDA, domainClass);
-
-                    domainLDA++;
-                }
-                temp.put(domainIDMap.get(domainClass), dataAccessFrequencies.get(txID).get(domainClass));
-            }
-            ldaInput.put(txLDA, temp);
-
-            txLDA++;
-        }
-
-        txClusterMap = new LinkedHashMap<String,Integer>();
-        LDA_ExtendedResult ldaResult = LDA.generateOptimalLDAResult(ldaInput);
-        //txIDClusterMap = LDA.generateOptimalLDA(ldaInput);
-        txIDClusterMap = ldaResult.getTransactionClusters();
-        int[][] domainDataPlacement = ldaResult.getTop2DataPlacementClusters();//int[numberOfDomainTypes][2]
-        primaryDataClusters = new LinkedHashMap<String,Integer>();
-        secondaryDataClusters = new LinkedHashMap<String,Integer>();
-        
-        for (int i = 0; i < domainDataPlacement.length; i++) {
-            primaryDataClusters.put(reverseDomainIDMap.get(i+1), domainDataPlacement[i][0]);
-            secondaryDataClusters.put(reverseDomainIDMap.get(i+1), domainDataPlacement[i][1]);
-        }
-        
-
-        int t = 0;
-        int clusters = 0;
-        for (String txID : dataAccessFrequencies.keySet()) {
-            //System.out.println("looking up " +txID + ", that goes into cluster " + txIDClusterMap.get(t));
-            txClusterMap.put(txID, txIDClusterMap.get(t));
-            if (numberOfClusters <= (txIDClusterMap.get(t) + 1)) numberOfClusters = txIDClusterMap.get(t) + 1;
-            t++;
-        }
+//        int txLDA = 0;
+//        int domainLDA = 1;
+//        int numberOfClusters = 0;
+//
+//        LinkedHashMap<Integer,LinkedHashMap<Integer,Integer>> ldaInput = new LinkedHashMap<Integer,LinkedHashMap<Integer,Integer>>();
+//        LinkedHashMap<Integer,Integer> temp;
+//
+//        txIDMap = new LinkedHashMap<String,Integer>();
+//        domainIDMap = new LinkedHashMap<String,Integer>();
+//        reverseTxIDMap = new LinkedHashMap<Integer,String>();
+//        reverseDomainIDMap = new LinkedHashMap<Integer,String>();
+//
+//        for (String txID : dataAccessFrequencies.keySet()) {
+//            txIDMap.put(txID, txLDA);
+//            reverseTxIDMap.put(txLDA, txID);
+//
+//            temp = new LinkedHashMap<Integer,Integer>();
+//
+//            for (String domainClass : dataAccessFrequencies.get(txID).keySet()) {
+//                if (!domainIDMap.containsKey(domainClass)) {
+//                    domainIDMap.put(domainClass, domainLDA);
+//                    reverseDomainIDMap.put(domainLDA, domainClass);
+//
+//                    domainLDA++;
+//                }
+//                temp.put(domainIDMap.get(domainClass), dataAccessFrequencies.get(txID).get(domainClass));
+//            }
+//            ldaInput.put(txLDA, temp);
+//
+//            txLDA++;
+//        }
+//
+//        txClusterMap = new LinkedHashMap<String,Integer>();
+//        LDA_ExtendedResult ldaResult = LDA.generateOptimalLDAResult(ldaInput);//generateOptimalLDA
+//        //txIDClusterMap = LDA.generateOptimalLDA(ldaInput);
+//        txIDClusterMap = ldaResult.getTransactionClusters();
+//        int[][] domainDataPlacement = ldaResult.getTop2DataPlacementClusters();//int[numberOfDomainTypes][2]
+//        primaryDataClusters = new LinkedHashMap<String,Integer>();
+//        secondaryDataClusters = new LinkedHashMap<String,Integer>();
+//
+//        for (int i = 0; i < domainDataPlacement.length; i++) {
+//            primaryDataClusters.put(reverseDomainIDMap.get(i+1), domainDataPlacement[i][0]);
+//            secondaryDataClusters.put(reverseDomainIDMap.get(i+1), domainDataPlacement[i][1]);
+//        }
+//
+//
+//        int t = 0;
+//        int clusters = 0;
+//        for (String txID : dataAccessFrequencies.keySet()) {
+//            //System.out.println("looking up " +txID + ", that goes into cluster " + txIDClusterMap.get(t));
+//            txClusterMap.put(txID, txIDClusterMap.get(t));
+//            if (numberOfClusters <= (txIDClusterMap.get(t) + 1)) numberOfClusters = txIDClusterMap.get(t) + 1;
+//            t++;
+//        }
         //System.out.println("There are " + numberOfClusters + " clusters.");
     }
 
