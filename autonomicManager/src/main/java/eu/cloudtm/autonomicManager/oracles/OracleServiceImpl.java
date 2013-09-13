@@ -25,9 +25,9 @@ public class OracleServiceImpl implements OracleService {
 
     private static Log log = LogFactory.getLog(OracleServiceImpl.class);
 
-    private int nodesMin = 2, nodesMax = 10; // TODO: da rendere parametrizzabili
+    protected int nodesMin = 2, nodesMax = 10; // TODO: da rendere parametrizzabili
 
-    private int degreeMin = 2;
+    protected int degreeMin = 2;
 
     private Oracle oracle;
 
@@ -37,7 +37,7 @@ public class OracleServiceImpl implements OracleService {
         this.oracle = oracle;
     }
 
-    public final PlatformConfiguration minimizeCosts(ProcessedSample sample,
+    public PlatformConfiguration minimizeCosts(ProcessedSample sample,
                                                      double arrivalRateToGuarantee,
                                                      double abortRateToGuarantee,
                                                      double responseTimeToGuarantee)
@@ -82,7 +82,7 @@ public class OracleServiceImpl implements OracleService {
 
 
     @Override
-    public final PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
+    public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
 
         PlatformConfiguration finalConfiguration = null;
         boolean found = false;
@@ -219,7 +219,7 @@ public class OracleServiceImpl implements OracleService {
     }
 
 
-    private OutputOracle doForecast(PlatformConfiguration currConf, ProcessedSample sample){
+    protected OutputOracle doForecast(PlatformConfiguration currConf, ProcessedSample sample){
 
         Map<ForecastParam, Object> forecastParam = new HashMap<ForecastParam, Object>();
         forecastParam.put(ForecastParam.NumNodes, currConf.platformSize() );

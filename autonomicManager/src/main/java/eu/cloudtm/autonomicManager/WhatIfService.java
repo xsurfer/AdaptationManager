@@ -6,10 +6,7 @@ import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
-import eu.cloudtm.autonomicManager.oracles.Oracle;
-import eu.cloudtm.autonomicManager.oracles.OracleService;
-import eu.cloudtm.autonomicManager.oracles.OracleServiceImpl;
-import eu.cloudtm.autonomicManager.oracles.OutputOracle;
+import eu.cloudtm.autonomicManager.oracles.*;
 import eu.cloudtm.autonomicManager.statistics.CustomSample;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -64,7 +61,7 @@ public class WhatIfService {
         Object avgPrepareAsync = processedSample.getParam(Param.AvgPrepareAsync);
         if(avgPrepareAsync != null ){
             double val = ((Number) avgPrepareAsync).doubleValue();
-            customParam.setAvgPrepareAsync( val );
+            customParam.setAvgPrepareAsync(val);
         } else {
             log.warn("AvgPrepareAsync is not set!");
             customParam.setAvgPrepareAsync(0);
@@ -74,7 +71,7 @@ public class WhatIfService {
         if(avgPrepareCommandSize != null ){
 
             double val = ((Number) avgPrepareCommandSize).doubleValue();
-            customParam.setAvgPrepareCommandSize( val );
+            customParam.setAvgPrepareCommandSize(val);
         } else {
             log.warn("AvgPrepareCommandSize is not set!");
             customParam.setAvgPrepareCommandSize(0);
@@ -84,7 +81,7 @@ public class WhatIfService {
         if(avgNumPutsBySuccessfulLocalTx != null ){
 
             double val = ((Number) avgNumPutsBySuccessfulLocalTx).doubleValue();
-            customParam.setAvgNumPutsBySuccessfulLocalTx( val );
+            customParam.setAvgNumPutsBySuccessfulLocalTx(val);
         } else {
             log.warn("AvgNumPutsBySuccessfulLocalTx is not set!");
             customParam.setAvgNumPutsBySuccessfulLocalTx(0.0);
@@ -94,7 +91,7 @@ public class WhatIfService {
         if(percentageSuccessWriteTransactions != null ){
 
             double val = ((Number) percentageSuccessWriteTransactions).doubleValue();
-            customParam.setPercentageSuccessWriteTransactions( val );
+            customParam.setPercentageSuccessWriteTransactions(val);
         } else {
             log.warn("PercentageSuccessWriteTransactions is not set!");
             customParam.setPercentageSuccessWriteTransactions(0.0);
@@ -104,7 +101,7 @@ public class WhatIfService {
         if(localUpdateTxLocalServiceTime != null ){
 
             double val = ((Number) localUpdateTxLocalServiceTime).doubleValue();
-            customParam.setLocalUpdateTxLocalServiceTime( val );
+            customParam.setLocalUpdateTxLocalServiceTime(val);
         } else {
             log.warn("LocalUpdateTxLocalServiceTime is not set!");
             customParam.setLocalUpdateTxLocalServiceTime(0.0);
@@ -114,7 +111,7 @@ public class WhatIfService {
         if(localReadOnlyTxLocalServiceTime != null ){
 
             double val = ((Number) localReadOnlyTxLocalServiceTime).doubleValue();
-            customParam.setLocalReadOnlyTxLocalServiceTime( val );
+            customParam.setLocalReadOnlyTxLocalServiceTime(val);
         } else {
             log.warn("LocalReadOnlyTxLocalServiceTime is not set!");
             customParam.setLocalReadOnlyTxLocalServiceTime(0);
@@ -124,7 +121,7 @@ public class WhatIfService {
         if(avgRemoteGetRtt != null ){
 
             double val = ((Number) avgRemoteGetRtt).doubleValue();
-            customParam.setAvgRemoteGetRtt( val );
+            customParam.setAvgRemoteGetRtt(val);
         } else {
             log.warn("AvgRemoteGetRtt is not set!");
             customParam.setAvgRemoteGetRtt(0);
@@ -134,7 +131,7 @@ public class WhatIfService {
         if(avgGetsPerWrTransaction != null ){
 
             double val = ((Number) avgGetsPerWrTransaction).doubleValue();
-            customParam.setAvgGetsPerWrTransaction( val );
+            customParam.setAvgGetsPerWrTransaction(val);
         } else {
             log.warn("AvgGetsPerWrTransaction is not set!");
             customParam.setAvgGetsPerWrTransaction(0.0);
@@ -144,7 +141,7 @@ public class WhatIfService {
         if(avgGetsPerROTransaction != null ){
 
             double val = ((Number) avgGetsPerROTransaction).doubleValue();
-            customParam.setAvgGetsPerROTransaction( val );
+            customParam.setAvgGetsPerROTransaction(val);
         } else {
             log.warn("AvgGetsPerROTransaction is not set!");
             customParam.setAvgGetsPerROTransaction(0);
@@ -170,10 +167,8 @@ public class WhatIfService {
         for(Forecaster forecaster : customParamDTO.getForecasters()){
             WhatIfDTO currWhatIfResult = new WhatIfDTO(forecaster, customParamDTO.getXaxis());
 
-            OracleService oracleService;
-
             Oracle oracle = forecaster.getInstance();
-            oracleService = new OracleServiceImpl(oracle);
+            OracleService oracleService = new HillClimbingOracleService(oracle);
             log.info("Querying " + forecaster);
 
                 /* creating custom Sample, with custom maps */

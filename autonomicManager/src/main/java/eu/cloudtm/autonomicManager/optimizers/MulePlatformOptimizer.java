@@ -4,8 +4,9 @@ import eu.cloudtm.autonomicManager.AbstractPlatformOptimizer;
 import eu.cloudtm.autonomicManager.ControllerLogger;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
+import eu.cloudtm.autonomicManager.oracles.HillClimbingOracleService;
 import eu.cloudtm.autonomicManager.oracles.Oracle;
-import eu.cloudtm.autonomicManager.oracles.OracleServiceImpl;
+import eu.cloudtm.autonomicManager.oracles.OracleService;
 import eu.cloudtm.autonomicManager.oracles.exceptions.OracleException;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
@@ -36,7 +37,7 @@ public class MulePlatformOptimizer extends AbstractPlatformOptimizer {
         ControllerLogger.log.info("Mule Optimizer: Querying " + platformTuning.forecaster() + " oracle");
 
         Oracle oracle = platformTuning.forecaster().getInstance();
-        OracleServiceImpl oracleService = new OracleServiceImpl(oracle);
+        OracleService oracleService = new HillClimbingOracleService(oracle);
 
         PlatformConfiguration forecastedConfig = null;
         try {

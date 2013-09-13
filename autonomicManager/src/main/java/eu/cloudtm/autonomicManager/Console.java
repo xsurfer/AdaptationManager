@@ -1,10 +1,7 @@
 package eu.cloudtm.autonomicManager;
 
 import com.google.gson.Gson;
-import eu.cloudtm.autonomicManager.commons.Forecaster;
-import eu.cloudtm.autonomicManager.commons.InstanceConfig;
-import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
@@ -42,6 +39,7 @@ public class Console {
             log.info("5 - Optimize now");
             log.info("6 - Enable/Disable WorkloadAnalyzer [ current: " + (autonomicManager.isWorkloadAnalyzerEnabled() ? "enabled" : "disabled")  + " ]");
             log.info("7 - Forecast (w/o reconfigure)");
+            log.info("8 - Change forecaster");
             Scanner in = new Scanner(System.in);
             selected = in.nextInt();
             processInput(selected);
@@ -72,6 +70,9 @@ public class Console {
             case 7:
                 forecast();
                 break;
+            case 8:
+                changeForecaster();
+                break;
             default:
                 log.info("Unexpected input");
                 break;
@@ -82,6 +83,22 @@ public class Console {
         log.info("*** Current Configuration ***");
         log.info( autonomicManager.platformConfiguration() );
         log.info("");
+    }
+
+    private void changeForecaster(){
+
+        try {
+            Scanner in = new Scanner(System.in);
+
+            log.info("Forecaster: [ ANALYTICAL | SIMULATOR | MACHINE_LEARNING | COMMITTEE ] ");
+            String forecasterStr = in.next();
+            Forecaster forecaster = Forecaster.valueOf(forecasterStr);
+            autonomicManager.updateForecaster(forecaster);
+
+        } catch (IllegalArgumentException e){
+            log.info("Illegal value for replication protocol!");
+        }
+
     }
 
     private void customConfiguration(){
@@ -105,16 +122,16 @@ public class Console {
             ReplicationProtocol protocol = ReplicationProtocol.valueOf(protocolString);
             platformConfiguration.setRepProtocol(protocol);
 
+            Map<OptimizerType, Object> configuration = new HashMap<OptimizerType, Object>();
+            configuration.put(OptimizerType.PLATFORM, platformConfiguration);
+            configuration.put(OptimizerType.AUTOPLACER, null);
+
+            autonomicManager.customConfiguration(configuration);
+
         } catch (IllegalArgumentException e){
             log.info("Illegal value for replication protocol!");
-            return;
         }
 
-        Map<OptimizerType, Object> configuration = new HashMap<OptimizerType, Object>();
-        configuration.put(OptimizerType.PLATFORM, platformConfiguration);
-        configuration.put(OptimizerType.AUTOPLACER, null);
-
-        autonomicManager.customConfiguration(configuration);
     }
 
     private void forecast(){

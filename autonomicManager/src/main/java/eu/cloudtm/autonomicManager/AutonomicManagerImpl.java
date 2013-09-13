@@ -61,6 +61,9 @@ public class AutonomicManagerImpl implements AutonomicManager {
         reconfigurator.reconfigure( configuration );
     }
 
+
+
+
     @Override
     public boolean isWorkloadAnalyzerEnabled(){
         return workloadAnalyzer.isEnabled();
