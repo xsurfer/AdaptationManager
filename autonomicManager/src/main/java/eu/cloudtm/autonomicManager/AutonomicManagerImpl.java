@@ -222,12 +222,12 @@ public class AutonomicManagerImpl implements AutonomicManager {
         platformTuning.autoScale(tuning);
         if(!tuning){
             log.info("Triggering reconfiguration (" + size + ")");
-            platformConfiguration.setPlatformScale(size, instanceConfig);
+            PlatformConfiguration platformReq = new PlatformConfiguration(size, platformConfiguration.replicationDegree(), platformConfiguration.replicationProtocol());
             Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
-            optimization.put(OptimizerType.PLATFORM, platformConfiguration);
+            optimization.put(OptimizerType.PLATFORM, platformReq);
             reconfigureNow(optimization);
+            // the curr platform state will be updated when reconfiguration ends
         }
-
     }
 
     @Override
@@ -237,10 +237,11 @@ public class AutonomicManagerImpl implements AutonomicManager {
         platformTuning.autoDegree(tuning);
         if(!tuning){
             log.info("Triggering reconfiguration (" + degree + ")");
-            platformConfiguration.setRepDegree(degree);
+            PlatformConfiguration platformReq = new PlatformConfiguration(platformConfiguration.platformSize(), degree, platformConfiguration.replicationProtocol());
             Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
-            optimization.put(OptimizerType.PLATFORM, platformConfiguration);
+            optimization.put(OptimizerType.PLATFORM, platformReq);
             reconfigureNow(optimization);
+            // the curr platform state will be updated when reconfiguration ends
         }
     }
 
@@ -251,10 +252,11 @@ public class AutonomicManagerImpl implements AutonomicManager {
         platformTuning.autoProtocol(tuning);
         if(!tuning){
             ControllerLogger.log.info("Triggering new reconfiguration changing replication protocol" + protocol + ")");
-            platformConfiguration.setRepProtocol(protocol);
+            PlatformConfiguration platformReq = new PlatformConfiguration(platformConfiguration.platformSize(), platformConfiguration.replicationDegree(), protocol);
             Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
-            optimization.put(OptimizerType.PLATFORM, platformConfiguration);
+            optimization.put(OptimizerType.PLATFORM, platformReq);
             reconfigureNow(optimization);
+            // the curr platform state will be updated when reconfiguration ends
         }
     }
 

@@ -95,6 +95,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
         ControllerLogger.log.info("#####################");
 
         try{
+            platformState.update(PlatformState.RECONFIGURING);
             if(testing){
                 ControllerLogger.log.warn("Simulating reconfiguration...No instance will be changed!");
             } else {
@@ -108,6 +109,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
             }
 
             request = null;
+            platformState.update(PlatformState.RUNNING);
 
         } catch (Exception e) {     // capturing all the exceptions because if ignoreError=false, AM must die
             platformState.update(PlatformState.ERROR);
@@ -149,7 +151,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
         }
 
         if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_DEGREE.key() ) ){
-            ControllerLogger.log.info("Reconfiguring degree");
+            ControllerLogger.log.info("Reconfiguring replication degree from " + current.replicationDegree() + " to " + platformRequest.replicationDegree() );
             reconfigureDegree(platformRequest.replicationDegree());
             ControllerLogger.log.info("Replication degree successfully switched to " + platformRequest.replicationDegree() + " !" );
         } else {
