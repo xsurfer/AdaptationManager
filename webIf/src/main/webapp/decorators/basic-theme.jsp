@@ -29,7 +29,7 @@
     <!-- Header -->
     <div id="header">
 
-        <h1 id="logo"><a title="[Go to homepage]" href="./"><img width="160" src="http://www.cloudtm.eu/_/rsrc/1288609844892/home/spotlight_logo.png" alt="" /></a></h1>
+        <h1 id="logo"><a title="[Go to homepage]" href="./"><img width="160" src="${pageContext.request.contextPath}/assets/images/spotlight_logo.png" alt="" /></a></h1>
         <hr class="noscreen" />
 
         <!-- Navigation -->

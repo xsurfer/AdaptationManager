@@ -107,15 +107,15 @@ public class WhatIfResource extends AbstractResource {
             @DefaultValue("-1") @FormParam("percentageSuccessWriteTransactions") Double percentageSuccessWriteTransactions,
             @DefaultValue("-1") @FormParam("avgNumPutsBySuccessfulLocalTx") Double avgNumPutsBySuccessfulLocalTx,
             @DefaultValue("-1") @FormParam("avgGetsPerWrTransaction") Double avgGetsPerWrTransaction,
-            @DefaultValue("-1") @FormParam("avgGetsPerROTransaction") Long avgGetsPerROTransaction,
+            @DefaultValue("-1") @FormParam("avgGetsPerROTransaction") Double avgGetsPerROTransaction,
 
-            @DefaultValue("-1") @FormParam("localUpdateTxLocalServiceTime") Long localUpdateTxLocalServiceTime,
-            @DefaultValue("-1") @FormParam("localReadOnlyTxLocalServiceTime") Long localReadOnlyTxLocalServiceTime,
+            @DefaultValue("-1") @FormParam("localUpdateTxLocalServiceTime") Double localUpdateTxLocalServiceTime,
+            @DefaultValue("-1") @FormParam("localReadOnlyTxLocalServiceTime") Double localReadOnlyTxLocalServiceTime,
 
-            @DefaultValue("-1") @FormParam("avgPrepareCommandSize") Long avgPrepareCommandSize,
-            @DefaultValue("-1") @FormParam("avgPrepareAsync") Long avgPrepareAsync,
-            @DefaultValue("-1") @FormParam("avgCommitAsync") Long avgCommitAsync,
-            @DefaultValue("-1") @FormParam("avgRemoteGetRtt") Long avgRemoteGetRtt,
+            @DefaultValue("-1") @FormParam("avgPrepareCommandSize") Double avgPrepareCommandSize,
+            @DefaultValue("-1") @FormParam("avgPrepareAsync") Double avgPrepareAsync,
+            @DefaultValue("-1") @FormParam("avgCommitAsync") Double avgCommitAsync,
+            @DefaultValue("-1") @FormParam("avgRemoteGetRtt") Double avgRemoteGetRtt,
 
             @DefaultValue("NODES") @FormParam("xaxis") WhatIfCustomParamDTO.Xaxis xaxis,
 

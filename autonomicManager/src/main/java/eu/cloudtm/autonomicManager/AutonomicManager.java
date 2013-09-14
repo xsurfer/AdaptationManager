@@ -35,7 +35,7 @@ public interface AutonomicManager {
 
     PlatformConfiguration currentConfiguration();
 
-    void optimizeAndReconfigure(ProcessedSample sample);
+    /*void reconfigureNow(ProcessedSample sample);*/
 
     void optimizeAndReconfigureNow();
 
@@ -48,4 +48,7 @@ public interface AutonomicManager {
     void customConfiguration(Map<OptimizerType, Object> configuration);
 
     StatsManager getStatsManager();
+
+    void reconfigureNow(Map<OptimizerType, Object> configuration);
+
 }

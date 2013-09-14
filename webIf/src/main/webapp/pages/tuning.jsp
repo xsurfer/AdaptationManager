@@ -305,15 +305,15 @@
 							<ol>
 								<li>
 									<p class="label autoplacer">AVG Remote OPS/ReadOnly TX:</p>
-									<p class="config"><span id="current_data_placement">393.4</span></p>								
+									<p class="config"><span id="current_data_placement">N/A</span></p>								
 								</li>
 								<li>
 									<p class="label autoplacer">AVG Remote OPS/Update TX:</p>
-									<p class="config"><span id="current_data_placement">23.24</span></p>								
+									<p class="config"><span id="current_data_placement">N/A</span></p>								
 								</li>
 								<li>
 									<p class="label autoplacer">AVG Nodes involved in TX:</p>
-									<p class="config"><span id="current_opt_data_placement">3.95</span></p>
+									<p class="config"><span id="current_opt_data_placement">N/A</span></p>
 								</li>
 							</ol>
 						</div>	

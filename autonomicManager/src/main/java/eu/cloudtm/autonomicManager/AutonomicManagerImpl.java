@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -98,19 +99,20 @@ public class AutonomicManagerImpl implements AutonomicManager {
 
     @Override
     public void optimizeAndReconfigureNow(){
-        optimizeAndReconfigure(statsManager.getLastSample());
-    }
-
-    @Override
-    public void optimizeAndReconfigure(ProcessedSample sample){
-
         if( !reconfigurator.isReconfiguring() ){
-            Map<OptimizerType, Object> optimization = optimizer.optimizeAll(sample, false);
-            reconfigurator.reconfigure(optimization);
+            ControllerLogger.log.info("Starting new optimization...");
+            Map<OptimizerType, Object> optimization = optimizer.optimizeAll(statsManager.getLastSample(), false);
+            reconfigureNow(optimization);
 
         } else {
             ControllerLogger.log.info("Reconfigurator busy! Skipping...");
         }
+    }
+
+    @Override
+    public void reconfigureNow(Map<OptimizerType, Object> configuration){
+        ControllerLogger.log.info("Starting reconfiguration...");
+        reconfigurator.reconfigure(configuration);
 
     }
 
@@ -221,6 +223,9 @@ public class AutonomicManagerImpl implements AutonomicManager {
         if(!tuning){
             log.info("Triggering reconfiguration (" + size + ")");
             platformConfiguration.setPlatformScale(size, instanceConfig);
+            Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
+            optimization.put(OptimizerType.PLATFORM, platformConfiguration);
+            reconfigureNow(optimization);
         }
 
     }
@@ -233,6 +238,9 @@ public class AutonomicManagerImpl implements AutonomicManager {
         if(!tuning){
             log.info("Triggering reconfiguration (" + degree + ")");
             platformConfiguration.setRepDegree(degree);
+            Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
+            optimization.put(OptimizerType.PLATFORM, platformConfiguration);
+            reconfigureNow(optimization);
         }
     }
 
@@ -242,8 +250,11 @@ public class AutonomicManagerImpl implements AutonomicManager {
 
         platformTuning.autoProtocol(tuning);
         if(!tuning){
-            log.info("Triggering reconfiguration (" + protocol + ")");
+            ControllerLogger.log.info("Triggering new reconfiguration changing replication protocol" + protocol + ")");
             platformConfiguration.setRepProtocol(protocol);
+            Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
+            optimization.put(OptimizerType.PLATFORM, platformConfiguration);
+            reconfigureNow(optimization);
         }
     }
 
