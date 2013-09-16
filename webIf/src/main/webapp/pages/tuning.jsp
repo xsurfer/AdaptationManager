@@ -350,18 +350,18 @@
 											<div class="radio_tuning autoplacer">
 											<ol>
 												<li>
-													<input type="checkbox" />
-													<label>Remote Ops (RO TX) ></label>
+													<input id="remote_ops_ro_tx" type="checkbox" />
+													<label for="remote_ops_ro_tx">Remote Ops (RO TX) ></label>
 													<input type="text" name="rep_degree_size" id=degree_conf size="3" />																						
 												</li>
 												<li>
-													<input type="checkbox" />
-													<label>Remote Ops (UP TX) ></label>
+													<input id="remote_ops_up_tx" type="checkbox" />
+													<label for="remote_ops_up_tx" >Remote Ops (UP TX) ></label>
 													<input type="text" name="rep_degree_size" id=asd size="3" />																						
 												</li>
 												<li>
-													<input type="checkbox" />
-													<label>AVG #Nodes in TX ></label>
+													<input id="avg_nodes_in_tx" type="checkbox" />
+													<label for="avg_nodes_in_tx">AVG #Nodes in TX ></label>
 													<input type="text" name="rep_degree_size" id=asd size="3" />																						
 												</li>
 												
@@ -370,16 +370,16 @@
 											<div class="conf_tuning autoplacer">
 											<ol>
 												<li>
-													<label>Time b/t Rounds (mins):</label>
-													<input type="text" name="rep_degree_size" id=asd size="3" />
+													<label for="time_bt_rounds">Time b/t Rounds (mins):</label>
+													<input id="time_bt_rounds" type="text" name="rep_degree_size" id=asd size="3" />
 												</li>
 												<li>
-													<label>Keys shifted per Round (per Node):</label>
-													<input type="text" name="rep_degree_size" id=asd size="3" />
+													<label for="keys_shifted_per_round">Keys shifted per Round (per Node):</label>
+													<input id="keys_shifted_per_round" type="text" name="rep_degree_size" id=asd size="3" />
 												</li>
 												<li>
-													<label>Max #Rounds:</label>
-													<input type="text" name="rep_degree_size" id=asd size="3" />
+													<label for="max_rounds">Max #Rounds:</label>
+													<input id="max_rounds" type="text" name="rep_degree_size" id=asd size="3" />
 												</li>
 											</ol>
 											</div>

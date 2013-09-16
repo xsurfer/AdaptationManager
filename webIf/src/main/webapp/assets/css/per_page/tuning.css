@@ -132,13 +132,13 @@ div.tuning div.radio_tuning{
 
 div.tuning div.radio_tuning.autoplacer{
 	/*border: 1px dotted blue;*/
-	width: 235px;	
+	width: 225px;	
 }
 
 div.radio_tuning.autoplacer label{
 	/*border: 1px solid;*/
 	display: inline-block;	
-	width: 160px;
+	width: 150px;
 	
 }
 
@@ -160,13 +160,13 @@ div.tuning div.conf_tuning{
 div.tuning div.conf_tuning.autoplacer{
 	/*border: 1px solid red;*/
 	margin-left: 0px;
-	width: 270px;
+	width: 280px;
 }
 
 div.conf_tuning.autoplacer label{
 	/*border: 1px solid;*/
 	display: inline-block;	
-	width: 205px;
+	width: 215px;
 	
 }
 
