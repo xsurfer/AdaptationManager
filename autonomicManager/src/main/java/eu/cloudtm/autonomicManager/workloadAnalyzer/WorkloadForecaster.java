@@ -2,97 +2,106 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Param;
+import eu.cloudtm.autonomicManager.configs.Config;
+import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.statistics.CustomSample;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Created with IntelliJ IDEA.
- * User: fabio
- * Date: 7/19/13
- * Time: 11:03 AM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: fabio Date: 7/19/13 Time: 11:03 AM To change this template use File | Settings |
+ * File Templates.
  */
 public class WorkloadForecaster {
 
-    private static final int POLYNOMIAL_GRADE = 1;
+   private static Log log = LogFactory.getLog(WorkloadForecaster.class);
 
-    public static final int TIME_WINDOW = 5; // in seconds; it means that each 5 seconds I have a new sample
-    public static final int RECONFIGURATION_TIME = 5*60; // in seconds, to divide for the TIME_WINDOW
-    public static final int SAFE_TIME = 2*60; // in seconds, to divide for the TIME_WINDOW
+   private static final int POLYNOMIAL_GRADE = Config.getInstance().getInt(KeyConfig.WORKLOAD_FORECASTER_GRADE.key());
 
-    private Set<Param> monitoredParams;
-    private Map<Param, PolynomialFitter> paramForecasters = new HashMap<Param, PolynomialFitter>();
+   public static final int TIME_WINDOW = 10; // in seconds; it means that each 5 seconds I have a new sample
+   public static final int RECONFIGURATION_TIME = 5 * 60; // in seconds, to divide for the TIME_WINDOW
+   public static final int SAFE_TIME = 2 * 60; // in seconds, to divide for the TIME_WINDOW
 
-    private Set<EvaluatedParam> monitoredEvaluatedParam;
-    private Map<EvaluatedParam, PolynomialFitter> evaluatedParamForecasters = new HashMap<EvaluatedParam, PolynomialFitter>();
+   private Set<Param> monitoredParams;
+   private Map<Param, PolynomialFitter> paramForecasters = new HashMap<Param, PolynomialFitter>();
 
-    private ProcessedSample lastSampleForecasted;
+   private Set<EvaluatedParam> monitoredEvaluatedParam;
+   private Map<EvaluatedParam, PolynomialFitter> evaluatedParamForecasters = new HashMap<EvaluatedParam, PolynomialFitter>();
 
-    public WorkloadForecaster(Set<Param> monitoredParams,
-                              Set<EvaluatedParam> monitoredEvaluatedParam){
-        this.monitoredParams = monitoredParams;
-        this.monitoredEvaluatedParam = monitoredEvaluatedParam;
-        init();
-    }
+   private ProcessedSample lastSampleForecasted;
 
-    private void init(){
-        for(Param param : monitoredParams){
-            PolynomialFitter forecaster = new PolynomialFitter(POLYNOMIAL_GRADE);
-            paramForecasters.put(param, forecaster);
-        }
-        for(EvaluatedParam param : monitoredEvaluatedParam){
-            PolynomialFitter forecaster = new PolynomialFitter(POLYNOMIAL_GRADE);
-            evaluatedParamForecasters.put(param, forecaster);
-        }
-    }
+   public WorkloadForecaster(Set<Param> monitoredParams,
+                             Set<EvaluatedParam> monitoredEvaluatedParam) {
+      this.monitoredParams = monitoredParams;
+      this.monitoredEvaluatedParam = monitoredEvaluatedParam;
+      init();
+   }
 
-    public void add(ProcessedSample sample){
-        for(Param param : monitoredParams){
-            PolynomialFitter forecaster = paramForecasters.get(param);
-            forecaster.addPoint(sample.getId(), ((Number) sample.getParam(param)).doubleValue() );
+   private void init() {
 
-        }
-        for(EvaluatedParam param : monitoredEvaluatedParam){
-            PolynomialFitter forecaster = evaluatedParamForecasters.get(param);
-            forecaster.addPoint(sample.getId(), (Double) sample.getEvaluatedParam(param));
-        }
+      log.trace("POLYNOMIAL_GRADE: " + POLYNOMIAL_GRADE);
 
-        lastSampleForecasted = new CustomSample(sample, createCustomMap(sample.getId()), createCustomEvaluatedMap(sample.getId()) );
-    }
+      for (Param param : monitoredParams) {
+         PolynomialFitter forecaster = new PolynomialFitter(POLYNOMIAL_GRADE);
+         paramForecasters.put(param, forecaster);
+      }
+      for (EvaluatedParam param : monitoredEvaluatedParam) {
+         PolynomialFitter forecaster = new PolynomialFitter(POLYNOMIAL_GRADE);
+         evaluatedParamForecasters.put(param, forecaster);
+      }
+   }
 
+   public ProcessedSample add(ProcessedSample sample) {
+      for (Param param : monitoredParams) {
+         double value = ((Number) sample.getParam(param)).doubleValue();
+         if (value < 0) {
+            value = 0;
+         }
+         log.trace("Adding value to forecaster for " + param + ": " + value);
+         PolynomialFitter forecaster = paramForecasters.get(param);
+         forecaster.addPoint(sample.getId(), value);
+      }
 
-    public ProcessedSample forecast(){
-        return lastSampleForecasted;
-    }
+      for (EvaluatedParam param : monitoredEvaluatedParam) {
+         PolynomialFitter forecaster = evaluatedParamForecasters.get(param);
+         forecaster.addPoint(sample.getId(), (Double) sample.getEvaluatedParam(param));
+      }
 
-    private Map<Param, Object> createCustomMap(long instance){
-        Map<Param, Object> customMap = new HashMap<Param, Object>();
+      lastSampleForecasted = new CustomSample(sample, createCustomMap(sample.getId()), createCustomEvaluatedMap(sample.getId()));
+      return lastSampleForecasted;
+   }
 
-        for(Param param : monitoredParams){
-            PolynomialFitter forecaster = paramForecasters.get(param);
-            customMap.put(param, forecaster.getBestFit().getY( timeToForecast(instance) ) );
-        }
+   private Map<Param, Object> createCustomMap(long instance) {
+      Map<Param, Object> customMap = new HashMap<Param, Object>();
 
-        return customMap;
-    }
+      for (Param param : monitoredParams) {
+         PolynomialFitter forecaster = paramForecasters.get(param);
+         double forecastedValue = forecaster.getBestFit().getY(timeToForecast(instance));
+         log.trace("Forecasting (t=" + timeToForecast(instance) + ") for " + param + ": " + forecastedValue);
+         customMap.put(param, forecastedValue);
+      }
 
-    private Map<EvaluatedParam, Object> createCustomEvaluatedMap(long instance){
-        Map<EvaluatedParam, Object> customEvaluatedMap = new HashMap<EvaluatedParam, Object>();
+      return customMap;
+   }
 
-        for(EvaluatedParam param : monitoredEvaluatedParam){
-            PolynomialFitter forecaster = evaluatedParamForecasters.get(param);
-            customEvaluatedMap.put(param, forecaster.getBestFit().getY( timeToForecast(instance) ) );
-        }
+   private Map<EvaluatedParam, Object> createCustomEvaluatedMap(long instance) {
+      Map<EvaluatedParam, Object> customEvaluatedMap = new HashMap<EvaluatedParam, Object>();
 
-        return customEvaluatedMap;
-    }
+      for (EvaluatedParam param : monitoredEvaluatedParam) {
+         PolynomialFitter forecaster = evaluatedParamForecasters.get(param);
+         customEvaluatedMap.put(param, forecaster.getBestFit().getY(timeToForecast(instance)));
+      }
 
-    private double timeToForecast(long instance){
-        return  ((double) instance + ((double) (RECONFIGURATION_TIME + SAFE_TIME) / TIME_WINDOW));
-    }
+      return customEvaluatedMap;
+   }
+
+   private double timeToForecast(long instance) {
+      return ((double) instance + ((double) (RECONFIGURATION_TIME + SAFE_TIME) / TIME_WINDOW));
+   }
 
 }

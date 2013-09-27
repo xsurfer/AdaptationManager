@@ -1,17 +1,13 @@
 package eu.cloudtm.autonomicManager.commons;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
- * Date: 7/12/13
+ * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 7/12/13
  */
 public enum ForecastParam {
 
    ReplicationProtocol(0, "REP_PROT", eu.cloudtm.autonomicManager.commons.ReplicationProtocol.class),
    ReplicationDegree(1, "REP_DEGREE", Integer.class),
-   NumNodes(2, "NUM_NODES", Integer.class),
-
-    ;
+   NumNodes(2, "NUM_NODES", Integer.class),;
 
    private final int id;
    private final String key;

@@ -1,54 +1,56 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.commons.*;
+import eu.cloudtm.autonomicManager.commons.Forecaster;
+import eu.cloudtm.autonomicManager.commons.InstanceConfig;
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.PlatformTuning;
+import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.State;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
-import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
- * Date: 9/11/13
+ * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 9/11/13
  */
 public interface AutonomicManager {
 
-    List<WhatIfDTO> whatIf(WhatIfCustomParamDTO customParamDTO );
+   List<WhatIfDTO> whatIf(WhatIfCustomParamDTO customParamDTO);
 
-    void updateProtocol(boolean tuning, ReplicationProtocol protocol);
+   void updateProtocol(boolean tuning, ReplicationProtocol protocol);
 
-    void updateDegree(boolean tuning, int degree);
+   void updateDegree(boolean tuning, int degree);
 
-    void updateScale(boolean tuning, int size, InstanceConfig instanceConfig);
+   void updateScale(boolean tuning, int size, InstanceConfig instanceConfig);
 
-    void updateForecaster(Forecaster forecaster);
+   void updateForecaster(Forecaster forecaster);
 
-    State state();
+   State state();
 
-    PlatformConfiguration platformConfiguration();
+   PlatformConfiguration platformConfiguration();
 
-    PlatformTuning platformTuning();
+   PlatformTuning platformTuning();
 
-    PlatformConfiguration currentConfiguration();
+   PlatformConfiguration currentConfiguration();
 
     /*void reconfigureNow(ProcessedSample sample);*/
 
-    void optimizeAndReconfigureNow();
+   void optimizeAndReconfigureNow();
 
-    PlatformConfiguration forecast();
+   PlatformConfiguration forecast();
 
-    void switchWorkloadAnalyzer();
+   void switchWorkloadAnalyzer();
 
-    boolean isWorkloadAnalyzerEnabled();
+   boolean isWorkloadAnalyzerEnabled();
 
-    void customConfiguration(Map<OptimizerType, Object> configuration);
+   void customConfiguration(Map<OptimizerType, Object> configuration);
 
-    StatsManager getStatsManager();
+   StatsManager getStatsManager();
 
-    void reconfigureNow(Map<OptimizerType, Object> configuration);
+   void reconfigureNow(Map<OptimizerType, Object> configuration);
 
 }

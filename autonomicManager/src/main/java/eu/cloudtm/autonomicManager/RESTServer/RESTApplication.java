@@ -4,16 +4,14 @@ import eu.cloudtm.autonomicManager.AutonomicManager;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
- * Date: 7/2/13
+ * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 7/2/13
  */
 public class RESTApplication extends ResourceConfig {
 
-    public RESTApplication(AutonomicManager autonomicManager) {
-        register(new Binder(autonomicManager));
-        packages(true, "eu.cloudtm.autonomicManager.RESTServer.resources");
-    }
+   public RESTApplication(AutonomicManager autonomicManager) {
+      register(new Binder(autonomicManager));
+      packages(true, "eu.cloudtm.autonomicManager.RESTServer.resources");
+   }
 
 }
 

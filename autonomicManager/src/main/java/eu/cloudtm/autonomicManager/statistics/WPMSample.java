@@ -7,9 +7,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
- * Date: 6/10/13
+ * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 6/10/13
  */
 public class WPMSample implements Sample {
 
@@ -24,8 +22,8 @@ public class WPMSample implements Sample {
 
    public static WPMSample getInstance(Map<String, Object> params2values) {
       WPMSample sample = new WPMSample(
-              counter.getAndIncrement(),
-              new HashMap<String, Object>(params2values)
+            counter.getAndIncrement(),
+            new HashMap<String, Object>(params2values)
       );
 
       return sample;
