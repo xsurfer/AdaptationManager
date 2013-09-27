@@ -20,53 +20,53 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Path("/status")
 public class StatusResource extends AbstractResource {
 
-   private static Log log = LogFactory.getLog(StatusResource.class);
+    private static Log log = LogFactory.getLog(StatusResource.class);
 
-   @Inject
-   private AutonomicManager autonomicManager;
+    @Inject
+    private AutonomicManager autonomicManager;
 
-   /*
-    {
-      "currentState":"RUNNING",
-      "tuning":{
-        "forecaster":"ANALYTICAL",
-        "autoScale":"true",
-        "autoDegree":"true",
-        "autoProtocol":"true"
-      },
+    /*
+     {
+       "currentState":"RUNNING",
+       "tuning":{
+         "forecaster":"ANALYTICAL",
+         "autoScale":"true",
+         "autoDegree":"true",
+         "autoProtocol":"true"
+       },
 
-      "configuration":{
-        "platformSize":2,
-        "threadPerNode":2,
-        "nodesConfig":"MEDIUM",
-        "replicationProtocol":"TWOPC",
-        "replicationDegree":2,
-        "dataPlacement":false
-      }
+       "configuration":{
+         "platformSize":2,
+         "threadPerNode":2,
+         "nodesConfig":"MEDIUM",
+         "replicationProtocol":"TWOPC",
+         "replicationDegree":2,
+         "dataPlacement":false
+       }
+     }
+    */
+    @GET
+    @Produces("application/json")
+    public Response getState() {
+
+        log.trace("Generating state to send...");
+
+        //Gson gson = new Gson();
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(AtomicBoolean.class, new AtomicBooleanSerializer());
+
+        StatusDTO statusDTO = new StatusDTO(
+                autonomicManager.state(),
+                autonomicManager.platformTuning(),
+                autonomicManager.platformConfiguration()
+        );
+
+        String json = gson.create().toJson(statusDTO);
+        log.trace("state: " + json);
+
+        Response.ResponseBuilder builder = Response.ok(json);
+        return makeCORS(builder);
     }
-   */
-   @GET
-   @Produces("application/json")
-   public Response getState() {
-
-      log.trace("Generating state to send...");
-
-      //Gson gson = new Gson();
-      GsonBuilder gson = new GsonBuilder();
-      gson.registerTypeAdapter(AtomicBoolean.class, new AtomicBooleanSerializer());
-
-      StatusDTO statusDTO = new StatusDTO(
-            autonomicManager.state(),
-            autonomicManager.platformTuning(),
-            autonomicManager.platformConfiguration()
-      );
-
-      String json = gson.create().toJson(statusDTO);
-      log.trace("state: " + json);
-
-      Response.ResponseBuilder builder = Response.ok(json);
-      return makeCORS(builder);
-   }
 
     /*
     @GET @Path("/replication/degree")

@@ -18,42 +18,44 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 6/7/13
+ * Created by: Fabio Perfetti
+ * E-mail: perfabio87@gmail.com
+ * Date: 6/7/13
  */
 public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListener {
 
-   private final static Log log = LogFactory.getLog(WPMStatisticsRemoteListenerImpl.class);
+    private final static Log log = LogFactory.getLog(WPMStatisticsRemoteListenerImpl.class);
 
-   private StatsManager statsManager;
+    private StatsManager statsManager;
 
-   private Handle handle;
+    private Handle handle;
 
-   private Processor processor;
+    private Processor processor;
 
-   public WPMStatisticsRemoteListenerImpl(WPMConnector connector, StatsManager statsManager, SubscribeEvent subscribeEvent, Processor processor) {
-      log.trace("Creating WPMStatisticsRemoteListenerImpl");
-      this.processor = processor;
+    public WPMStatisticsRemoteListenerImpl(WPMConnector connector, StatsManager statsManager, SubscribeEvent subscribeEvent, Processor processor){
+        log.trace("Creating WPMStatisticsRemoteListenerImpl");
+        this.processor = processor;
 
-      this.statsManager = statsManager;
-      try {
-         handle = connector.registerStatisticsRemoteListener(subscribeEvent, this);
-      } catch (RemoteException e) {
-         throw new RuntimeException(e);
-      }
-   }
+        this.statsManager = statsManager;
+        try {
+            handle = connector.registerStatisticsRemoteListener(subscribeEvent, this);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-   public Handle getHandle() {
-      return handle;
-   }
+    public Handle getHandle(){
+        return handle;
+    }
 
-   @Override
-   public void onNewPerVMStatistics(PublishStatisticsEvent publishStatisticsEvent) throws RemoteException {
-      log.trace("onNewPerVMStatistics");
-   }
+    @Override
+    public void onNewPerVMStatistics(PublishStatisticsEvent publishStatisticsEvent) throws RemoteException {
+        log.trace("onNewPerVMStatistics");
+    }
 
-   @Override
-   public void onNewPerSubscriptionStatistics(PublishStatisticsEvent event) throws RemoteException {
-      log.trace("onNewPerSubscriptionStatistics");
+    @Override
+    public void onNewPerSubscriptionStatistics(PublishStatisticsEvent event) throws RemoteException {
+        log.trace("onNewPerSubscriptionStatistics");
 
 //        Set<String> ips = event.getIps();
 //        log.trace("Received statistics from wpm instances " + ips.toString());
@@ -107,34 +109,35 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 //        statsManager.process(processedSample);
 
 
-   }
+    }
 
 
-   @Override
-   public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
 
-      Map<String, Object> aggregatedStats = new HashMap<String, Object>();
+    @Override
+    public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
 
-      log.trace("Parsing JMX stats");
-      PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX);
-      HashMap<String, PublishAttribute> jmx = pm.getValues();
+        Map<String, Object> aggregatedStats = new HashMap<String, Object>();
 
-      for (Map.Entry<String, PublishAttribute> e : jmx.entrySet()) {
-         aggregatedStats.put(e.getKey(), e.getValue().getValue());
-      }
+        log.trace("Parsing JMX stats");
+        PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX);
+        HashMap<String, PublishAttribute> jmx = pm.getValues();
 
-      log.trace("Parsing MEM stats");
-      pm = event.getPublishMeasurement(ResourceType.MEMORY);
-      HashMap<String, PublishAttribute> mem = pm.getValues();
+        for(Map.Entry<String,PublishAttribute> e : jmx.entrySet()){
+            aggregatedStats.put(e.getKey(), e.getValue().getValue());
+        }
 
-      for (Map.Entry<String, PublishAttribute> e : mem.entrySet()) {
-         aggregatedStats.put(e.getKey(), e.getValue().getValue());
-      }
+        log.trace("Parsing MEM stats");
+        pm = event.getPublishMeasurement(ResourceType.MEMORY);
+        HashMap<String, PublishAttribute> mem = pm.getValues();
 
-      WPMSample wpmSample = WPMSample.getInstance(aggregatedStats);
-      ProcessedSample processedSample = processor.process(wpmSample);
-      statsManager.push(processedSample);
-   }
+        for(Map.Entry<String,PublishAttribute> e : mem.entrySet()){
+            aggregatedStats.put(e.getKey(), e.getValue().getValue());
+        }
+
+        WPMSample wpmSample = WPMSample.getInstance(aggregatedStats);
+        ProcessedSample processedSample = processor.process(wpmSample);
+        statsManager.push(processedSample);
+    }
 
 
 //    Usato per leggere le chiavi
@@ -167,44 +170,45 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 //    }
 
 
-   private void trace(Set<HashMap<String, PublishAttribute>> set) {
-      int i = 0;
-      for (HashMap<String, PublishAttribute> map : set) {
-         log.trace("Map " + (++i));
-         for (Map.Entry<String, PublishAttribute> e : map.entrySet()) {
-            log.trace(e.getKey() + " - " + e.getValue().getValue());
-         }
-      }
-   }
 
-   private void debug(PublishStatisticsEvent event) {
-      Set<String> ips = event.getIps();
-      log.trace("Statistics!! " + ips.toString());
-      for (String ip : ips) {
-
-         log.trace("Printing Statistics for machine " + ip);
-
-         int numResources = event.getNumResources(ResourceType.JMX, ip);
-
-         if (numResources > 0) {
-            for (int i = 0; i < numResources; i++) {
-               PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX, i, ip);
-               HashMap<String, PublishAttribute> values = pm.getValues();
-               if (values != null && !values.isEmpty()) {
-
-                  Set<Map.Entry<String, PublishAttribute>> entries = values.entrySet();
-
-                  for (Map.Entry<String, PublishAttribute> entry : entries) {
-
-                     log.trace("" + entry.getKey() + " - " + entry.getValue().getValue());
-                  }
-               }
+    private void trace(Set<HashMap<String, PublishAttribute>> set) {
+        int i = 0;
+        for (HashMap<String, PublishAttribute> map : set) {
+            log.trace("Map " + (++i));
+            for (Map.Entry<String, PublishAttribute> e : map.entrySet()) {
+                log.trace(e.getKey() + " - " + e.getValue().getValue());
             }
+        }
+    }
 
-         } else {
-            log.trace("No resource found!");
-         }
-      }
-   }
+    private void debug(PublishStatisticsEvent event) {
+        Set<String> ips = event.getIps();
+        log.trace("Statistics!! " + ips.toString());
+        for (String ip : ips) {
+
+            log.trace("Printing Statistics for machine " + ip);
+
+            int numResources = event.getNumResources(ResourceType.JMX, ip);
+
+            if (numResources > 0) {
+                for (int i = 0; i < numResources; i++) {
+                    PublishMeasurement pm = event.getPublishMeasurement(ResourceType.JMX, i, ip);
+                    HashMap<String, PublishAttribute> values = pm.getValues();
+                    if (values != null && !values.isEmpty()) {
+
+                        Set<Map.Entry<String, PublishAttribute>> entries = values.entrySet();
+
+                        for (Map.Entry<String, PublishAttribute> entry : entries) {
+
+                            log.trace("" + entry.getKey() + " - " + entry.getValue().getValue());
+                        }
+                    }
+                }
+
+            } else {
+                log.trace("No resource found!");
+            }
+        }
+    }
 
 }

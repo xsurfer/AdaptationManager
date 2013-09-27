@@ -24,105 +24,108 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 7/10/13
+ * Created by: Fabio Perfetti
+ * E-mail: perfabio87@gmail.com
+ * Date: 7/10/13
  */
 public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory {
 
-   private static Log log = LogFactory.getLog(AutonomicManagerFactory.class);
+    private static Log log = LogFactory.getLog(AutonomicManagerFactory.class);
 
-   private ActuatorFactory actuatorFactory = new ActuatorFactory();
+    private ActuatorFactory actuatorFactory = new ActuatorFactory();
 
-   private State platformState = new State(PlatformState.RUNNING);
-   private Reconfigurator reconfigurator;
-   private PlatformTuning platformTuning = new PlatformTuning(Forecaster.ANALYTICAL, true);
-   private PlatformConfiguration platformConfiguration;
-   private Optimizer optimizer;
-   private SLAManager slaManager;
-   private WorkloadAnalyzer workloadAnalyzer;
+    private State platformState = new State(PlatformState.RUNNING);
+    private Reconfigurator reconfigurator;
+    private PlatformTuning platformTuning = new PlatformTuning(Forecaster.ANALYTICAL, true);
+    private PlatformConfiguration platformConfiguration;
+    private Optimizer optimizer;
+    private SLAManager slaManager;
+    private WorkloadAnalyzer workloadAnalyzer;
 
-   private WPMStatsManager wpmStatsManager;
+    private WPMStatsManager wpmStatsManager;
 
-   public AutonomicManagerFactory() {
-   }
-
-
-   public AutonomicManager build() {
-
-      AutonomicManager autonomicManager = new AutonomicManagerImpl(
-            platformState,
-            getPlatformConfiguration(),
-            platformTuning,
-            getStatsManager(),
-            getWorkloadAnalyzer(),
-            getOptimizer(),
-            getReconfigurator());
-
-      return autonomicManager;
-   }
-
-   public WPMStatsManager getStatsManager() {
-
-      if (wpmStatsManager == null) {
-         WPMStatsManagerFactory wpmStatsManagerFactory = new WPMStatsManagerFactory(getPlatformConfiguration());
-         wpmStatsManager = wpmStatsManagerFactory.build();
-      }
-
-      return wpmStatsManager;
-   }
-
-   @Override
-   public PlatformConfiguration getPlatformConfiguration() {
-      if (this.platformConfiguration == null) {
-         this.platformConfiguration = new PlatformConfiguration();
-      }
-      return this.platformConfiguration;
-   }
+    public AutonomicManagerFactory(){
+    }
 
 
-   @Override
-   public Reconfigurator getReconfigurator() {
-      if (this.reconfigurator == null) {
-         this.reconfigurator = new ReconfiguratorImpl(getPlatformConfiguration(), platformState, actuatorFactory.build());
-      }
-      return reconfigurator;
-   }
+    public AutonomicManager build(){
 
-   @Override
-   public Optimizer getOptimizer() {
+        AutonomicManager autonomicManager = new AutonomicManagerImpl(
+                platformState,
+                getPlatformConfiguration(),
+                platformTuning,
+                getStatsManager(),
+                getWorkloadAnalyzer(),
+                getOptimizer(),
+                getReconfigurator());
 
-      if (this.optimizer == null) {
-         List<OptimizerComponent> optimizerFilters = new ArrayList<OptimizerComponent>();
+        return autonomicManager;
+    }
+
+    public WPMStatsManager getStatsManager(){
+
+        if(wpmStatsManager==null){
+            WPMStatsManagerFactory wpmStatsManagerFactory = new WPMStatsManagerFactory( getPlatformConfiguration() );
+            wpmStatsManager = wpmStatsManagerFactory.build();
+        }
+
+        return wpmStatsManager;
+    }
+
+    @Override
+    public PlatformConfiguration getPlatformConfiguration() {
+        if( this.platformConfiguration == null ){
+            this.platformConfiguration = new PlatformConfiguration();
+        }
+        return this.platformConfiguration;
+    }
 
 
-         String platformOptimizerStr = Config.getInstance().getString(KeyConfig.ENVIRONMENT_SYSTEM_TYPE.key());
+    @Override
+    public Reconfigurator getReconfigurator() {
+        if( this.reconfigurator == null ){
+            this.reconfigurator = new ReconfiguratorImpl( getPlatformConfiguration(), platformState, actuatorFactory.build()  );
+        }
+        return reconfigurator;
+    }
 
-         AbstractPlatformOptimizer platformOptimizer = null;
-         if (platformOptimizerStr.equals("MULE")) {
-            log.trace("Platform Optimizer type: MulePlatformOptimizer");
-            platformOptimizer = new MulePlatformOptimizer(getPlatformConfiguration(), platformTuning);
-         }
+    @Override
+    public Optimizer getOptimizer() {
 
-         this.optimizer = new OptimizerImpl(platformOptimizer, new LAOptimizer());
-      }
-      return this.optimizer;
-   }
+        if( this.optimizer == null ){
+            List<OptimizerComponent> optimizerFilters = new ArrayList<OptimizerComponent>();
 
-   @Override
-   public SLAManager getSLAManager() {
-      if (this.slaManager == null) {
-         this.slaManager = new SLAManager();
-      }
-      return this.slaManager;
-   }
 
-   @Override
-   public WorkloadAnalyzer getWorkloadAnalyzer() {
-      if (this.workloadAnalyzer == null) {
-         WorkloadAnalyzerFactory workloadAnalyzerFactory = new WorkloadAnalyzerFactory((SampleProducer) getStatsManager(), getReconfigurator(), getOptimizer());
-         this.workloadAnalyzer = workloadAnalyzerFactory.build();
-      }
-      return this.workloadAnalyzer;
-   }
+            String platformOptimizerStr = Config.getInstance().getString( KeyConfig.ENVIRONMENT_SYSTEM_TYPE.key() );
+
+            AbstractPlatformOptimizer platformOptimizer = null;
+            if( platformOptimizerStr.equals("MULE") ){
+                log.trace("Platform Optimizer type: MulePlatformOptimizer");
+                platformOptimizer = new MulePlatformOptimizer(getPlatformConfiguration() ,platformTuning);
+            }
+
+            this.optimizer = new OptimizerImpl(platformOptimizer, new LAOptimizer());
+        }
+        return this.optimizer;
+    }
+
+    @Override
+    public SLAManager getSLAManager() {
+        if ( this.slaManager == null ){
+            this.slaManager = new SLAManager();
+        }
+        return this.slaManager;
+    }
+
+    @Override
+    public WorkloadAnalyzer getWorkloadAnalyzer() {
+        if( this.workloadAnalyzer == null ){
+            WorkloadAnalyzerFactory workloadAnalyzerFactory = new WorkloadAnalyzerFactory((SampleProducer) getStatsManager(), getReconfigurator(), getOptimizer());
+            this.workloadAnalyzer = workloadAnalyzerFactory.build();
+        }
+        return this.workloadAnalyzer;
+    }
+
 
 
 }

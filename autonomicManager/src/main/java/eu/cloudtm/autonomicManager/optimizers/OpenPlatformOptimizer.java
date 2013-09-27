@@ -9,32 +9,35 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 6/16/13
+ * Created by: Fabio Perfetti
+ * E-mail: perfabio87@gmail.com
+ * Date: 6/16/13
  */
 public class OpenPlatformOptimizer extends AbstractPlatformOptimizer {
 
-   private static Log log = LogFactory.getLog(OpenPlatformOptimizer.class);
+    private static Log log = LogFactory.getLog(OpenPlatformOptimizer.class);
 
-   private final static int ARRIVAL_RATE_GUARANTEE_PERC = 50;
-   private final static int ABORT_GUARANTEE_PERC = 5;
-   private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
+    private final static int ARRIVAL_RATE_GUARANTEE_PERC = 50;
+    private final static int ABORT_GUARANTEE_PERC = 5;
+    private final static int RESPONSE_TIME_GUARANTEE_PERC = 5;
 
-   private SLAManager slaManager;
+    private SLAManager slaManager;
 
-   public OpenPlatformOptimizer(SLAManager slaManager,
-                                PlatformConfiguration platformConfiguration,
-                                PlatformTuning platformTuning) {
-      super(platformConfiguration, platformTuning);
-      this.slaManager = slaManager;
-   }
+    public OpenPlatformOptimizer(SLAManager slaManager,
+                                 PlatformConfiguration platformConfiguration,
+                                 PlatformTuning platformTuning) {
+        super(platformConfiguration, platformTuning);
+        this.slaManager = slaManager;
+    }
 
-   @Override
-   public PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction) {
-      throw new RuntimeException("TO IMPLEMENT");
-   }
+    @Override
+    public PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction) {
+        throw new RuntimeException("TO IMPLEMENT");
+    }
 
 
 }
+
 
 
 // TODO: Cercare una configurazione valida per ogni classe transazionale (Read, Write) cioè che rispetta gli SLAs

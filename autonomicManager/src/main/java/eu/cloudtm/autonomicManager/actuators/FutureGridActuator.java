@@ -30,268 +30,271 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Author: Fabio Perfetti (perfabio87 [at] gmail.com) Date: 8/6/13 Time: 10:54 AM
+ * Author: Fabio Perfetti (perfabio87 [at] gmail.com)
+ * Date: 8/6/13
+ * Time: 10:54 AM
  */
 public class FutureGridActuator implements Actuator {
 
-   private static Log log = LogFactory.getLog(FutureGridActuator.class);
+    private static Log log = LogFactory.getLog(FutureGridActuator.class);
 
-   private JSch jsch = new JSch();
+    private JSch jsch=new JSch();
 
-   private final String user = "root";
+    private final String user = "root";
 
-   private final int sshPort = 22;
+    private final int sshPort = 22;
 
-   private final String privateKey = "~/.ssh/id_rsa";
+    private final String privateKey = "~/.ssh/id_rsa";
 
-   private Session session;
+    private Session session;
 
     /* FUTUREGRID */
 
-   private final Set<String> availableMachines = Collections.synchronizedSet(new HashSet<String>());
+    private final Set<String> availableMachines = Collections.synchronizedSet ( new HashSet<String>() );
 
-   private Set<String> runningMachines = Collections.synchronizedSet(new HashSet<String>());
+    private Set<String> runningMachines = Collections.synchronizedSet(new HashSet<String>());
 
-   protected final int jmxPort;
-
-
-   /* INFINISPAN CLIENT */
-   private final String ispnDomain;
-
-   private final String ispnCacheName;
+    protected final int jmxPort;
 
 
-   public FutureGridActuator(int jmxPort,
-                             String ispnDomain,
-                             String ispnCacheName,
-                             Set<String> availableMachines) {
-      this.jmxPort = jmxPort;
-      this.ispnDomain = ispnDomain;
-      this.ispnCacheName = ispnCacheName;
+    /* INFINISPAN CLIENT */
+    private final String ispnDomain;
 
-      this.availableMachines.addAll(availableMachines);
-      log.info("AvailableMachines: " + this.availableMachines.size());
-
-   }
-
-   @Override
-   public void stopApplication(String machine) throws ActuatorException {
-      // nop
-   }
-
-   @Override
-   public synchronized void stopInstance() throws ActuatorException {
-
-      final String command = Config.getInstance().getString(KeyConfig.FUTUREGRID_STOP_SCRIPT.key());
-      final String machine = runningMachines.iterator().next();
+    private final String ispnCacheName;
 
 
-      stopApplication(machine);
 
-      try {
-         Session session = createSession(machine);
-         executeCommand(session, command);
+    public FutureGridActuator(int jmxPort,
+                              String ispnDomain,
+                              String ispnCacheName,
+                              Set<String> availableMachines){
+        this.jmxPort = jmxPort;
+        this.ispnDomain = ispnDomain;
+        this.ispnCacheName = ispnCacheName;
 
-         if (runningMachines.remove(machine)) {
-            availableMachines.add(machine);
-         }
+        this.availableMachines.addAll(availableMachines);
+        log.info("AvailableMachines: " + this.availableMachines.size());
 
-         log.info("VM " + machine + " stopped!");
+    }
 
-      } catch (JSchException e) {
-         throw new ActuatorException(e);
-      } catch (IOException e) {
-         throw new ActuatorException(e);
-      }
+    @Override
+    public void stopApplication(String machine) throws ActuatorException {
+        // nop
+    }
 
-      log.info("available: " + availableMachines.size());
-   }
+    @Override
+    public synchronized void stopInstance() throws ActuatorException {
 
-   @Override
-   public synchronized void startInstance() throws ActuatorException {
-
-      final String command = Config.getInstance().getString(KeyConfig.FUTUREGRID_START_SCRIPT.key());
-      final String machine = availableMachines.iterator().next();
-
-      try {
-         Session session = createSession(machine);
-         executeCommand(session, command);
-
-         if (availableMachines.remove(machine)) {
-            runningMachines.add(machine);
-         }
-         log.info("VM " + machine + " started!");
+        final String command = Config.getInstance().getString( KeyConfig.FUTUREGRID_STOP_SCRIPT.key() );
+        final String machine = runningMachines.iterator().next();
 
 
-      } catch (JSchException e) {
-         throw new ActuatorException(e);
-      } catch (IOException e) {
-         throw new ActuatorException(e);
-      } finally {
-         session.disconnect();
-      }
+        stopApplication(machine);
 
-      log.info("available: " + availableMachines.size());
-   }
+        try {
+            Session session = createSession( machine );
+            executeCommand(session, command);
 
-   @Override
-   public synchronized List<String> runningInstances() {
-      return new ArrayList<String>(runningMachines);
-   }
+            if(runningMachines.remove(machine) ){
+                availableMachines.add(machine);
+            }
 
-   @Override
-   public void switchProtocol(ReplicationProtocol repProtocol) throws ActuatorException {
+            log.info("VM " + machine + " stopped!");
 
-      Set<InfinispanMachine> ispnMachines = null;
-      try {
-         ispnMachines = instacesToIspnMachines();
-      } catch (UnknownHostException e) {
-         throw new ActuatorException(e);
-      }
+        } catch (JSchException e) {
+            throw new ActuatorException(e);
+        } catch (IOException e) {
+            throw new ActuatorException(e);
+        }
 
-      if (ispnMachines.size() == 0) {
-         log.info("No instances. Skipping...");
-         return;
-      }
+        log.info("available: " + availableMachines.size());
+    }
 
-      InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
+    @Override
+    public synchronized void startInstance() throws ActuatorException {
 
-      try {
-         infinispanClient.triggerBlockingSwitchReplicationProtocol(repProtocol.getWpmValue(), false, false);
+        final String command = Config.getInstance().getString( KeyConfig.FUTUREGRID_START_SCRIPT.key() );
+        final String machine = availableMachines.iterator().next();
 
-      } catch (InvocationException e) {
-         throw new ActuatorException(e);
-      } catch (NoJmxProtocolRegisterException e) {
-         throw new ActuatorException(e);
-      }
-   }
+        try {
+            Session session = createSession( machine );
+            executeCommand(session, command);
 
-   @Override
-   public void switchDegree(int degree) throws ActuatorException {
-      Set<InfinispanMachine> ispnMachines = null;
-      try {
-         ispnMachines = instacesToIspnMachines();
-      } catch (UnknownHostException e) {
-         throw new ActuatorException(e);
-      }
-
-      if (ispnMachines.size() == 0) {
-         log.info("No instances. Skipping...");
-         return;
-      }
-
-      InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
-
-      try {
-         infinispanClient.triggerBlockingSwitchReplicationDegree(degree);
-
-      } catch (InvocationException e) {
-         ControllerLogger.log.warn(e);
-         throw new ActuatorException(e);
-      } catch (NoJmxProtocolRegisterException e) {
-         ControllerLogger.log.warn(e);
-         throw new ActuatorException(e);
-      }
-   }
-
-   @Override
-   public void triggerRebalancing(boolean enabled) throws ActuatorException {
-      Set<InfinispanMachine> ispnMachines = null;
-      try {
-         ispnMachines = instacesToIspnMachines();
-      } catch (UnknownHostException e) {
-         throw new ActuatorException(e);
-      }
-
-      if (ispnMachines.size() == 0) {
-         log.info("No instances. Skipping...");
-         return;
-      }
-
-      InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
-
-      try {
-         infinispanClient.triggerRebalancing(enabled);
-
-      } catch (InvocationException e) {
-         ControllerLogger.log.warn(e);
-         throw new ActuatorException(e);
-      } catch (NoJmxProtocolRegisterException e) {
-         ControllerLogger.log.warn(e);
-         throw new ActuatorException(e);
-      }
-   }
-
-   private Session createSession(String host) throws JSchException {
-
-      jsch.addIdentity(privateKey);
-      log.trace("identity added ");
-      session = jsch.getSession(user, host, sshPort);
-      log.trace("session created.");
-
-      java.util.Properties config = new java.util.Properties();
-      config.put("StrictHostKeyChecking", "no");
-      session.setConfig(config);
-
-      session.connect();
-      log.trace("session connected.....");
-
-      return session;
-   }
+            if(availableMachines.remove(machine) ){
+                runningMachines.add(machine);
+            }
+            log.info("VM " + machine + " started!");
 
 
-   private void executeCommand(Session session, String command) throws JSchException, IOException {
-      Channel channel = null;
-      channel = session.openChannel("exec");
-      ((ChannelExec) channel).setCommand(command);
+        } catch (JSchException e) {
+            throw new ActuatorException(e);
+        } catch (IOException e) {
+            throw new ActuatorException(e);
+        } finally {
+            session.disconnect();
+        }
 
-      // X Forwarding
-      // channel.setXForwarding(true);
+        log.info("available: " + availableMachines.size());
+    }
 
-      //channel.setInputStream(System.in);
-      channel.setInputStream(null);
+    @Override
+    public synchronized List<String> runningInstances() {
+        return new ArrayList<String>(runningMachines);
+    }
 
-      //channel.setOutputStream(System.out);
+    @Override
+    public void switchProtocol(ReplicationProtocol repProtocol) throws ActuatorException {
 
-      //FileOutputStream fos=new FileOutputStream("/tmp/stderr");
-      //((ChannelExec)channel).setErrStream(fos);
-      ((ChannelExec) channel).setErrStream(System.err);
+        Set<InfinispanMachine> ispnMachines = null;
+        try {
+            ispnMachines = instacesToIspnMachines();
+        } catch (UnknownHostException e) {
+            throw new ActuatorException(e);
+        }
 
-      InputStream in = null;
-      in = channel.getInputStream();
+        if(ispnMachines.size()==0){
+            log.info("No instances. Skipping...");
+            return;
+        }
 
-      channel.connect();
+        InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
 
-      byte[] tmp = new byte[1024];
-      while (true) {
-         while (in.available() > 0) {
-            int i = in.read(tmp, 0, 1024);
-            if (i < 0) break;
-            log.trace(new String(tmp, 0, i));
-         }
-         if (channel.isClosed()) {
-            log.trace("exit-status: " + channel.getExitStatus());
-            break;
-         }
-         try {
-            Thread.sleep(1000);
-         } catch (InterruptedException e) {
-            e.printStackTrace();
-         }
-      }
-      channel.disconnect();
-   }
+        try {
+            infinispanClient.triggerBlockingSwitchReplicationProtocol(repProtocol.getWpmValue(), false, false);
 
-   private Set<InfinispanMachine> instacesToIspnMachines() throws UnknownHostException {
-      Set<InfinispanMachine> ispnMachines = new HashSet<InfinispanMachine>();
-      for (String machine : runningInstances()) {
-         String hostname = InetAddress.getByName(machine).getHostName();
-         String address = machine;
-         log.info("Mapping FutureGrid instances to infinispan machines (" + hostname + ", " + address + ")");
+        } catch (InvocationException e) {
+            throw new ActuatorException(e);
+        } catch (NoJmxProtocolRegisterException e) {
+            throw new ActuatorException(e);
+        }
+    }
 
-         ispnMachines.add(new InfinispanMachine(hostname, jmxPort, address));
-      }
-      return ispnMachines;
-   }
+    @Override
+    public void switchDegree(int degree) throws ActuatorException {
+        Set<InfinispanMachine> ispnMachines = null;
+        try {
+            ispnMachines = instacesToIspnMachines();
+        } catch (UnknownHostException e) {
+            throw new ActuatorException(e);
+        }
+
+        if(ispnMachines.size()==0){
+            log.info("No instances. Skipping...");
+            return;
+        }
+
+        InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
+
+        try {
+            infinispanClient.triggerBlockingSwitchReplicationDegree(degree);
+
+        } catch (InvocationException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        } catch (NoJmxProtocolRegisterException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        }
+    }
+
+    @Override
+    public void triggerRebalancing(boolean enabled) throws ActuatorException {
+        Set<InfinispanMachine> ispnMachines = null;
+        try {
+            ispnMachines = instacesToIspnMachines();
+        } catch (UnknownHostException e) {
+            throw new ActuatorException(e);
+        }
+
+        if(ispnMachines.size()==0){
+            log.info("No instances. Skipping...");
+            return;
+        }
+
+        InfinispanClient infinispanClient = new InfinispanClientImpl(ispnMachines, ispnDomain, ispnCacheName);
+
+        try {
+            infinispanClient.triggerRebalancing(enabled);
+
+        } catch (InvocationException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        } catch (NoJmxProtocolRegisterException e) {
+            ControllerLogger.log.warn(e);
+            throw new ActuatorException(e);
+        }
+    }
+
+    private Session createSession(String host) throws JSchException {
+
+        jsch.addIdentity(privateKey);
+        log.trace("identity added ");
+        session = jsch.getSession(user, host, sshPort);
+        log.trace("session created.");
+
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+
+        session.connect();
+        log.trace("session connected.....");
+
+        return session;
+    }
+
+
+    private void executeCommand(Session session, String command) throws JSchException, IOException {
+        Channel channel= null;
+        channel = session.openChannel("exec");
+        ((ChannelExec)channel).setCommand(command);
+
+        // X Forwarding
+        // channel.setXForwarding(true);
+
+        //channel.setInputStream(System.in);
+        channel.setInputStream(null);
+
+        //channel.setOutputStream(System.out);
+
+        //FileOutputStream fos=new FileOutputStream("/tmp/stderr");
+        //((ChannelExec)channel).setErrStream(fos);
+        ((ChannelExec)channel).setErrStream(System.err);
+
+        InputStream in = null;
+        in = channel.getInputStream();
+
+        channel.connect();
+
+        byte[] tmp=new byte[1024];
+        while(true){
+            while(in.available()>0){
+                int i=in.read(tmp, 0, 1024);
+                if(i<0)break;
+                log.trace(new String(tmp, 0, i));
+            }
+            if(channel.isClosed()){
+                log.trace("exit-status: " + channel.getExitStatus());
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        channel.disconnect();
+    }
+
+    private Set<InfinispanMachine> instacesToIspnMachines() throws UnknownHostException {
+        Set<InfinispanMachine> ispnMachines = new HashSet<InfinispanMachine>();
+        for( String machine : runningInstances() ){
+            String hostname = InetAddress.getByName(machine).getHostName();
+            String address = machine;
+            log.info("Mapping FutureGrid instances to infinispan machines (" +  hostname + ", " + address + ")" );
+
+            ispnMachines.add( new InfinispanMachine(hostname, jmxPort, address) );
+        }
+        return ispnMachines;
+    }
 
 }

@@ -7,58 +7,59 @@ import java.util.LinkedHashMap;
 
 
 public class LAOptimizer implements OptimizerComponent {
-   private boolean clustered = false;
-   //private int numberOfClusters;//to be established through LDA+Silhouette optimization after calling the generateClustering
-   private int numberOfAvailableNodes;//number of available nodes for processing requests. to be updated at runtime
-   private LinkedHashMap<String, Integer> txClusterMap;// txID - clusterID map
-   private LinkedHashMap<Integer, Integer> txIDClusterMap;// LDA_tx_ID - clusterID map
-   private LinkedHashMap<String, Integer> txIDMap;// txID - LDA_tx_ID
-   private LinkedHashMap<String, Integer> domainIDMap;// domClass - LDA_DomClass_ID
-   private LinkedHashMap<Integer, String> reverseTxIDMap;// LDA_tx_ID - txID
-   private LinkedHashMap<Integer, String> reverseDomainIDMap;//  LDA_DomClass_ID - domClass
-   private LinkedHashMap<Integer, Float> clusterWeight;//normalized load (sum of all loads = 1) expected to be generated in every cluster
-   private LinkedHashMap<String, Integer> primaryDataClusters;// domClass - primary cluster ID
-   private LinkedHashMap<String, Integer> secondaryDataClusters;// domClass - secondary cluster ID
+    private boolean clustered = false;
+    //private int numberOfClusters;//to be established through LDA+Silhouette optimization after calling the generateClustering
+    private int numberOfAvailableNodes;//number of available nodes for processing requests. to be updated at runtime
+    private LinkedHashMap<String,Integer> txClusterMap;// txID - clusterID map
+    private LinkedHashMap<Integer,Integer> txIDClusterMap;// LDA_tx_ID - clusterID map
+    private LinkedHashMap<String,Integer> txIDMap;// txID - LDA_tx_ID
+    private LinkedHashMap<String,Integer> domainIDMap;// domClass - LDA_DomClass_ID
+    private LinkedHashMap<Integer,String> reverseTxIDMap;// LDA_tx_ID - txID
+    private LinkedHashMap<Integer,String> reverseDomainIDMap;//  LDA_DomClass_ID - domClass
+    private LinkedHashMap<Integer,Float> clusterWeight;//normalized load (sum of all loads = 1) expected to be generated in every cluster
+    private LinkedHashMap<String,Integer> primaryDataClusters;// domClass - primary cluster ID
+    private LinkedHashMap<String,Integer> secondaryDataClusters;// domClass - secondary cluster ID
 
 
-   @Override
-   public OptimizerType getType() {
-      return OptimizerType.AUTOPLACER;
-   }
 
-   @Override
-   public Object doOptimize(ProcessedSample processedSample, boolean purePrediction) {
-      LinkedHashMap<String, Integer> txInvokeFrequency = (LinkedHashMap<String, Integer>) processedSample.getEvaluatedParam(EvaluatedParam.TX_INVOKER_FREQUENCY);
-      LinkedHashMap<String, Float> txResponseTime = (LinkedHashMap<String, Float>) processedSample.getEvaluatedParam(EvaluatedParam.TX_RESPONSE_TIME);
-      LinkedHashMap<String, Float> txWeight = calculateTxWeight(txInvokeFrequency, txResponseTime);
-      int clusterID;
+    @Override
+    public OptimizerType getType() {
+        return OptimizerType.AUTOPLACER;
+    }
 
-      if (!clustered) {
-         generateClusters((LinkedHashMap<String, LinkedHashMap<String, Integer>>) processedSample.getEvaluatedParam(EvaluatedParam.DATA_ACCESS_FREQUENCIES));
-         clustered = true;
-      }
+    @Override
+    public Object doOptimize(ProcessedSample processedSample, boolean purePrediction) {
+        LinkedHashMap<String,Integer> txInvokeFrequency = (LinkedHashMap<String, Integer>) processedSample.getEvaluatedParam(EvaluatedParam.TX_INVOKER_FREQUENCY);
+        LinkedHashMap<String,Float> txResponseTime = (LinkedHashMap<String, Float>) processedSample.getEvaluatedParam(EvaluatedParam.TX_RESPONSE_TIME);
+        LinkedHashMap<String,Float> txWeight = calculateTxWeight(txInvokeFrequency, txResponseTime);
+        int clusterID;
 
-      clusterWeight = new LinkedHashMap<Integer, Float>();
+        if (!clustered) {
+            generateClusters((LinkedHashMap<String, LinkedHashMap<String, Integer>>) processedSample.getEvaluatedParam(EvaluatedParam.DATA_ACCESS_FREQUENCIES));
+            clustered = true;
+        }
 
-      for (String s : txWeight.keySet()) {
-         clusterID = txClusterMap.get(s);
-         if (clusterWeight.containsKey(clusterID))
-            clusterWeight.put(clusterID, clusterWeight.get(clusterID) + txWeight.get(s));
-         else clusterWeight.put(clusterID, txWeight.get(s));
-      }
-      //numberOfClusters = clusterWeight.size();
+        clusterWeight = new LinkedHashMap<Integer,Float>();
 
-      //LinkedHashMap<String,Integer> txIDMap; //transactionID - clusterID
-      //LinkedHashMap<Integer,Float> clusterWeight;  //clusterID - clusterWeight
+        for (String s : txWeight.keySet()) {
+            clusterID = txClusterMap.get(s);
+            if (clusterWeight.containsKey(clusterID)) clusterWeight.put(clusterID, clusterWeight.get(clusterID) + txWeight.get(s));
+            else clusterWeight.put(clusterID, txWeight.get(s));
+        }
+        //numberOfClusters = clusterWeight.size();
 
-
-      throw new RuntimeException("THIS METHOD SHOULD RETURN SOMETHING...ASK TO STOYAN!");
-
-   }
+        //LinkedHashMap<String,Integer> txIDMap; //transactionID - clusterID
+        //LinkedHashMap<Integer,Float> clusterWeight;  //clusterID - clusterWeight
 
 
-   //<TransactionID,<DomainClassID,AccessFrequency>>
-   private void generateClusters(LinkedHashMap<String, LinkedHashMap<String, Integer>> dataAccessFrequencies) {
+
+        throw new RuntimeException("THIS METHOD SHOULD RETURN SOMETHING...ASK TO STOYAN!");
+
+    }
+
+
+    //<TransactionID,<DomainClassID,AccessFrequency>>
+    private void generateClusters(LinkedHashMap<String,LinkedHashMap<String,Integer>> dataAccessFrequencies) {
 //        int txLDA = 0;
 //        int domainLDA = 1;
 //        int numberOfClusters = 0;
@@ -113,8 +114,8 @@ public class LAOptimizer implements OptimizerComponent {
 //            if (numberOfClusters <= (txIDClusterMap.get(t) + 1)) numberOfClusters = txIDClusterMap.get(t) + 1;
 //            t++;
 //        }
-      //System.out.println("There are " + numberOfClusters + " clusters.");
-   }
+        //System.out.println("There are " + numberOfClusters + " clusters.");
+    }
 
 
     /*
@@ -211,23 +212,23 @@ public class LAOptimizer implements OptimizerComponent {
 //        return result;
 //    }
 
-   private LinkedHashMap<String, Float> calculateTxWeight(LinkedHashMap<String, Integer> txInvokeFrequency, LinkedHashMap<String, Float> txResponseTime) {
-      LinkedHashMap<String, Float> normalizedWeight = new LinkedHashMap<String, Float>();
-      LinkedHashMap<String, Float> temp = new LinkedHashMap<String, Float>();
-      float totalWeight = 0;
-      float txWeight = 0;
+    private LinkedHashMap<String,Float> calculateTxWeight(LinkedHashMap<String,Integer> txInvokeFrequency, LinkedHashMap<String,Float> txResponseTime) {
+        LinkedHashMap<String,Float> normalizedWeight = new LinkedHashMap<String,Float>();
+        LinkedHashMap<String,Float> temp = new LinkedHashMap<String,Float>();
+        float totalWeight = 0;
+        float txWeight = 0;
 
-      for (String txID : txInvokeFrequency.keySet()) {
-         txWeight = (float) txInvokeFrequency.get(txID) * txResponseTime.get(txID);
-         totalWeight += txWeight;
-         temp.put(txID, txWeight);
-      }
+        for (String txID : txInvokeFrequency.keySet()) {
+            txWeight = (float)txInvokeFrequency.get(txID) * txResponseTime.get(txID);
+            totalWeight += txWeight;
+            temp.put(txID, txWeight);
+        }
 
-      for (String txID : txInvokeFrequency.keySet()) {
-         normalizedWeight.put(txID, temp.get(txID) / totalWeight);
-      }
+        for (String txID : txInvokeFrequency.keySet()) {
+            normalizedWeight.put(txID, temp.get(txID) / totalWeight);
+        }
 
-      return normalizedWeight;
-   }
+        return normalizedWeight;
+    }
 
 }

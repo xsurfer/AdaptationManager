@@ -16,243 +16,243 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 6/14/13
+ * Created by: Fabio Perfetti
+ * E-mail: perfabio87@gmail.com
+ * Date: 6/14/13
  */
 public class OracleServiceImpl implements OracleService {
 
-   private static Log log = LogFactory.getLog(OracleServiceImpl.class);
+    private static Log log = LogFactory.getLog(OracleServiceImpl.class);
 
-   protected int nodesMin = 2, nodesMax = 10; // TODO: da rendere parametrizzabili
+    protected int nodesMin = 2, nodesMax = 10; // TODO: da rendere parametrizzabili
 
-   protected int degreeMin = 2;
+    protected int degreeMin = 2;
 
-   private Oracle oracle;
+    private Oracle oracle;
 
-   private boolean dump = false;
+    private boolean dump = false;
 
-   public OracleServiceImpl(Oracle oracle) {
-      this.oracle = oracle;
-   }
+    public OracleServiceImpl(Oracle oracle){
+        this.oracle = oracle;
+    }
 
-   public PlatformConfiguration minimizeCosts(ProcessedSample sample,
-                                              double arrivalRateToGuarantee,
-                                              double abortRateToGuarantee,
-                                              double responseTimeToGuarantee)
-         throws OracleException {
+    public PlatformConfiguration minimizeCosts(ProcessedSample sample,
+                                                     double arrivalRateToGuarantee,
+                                                     double abortRateToGuarantee,
+                                                     double responseTimeToGuarantee)
+            throws OracleException {
 
-      PlatformConfiguration configuration = exploreAllCases(sample, arrivalRateToGuarantee, abortRateToGuarantee, responseTimeToGuarantee);
-      return configuration;
-   }
+        PlatformConfiguration configuration = exploreAllCases(sample, arrivalRateToGuarantee, abortRateToGuarantee, responseTimeToGuarantee);
+        return configuration;
+    }
 
-   private PlatformConfiguration exploreAllCases(ProcessedSample sample,
-                                                 double arrivalRateToGuarantee,
-                                                 double abortRateToGuarantee,
-                                                 double responseTimeToGuarantee) throws OracleException {
+    private PlatformConfiguration exploreAllCases(ProcessedSample sample,
+                                                  double arrivalRateToGuarantee,
+                                                  double abortRateToGuarantee,
+                                                  double responseTimeToGuarantee) throws OracleException{
 
-      PlatformConfiguration finalConfiguration = null;
-      boolean found = false;
-      int numNodes = nodesMin;
+        PlatformConfiguration finalConfiguration = null;
+        boolean found = false;
+        int numNodes= nodesMin;
 
-      while (numNodes <= nodesMax && !found) {
-         int repDegree = nodesMin;
-         while (repDegree <= numNodes && !found) {
-            for (ReplicationProtocol protocol : ReplicationProtocol.values()) {
+        while(numNodes<= nodesMax && !found){
+            int repDegree= nodesMin;
+            while(repDegree<=numNodes && !found){
+                for(ReplicationProtocol protocol : ReplicationProtocol.values()){
 
-               log.trace("Preparing query for <" + numNodes + ", " + repDegree + ", " + protocol + ">");
+                    log.trace("Preparing query for <" + numNodes + ", " + repDegree  + ", " + protocol + ">");
 
-               PlatformConfiguration currConf = new PlatformConfiguration(numNodes, repDegree, protocol);
-               OutputOracle outputOracle = doForecast(currConf, sample);
+                    PlatformConfiguration currConf = new PlatformConfiguration(numNodes, repDegree, protocol);
+                    OutputOracle outputOracle = doForecast(currConf, sample);
 
-               if (outputOracle.throughput(0) >= arrivalRateToGuarantee && outputOracle.abortRate(0) <= abortRateToGuarantee) {
-                  found = true;
-                  finalConfiguration = new PlatformConfiguration(numNodes, repDegree, protocol);
-                  break;
-               }
+                    if( outputOracle.throughput(0) >= arrivalRateToGuarantee && outputOracle.abortRate(0) <= abortRateToGuarantee ){
+                        found = true;
+                        finalConfiguration = new PlatformConfiguration(numNodes, repDegree, protocol);
+                        break;
+                    }
+                }
+                repDegree++;
             }
-            repDegree++;
-         }
-         numNodes++;
-      }
+            numNodes++;
+        }
 
-      return finalConfiguration;
-   }
+        return finalConfiguration;
+    }
 
 
-   @Override
-   public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
+    @Override
+    public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
 
-      PlatformConfiguration finalConfiguration = null;
-      boolean found = false;
-      double maxThroughput = 0;
+        PlatformConfiguration finalConfiguration = null;
+        boolean found = false;
+        double maxThroughput = 0;
 
-      int numNodes = nodesMin;
+        int numNodes= nodesMin;
 
-      while (numNodes <= nodesMax) {
-         int repDegree = nodesMin;
-         while (repDegree <= numNodes) {
-            for (ReplicationProtocol protocol : ReplicationProtocol.values()) {
+        while( numNodes<= nodesMax){
+            int repDegree= nodesMin;
+            while( repDegree<=numNodes ){
+                for(ReplicationProtocol protocol : ReplicationProtocol.values()){
 
-               log.trace("Preparing query for <" + numNodes + ", " + repDegree + ", " + protocol + ">");
+                    log.trace("Preparing query for <" + numNodes + ", " + repDegree  + ", " + protocol + ">");
 
-               PlatformConfiguration currConf = new PlatformConfiguration(numNodes, repDegree, protocol);
-               OutputOracle outputOracle = doForecast(currConf, sample);
+                    PlatformConfiguration currConf = new PlatformConfiguration(numNodes, repDegree, protocol);
+                    OutputOracle outputOracle = doForecast(currConf, sample);
 
-               if (outputOracle.throughput(0) > maxThroughput) {
-                  finalConfiguration = new PlatformConfiguration(numNodes, repDegree, protocol);
-               }
+                    if( outputOracle.throughput(0) > maxThroughput ){
+                        finalConfiguration = new PlatformConfiguration(numNodes, repDegree, protocol);
+                    }
+                }
+                repDegree++;
             }
-            repDegree++;
-         }
-         numNodes++;
-      }
-      return finalConfiguration;
-   }
+            numNodes++;
+        }
+        return finalConfiguration;
+    }
 
 
-   /**
-    * What-if with Protocols on X-axis
-    *
-    * @param sample
-    * @param fixedNodes
-    * @param fixedDegree
-    * @return
-    */
-   @Override
-   public final Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int fixedNodes, int fixedDegree) {
-      TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
-      if (fixedNodes <= 1)
-         throw new IllegalArgumentException("fixedDegree must be > 1");
-      if (fixedDegree > fixedNodes)
-         throw new IllegalArgumentException("fixedDegree must be >= fixedNodes");
 
-      for (ReplicationProtocol protocol : ReplicationProtocol.values()) {
+    /**
+     * What-if with Protocols on X-axis
+     * @param sample
+     * @param fixedNodes
+     * @param fixedDegree
+     * @return
+     */
+    @Override
+    public final Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int fixedNodes, int fixedDegree) {
+        TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
+        if(fixedNodes <= 1)
+            throw new IllegalArgumentException("fixedDegree must be > 1");
+        if(fixedDegree > fixedNodes)
+            throw new IllegalArgumentException("fixedDegree must be >= fixedNodes");
 
-         log.trace("Preparing query for <" + fixedNodes + ", " + fixedDegree + ", " + protocol + ">");
+        for( ReplicationProtocol protocol : ReplicationProtocol.values() ){
 
-         PlatformConfiguration currConf = new PlatformConfiguration(fixedNodes, fixedDegree, protocol);
-         OutputOracle currOutputOracle = doForecast(currConf, sample);
-         result.put(currConf, currOutputOracle);
-      }
-      return result;
+            log.trace("Preparing query for <" + fixedNodes + ", " + fixedDegree + ", " + protocol + ">");
 
-   }
+            PlatformConfiguration currConf = new PlatformConfiguration(fixedNodes, fixedDegree, protocol);
+            OutputOracle currOutputOracle = doForecast(currConf, sample);
+            result.put(currConf, currOutputOracle);
+        }
+        return result;
 
-   /**
-    * What-if with Degree on X-axis
-    *
-    * @param sample
-    * @param fixedNodes
-    * @param fixedProtocol
-    * @return
-    */
-   @Override
-   public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumDegree, int maxNumDegree,
-                                                          int fixedNodes, ReplicationProtocol fixedProtocol) {
+    }
 
-      TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
-      if (fixedNodes <= 1)
-         throw new IllegalArgumentException("fixedDegree must be > 0");
-      if (fixedProtocol == null)
-         throw new IllegalArgumentException("fixedProtocol must be not null");
+    /**
+     * What-if with Degree on X-axis
+     * @param sample
+     * @param fixedNodes
+     * @param fixedProtocol
+     * @return
+     */
+    @Override
+    public Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumDegree, int maxNumDegree,
+                                                           int fixedNodes, ReplicationProtocol fixedProtocol) {
 
-      if (minNumDegree < degreeMin) {
-         minNumDegree = degreeMin;
-      }
-      if (maxNumDegree > fixedNodes) {
-         maxNumDegree = fixedNodes;
-      }
+        TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
+        if(fixedNodes <= 1)
+            throw new IllegalArgumentException("fixedDegree must be > 0");
+        if(fixedProtocol == null)
+            throw new IllegalArgumentException("fixedProtocol must be not null");
 
-      for (int degree = minNumDegree; degree <= maxNumDegree; degree++) {
+        if( minNumDegree < degreeMin){
+            minNumDegree = degreeMin;
+        }
+        if( maxNumDegree > fixedNodes ){
+            maxNumDegree = fixedNodes;
+        }
 
-         log.trace("Preparing query for <" + fixedNodes + ", " + degree + ", " + fixedProtocol + ">");
+        for( int degree = minNumDegree; degree<=maxNumDegree; degree++){
 
-         PlatformConfiguration currConf = new PlatformConfiguration(fixedNodes, degree, fixedProtocol);
-         OutputOracle currOutputOracle = doForecast(currConf, sample);
-         result.put(currConf, currOutputOracle);
-      }
-      return result;
-   }
+            log.trace("Preparing query for <" + fixedNodes + ", " + degree  + ", " + fixedProtocol + ">");
 
-   /**
-    * What-if with Nodes on X-axis
-    *
-    * @param sample
-    * @param fixedProtocol
-    * @param fixedDegree
-    * @return
-    */
-   @Override
-   public final Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumNodes,
-                                                                int maxNumNodes, ReplicationProtocol fixedProtocol,
-                                                                int fixedDegree) {
+            PlatformConfiguration currConf = new PlatformConfiguration(fixedNodes, degree, fixedProtocol);
+            OutputOracle currOutputOracle = doForecast(currConf, sample);
+            result.put(currConf, currOutputOracle);
+        }
+        return result;
+    }
 
-      TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
-      if (fixedDegree <= 0)
-         throw new IllegalArgumentException("fixedDegree must be > 0");
-      if (fixedProtocol == null)
-         throw new IllegalArgumentException("fixedDegree must be not null");
+    /**
+     * What-if with Nodes on X-axis
+     * @param sample
+     * @param fixedProtocol
+     * @param fixedDegree
+     * @return
+     */
+    @Override
+    public final Map<PlatformConfiguration, OutputOracle> whatIf(ProcessedSample sample, int minNumNodes,
+                                                                 int maxNumNodes, ReplicationProtocol fixedProtocol,
+                                                                 int fixedDegree) {
 
-      if (minNumNodes < nodesMin) {
-         minNumNodes = nodesMin;
-      }
-      if (maxNumNodes > nodesMax) {
-         maxNumNodes = nodesMax;
-      }
+        TreeMap<PlatformConfiguration, OutputOracle> result = new TreeMap<PlatformConfiguration, OutputOracle>();
+        if(fixedDegree <= 0)
+            throw new IllegalArgumentException("fixedDegree must be > 0");
+        if(fixedProtocol == null)
+            throw new IllegalArgumentException("fixedDegree must be not null");
 
-      int degree = 0;
-      for (int nodes = minNumNodes; nodes <= maxNumNodes; nodes++) {
+        if( minNumNodes < nodesMin){
+            minNumNodes = nodesMin;
+        }
+        if( maxNumNodes > nodesMax ){
+            maxNumNodes = nodesMax;
+        }
 
-         if (fixedDegree > nodes) {
-            degree = nodes;
-         } else {
-            degree = fixedDegree;
-         }
+        int degree = 0;
+        for( int nodes = minNumNodes; nodes<= maxNumNodes; nodes++){
 
-         log.trace("Preparing query for <" + nodes + ", " + degree + ", " + fixedProtocol + ">");
+            if(fixedDegree > nodes ){
+                degree = nodes;
+            } else {
+                degree = fixedDegree;
+            }
 
-         PlatformConfiguration currConf = new PlatformConfiguration(nodes, degree, fixedProtocol);
-         OutputOracle currOutputOracle = doForecast(currConf, sample);
-         result.put(currConf, currOutputOracle);
-      }
-      return result;
-   }
+            log.trace("Preparing query for <" + nodes + ", " + degree  + ", " + fixedProtocol + ">");
+
+            PlatformConfiguration currConf = new PlatformConfiguration(nodes, degree, fixedProtocol);
+            OutputOracle currOutputOracle = doForecast(currConf, sample);
+            result.put(currConf, currOutputOracle);
+        }
+        return result;
+    }
 
 
-   protected OutputOracle doForecast(PlatformConfiguration currConf, ProcessedSample sample) {
+    protected OutputOracle doForecast(PlatformConfiguration currConf, ProcessedSample sample){
 
-      Map<ForecastParam, Object> forecastParam = new HashMap<ForecastParam, Object>();
-      forecastParam.put(ForecastParam.NumNodes, currConf.platformSize());
-      forecastParam.put(ForecastParam.ReplicationDegree, currConf.replicationDegree());
-      forecastParam.put(ForecastParam.ReplicationProtocol, currConf.replicationProtocol());
+        Map<ForecastParam, Object> forecastParam = new HashMap<ForecastParam, Object>();
+        forecastParam.put(ForecastParam.NumNodes, currConf.platformSize() );
+        forecastParam.put(ForecastParam.ReplicationDegree, currConf.replicationDegree() );
+        forecastParam.put(ForecastParam.ReplicationProtocol, currConf.replicationProtocol() );
 
-      InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParam);
+        InputOracleWPM inputOracle = new InputOracleWPM(sample, forecastParam);
 
-      if (dump) {
-         WPMInputOracleDumper dumper = new WPMInputOracleDumper(inputOracle);
-         try {
-            dumper.dump("dump_nodes_" + currConf.platformSize());
-         } catch (ParserConfigurationException e) {
-            log.warn(e, e);
-            throw new RuntimeException(e);
-         } catch (TransformerException e) {
-            log.warn(e, e);
-            throw new RuntimeException(e);
-         }
-      }
+        if(dump){
+            WPMInputOracleDumper dumper = new WPMInputOracleDumper(inputOracle);
+            try {
+                dumper.dump("dump_nodes_" + currConf.platformSize());
+            } catch (ParserConfigurationException e) {
+                log.warn(e,e);
+                throw new RuntimeException(e);
+            } catch (TransformerException e) {
+                log.warn(e,e);
+                throw new RuntimeException(e);
+            }
+        }
 
-      OutputOracle currOutputOracle = null;
-      try {
-         log.info("Forecasting for " + currConf);
-         currOutputOracle = oracle.forecast(inputOracle);
-      } catch (OracleException e) {
-         log.warn("An error occured during the forecasting. The configuration " + currConf + " will be skipped!");
+        OutputOracle currOutputOracle = null;
+        try {
+            log.info("Forecasting for " + currConf);
+            currOutputOracle = oracle.forecast(inputOracle);
+        } catch (OracleException e) {
+            log.warn("An error occured during the forecasting. The configuration " + currConf + " will be skipped!");
 
-         if (log.isDebugEnabled()) {
-            log.debug(e, e);
-         }
-      }
-      return currOutputOracle;
-   }
+            if(log.isDebugEnabled()){
+                log.debug(e,e);
+            }
+        }
+        return currOutputOracle;
+    }
 
 
 }

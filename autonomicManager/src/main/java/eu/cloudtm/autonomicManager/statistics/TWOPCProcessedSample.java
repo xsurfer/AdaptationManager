@@ -4,17 +4,20 @@ package eu.cloudtm.autonomicManager.statistics;
 import java.util.Random;
 
 /**
- * Created with IntelliJ IDEA. User: fabio Date: 7/8/13 Time: 8:38 PM To change this template use File | Settings | File
- * Templates.
+ * Created with IntelliJ IDEA.
+ * User: fabio
+ * Date: 7/8/13
+ * Time: 8:38 PM
+ * To change this template use File | Settings | File Templates.
  */
 public class TWOPCProcessedSample extends ProcessedSample {
 
-   public TWOPCProcessedSample(Sample sample) {
-      super(sample);
-   }
+    public TWOPCProcessedSample(Sample sample) {
+        super(sample);
+    }
 
-   @Override
-   public Double getACF() {
+    @Override
+    public Double getACF() {
 
 //        double PaoloLocalTakenLocks = (Long) getParam(Param.PaoloLocalTakenLocks);
 //        double NumPuts = (Double) getParam(Param.NumPuts);
@@ -32,10 +35,10 @@ public class TWOPCProcessedSample extends ProcessedSample {
 //                PaoloRemoteTakenLocks,
 //                threads,
 //                timeWindow).evaluate();
-      Random rnd = new Random();
+        Random rnd = new Random();
 
-      //return rnd.nextDouble();
-      return 0.0D;
-   }
+        //return rnd.nextDouble();
+        return 0.0D;
+    }
 
 }

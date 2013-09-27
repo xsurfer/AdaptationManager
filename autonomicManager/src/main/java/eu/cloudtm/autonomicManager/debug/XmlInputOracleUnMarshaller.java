@@ -151,7 +151,7 @@ public class XmlInputOracleUnMarshaller {
       if (clazz.equals(Double.class))
          return Double.parseDouble(value);
       if (clazz.equals(eu.cloudtm.autonomicManager.commons.ReplicationProtocol.class))
-         return ReplicationProtocol.valueOf(value);
+         return  ReplicationProtocol.valueOf(value);
       throw new IllegalArgumentException(value + " is not a String or a int,long or double");
    }
 

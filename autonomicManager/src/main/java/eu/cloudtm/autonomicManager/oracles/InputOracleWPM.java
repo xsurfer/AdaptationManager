@@ -9,7 +9,9 @@ import eu.cloudtm.autonomicManager.statistics.Sample;
 import java.util.Map;
 
 /**
- * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 7/10/13
+ * Created by: Fabio Perfetti
+ * E-mail: perfabio87@gmail.com
+ * Date: 7/10/13
  */
 public class InputOracleWPM implements InputOracle {
 
