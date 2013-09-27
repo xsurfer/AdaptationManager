@@ -48,6 +48,8 @@ public class ReconfiguratorImpl implements Reconfigurator {
 
     private ReentrantLock reconfigurationLock = new ReentrantLock();
 
+    private final int rebalanceSleep = Config.getInstance().getInt( KeyConfig.RECONFIGURATOR_SLEEP_REBALANCING.key() );
+
     public ReconfiguratorImpl(PlatformConfiguration current, State platformState, IActuator actuator) {
         this.current = current;
         this.platformState = platformState;
@@ -91,7 +93,6 @@ public class ReconfiguratorImpl implements Reconfigurator {
     private void start(){
         ControllerLogger.log.info("#####################");
         ControllerLogger.log.info("Starting a new reconfigurarion request");
-        //ControllerLogger.log.info(request);
         ControllerLogger.log.info("#####################");
 
         try{
@@ -136,63 +137,87 @@ public class ReconfiguratorImpl implements Reconfigurator {
     }
 
 
+   private void changeReplicationDegreeIfNeeded(PlatformConfiguration platformRequest) throws ReconfiguratorException{
+      int current,target;
+      current = this.current.replicationDegree();
+      target = platformRequest.replicationDegree();
+      if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_DEGREE.key() )  && (current!=target)){
+         ControllerLogger.log.info("Reconfiguring replication degree from " + current + " to " + target );
+         reconfigureDegree(target);
+         current = this.current.replicationDegree();
+         ControllerLogger.log.info("Replication degree successfully switched to " + target + " !" );
+
+      } else {
+         ControllerLogger.log.info("Skipping reconfiguring replication degree");
+      }
+   }
+
+   private void changeScaleIfNeeded(PlatformConfiguration platformRequest) throws ReconfiguratorException{
+      int current,target;
+      current = this.current.platformSize();
+      target = platformRequest.platformSize();
+      if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_NODES.key() ) ){
+         ControllerLogger.log.info("Reconfiguring scale from " + current + " to " + target + " nodes");
+         reconfigureSize(platformRequest.platformSize());
+         ControllerLogger.log.info("Scale successfully switched to " + target + " !" );
+      } else {
+         ControllerLogger.log.info("Skipping reconfiguring scale");
+      }
+   }
+
+   private void changeReplicationProtocolIfNeeded(PlatformConfiguration platformRequest) throws ReconfiguratorException{
+      ReplicationProtocol current = this.current.replicationProtocol();
+      ReplicationProtocol target = platformRequest.replicationProtocol();
+      if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_PROTOCOL.key() ) && !(target.equals(current)) ){
+         ControllerLogger.log.info("Reconfiguring protocol");
+         reconfigureProtocol(platformRequest.replicationProtocol());
+         ControllerLogger.log.info("Replication protocol successfully switched to " + target + " !" );
+      } else {
+         ControllerLogger.log.info("Skipping replication protocol");
+      }
+   }
+
+   private void triggerRebalanceIfNeeded(boolean trigger) throws ReconfiguratorException{
+      final String enabled = trigger?"State transfer enabled..":"State transfer disabled...";
+      final String bool = trigger?"(true)":"(false)";
+      if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_SWITCH_REBALANCING.key() ) ){
+         try {
+            actuator.triggerRebalancing(trigger);
+            if(log.isInfoEnabled())
+               log.info(enabled);
+         } catch (ActuatorException e) {
+            throw new ReconfiguratorException(e);
+         }
+      } else {
+         ControllerLogger.log.info("Skipping triggerRebalancing"+bool+" because disabled!");
+      }
+   }
+
+
+   //Given that the exception is not handled...
+   private void sleep(int msecToSleep){
+      log.info("Waiting 10 secs");
+      try {
+         Thread.sleep(msecToSleep);
+      } catch (InterruptedException e) {
+         log.warn("Thread Interrupted!");
+      }
+   }
+
     private void platformReconfiguration(PlatformConfiguration platformRequest) throws ReconfiguratorException {
 
+       triggerRebalanceIfNeeded(false);
 
-        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_SWITCH_REBALANCING.key() ) ){
-            try {
-                actuator.triggerRebalancing(false);
-                log.info("State transfer disabled..");
-            } catch (ActuatorException e) {
-                throw new ReconfiguratorException(e);
-            }
-        } else {
-            ControllerLogger.log.info("Skipping triggerRebalancing(false) because disabled!");
-        }
+       changeReplicationDegreeIfNeeded(platformRequest);
 
-        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_DEGREE.key() ) ){
-            ControllerLogger.log.info("Reconfiguring replication degree from " + current.replicationDegree() + " to " + platformRequest.replicationDegree() );
-            reconfigureDegree(platformRequest.replicationDegree());
-            ControllerLogger.log.info("Replication degree successfully switched to " + platformRequest.replicationDegree() + " !" );
-        } else {
-            ControllerLogger.log.info("Skipping reconfiguring replication degree because disabled!");
-        }
-
-        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_NODES.key() ) ){
-            ControllerLogger.log.info("Reconfiguring scale from " + current.platformSize() + " to " + platformRequest.platformSize() + " nodes");
-            reconfigureSize(platformRequest.platformSize());
-            ControllerLogger.log.info("Scale successfully switched to " + platformRequest.platformSize() + " !" );
-        } else {
-            ControllerLogger.log.info("Skipping reconfiguring scale because disabled!");
-        }
+       changeScaleIfNeeded(platformRequest);
 
         // TODO CHECK THE NUM NODEs
-        log.info("Waiting 10 secs");
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            log.warn("Thread Interrupted!");
-        }
+        sleep(rebalanceSleep);
 
-        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_SWITCH_REBALANCING.key() ) ){
-            try {
-                actuator.triggerRebalancing(true);
-                log.info("State transfer enabled..");
-            } catch (ActuatorException e) {
-                throw new ReconfiguratorException(e);
-            }
-        } else {
-            ControllerLogger.log.info("Skipping triggerRebalancing(false) because disabled!");
-        }
+       triggerRebalanceIfNeeded(true);
 
-
-        if( Config.getInstance().getBoolean( KeyConfig.RECONFIGURATOR_RECONFIGURE_PROTOCOL.key() ) ){
-            ControllerLogger.log.info("Reconfiguring protocol");
-            reconfigureProtocol(platformRequest.replicationProtocol());
-            ControllerLogger.log.info("Replication protocol successfully switched to " + platformRequest.replicationProtocol() + " !" );
-        } else {
-            ControllerLogger.log.info("Skipping replication protocol because disabled!");
-        }
+       changeReplicationProtocolIfNeeded(platformRequest);
 
 
         ControllerLogger.log.info("Updating Current Configuration");
@@ -209,10 +234,10 @@ public class ReconfiguratorImpl implements Reconfigurator {
         //ControllerLogger.log.info("To change: " + numInstancesToChange );
 
 
-
         if(numInstancesToChange>0){
             while ( numInstancesToChange-- > 0 ){
                 try {
+                    ControllerLogger.log.trace(numInstancesToChange+ " instances(s) more to be started...");
                     actuator.startInstance();
                 } catch (ActuatorException e) {
                     throw new ReconfiguratorException(e);
@@ -221,6 +246,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
         } else if(numInstancesToChange < 0){
             while ( numInstancesToChange++ < 0 ){
                 try {
+                   ControllerLogger.log.trace(-numInstancesToChange+ " instances(s) more to be stopped...");
                     actuator.stopInstance();
                 } catch (ActuatorException e) {
                     throw new ReconfiguratorException(e);

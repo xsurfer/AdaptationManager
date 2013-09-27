@@ -59,6 +59,8 @@ public enum KeyConfig {
     FUTUREGRID_START_SCRIPT("futuregrid.startScript"),
     FUTUREGRID_STOP_SCRIPT("futuregrid.stopScript"),
 
+    INITIAL_NUM_NODES("initial.numNodes"),      //DIE
+
 
     /* ******* RECONFIGURATOR ******* */
 
@@ -66,6 +68,7 @@ public enum KeyConfig {
     RECONFIGURATOR_SIMULATE("reconfigurator.simulate"),
 
     RECONFIGURATOR_SWITCH_REBALANCING ("reconfigurator.switchRebalancing"),
+    RECONFIGURATOR_SLEEP_REBALANCING ("reconfigurator.sleepRebalancing"),    //DIE
     RECONFIGURATOR_RECONFIGURE_NODES("reconfigurator.reconfigureNodes"),
     RECONFIGURATOR_RECONFIGURE_DEGREE("reconfigurator.reconfigureDegree"),
     RECONFIGURATOR_RECONFIGURE_PROTOCOL("reconfigurator.reconfigureProtocol"),
@@ -82,6 +85,8 @@ public enum KeyConfig {
     FORECASTER_ANALYTICAL("forecaster.analytical"),
     FORECASTER_SIMULATOR("forecaster.simulator"),
     FORECASTER_MACHINE_LEARNING("forecaster.machineLearning"),
+
+   FILE_HOSTNAME("file.hostnames")
 
     ;
 
