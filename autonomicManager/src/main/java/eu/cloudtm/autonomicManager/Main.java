@@ -6,30 +6,28 @@ import org.apache.log4j.PropertyConfigurator;
 import java.io.IOException;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
- * Date: 6/5/13
+ * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 6/5/13
  */
 public class Main {
 
-    public static void main(String[] args) {
+   public static void main(String[] args) {
 
-        PropertyConfigurator.configure("config/log4j.properties");
+      PropertyConfigurator.configure("config/log4j.properties");
 
-        AutonomicManagerFactory appFactory = new AutonomicManagerFactory();
-        AutonomicManager autonomicManager = appFactory.build();
+      AutonomicManagerFactory appFactory = new AutonomicManagerFactory();
+      AutonomicManager autonomicManager = appFactory.build();
 
-        RESTServer restServer = new RESTServer(autonomicManager);
-        try {
-            restServer.startServer();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+      RESTServer restServer = new RESTServer(autonomicManager);
+      try {
+         restServer.startServer();
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
 
-        Console console = new Console(autonomicManager);
-        console.menu();
-        System.out.println("Main ended!");
-        System.exit(0);
+      Console console = new Console(autonomicManager);
+      console.menu();
+      System.out.println("Main ended!");
+      System.exit(0);
 
-    }
+   }
 }

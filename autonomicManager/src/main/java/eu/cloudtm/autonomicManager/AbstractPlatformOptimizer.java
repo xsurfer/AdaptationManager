@@ -10,52 +10,50 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
- * Date: 6/16/13
+ * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 6/16/13
  */
 public abstract class AbstractPlatformOptimizer implements OptimizerComponent<PlatformConfiguration> {
 
-    private static Log log = LogFactory.getLog(AbstractPlatformOptimizer.class);
+   private static Log log = LogFactory.getLog(AbstractPlatformOptimizer.class);
 
-    protected PlatformTuning platformTuning;
-    protected PlatformConfiguration platformConfiguration;
-
-
-    public AbstractPlatformOptimizer(PlatformConfiguration platformConfiguration,
-                                     PlatformTuning platformTuning){
-        this.platformTuning = platformTuning;
-        this.platformConfiguration = platformConfiguration;
-    }
-
-    @Override
-    public PlatformConfiguration doOptimize(ProcessedSample sample, boolean purePrediction) {
-        if(!purePrediction){
-            if(!platformTuning.forecaster().isAutoTuning()){
-                return null;
-            }
-        }
-        return optimize(sample, purePrediction);
-    }
-
-    protected abstract PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction);
+   protected PlatformTuning platformTuning;
+   protected PlatformConfiguration platformConfiguration;
 
 
-    protected PlatformConfiguration createNextConfig(PlatformConfiguration forecastedConfig){
-        int size, repDegree;
-        ReplicationProtocol repProt;
+   public AbstractPlatformOptimizer(PlatformConfiguration platformConfiguration,
+                                    PlatformTuning platformTuning) {
+      this.platformTuning = platformTuning;
+      this.platformConfiguration = platformConfiguration;
+   }
 
-        size = (!platformTuning.isAutoScale()) ? platformConfiguration.platformSize() : forecastedConfig.platformSize();
-        repDegree = (!platformTuning.isAutoDegree()) ? platformConfiguration.replicationDegree() : forecastedConfig.replicationDegree();
-        repProt = (!platformTuning.isAutoProtocol()) ? platformConfiguration.replicationProtocol() : forecastedConfig.replicationProtocol();
+   @Override
+   public PlatformConfiguration doOptimize(ProcessedSample sample, boolean purePrediction) {
+      if (!purePrediction) {
+         if (!platformTuning.forecaster().isAutoTuning()) {
+            return null;
+         }
+      }
+      return optimize(sample, purePrediction);
+   }
 
-        return new PlatformConfiguration(size, repDegree, repProt);
-    }
+   protected abstract PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction);
 
-    @Override
-    public final OptimizerType getType() {
-        return OptimizerType.PLATFORM;
-    }
+
+   protected PlatformConfiguration createNextConfig(PlatformConfiguration forecastedConfig) {
+      int size, repDegree;
+      ReplicationProtocol repProt;
+
+      size = (!platformTuning.isAutoScale()) ? platformConfiguration.platformSize() : forecastedConfig.platformSize();
+      repDegree = (!platformTuning.isAutoDegree()) ? platformConfiguration.replicationDegree() : forecastedConfig.replicationDegree();
+      repProt = (!platformTuning.isAutoProtocol()) ? platformConfiguration.replicationProtocol() : forecastedConfig.replicationProtocol();
+
+      return new PlatformConfiguration(size, repDegree, repProt);
+   }
+
+   @Override
+   public final OptimizerType getType() {
+      return OptimizerType.PLATFORM;
+   }
 
 }
 

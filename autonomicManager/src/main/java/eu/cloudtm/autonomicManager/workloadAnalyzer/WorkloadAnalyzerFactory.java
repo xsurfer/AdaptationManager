@@ -14,91 +14,89 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: Fabio Perfetti perfabio87 [at] gmail.com
- * Date: 7/19/13
- * Time: 1:49 PM
+ * User: Fabio Perfetti perfabio87 [at] gmail.com Date: 7/19/13 Time: 1:49 PM
  */
 public class WorkloadAnalyzerFactory {
 
-    private static Log log = LogFactory.getLog(WorkloadAnalyzerFactory.class);
+   private static Log log = LogFactory.getLog(WorkloadAnalyzerFactory.class);
 
-    private double delta = Config.getInstance().getDouble( KeyConfig.CHANGE_DETECTOR_DELTA.key() );
+   private double delta = Config.getInstance().getDouble(KeyConfig.CHANGE_DETECTOR_DELTA.key());
 
-    private SampleProducer statsManager;
-    private Reconfigurator reconfigurator;
-    private Optimizer optimizer;
+   private SampleProducer statsManager;
+   private Reconfigurator reconfigurator;
+   private Optimizer optimizer;
 
-    Map<Param, Double> param2delta = new HashMap<Param, Double>(){{
-        log.warn("TODO read params from config file");
+   Map<Param, Double> param2delta = new HashMap<Param, Double>() {{
+      log.warn("TODO read params from config file");
 
-        log.trace("CHANGE DETECTOR MONITOR:");
-        log.trace("Param.AvgNumPutsBySuccessfulLocalTx, " + delta);
-        put(Param.AvgNumPutsBySuccessfulLocalTx, delta);
+      log.trace("CHANGE DETECTOR MONITOR:");
+      log.trace("Param.AvgNumPutsBySuccessfulLocalTx, " + delta);
+      put(Param.AvgNumPutsBySuccessfulLocalTx, delta);
 
-        log.trace("Param.PercentageSuccessWriteTransactions, " + delta);
-        put(Param.PercentageSuccessWriteTransactions, delta);
+      log.trace("Param.PercentageSuccessWriteTransactions, " + delta);
+      put(Param.PercentageSuccessWriteTransactions, delta);
 
-        log.trace("Param.LocalUpdateTxLocalServiceTime, " + delta);
-        put(Param.LocalUpdateTxLocalServiceTime, delta);
+      log.trace("Param.LocalUpdateTxLocalServiceTime, " + delta);
+      put(Param.LocalUpdateTxLocalServiceTime, delta);
 
-        log.trace("Param.LocalReadOnlyTxLocalServiceTime, " + delta);
-        put(Param.LocalReadOnlyTxLocalServiceTime, delta);
+      log.trace("Param.LocalReadOnlyTxLocalServiceTime, " + delta);
+      put(Param.LocalReadOnlyTxLocalServiceTime, delta);
 
-        log.trace("Param.AvgGetsPerWrTransaction, " + delta);
-        put(Param.AvgGetsPerWrTransaction, delta);
+      log.trace("Param.AvgGetsPerWrTransaction, " + delta);
+      put(Param.AvgGetsPerWrTransaction, delta);
 
-        log.trace("Param.AvgGetsPerROTransaction, " + delta);
-        put(Param.AvgGetsPerROTransaction, delta);
-    }};
+      log.trace("Param.AvgGetsPerROTransaction, " + delta);
+      put(Param.AvgGetsPerROTransaction, delta);
+   }};
 
-    Map<EvaluatedParam, Double> evaluatedParam2delta = new HashMap<EvaluatedParam, Double>(){{
-        log.trace("Param.ACF, " + delta);
-        put(EvaluatedParam.ACF, delta);
-    }};
+   Map<EvaluatedParam, Double> evaluatedParam2delta = new HashMap<EvaluatedParam, Double>() {{
+      log.trace("Param.ACF, " + delta);
+      put(EvaluatedParam.ACF, delta);
+   }};
 
-    public WorkloadAnalyzerFactory(SampleProducer statsManager,
-                                    Reconfigurator reconfigurator,
-                                    Optimizer optimizer){
-        this.statsManager = statsManager;
-        this.reconfigurator = reconfigurator;
-        this.optimizer = optimizer;
+   public WorkloadAnalyzerFactory(SampleProducer statsManager,
+                                  Reconfigurator reconfigurator,
+                                  Optimizer optimizer) {
+      this.statsManager = statsManager;
+      this.reconfigurator = reconfigurator;
+      this.optimizer = optimizer;
 
-    }
+   }
 
-    public WorkloadAnalyzer build(){
+   public WorkloadAnalyzer build() {
 
-        WorkloadForecaster workloadForecaster = new WorkloadForecaster(
-                param2delta.keySet(),
-                evaluatedParam2delta.keySet()
-        );
+      WorkloadForecaster workloadForecaster = new WorkloadForecaster(
+            param2delta.keySet(),
+            evaluatedParam2delta.keySet()
+      );
 
-        AbstractChangeDetector proactiveChangeDetector = new ProactiveChangeDetector(
-                param2delta,
-                evaluatedParam2delta,
-                workloadForecaster
-        );
+      AbstractChangeDetector proactiveChangeDetector = new ProactiveChangeDetector(
+            param2delta,
+            evaluatedParam2delta,
+            workloadForecaster
+      );
 
-        AbstractChangeDetector reactiveChangeDetector = new ReactiveChangeDetector(
-                param2delta,
-                evaluatedParam2delta
-        );
+      AbstractChangeDetector reactiveChangeDetector = new ReactiveChangeDetector(
+            param2delta,
+            evaluatedParam2delta
+      );
 
 
-        String policy = Config.getInstance().getString(KeyConfig.ALERT_MANAGER_POLICY.key());
-        AbstractAlertManager alertManager = AbstractAlertManager.createInstance(policy, optimizer, reconfigurator);
+      String policy = Config.getInstance().getString(KeyConfig.ALERT_MANAGER_POLICY.key());
+      AbstractAlertManager alertManager = AbstractAlertManager.createInstance(policy, optimizer, reconfigurator);
 
-        proactiveChangeDetector.addEventListener(alertManager);
-        reactiveChangeDetector.addEventListener(alertManager);
+      proactiveChangeDetector.addEventListener(alertManager);
+      reactiveChangeDetector.addEventListener(alertManager);
 
-        boolean enabled = Config.getInstance().getBoolean(KeyConfig.WORKLOAD_ANALYZER_AUTOSTART.key());
+      boolean enabled = Config.getInstance().getBoolean(KeyConfig.WORKLOAD_ANALYZER_AUTOSTART.key());
 
-        WorkloadAnalyzer workloadAnalyzer = new WorkloadAnalyzer(enabled,
-                statsManager,
-                reactiveChangeDetector,
-                proactiveChangeDetector,
-                alertManager);
+      WorkloadAnalyzer workloadAnalyzer = new WorkloadAnalyzer(enabled,
+                                                               statsManager,
+                                                               reactiveChangeDetector,
+                                                               proactiveChangeDetector,
+                                                               alertManager);
 
-        return workloadAnalyzer;
-    }
+      return workloadAnalyzer;
+   }
 
 }

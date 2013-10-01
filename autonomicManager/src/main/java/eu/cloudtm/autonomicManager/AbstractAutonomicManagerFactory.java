@@ -4,24 +4,21 @@ import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.workloadAnalyzer.WorkloadAnalyzer;
 
 /**
- * Created with IntelliJ IDEA.
- * User: fabio
- * Date: 7/24/13
- * Time: 11:08 AM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: fabio Date: 7/24/13 Time: 11:08 AM To change this template use File | Settings |
+ * File Templates.
  */
 public interface AbstractAutonomicManagerFactory {
 
-    public AutonomicManager build();
+   public AutonomicManager build();
 
-    public PlatformConfiguration getPlatformConfiguration();
+   public PlatformConfiguration getPlatformConfiguration();
 
-    public Reconfigurator getReconfigurator();
+   public Reconfigurator getReconfigurator();
 
-    public Optimizer getOptimizer();
+   public Optimizer getOptimizer();
 
-    public SLAManager getSLAManager();
+   public SLAManager getSLAManager();
 
-    public WorkloadAnalyzer getWorkloadAnalyzer();
+   public WorkloadAnalyzer getWorkloadAnalyzer();
 
 }

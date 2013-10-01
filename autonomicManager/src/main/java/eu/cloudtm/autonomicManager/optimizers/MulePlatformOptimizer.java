@@ -13,54 +13,52 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Created by: Fabio Perfetti
- * E-mail: perfabio87@gmail.com
- * Date: 6/16/13
+ * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 6/16/13
  */
 public class MulePlatformOptimizer extends AbstractPlatformOptimizer {
 
-    private static Log log = LogFactory.getLog(MulePlatformOptimizer.class);
+   private static Log log = LogFactory.getLog(MulePlatformOptimizer.class);
 
-    public MulePlatformOptimizer(PlatformConfiguration platformConfiguration,
-                                 PlatformTuning platformTuning) {
-        super(platformConfiguration, platformTuning);
-    }
+   public MulePlatformOptimizer(PlatformConfiguration platformConfiguration,
+                                PlatformTuning platformTuning) {
+      super(platformConfiguration, platformTuning);
+   }
 
 
-    public PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction) {
+   public PlatformConfiguration optimize(ProcessedSample processedSample, boolean purePrediction) {
 
-        if(processedSample==null) {
-            log.info("Sample is null. Skipping...");
-            return null;
-        }
+      if (processedSample == null) {
+         log.info("Sample is null. Skipping...");
+         return null;
+      }
 
-        ControllerLogger.log.info("Mule Optimizer: Querying " + platformTuning.forecaster() + " oracle");
+      ControllerLogger.log.info("Mule Optimizer: Querying " + platformTuning.forecaster() + " oracle");
 
-        Oracle oracle = platformTuning.forecaster().getInstance();
-        OracleService oracleService = new HillClimbingOracleService(oracle);
+      Oracle oracle = platformTuning.forecaster().getInstance();
+      OracleService oracleService = new HillClimbingOracleService(oracle);
 
-        PlatformConfiguration forecastedConfig = null;
-        try {
-            forecastedConfig = oracleService.maximizeThroughput(processedSample);
-        } catch (OracleException e) {
-            if( log.isDebugEnabled() ){
-                log.debug(e, e);
-            } else {
-                log.warn(e);
-            }
-        }
+      PlatformConfiguration forecastedConfig = null;
+      try {
+         forecastedConfig = oracleService.maximizeThroughput(processedSample);
+      } catch (OracleException e) {
+         if (log.isDebugEnabled()) {
+            log.debug(e, e);
+         } else {
+            log.warn(e);
+         }
+      }
 
-        if( forecastedConfig != null ){
+      if (forecastedConfig != null) {
 
-            ControllerLogger.log.info(" »»» Configuration found «««" );
-            if(purePrediction){
-                return forecastedConfig;
-            } else {
-                return createNextConfig(forecastedConfig);
-            }
-        } else {
-            ControllerLogger.log.info(" »»» Configuration not found «««" );
-            return null;
-        }
-    }
+         ControllerLogger.log.info(" »»» Configuration found «««");
+         if (purePrediction) {
+            return forecastedConfig;
+         } else {
+            return createNextConfig(forecastedConfig);
+         }
+      } else {
+         ControllerLogger.log.info(" »»» Configuration not found «««");
+         return null;
+      }
+   }
 }

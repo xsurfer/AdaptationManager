@@ -47,10 +47,14 @@
 
         <ul>
         	<li>
-        		<a href="javascript:void(0)" onclick="window.open('http://html.it/articoli/esempi/articoli_pro/esempio_11_a.htm', 'Console', 'resizable=0,top=10,left=10,width=600,height=200')">Console</a>
+        		<a href="javascript:void(0)" onclick="window.open('http://www.cloudtm.eu', 'Console', 'resizable=0,top=10,left=10,width=600,height=200')">Console</a>
         	</li>
+
             <li><a href="overview">Overview</a></li> <!-- Active page -->
-            <li><a href="#">Workload and Performance Monitor</a></li>
+            <!--<li><a href="monitor">Workload and Performance Monitor</a></li>     Uncomment to embed page-->
+            <li>
+                 <a href="javascript:void(0)" onclick="window.open('http://cloudtm.ist.utl.pt:8084/index.php?rootFolder=csv', 'Workload Monitor', 'resizable=0,top=10,left=10,width=1000,height=1000')">Workload and Performance Monitor</a>
+            </li>
             <li><a href="tuning">Tuning</a></li>
             <li><a href="whatIf">What-if Analysis</a></li>            
             <li><a href="workloadAnalysis">Workload Analysis</a></li>
