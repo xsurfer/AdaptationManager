@@ -49,7 +49,6 @@ public class CloudTMActuator implements Actuator {
 
    private final DeltaCloudClient deltaCloudClient;
 
-   private final boolean isRadargun;
    private final int jmxPort;
 
    private final String ispnDomain;
@@ -68,7 +67,6 @@ public class CloudTMActuator implements Actuator {
                           String ispnDomain,
                           String ispnCacheName) {
       this.deltaCloudClient = deltaCloudClient;
-      this.isRadargun = false;
       this.jmxPort = jmxPort;
       this.imageId = imageId;
       this.flavorId = flavorId;
