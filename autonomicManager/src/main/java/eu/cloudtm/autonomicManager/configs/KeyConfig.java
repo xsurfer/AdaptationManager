@@ -11,6 +11,9 @@ public enum KeyConfig {
    ENVIRONMENT_MAX_ACTIVE_THREADS_PER_NODE("environment.max_active_threads_per_node"),
    ENVIRONMENT_SYSTEM_TYPE("environment.system_type"),
    ENVIRONMENT_CORE_PER_CPU("environment.core_per_cpu"),
+   ENVIRONMENT_INIT_NODES("environment.init_nodes"),
+   ENVIRONMENT_INIT_R_DEGREE("environment.init_r_degreee"),
+   ENVIRONMENT_INIT_R_PROT("environment.init_r_protocol"),
 
 
     /* ****** WORKLOAD ANALYZER ****** */
