@@ -7,6 +7,7 @@ import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
