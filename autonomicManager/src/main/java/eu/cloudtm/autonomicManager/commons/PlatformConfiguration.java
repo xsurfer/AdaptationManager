@@ -31,6 +31,7 @@ public class PlatformConfiguration implements Comparable<PlatformConfiguration> 
    private AtomicBoolean dataPlacement = new AtomicBoolean(false);
 
    public PlatformConfiguration() {
+
    }
 
    public PlatformConfiguration(int size, int repDegree, ReplicationProtocol repProtocol) {

@@ -1,5 +1,7 @@
 package eu.cloudtm.autonomicManager.configs;
 
+import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
+import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -11,18 +13,19 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 public class
       Config {
 
-   private static Configuration instance;
+   private static AdaptationManagerConfig instance;
 
-   public static Configuration getInstance() {
+   public static AdaptationManagerConfig getInstance() {
       if (instance == null) {
          try {
-            instance = new PropertiesConfiguration("config/config.properties");
+            instance = new AdaptationManagerConfig("config/config.properties");
          } catch (ConfigurationException e) {
             throw new RuntimeException(e);
          }
       }
       return instance;
    }
+
 
 
 }

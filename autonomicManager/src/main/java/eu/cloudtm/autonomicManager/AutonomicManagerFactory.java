@@ -6,6 +6,7 @@ import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.PlatformState;
 import eu.cloudtm.autonomicManager.commons.PlatformTuning;
 import eu.cloudtm.autonomicManager.commons.State;
+import eu.cloudtm.autonomicManager.configs.AdaptationManagerConfig;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
 import eu.cloudtm.autonomicManager.optimizers.LAOptimizer;
@@ -72,8 +73,9 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
 
    @Override
    public PlatformConfiguration getPlatformConfiguration() {
+
       if (this.platformConfiguration == null) {
-         this.platformConfiguration = new PlatformConfiguration();
+         this.platformConfiguration = Config.getInstance().initPlatformConfig();
       }
       return this.platformConfiguration;
    }
