@@ -19,7 +19,7 @@ import java.net.MalformedURLException;
  * File Templates.
  */
 
-public class RadargunClientJMX implements RadargunClient {
+public class RadargunClientJMX implements ApplicationClient {
 
    private final String component;
 

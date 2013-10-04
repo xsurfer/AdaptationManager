@@ -16,7 +16,7 @@ import java.net.URI;
  * Created by: Fabio Perfetti E-mail: perfabio87@gmail.com Date: 6/27/13
  */
 @Deprecated
-public class SlaveKillerClient implements RadargunClient {
+public class SlaveKillerClient implements ApplicationClient {
 
    private Log log = LogFactory.getLog(SlaveKillerClient.class);
 
