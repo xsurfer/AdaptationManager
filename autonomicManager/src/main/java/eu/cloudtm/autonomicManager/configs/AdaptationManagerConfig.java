@@ -17,6 +17,10 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
       super(fileName);
    }
 
+   /**
+    * *********************** PLATFORM ************************
+    */
+
    public PlatformConfiguration initPlatformConfig() {
       ReplicationProtocol rp = ReplicationProtocol.valueOf(getString(KeyConfig.ENVIRONMENT_INIT_R_PROT.key()));
       int initNodes = getInt(KeyConfig.ENVIRONMENT_INIT_NODES.key());
@@ -24,6 +28,30 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
       if (rD < initNodes)
          rD = initNodes;
       return new PlatformConfiguration(initNodes, rD, rp);
+   }
+
+   /**
+    * *********************** ALERT MANAGER ************************
+    */
+
+   public boolean isAlertManagerPolicyPureReactive() {
+      return isAlertManagerPolicyEqualTo("REACTIVE");
+   }
+
+   public boolean isAlertManagerPolicyMix() {
+      return isAlertManagerPolicyEqualTo("MIX");
+   }
+
+   public boolean isAlertManagerPolicyProactive() {
+      return isAlertManagerPolicyEqualTo("PROACTIVE");
+   }
+
+   public boolean isAlertManagerPolicyTimeReactive() {
+      return isAlertManagerPolicyEqualTo("REACTIVE_TIME");
+   }
+
+   private boolean isAlertManagerPolicyEqualTo(String to) {
+      return getString(KeyConfig.ALERT_MANAGER_POLICY.key()).equals(to);
    }
 
 }

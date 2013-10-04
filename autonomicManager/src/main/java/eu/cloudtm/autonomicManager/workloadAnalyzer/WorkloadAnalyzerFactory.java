@@ -76,10 +76,13 @@ public class WorkloadAnalyzerFactory {
             workloadForecaster
       );
 
-      AbstractChangeDetector reactiveChangeDetector = new ReactiveChangeDetector(
+      AbstractChangeDetector reactiveChangeDetector = buildReactiveChangeDetector();
+      /*
+      new ReactiveChangeDetector(
             param2delta,
             evaluatedParam2delta
       );
+       */
 
 
       String policy = Config.getInstance().getString(KeyConfig.ALERT_MANAGER_POLICY.key());
@@ -97,6 +100,14 @@ public class WorkloadAnalyzerFactory {
                                                                alertManager);
 
       return workloadAnalyzer;
+   }
+
+
+   private AbstractChangeDetector buildReactiveChangeDetector() {
+      if (Config.getInstance().isAlertManagerPolicyPureReactive()) {
+         return new ReactiveChangeDetector(param2delta, evaluatedParam2delta);
+      }
+      return new DummyChangeDetector_Periodic(param2delta, evaluatedParam2delta);
    }
 
 }
