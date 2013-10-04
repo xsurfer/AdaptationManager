@@ -7,6 +7,7 @@ import eu.cloudtm.InfinispanClient.exception.InvocationException;
 import eu.cloudtm.InfinispanClient.exception.NoJmxProtocolRegisterException;
 import eu.cloudtm.autonomicManager.Actuator;
 import eu.cloudtm.autonomicManager.ControllerLogger;
+import eu.cloudtm.autonomicManager.actuators.clients.ApplicationClient;
 import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import eu.cloudtm.autonomicManager.configs.Config;
@@ -49,6 +50,9 @@ public class CloudTMActuator implements Actuator {
 
    private final DeltaCloudClient deltaCloudClient;
 
+   /* APPLICATION CLIENT */
+   private final ApplicationClient applicationClient;
+
    private final int jmxPort;
 
    private final String ispnDomain;
@@ -60,12 +64,36 @@ public class CloudTMActuator implements Actuator {
     * @param imageId
     * @param flavorId
     */
+   @Deprecated
    public CloudTMActuator(DeltaCloudClient deltaCloudClient,
                           int jmxPort,
                           String imageId,
                           String flavorId,
                           String ispnDomain,
                           String ispnCacheName) {
+      this.applicationClient = null;
+      this.deltaCloudClient = deltaCloudClient;
+      this.jmxPort = jmxPort;
+      this.imageId = imageId;
+      this.flavorId = flavorId;
+      this.ispnDomain = ispnDomain;
+      this.ispnCacheName = ispnCacheName;
+   }
+
+   /**
+    * @param deltaCloudClient
+    * @param jmxPort
+    * @param imageId
+    * @param flavorId
+    */
+   public CloudTMActuator( ApplicationClient applicationClient,
+                          DeltaCloudClient deltaCloudClient,
+                          int jmxPort,
+                          String imageId,
+                          String flavorId,
+                          String ispnDomain,
+                          String ispnCacheName) {
+      this.applicationClient = applicationClient;
       this.deltaCloudClient = deltaCloudClient;
       this.jmxPort = jmxPort;
       this.imageId = imageId;
@@ -76,7 +104,10 @@ public class CloudTMActuator implements Actuator {
 
    @Override
    public void stopApplication(String machine) throws ActuatorException {
-      // nop
+      if( applicationClient!=null ){
+         ControllerLogger.log.info(" * Stopping application on machine " + machine);
+         applicationClient.stop(machine, jmxPort);
+      }
    }
 
    @Override

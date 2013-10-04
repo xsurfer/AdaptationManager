@@ -1,7 +1,7 @@
 package eu.cloudtm.autonomicManager.actuators;
 
 import eu.cloudtm.autonomicManager.Actuator;
-import eu.cloudtm.autonomicManager.actuators.clients.RadargunClient;
+import eu.cloudtm.autonomicManager.actuators.clients.ApplicationClient;
 import eu.cloudtm.autonomicManager.actuators.clients.RadargunClientJMX;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
@@ -56,17 +56,17 @@ public class ActuatorFactory {
    private Actuator createCloudTM() {
       log.info("Creating CloudTM actuator...");
       // todo add choise Radargun or Geograph
-      Actuator futureGridActuator = new CloudTMActuator(createDeltaCloudClient(), jmxPort, imageId, flavorId, domain, cacheName); // with radargun
-      return new RadargunDecorator(futureGridActuator, createRadargunClient(), jmxPort);
-
+      ApplicationClient applicationClient = createRadargunClient();
+      Actuator cloudTmActuator = new CloudTMActuator(applicationClient, createDeltaCloudClient(), jmxPort, imageId, flavorId, domain, cacheName); // with radargun
+      return cloudTmActuator;
    }
 
    private Actuator createFutureGrid() {
       log.info("Creating FutureGrid actuator...");
       // todo add choise Radargun or Geograph
-      Actuator futureGridActuator = new FutureGridActuator(jmxPort, domain, cacheName, availableMachines(), initMachinesUp()); // with radargun
-      return new RadargunDecorator(futureGridActuator, createRadargunClient(), jmxPort);
-
+      ApplicationClient applicationClient = createRadargunClient();
+      Actuator futureGridActuator = new FutureGridActuator( applicationClient, jmxPort, domain, cacheName, availableMachines(), initMachinesUp() ); // with radargun
+      return futureGridActuator;
    }
 
    private Set<String> availableMachines() {
@@ -134,7 +134,7 @@ public class ActuatorFactory {
    }
 
 
-   private RadargunClient createRadargunClient() {
+   private ApplicationClient createRadargunClient() {
 
       String actuator = Config.getInstance().getString(KeyConfig.RADARGUN_CLIENT.key());
 

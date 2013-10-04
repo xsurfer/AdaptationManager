@@ -12,6 +12,7 @@ import eu.cloudtm.InfinispanClient.exception.InvocationException;
 import eu.cloudtm.InfinispanClient.exception.NoJmxProtocolRegisterException;
 import eu.cloudtm.autonomicManager.Actuator;
 import eu.cloudtm.autonomicManager.ControllerLogger;
+import eu.cloudtm.autonomicManager.actuators.clients.ApplicationClient;
 import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import eu.cloudtm.autonomicManager.configs.Config;
@@ -50,6 +51,9 @@ public class FutureGridActuator implements Actuator {
 
    private Session session;
 
+   /* APPLICATION CLIENT */
+   private final ApplicationClient applicationClient;
+
     /* FUTUREGRID */
 
    private final Set<String> availableMachines = Collections.synchronizedSet(new HashSet<String>());
@@ -65,11 +69,29 @@ public class FutureGridActuator implements Actuator {
    private final String ispnCacheName;
 
 
+   @Deprecated
    public FutureGridActuator(int jmxPort,
                              String ispnDomain,
                              String ispnCacheName,
                              Set<String> availableMachines,
                              Set<String> initUpMachines) {
+      this.applicationClient = null;
+      this.jmxPort = jmxPort;
+      this.ispnDomain = ispnDomain;
+      this.ispnCacheName = ispnCacheName;
+      registerInitialMachineIfNeeded(availableMachines, initUpMachines);
+      this.availableMachines.addAll(availableMachines);
+      log.info("AvailableMachines: " + this.availableMachines.size());
+
+   }
+
+   public FutureGridActuator(ApplicationClient applicationClient,
+                             int jmxPort,
+                             String ispnDomain,
+                             String ispnCacheName,
+                             Set<String> availableMachines,
+                             Set<String> initUpMachines) {
+      this.applicationClient = applicationClient;
       this.jmxPort = jmxPort;
       this.ispnDomain = ispnDomain;
       this.ispnCacheName = ispnCacheName;
@@ -82,7 +104,10 @@ public class FutureGridActuator implements Actuator {
 
    @Override
    public void stopApplication(String machine) throws ActuatorException {
-      // nop
+      if( applicationClient!=null ){
+         ControllerLogger.log.info(" * Stopping application on machine " + machine);
+         applicationClient.stop(machine, jmxPort);
+      }
    }
 
 
