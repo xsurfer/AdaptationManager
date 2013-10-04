@@ -16,18 +16,21 @@ public class ReactiveChangeDetector extends AbstractChangeDetector {
    }
 
    @Override
-   public void samplePerformed(ProcessedSample sample) {
+   public final void samplePerformed(ProcessedSample sample) {
       add(sample);
 
-      if (sampleSlideWindow.size() < SLIDE_WINDOW_SIZE) {
+      if (notEnoughTimeElapsed()) {
          return;
       }
 
       boolean reconfigure = evaluateParam() || evaluateEvaluatedParam();
       if (reconfigure) {
-
          fireEvent(WorkloadEvent.WorkloadEventType.WORKLOAD_CHANGED, sample);
       }
+   }
+
+   protected boolean notEnoughTimeElapsed(){
+      return  sampleSlideWindow.size() < SLIDE_WINDOW_SIZE;
    }
 
 }
