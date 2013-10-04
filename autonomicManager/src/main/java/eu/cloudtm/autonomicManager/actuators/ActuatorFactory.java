@@ -25,7 +25,6 @@ public class ActuatorFactory {
 
    private Log log = LogFactory.getLog(ActuatorFactory.class);
 
-   private final boolean isRadargun = Config.getInstance().getBoolean(KeyConfig.ACTUATOR_IS_RADARGUN.key());
 
    private int jmxPort = Config.getInstance().getInt(KeyConfig.ISPN_JMX_PORT.key());
    private String imageId = Config.getInstance().getString(KeyConfig.DELTACLOUD_IMAGE.key());
