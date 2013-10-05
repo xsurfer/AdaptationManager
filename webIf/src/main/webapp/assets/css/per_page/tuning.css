@@ -34,7 +34,7 @@ fieldset.resource div.current{
 	/*background-color: red;*/
 	display: inline-block;
 	vertical-align: middle;
-	width: 300px;
+	width: 350px;
 }
 
 fieldset.resource div.current.autoplacer{
@@ -58,7 +58,7 @@ fieldset.resource div.update{
 fieldset.resource div.tuning{	
 	/*border: 1px dashed;*/		
 	/*background-color: blue;*/
-	margin-left: 130px;
+	margin-left: 80px;
 	width: 200px;	
 	display: inline-block;
 	vertical-align: middle;
@@ -84,6 +84,7 @@ fieldset.resource div.control{
 /** END CURRENT, CONTROL and TUNING **/
 
 fieldset.resource div.current p {
+	/*border: 1px solid blue;*/
 	margin: 0;
 	display: inline-block;	
 	vertical-align: middle;

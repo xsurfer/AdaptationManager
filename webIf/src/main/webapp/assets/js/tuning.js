@@ -103,8 +103,12 @@ function initCurrentConfig(){
 		console.log(json);
 		
 		$('span#current_forecaster').text( json.tuning.forecaster );
+		
+		$("span#current_tuning_scale").text( (json.tuning.autoScale ) ? "Self-tuned (" + json.tuning.forecaster + ")" : "MANUAL" );		
 		$('span#current_scale').text( json.configuration.platformSize );
+		$("span#current_tuning_rep_degree").text( (json.tuning.autoDegree ) ? "Self-tuned (" + json.tuning.forecaster + ")" : "MANUAL" );
 		$('span#current_rep_degree').text( json.configuration.replicationDegree );
+		$("span#current_tuning_rep_protocol").text( (json.tuning.autoProtocol ) ? "Self-tuned (" + json.tuning.forecaster + ")" : "MANUAL" );
 		$('span#current_rep_protocol').text( json.configuration.replicationProtocol );
 		
 	});

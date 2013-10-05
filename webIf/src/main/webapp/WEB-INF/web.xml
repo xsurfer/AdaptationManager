@@ -46,7 +46,7 @@
   
   <context-param>
     <param-name>rest_host</param-name>
-    <param-value>149.165.148.105</param-value>   
+    <param-value>149.165.148.104</param-value>   
   </context-param>
   
   <context-param>

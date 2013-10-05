@@ -98,13 +98,17 @@
 						<div class="current">
 							<ol>
 								<li>
+									<p class="label">Current tuning:</p>
+									<p class="config"><span id="current_tuning_scale">N/A</span></p>								
+								</li>
+								<li>
 									<p class="label">Current configuration:</p>
 									<p class="config"><span id="current_scale">N/A</span>instances</p>								
 								</li>
 								<li>
 									<p class="label">Optimal configuration:</p>
 									<p class="config"><span id="current_opt_scale">N/A</span>instances</p>								
-								</li>
+								</li>								
 							</ol>
 						</div>	
 						
@@ -170,6 +174,10 @@
 						<div class="current">
 							<ol>
 								<li>
+									<p class="label">Current tuning:</p>
+									<p class="config"><span id="current_tuning_rep_degree">N/A</span></p>								
+								</li>
+								<li>
 									<p class="label">Current configuration:</p>
 									<p class="config"><span id="current_rep_degree">N/A</span>replicas per object</p>								
 								</li>
@@ -234,6 +242,10 @@
 						<!-- CURRENT -->
 						<div class="current">
 							<ol>
+								<li>
+									<p class="label">Current tuning:</p>
+									<p class="config"><span id="current_tuning_rep_protocol">N/A</span></p>								
+								</li>
 								<li>
 									<p class="label">Current configuration:</p>
 									<p class="config"><span id="current_rep_protocol">N/A</span></p>								
