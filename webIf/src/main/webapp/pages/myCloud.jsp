@@ -113,7 +113,7 @@ var Retrieve = function(){
 		
 		/* SCALE */
 		$("p#scale_tuning").text( (json.tuning.autoScale ) ? "Self-tuned (" + json.tuning.forecaster + ")" : "MANUAL" );					
-		$("p#scale_conf").text( $.trim(json.configuration.platformSize) + " " + $.trim(json.configuration.nodesConfig));
+		$("p#scale_conf").text( $.trim(json.configuration.platformSize) );
 		
 		$("p#rep_degree_tuning").text( (json.tuning.autoDegree ) ? "Self-tuned (" + json.tuning.forecaster + ")" : "MANUAL" );	
 		$("p#rep_degree_conf").text( $.trim(json.configuration.replicationDegree) );
