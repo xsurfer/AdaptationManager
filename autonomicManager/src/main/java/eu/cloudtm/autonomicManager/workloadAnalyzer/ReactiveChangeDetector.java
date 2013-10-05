@@ -3,6 +3,8 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Map;
 
@@ -11,26 +13,42 @@ import java.util.Map;
  */
 public class ReactiveChangeDetector extends AbstractChangeDetector {
 
+   private static final Log log = LogFactory.getLog(ReactiveChangeDetector.class);
+
    public ReactiveChangeDetector(Map<Param, Double> monitoredParams2delta, Map<EvaluatedParam, Double> monitoredEvaluatedParams2delta) {
       super(monitoredParams2delta, monitoredEvaluatedParams2delta);
    }
 
    @Override
    public final void samplePerformed(ProcessedSample sample) {
-      add(sample);
+
+      onNewSamplePerformed(sample);
 
       if (notEnoughTimeElapsed()) {
+         log.trace("Not enough time has passed to start reconfiguring the system.");
          return;
       }
 
       boolean reconfigure = evaluateParam() || evaluateEvaluatedParam();
       if (reconfigure) {
+         log.trace("Going to trigger a reconfiguration");
          fireEvent(WorkloadEvent.WorkloadEventType.WORKLOAD_CHANGED, sample);
+         postFire();
       }
+
+
    }
 
-   protected boolean notEnoughTimeElapsed(){
-      return  sampleSlideWindow.size() < SLIDE_WINDOW_SIZE;
+   protected boolean notEnoughTimeElapsed() {
+      return sampleSlideWindow.size() < SLIDE_WINDOW_SIZE;
+   }
+
+   protected void onNewSamplePerformed(ProcessedSample sample) {
+      add(sample);
+   }
+
+   protected void postFire() {
+      //nop
    }
 
 }

@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager.configs;
 
+import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import org.apache.commons.configuration.ConfigurationException;
@@ -31,6 +32,14 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
    }
 
    /**
+    * *********************** CHANGE DETECTOR ************************
+    */
+   //For the dummy
+   public int getEvaluationPeriod() {
+      return getInt(KeyConfig.ALERT_MANAGER_EVALUATION_PERIOD.key());
+   }
+
+   /**
     * *********************** ALERT MANAGER ************************
     */
 
@@ -52,6 +61,14 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
 
    private boolean isAlertManagerPolicyEqualTo(String to) {
       return getString(KeyConfig.ALERT_MANAGER_POLICY.key()).equals(to);
+   }
+
+   /**
+    * *********************** FORECASTERS ************************
+    */
+
+   public Forecaster getDefaultForecaster() {
+      return (Forecaster.valueOf(getString(KeyConfig.FORECASTER_DEFAULT.key())));
    }
 
 }

@@ -93,11 +93,25 @@ public class ReconfiguratorImpl implements Reconfigurator {
       return reconfiguring.get();
    }
 
-   private void start() {
-      ControllerLogger.log.info("#####################");
-      ControllerLogger.log.info("Starting a new reconfigurarion request");
-      ControllerLogger.log.info("#####################");
+   //TODO: I don't understand the need for a thread here. Isn't this supposed to be a singleton?  Request should not be an instance variable then
+   private boolean skipReconfiguration() {
+      PlatformConfiguration toReconfigurePlatform = (PlatformConfiguration) request.get(OptimizerType.PLATFORM);
+      //TODO: this checks only nodes, RP and RD. No Autoplacer, no num threads. Is this correct?
+      return current.compareTo(toReconfigurePlatform) == 0;
+   }
 
+   private void start() {
+      boolean info = ControllerLogger.log.isInfoEnabled();
+      if (skipReconfiguration()) {
+         log.trace("No reconfiguration needed at this step");
+         request = null;
+         return;
+      }
+      if (info) {
+         ControllerLogger.log.info("#####################");
+         ControllerLogger.log.info("Starting a new reconfigurarion request");
+         ControllerLogger.log.info("#####################");
+      }
       try {
          platformState.update(PlatformState.RECONFIGURING);
          if (testing) {
@@ -199,7 +213,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
 
    //Given that the exception is not handled...
    private void sleep(int msecToSleep) {
-      log.info("Waiting 10 secs");
+      log.info("Waiting " + msecToSleep + " msecs");
       try {
          Thread.sleep(msecToSleep);
       } catch (InterruptedException e) {
