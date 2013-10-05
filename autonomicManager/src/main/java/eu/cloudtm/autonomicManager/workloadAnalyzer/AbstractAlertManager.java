@@ -15,7 +15,7 @@ import java.util.Date;
 public abstract class AbstractAlertManager implements WorkloadEventListener {
 
    public enum Policy {
-      REACTIVE, PROACTIVE, MIX;
+      REACTIVE, PROACTIVE, MIX, REACTIVE_TIME;
    }
 
    private static int SECONDS_BETWEEN_RECONFIGURATIONS = Config.getInstance().getInt(KeyConfig.ALERT_MANAGER_SECONDS_BETWEEN_RECONFIGURATIONS.key());
@@ -31,6 +31,9 @@ public abstract class AbstractAlertManager implements WorkloadEventListener {
       AbstractAlertManager alertManager = null;
       switch (policy) {
          case REACTIVE:
+            alertManager = new PureReactiveAlertManager(optimizer, reconfigurator);
+            break;
+         case REACTIVE_TIME:
             alertManager = new PureReactiveAlertManager(optimizer, reconfigurator);
             break;
          case PROACTIVE:
