@@ -1,6 +1,7 @@
 package eu.cloudtm.autonomicManager.commons;
 
 import com.google.gson.Gson;
+import eu.cloudtm.autonomicManager.configs.Config;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -13,7 +14,7 @@ public class PlatformTuning {
 
    private static Log log = LogFactory.getLog(PlatformTuning.class);
 
-   private Forecaster forecaster = Forecaster.ANALYTICAL;
+   private Forecaster forecaster = Config.getInstance().getDefaultForecaster();// Forecaster.ANALYTICAL;
 
    private AtomicBoolean autoScale = new AtomicBoolean(true);
    private AtomicBoolean autoDegree = new AtomicBoolean(true);

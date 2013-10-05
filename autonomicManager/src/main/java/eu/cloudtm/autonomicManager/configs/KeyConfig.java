@@ -22,6 +22,7 @@ public enum KeyConfig {
 
    ALERT_MANAGER_POLICY("alertManager.policy"),
    ALERT_MANAGER_SECONDS_BETWEEN_RECONFIGURATIONS("alertManager.timeBetweenReconfiguration"),
+   ALERT_MANAGER_EVALUATION_PERIOD("alertManager.evaluationPeriod"),
 
 
     /* ******* CHANGE DETECTORs ******* */
@@ -89,6 +90,7 @@ public enum KeyConfig {
    FORECASTER_ANALYTICAL("forecaster.analytical"),
    FORECASTER_SIMULATOR("forecaster.simulator"),
    FORECASTER_MACHINE_LEARNING("forecaster.machineLearning"),
+   FORECASTER_DEFAULT("forecaster.default"),
 
    FILE_HOSTNAME("file.hostnames");
 
