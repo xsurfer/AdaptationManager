@@ -9,6 +9,7 @@ import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
 import eu.cloudtm.autonomicManager.oracles.HillClimbingOracleService;
 import eu.cloudtm.autonomicManager.oracles.Oracle;
 import eu.cloudtm.autonomicManager.oracles.OracleService;
+import eu.cloudtm.autonomicManager.oracles.OracleServiceFactory;
 import eu.cloudtm.autonomicManager.oracles.OutputOracle;
 import eu.cloudtm.autonomicManager.statistics.CustomSample;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
@@ -169,7 +170,7 @@ public class WhatIfService {
          WhatIfDTO currWhatIfResult = new WhatIfDTO(forecaster, customParamDTO.getXaxis());
 
          Oracle oracle = forecaster.getInstance();
-         OracleService oracleService = new HillClimbingOracleService(oracle);
+         OracleService oracleService = OracleServiceFactory.buildOracleService(oracle);
          log.info("Querying " + forecaster);
 
                 /* creating custom Sample, with custom maps */

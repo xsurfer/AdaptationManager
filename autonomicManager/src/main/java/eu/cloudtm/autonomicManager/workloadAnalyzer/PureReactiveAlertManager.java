@@ -40,11 +40,27 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
          return;
       }
 
-      if (isTimeToReconfigure()) {
-         log.trace("It's safe reconfigure...");
+      boolean reconfigurationDone = false;
+      if (hasPassedEnoughTimeSinceLastReconfiguration()) {
+         log.trace("Enough time has passed since last reconfiguration");
+         //TODO: Fabio I think that we could do a way simpler thing: optimizeAll should return a special value (even null) to tell
+         //TODO that actually there is no optimization to do (this can be the case also if the workload changes: maybe we are in any case
+         //TODO in the optimal configuration. In this way we can avoid triggering anything beyond this level and simply go on
          Map<OptimizerType, Object> optimization = optimizer.optimizeAll(event.getSample(), false);
          if (optimization != null) {
-            reconfigurator.reconfigure(optimization);
+            log.trace("Going to invoke reconfigure");
+            try {
+               reconfigurationDone = reconfigurator.reconfigure(optimization);
+            } catch (Exception e) {
+               e.printStackTrace();
+               log.fatal(e);
+            }
+            if (reconfigurationDone) {
+               resetTimer();
+               log.trace("Reconfiguration done!");
+            } else {
+               log.trace("Reconfiguration not actually performed");
+            }
          } else {
             log.trace("Optimization result is null!!");
          }

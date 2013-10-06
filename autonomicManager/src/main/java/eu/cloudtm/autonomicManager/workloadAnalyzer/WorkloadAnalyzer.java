@@ -53,7 +53,11 @@ public class WorkloadAnalyzer implements SampleListener {
          log.info("WorkloadAnalyzer disabled! Skipping sample...");
          return;
       }
-      reactive.samplePerformed(sample);
-      proactive.samplePerformed(sample);
+      if (reactive != null) {
+         reactive.samplePerformed(sample);
+      }
+      if (proactive != null) {
+         proactive.samplePerformed(sample);
+      }
    }
 }

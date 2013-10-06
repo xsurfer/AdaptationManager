@@ -278,7 +278,7 @@
 									<div class="conf_tuning">
 										<fieldset name="rep_protocol_tuning_manual">
 											<select name="rep_protocol">
-												<option selected value="2PC">2PC</option>
+												<option selected value="TWOPC">TWOPC</option>
 												<option value="TO">TO</option>
 												<option value="PB">PB</option>
 											</select>											

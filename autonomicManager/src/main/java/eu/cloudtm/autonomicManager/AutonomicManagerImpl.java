@@ -89,6 +89,8 @@ public class AutonomicManagerImpl implements AutonomicManager {
             }
             lastForecastTimestamp = new Date();
             lastForecast = optimizer.optimizePlatform(statsManager.getLastSample(), true);
+            ControllerLogger.log.info("AM: new lastForecast "+lastForecast);
+            log.info("AM: new lastForecast "+lastForecast);
          } finally {
             forecastLock.unlock();
          }

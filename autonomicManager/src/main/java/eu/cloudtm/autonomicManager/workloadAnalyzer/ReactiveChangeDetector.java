@@ -48,7 +48,7 @@ public class ReactiveChangeDetector extends AbstractChangeDetector {
    }
 
    protected void postFire() {
-      //nop
+      log.trace("NO-OP");
    }
 
 }
