@@ -37,11 +37,15 @@ public class DummyChangeDetector_Periodic extends ReactiveChangeDetector {
    }
 
    @Override
+   //Either we are not at steady-state (super) or it is not the right cycle to optimize
+   //I put the < instead of the == because with == if "super.notEnoughTimeElapsed"  is true before the first time tick gets == period, then
+   //this second predicate won't ever be true
    protected boolean notEnoughTimeElapsed() {
-      return super.notEnoughTimeElapsed() && (tick == period);    // TODO: Customise this generated block
+      return super.notEnoughTimeElapsed() ||  (tick < period);
    }
 
    @Override
+   //Even if we do not optimize, we want that EVERY X samples we query the oracles
    protected void postFire() {
       tick = 0;
       log.trace("Event fired! Tick = " + tick);

@@ -81,9 +81,9 @@ public class OracleServiceImpl implements OracleService {
    @Override
    public PlatformConfiguration maximizeThroughput(ProcessedSample sample) throws OracleException {
 
-      PlatformConfiguration finalConfiguration = null;
+      PlatformConfiguration finalConfiguration = null, newC;
       boolean found = false;
-      double maxThroughput = 0;
+      double maxThroughput = 0, currT;
 
       int numNodes = nodesMin;
 
@@ -92,19 +92,25 @@ public class OracleServiceImpl implements OracleService {
          while (repDegree <= numNodes) {
             for (ReplicationProtocol protocol : ReplicationProtocol.values()) {
 
-               log.trace("Preparing query for <" + numNodes + ", " + repDegree + ", " + protocol + ">");
+               log.trace("Querying <" + numNodes + ", " + repDegree + ", " + protocol + ">");
 
                PlatformConfiguration currConf = new PlatformConfiguration(numNodes, repDegree, protocol);
                OutputOracle outputOracle = doForecast(currConf, sample);
+               currT = outputOracle.throughput(0) + outputOracle.throughput(1);
+               if (currT > maxThroughput) {
 
-               if (outputOracle.throughput(0) > maxThroughput) {
-                  finalConfiguration = new PlatformConfiguration(numNodes, repDegree, protocol);
+                  newC = new PlatformConfiguration(numNodes, repDegree, protocol);
+                  if (finalConfiguration != null)
+                     log.trace("Ex optimal was " + finalConfiguration + "with throughput " + maxThroughput + " now is " + newC + " with throughput " + currT);
+                  finalConfiguration = newC;
+                  maxThroughput = currT;
                }
             }
             repDegree++;
          }
          numNodes++;
       }
+      log.trace("Optimal configuration is " + finalConfiguration);
       return finalConfiguration;
    }
 

@@ -35,7 +35,7 @@ public class AutonomicManagerFactory implements AbstractAutonomicManagerFactory 
 
    private State platformState = new State(PlatformState.RUNNING);
    private Reconfigurator reconfigurator;
-   private PlatformTuning platformTuning = new PlatformTuning(Forecaster.ANALYTICAL, false);
+   private PlatformTuning platformTuning = new PlatformTuning(Config.getInstance().getDefaultForecaster(), false);
    private PlatformConfiguration platformConfiguration;
    private Optimizer optimizer;
    private SLAManager slaManager;

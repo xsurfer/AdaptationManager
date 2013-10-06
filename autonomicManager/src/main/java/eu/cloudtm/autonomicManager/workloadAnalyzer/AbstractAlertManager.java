@@ -52,7 +52,7 @@ public abstract class AbstractAlertManager implements WorkloadEventListener {
       this.reconfigurator = reconfigurator;
    }
 
-   protected boolean isTimeToReconfigure() {
+   protected boolean hasPassedEnoughTimeSinceLastReconfiguration() {
       if (lastReconfiguration != null) {
          long timeDiff = Math.abs(new Date().getTime() - lastReconfiguration.getTime()) / 1000;
          if (timeDiff < SECONDS_BETWEEN_RECONFIGURATIONS) {
@@ -61,9 +61,15 @@ public abstract class AbstractAlertManager implements WorkloadEventListener {
          }
       }
 
-      lastReconfiguration = new Date();
+
       return true;
 
+   }
+
+
+   protected void resetTimer(){
+      lastReconfiguration = new Date();
+      ControllerLogger.log.info("Resetting the timer");
    }
 
 

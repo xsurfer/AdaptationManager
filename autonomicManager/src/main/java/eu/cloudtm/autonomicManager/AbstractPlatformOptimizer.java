@@ -30,9 +30,11 @@ public abstract class AbstractPlatformOptimizer implements OptimizerComponent<Pl
    public PlatformConfiguration doOptimize(ProcessedSample sample, boolean purePrediction) {
       if (!purePrediction) {
          if (!platformTuning.forecaster().isAutoTuning()) {
+            log.trace("Not pure prediction, but returning null as autoTuning is false");
             return null;
          }
       }
+      log.trace("Going to optimize!");
       return optimize(sample, purePrediction);
    }
 

@@ -70,11 +70,12 @@ public class WorkloadAnalyzerFactory {
             evaluatedParam2delta.keySet()
       );
 
-      AbstractChangeDetector proactiveChangeDetector = new ProactiveChangeDetector(
+      AbstractChangeDetector proactiveChangeDetector = buildProactiveChangeDetector(workloadForecaster);
+      /*      new ProactiveChangeDetector(
             param2delta,
             evaluatedParam2delta,
             workloadForecaster
-      );
+      );  */
 
       AbstractChangeDetector reactiveChangeDetector = buildReactiveChangeDetector();
       /*
@@ -88,8 +89,12 @@ public class WorkloadAnalyzerFactory {
       String policy = Config.getInstance().getString(KeyConfig.ALERT_MANAGER_POLICY.key());
       AbstractAlertManager alertManager = AbstractAlertManager.createInstance(policy, optimizer, reconfigurator);
 
-      proactiveChangeDetector.addEventListener(alertManager);
-      reactiveChangeDetector.addEventListener(alertManager);
+      if (proactiveChangeDetector != null) {
+         proactiveChangeDetector.addEventListener(alertManager);
+      }
+      if (reactiveChangeDetector != null) {
+         reactiveChangeDetector.addEventListener(alertManager);
+      }
 
       boolean enabled = Config.getInstance().getBoolean(KeyConfig.WORKLOAD_ANALYZER_AUTOSTART.key());
 
@@ -104,10 +109,17 @@ public class WorkloadAnalyzerFactory {
 
 
    private AbstractChangeDetector buildReactiveChangeDetector() {
-      if (Config.getInstance().isAlertManagerPolicyPureReactive()) {
+      if (Config.getInstance().isAlertManagerPolicyPureReactive() || Config.getInstance().isAlertManagerPolicyMix()) {
          return new ReactiveChangeDetector(param2delta, evaluatedParam2delta);
       }
       return new DummyChangeDetector_Periodic(param2delta, evaluatedParam2delta);
+   }
+
+   //This should preserve backward compatibility with Fabios' code which wants both the changedetectors
+   private AbstractChangeDetector buildProactiveChangeDetector(WorkloadForecaster wf) {
+      if (Config.getInstance().isAlertManagerPolicyProactive() || Config.getInstance().isAlertManagerPolicyMix() || Config.getInstance().isAlertManagerPolicyPureReactive())
+         return new ProactiveChangeDetector(param2delta, evaluatedParam2delta, wf);
+      return null;
    }
 
 }

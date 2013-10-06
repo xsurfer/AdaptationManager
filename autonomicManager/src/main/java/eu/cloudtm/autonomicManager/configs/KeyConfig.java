@@ -92,7 +92,9 @@ public enum KeyConfig {
    FORECASTER_MACHINE_LEARNING("forecaster.machineLearning"),
    FORECASTER_DEFAULT("forecaster.default"),
 
-   FILE_HOSTNAME("file.hostnames");
+   FILE_HOSTNAME("file.hostnames"),
+
+   ORACLE_SERVICE("oracleService.default");
 
    private final String key;
 

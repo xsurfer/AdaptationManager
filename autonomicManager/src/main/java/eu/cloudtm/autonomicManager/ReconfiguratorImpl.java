@@ -61,7 +61,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
    }
 
    @Override
-   public void reconfigure(Map<OptimizerType, Object> toReconfigure) {
+   public boolean reconfigure(Map<OptimizerType, Object> toReconfigure) {
 
       // in case of error during the last reconfiguration, I'm throwing a RuntimeException
       if (error != null) {
@@ -69,11 +69,19 @@ public class ReconfiguratorImpl implements Reconfigurator {
          throw new RuntimeException(error);
       }
 
+
+      ControllerLogger.log.info("Trying to acquire the reconfiguration lock");
       if (reconfigurationLock.tryLock()) {
          ControllerLogger.log.info("Lock successfully acquired");
          try {
             if (reconfiguring.compareAndSet(false, true)) {
                request = toReconfigure;
+               if (skipReconfiguration()) {
+                  ControllerLogger.log.trace("No reconfiguration needed at this step: current and target configuration coincide");
+                  request = null;
+                  reconfiguring.compareAndSet(true,false);
+                  return false;
+               }
                ControllerLogger.log.info("Reconfiguration request ACCEPTED...");
                executorService.submit(new Runnable() {
                   @Override
@@ -81,11 +89,23 @@ public class ReconfiguratorImpl implements Reconfigurator {
                      start();
                   }
                });
+               return true;
+            } else {
+               ControllerLogger.log.info("Reconfiguration request DECLINED as compareAndSet was unsuccessful");
+               return false;
             }
+         } catch (Exception ee) {
+            ee.printStackTrace();
+            log.error(ee.getCause());
+            reconfiguring.compareAndSet(true,false);
+            return false;
          } finally {
             ControllerLogger.log.info("releasing lock");
             reconfigurationLock.unlock();
          }
+      } else {
+         ControllerLogger.log.info("Lock NOT successfully acquired!");
+         return false;
       }
    }
 
@@ -97,16 +117,13 @@ public class ReconfiguratorImpl implements Reconfigurator {
    private boolean skipReconfiguration() {
       PlatformConfiguration toReconfigurePlatform = (PlatformConfiguration) request.get(OptimizerType.PLATFORM);
       //TODO: this checks only nodes, RP and RD. No Autoplacer, no num threads. Is this correct?
-      return current.compareTo(toReconfigurePlatform) == 0;
+      //This checks that the target config is the same as the current AND there are no other optimizations to do!
+      return current.compareTo(toReconfigurePlatform) == 0 && request.size() == 1;
    }
 
    private void start() {
       boolean info = ControllerLogger.log.isInfoEnabled();
-      if (skipReconfiguration()) {
-         log.trace("No reconfiguration needed at this step");
-         request = null;
-         return;
-      }
+
       if (info) {
          ControllerLogger.log.info("#####################");
          ControllerLogger.log.info("Starting a new reconfigurarion request");

@@ -163,6 +163,7 @@ public class TuningResource extends AbstractResource {
          } else {
             log.info("!AutoProtocol req");
             if (protocol == null) {
+               log.error("Trying to set a null protocol!!");
                throw new WebApplicationException(Response.Status.BAD_REQUEST);
             }
             autonomicManager.updateProtocol(false, protocol);
@@ -173,6 +174,7 @@ public class TuningResource extends AbstractResource {
          return makeCORS(builder);
       } catch (Exception e) {
          e.printStackTrace();
+         log.trace(e.getMessage());
       }
       String json = "{ \"result\" : \"fail\" }";
       Response.ResponseBuilder builder = Response.ok(json);
