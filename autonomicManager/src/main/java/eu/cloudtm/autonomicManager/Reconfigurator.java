@@ -10,7 +10,12 @@ import java.util.Map;
  */
 public interface Reconfigurator {
 
-   public void reconfigure(Map<OptimizerType, Object> toReconfigure);
+   /**
+    *
+    * @param toReconfigure
+    * @return true if a reconfiguration has (at least tentatively) taken place. False otherwise
+    */
+   public boolean reconfigure(Map<OptimizerType, Object> toReconfigure);
 
    public boolean isReconfiguring();
 

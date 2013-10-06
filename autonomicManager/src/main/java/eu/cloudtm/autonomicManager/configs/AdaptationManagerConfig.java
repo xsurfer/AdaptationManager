@@ -3,6 +3,7 @@ package eu.cloudtm.autonomicManager.configs;
 import eu.cloudtm.autonomicManager.commons.Forecaster;
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
 import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.oracles.OracleServiceEnum;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
@@ -69,6 +70,26 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
 
    public Forecaster getDefaultForecaster() {
       return (Forecaster.valueOf(getString(KeyConfig.FORECASTER_DEFAULT.key())));
+   }
+
+
+   /**
+    * *********************** ORACLES ************************
+    */
+   public boolean isOracleServiceHillClimbing() {
+      return isOracleService(OracleServiceEnum.HILL_CLIMBING);
+   }
+
+   public boolean isOracleServiceExhaustive() {
+      return isOracleService(OracleServiceEnum.EXHAUSTIVE);
+   }
+
+   public boolean isOracleServiceFake() {
+      return isOracleService(OracleServiceEnum.FAKE);
+   }
+
+   private boolean isOracleService(OracleServiceEnum ose) {
+      return OracleServiceEnum.valueOf(getString(KeyConfig.ORACLE_SERVICE.key())).equals(ose);
    }
 
 }

@@ -39,6 +39,7 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
       } catch (RemoteException e) {
          throw new RuntimeException(e);
       }
+      log.trace("ViewChangeRemoteListener successfully registered");
    }
 
    @Override
@@ -52,11 +53,11 @@ public class WPMViewChangeRemoteListenerImpl implements WPMViewChangeRemoteListe
       currentVMs = event.getCurrentVMs();
 
       if (currentVMs == null) {
-         log.info("The set of VMs is empty. No-op");
+         log.trace("The set of VMs is empty. No-op");
          return;
       }
 
-      log.info("New set of VMs " + Arrays.toString(currentVMs));
+      log.trace("New set of VMs " + Arrays.toString(currentVMs));
 
       lastHandle = statisticsListernerFactory.build(new SubscribeEvent(currentVMs));
    }

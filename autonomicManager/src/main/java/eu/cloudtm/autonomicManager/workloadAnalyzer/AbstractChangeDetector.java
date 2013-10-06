@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -144,9 +143,8 @@ public abstract class AbstractChangeDetector {
    protected synchronized void fireEvent(WorkloadEvent.WorkloadEventType type, ProcessedSample sample) {
       log.info("Sending new event...");
       WorkloadEvent event = new WorkloadEvent(this, type, sample);
-      Iterator<WorkloadEventListener> i = listeners.iterator();
-      while (i.hasNext()) {
-         i.next().workloadEventPerformed(event);
+      for (WorkloadEventListener listener : listeners) {
+         listener.workloadEventPerformed(event);
       }
    }
 }

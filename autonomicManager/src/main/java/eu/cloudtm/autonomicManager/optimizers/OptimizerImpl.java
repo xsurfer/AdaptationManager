@@ -48,6 +48,7 @@ public class OptimizerImpl implements Optimizer {
    @Override
    public PlatformConfiguration optimizePlatform(ProcessedSample processedSample, boolean pureForecast) {
       if (platformOptimizer != null) {
+         log.trace("Going go invoke doOptimize");
          return platformOptimizer.doOptimize(processedSample, pureForecast);
       }
       return null;
