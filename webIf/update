@@ -1,0 +1,4 @@
+#!/bin/bash
+mvn clean package
+mv target/webIf-1.0-SNAPSHOT.war target/webif.war 
+tocloud target/webif.war

@@ -1,5 +1,11 @@
 package eu.cloudtm.autonomicManager.statistics;
 
+import eu.cloudtm.autonomicManager.commons.TopKeyParam;
+import eu.cloudtm.autonomicManager.statistics.samples.WPMSample;
+import eu.cloudtm.autonomicManager.statistics.topKeys.TopKeyNodeBucket;
+import eu.cloudtm.autonomicManager.statistics.topKeys.TopKeyNodeBucketImpl;
+import eu.cloudtm.autonomicManager.statistics.topKeys.TopKeySample;
+import eu.cloudtm.autonomicManager.statistics.topKeys.TopKeySampleImpl;
 import eu.cloudtm.wpm.connector.WPMConnector;
 import eu.cloudtm.wpm.logService.remote.events.PublishAggregatedStatisticsEvent;
 import eu.cloudtm.wpm.logService.remote.events.PublishAttribute;
@@ -13,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,11 +30,8 @@ import java.util.Set;
 public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListener {
 
    private final static Log log = LogFactory.getLog(WPMStatisticsRemoteListenerImpl.class);
-
    private StatsManager statsManager;
-
    private Handle handle;
-
    private Processor processor;
 
    public WPMStatisticsRemoteListenerImpl(WPMConnector connector, StatsManager statsManager, SubscribeEvent subscribeEvent, Processor processor) {
@@ -51,9 +55,60 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
       log.trace("onNewPerVMStatistics");
    }
 
+   private Map<String, Long> mapFromString(String s) {
+      if (s == null || s.equals("null"))
+         return null;
+      if (true)
+         return fenixMapFromString(s);
+      log.trace("String\n" + s);
+      String[] split = s.split("|"), kv;
+      log.trace("Split " + Arrays.toString(split));
+      Map<String, Long> map = new HashMap<String, Long>();
+      for (String topK : split) {
+         kv = topK.split("=");
+         map.put(kv[0], Long.parseLong(kv[1]));
+      }
+      return map;
+   }
+
    @Override
    public void onNewPerSubscriptionStatistics(PublishStatisticsEvent event) throws RemoteException {
       log.trace("onNewPerSubscriptionStatistics");
+      Set<String> ips = event.getIps();
+      TopKeyNodeBucket tnb;
+      TopKeySample tks = new TopKeySampleImpl();
+      for (String ip : ips) {
+         tnb = new TopKeyNodeBucketImpl(ip);
+         log.trace("Parsing JMX stats for top Kkeys for node " + ip);
+         int numResources = event.getNumResources(ResourceType.JMX, ip);
+         if (numResources > 0) {
+            if (numResources > 1) {
+               log.trace("The log file contains " + numResources + " JMX samples. I' going to consider only the first");
+            }
+            Map<String, PublishAttribute> jmx = (event.getPublishMeasurement(ResourceType.JMX, 0, ip).getValues());
+            if (log.isTraceEnabled()) {
+               for (Map.Entry<String, PublishAttribute> e : jmx.entrySet()) {
+                  log.trace(e.getKey() + " => " + e.getValue());
+                  log.trace(e.getKey() + " => " + e.getValue().getValue());
+               }
+            }
+            String k;
+            for (TopKeyParam t : TopKeyParam.values()) {
+               k = t.getKey();
+               if (jmx.containsKey(k)) {
+                  log.trace("Collecting " + k + " for " + ip);
+                  PublishAttribute p = jmx.get(k);
+                  String keys = (String) p.getValue();
+                  tnb.push(t, mapFromString(keys));
+               } else {
+                  log.trace("Skipping " + k + " for " + ip);
+               }
+            }
+            tks.push(tnb);
+         }
+      }
+      statsManager.pushTopKSample(tks);
+      log.trace("pushing new k " + tks);
 
 //        Set<String> ips = event.getIps();
 //        log.trace("Received statistics from wpm instances " + ips.toString());
@@ -108,7 +163,6 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 
 
    }
-
 
    @Override
    public void onNewAggregatedStatistics(PublishAggregatedStatisticsEvent event) throws RemoteException {
@@ -166,7 +220,6 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
 //        //statsManager.push(processedSample);
 //    }
 
-
    private void trace(Set<HashMap<String, PublishAttribute>> set) {
       int i = 0;
       for (HashMap<String, PublishAttribute> map : set) {
@@ -205,6 +258,27 @@ public class WPMStatisticsRemoteListenerImpl implements WPMStatisticsRemoteListe
             log.trace("No resource found!");
          }
       }
+   }
+
+   //Apparently,this method depends on the application. It should be refactored and made pluggable through an object
+   private Map<String, Long> fenixMapFromString(String s) {
+
+      s = s.substring(1);
+      log.trace("TOMAP " + s);
+      String[] eq;
+      String temp1, temp2;
+      String[] split = s.split("\\|");
+      log.trace(Arrays.toString(split));
+      Map<String, Long> map = new HashMap<String, Long>();
+
+      for (int i = 0; i < split.length; ) {
+         temp1 = split[i++];
+         eq = split[i++].split("=");
+         temp1 = temp1.concat("\\|").concat(eq[0]);
+         map.put(temp1, Long.parseLong(eq[1]));
+         log.trace("ADDING " + temp1 + " - " + Long.parseLong(eq[1]));
+      }
+      return map;
    }
 
 }

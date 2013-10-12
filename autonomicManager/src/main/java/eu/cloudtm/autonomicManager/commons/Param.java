@@ -1,5 +1,8 @@
 package eu.cloudtm.autonomicManager.commons;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Created with IntelliJ IDEA. User: fabio Date: 7/8/13 Time: 2:47 PM To change this template use File | Settings | File
  * Templates.
@@ -169,6 +172,7 @@ public enum Param {
    private final int id;
    private final String key;
    private final Class clazz;
+   private final static Log log = LogFactory.getLog(Param.class);
 
    private Param(int id, String name, Class clazz) {
       this.id = id;
@@ -206,5 +210,63 @@ public enum Param {
 
    public Class getClazz() {
       return clazz;
+   }
+
+   public static Object sumParams(Param p, Object a, Object b) {
+      if (b == null)
+         log.trace("B is not supposed to be null!!");
+      log.trace("Going to sum Param " + p + " of class " + p.getClazz() + ": " + a + " + " + b);
+      log.trace("Declared clazz of p " + p.getClazz() + " class of a " + ((a == null) ? null : a.getClass()) + " class of b " + b.getClass());
+      Object ret = null;
+      //if (p.getClazz() == Long.class) {
+
+      if (b instanceof Long) {
+         log.trace("Summing long");
+         if (a == null)
+            ret = new Long(((Long) b).longValue());
+         else
+            ret = new Long((Long) a + (Long) b);
+      }
+      //if (p.getClazz() == Double.class) {
+      if (b instanceof Double) {
+         log.trace("Summing double");
+         if (a == null)
+            ret = new Double(((Double) b).doubleValue());
+         else
+            ret = new Double((Double) a + (Double) b);
+      }
+
+      //if (p.getClazz() == Integer.class) {
+      if (b instanceof Integer) {
+         log.trace("Summing int");
+         if (a == null)
+            ret = new Integer(((Integer) b).intValue());
+         else
+            ret = new Integer((Integer) a + (Integer) b);
+      }
+
+      if (ret == null)
+         throw new IllegalArgumentException("Param " + p + " is not Double, Long or Integer and thus cannot be averaged");
+      log.trace("Returning " + ret);
+      return ret;
+   }
+
+   public static Object multiplyParams(Param p, Object a, double b) {
+      if (a instanceof Long) {
+         double d = (Long) a * b;
+         long dd = (long) d;
+         return new Long(dd);
+      }
+      if (a instanceof Double) {
+         return new Double((Double) a * b);
+      }
+
+      if (a instanceof Integer) {
+         double d = (Integer) a * b;
+         int dd = (int) d;
+         return new Integer(dd);
+      }
+      throw new IllegalArgumentException("Param " + p + " is not Double, Long or Integer and thus cannot be averaged");
+
    }
 }

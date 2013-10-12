@@ -2,6 +2,7 @@ package eu.cloudtm.autonomicManager.workloadAnalyzer;
 
 import eu.cloudtm.autonomicManager.Optimizer;
 import eu.cloudtm.autonomicManager.Reconfigurator;
+import eu.cloudtm.autonomicManager.configs.ReconfigurationParamSelf;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +51,8 @@ public class PureReactiveAlertManager extends AbstractAlertManager {
          if (optimization != null) {
             log.trace("Going to invoke reconfigure");
             try {
-               reconfigurationDone = reconfigurator.reconfigure(optimization);
+               //This reconfiguration is automatic so...
+               reconfigurationDone = reconfigurator.reconfigure(optimization, new ReconfigurationParamSelf());
             } catch (Exception e) {
                e.printStackTrace();
                log.fatal(e);
