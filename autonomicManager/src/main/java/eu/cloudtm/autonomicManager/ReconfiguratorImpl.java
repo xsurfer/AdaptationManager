@@ -1,13 +1,10 @@
 package eu.cloudtm.autonomicManager;
 
 import eu.cloudtm.autonomicManager.actuators.excepions.ActuatorException;
-import eu.cloudtm.autonomicManager.commons.InstanceConfig;
-import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.PlatformState;
-import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
-import eu.cloudtm.autonomicManager.commons.State;
+import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.configs.KeyConfig;
+import eu.cloudtm.autonomicManager.configs.ReconfigurationParam;
 import eu.cloudtm.autonomicManager.exceptions.ReconfiguratorException;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import org.apache.commons.logging.Log;
@@ -26,32 +23,19 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ReconfiguratorImpl implements Reconfigurator {
 
    private final Log log = LogFactory.getLog(ReconfiguratorImpl.class);
-
-
-   private AtomicInteger reconfigurationCounter = new AtomicInteger(0);
-
    private final State platformState;
-
    private final PlatformConfiguration current;
-
-   private volatile Map<OptimizerType, Object> request;
-
-   private AtomicBoolean reconfiguring = new AtomicBoolean(false);
-
    private final boolean ignoreError = Config.getInstance().getBoolean(KeyConfig.RECONFIGURATOR_IGNORE_ERROR.key());
-
-   private Throwable error;
-
    private final boolean testing = Config.getInstance().getBoolean(KeyConfig.RECONFIGURATOR_SIMULATE.key());
-
-   private ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-   private Actuator actuator;
-
-   private ReentrantLock reconfigurationLock = new ReentrantLock();
-
    private final int rebalanceSleep = Config.getInstance().getInt(KeyConfig.RECONFIGURATOR_SLEEP_REBALANCING.key());
-
+   private AtomicInteger reconfigurationCounter = new AtomicInteger(0);
+   private volatile Map<OptimizerType, Object> request;
+   private volatile ReconfigurationParam reconfigurationParam;
+   private AtomicBoolean reconfiguring = new AtomicBoolean(false);
+   private Throwable error;
+   private ExecutorService executorService = Executors.newSingleThreadExecutor();
+   private Actuator actuator;
+   private ReentrantLock reconfigurationLock = new ReentrantLock();
 
    public ReconfiguratorImpl(PlatformConfiguration current, State platformState, Actuator actuator) {
       this.current = current;
@@ -61,7 +45,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
    }
 
    @Override
-   public boolean reconfigure(Map<OptimizerType, Object> toReconfigure) {
+   public boolean reconfigure(Map<OptimizerType, Object> toReconfigure, ReconfigurationParam param) {
 
       // in case of error during the last reconfiguration, I'm throwing a RuntimeException
       if (error != null) {
@@ -76,10 +60,12 @@ public class ReconfiguratorImpl implements Reconfigurator {
          try {
             if (reconfiguring.compareAndSet(false, true)) {
                request = toReconfigure;
+               reconfigurationParam = param;
                if (skipReconfiguration()) {
                   ControllerLogger.log.trace("No reconfiguration needed at this step: current and target configuration coincide");
                   request = null;
-                  reconfiguring.compareAndSet(true,false);
+                  reconfigurationParam = null;
+                  reconfiguring.compareAndSet(true, false);
                   return false;
                }
                ControllerLogger.log.info("Reconfiguration request ACCEPTED...");
@@ -97,7 +83,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
          } catch (Exception ee) {
             ee.printStackTrace();
             log.error(ee.getCause());
-            reconfiguring.compareAndSet(true,false);
+            reconfiguring.compareAndSet(true, false);
             return false;
          } finally {
             ControllerLogger.log.info("releasing lock");
@@ -136,22 +122,23 @@ public class ReconfiguratorImpl implements Reconfigurator {
          } else {
 
             PlatformConfiguration toReconfigurePlatform = (PlatformConfiguration) request.get(OptimizerType.PLATFORM);
-            if (toReconfigurePlatform != null) {
+            if (toReconfigurePlatform != null && !forceSkipReconfiguration(current, toReconfigurePlatform, reconfigurationParam)) {
                platformReconfiguration(toReconfigurePlatform);
             } else {
-               log.info("No reconfiguration platform found in the request!");
+               log.info("No reconfiguration to perform");
             }
          }
 
          request = null;
+         reconfigurationParam = null;
          platformState.update(PlatformState.RUNNING);
 
       } catch (Exception e) {     // capturing all the exceptions because if ignoreError=false, AM must die
          platformState.update(PlatformState.ERROR);
 
          ControllerLogger.log.warn("An error occurred while reconfiguring. " +
-                                         "Please check the log.out file for stack traces. " +
-                                         "Reconfigs are enabled, but system state is: " + platformState.current());
+                 "Please check the log.out file for stack traces. " +
+                 "Reconfigs are enabled, but system state is: " + platformState.current());
 
          log.warn(e, e);
          if (!ignoreError) {
@@ -169,7 +156,6 @@ public class ReconfiguratorImpl implements Reconfigurator {
       ControllerLogger.log.info("*********************");
 
    }
-
 
    private void changeReplicationDegreeIfNeeded(PlatformConfiguration platformRequest) throws ReconfiguratorException {
       int current, target;
@@ -227,7 +213,6 @@ public class ReconfiguratorImpl implements Reconfigurator {
       }
    }
 
-
    //Given that the exception is not handled...
    private void sleep(int msecToSleep) {
       log.info("Waiting " + msecToSleep + " msecs");
@@ -239,6 +224,7 @@ public class ReconfiguratorImpl implements Reconfigurator {
    }
 
    private void platformReconfiguration(PlatformConfiguration platformRequest) throws ReconfiguratorException {
+
 
       triggerRebalanceIfNeeded(false);
 
@@ -307,6 +293,28 @@ public class ReconfiguratorImpl implements Reconfigurator {
       } catch (ActuatorException e) {
          throw new ReconfiguratorException(e);
       }
+   }
+
+   private boolean forceSkipReconfiguration(PlatformConfiguration from, PlatformConfiguration to, ReconfigurationParam param) {
+      log.trace("Force skip?");
+      if (!param.isAutoTuning()) {
+         log.trace("Autotuning is FALSE, thus NOT forcing skip");
+         return false;
+      }
+      if (Config.getInstance().enforceStability()) {
+         log.trace("Enforcing stability");
+         ReplicationProtocol fromRP = from.replicationProtocol(), toRP = to.replicationProtocol();
+         boolean allowedSwitch = (fromRP == ReplicationProtocol.TWOPC && toRP == ReplicationProtocol.PB) ||
+                 (fromRP == ReplicationProtocol.PB && toRP == ReplicationProtocol.TO);
+         if (allowedSwitch) {
+            log.trace("Switch allowed " + from + " to " + to);
+         } else {
+            log.trace("Switch not allowed " + from + " to " + to);
+         }
+         return !allowedSwitch;
+      }
+      log.trace("Not enforcing stability->not skipping");
+      return false;
    }
 
 }

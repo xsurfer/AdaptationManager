@@ -1,5 +1,6 @@
 package eu.cloudtm.autonomicManager;
 
+import eu.cloudtm.autonomicManager.configs.ReconfigurationParam;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 
 import java.util.Map;
@@ -15,7 +16,7 @@ public interface Reconfigurator {
     * @param toReconfigure
     * @return true if a reconfiguration has (at least tentatively) taken place. False otherwise
     */
-   public boolean reconfigure(Map<OptimizerType, Object> toReconfigure);
+   public boolean reconfigure(Map<OptimizerType, Object> toReconfigure, ReconfigurationParam param);
 
    public boolean isReconfiguring();
 

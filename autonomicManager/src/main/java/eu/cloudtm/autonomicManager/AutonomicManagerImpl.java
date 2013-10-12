@@ -1,13 +1,11 @@
 package eu.cloudtm.autonomicManager;
 
-import eu.cloudtm.autonomicManager.commons.Forecaster;
-import eu.cloudtm.autonomicManager.commons.InstanceConfig;
-import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.PlatformTuning;
-import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
-import eu.cloudtm.autonomicManager.commons.State;
+import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.configs.ReconfigurationParam;
+import eu.cloudtm.autonomicManager.configs.ReconfigurationParamManual;
+import eu.cloudtm.autonomicManager.configs.ReconfigurationParamSelf;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
@@ -26,8 +24,8 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class AutonomicManagerImpl implements AutonomicManager {
 
+   private final static int INTERVAL_BETWEEN_FORECAST = 300;
    private static Log log = LogFactory.getLog(AutonomicManagerImpl.class);
-
    private State state;
    private PlatformTuning platformTuning;
    private PlatformConfiguration platformConfiguration;
@@ -35,13 +33,9 @@ public class AutonomicManagerImpl implements AutonomicManager {
    private WorkloadAnalyzer workloadAnalyzer;
    private Optimizer optimizer;
    private Reconfigurator reconfigurator;
-
-
-   private final static int INTERVAL_BETWEEN_FORECAST = 300;
    private Date lastForecastTimestamp;
    private volatile PlatformConfiguration lastForecast;
    private ReentrantLock forecastLock = new ReentrantLock();
-
 
    public AutonomicManagerImpl(State state,
                                PlatformConfiguration platformConfiguration,
@@ -62,9 +56,8 @@ public class AutonomicManagerImpl implements AutonomicManager {
 
    @Override
    public void customConfiguration(Map<OptimizerType, Object> configuration) {
-      reconfigurator.reconfigure(configuration);
+      reconfigurator.reconfigure(configuration, new ReconfigurationParamManual());
    }
-
 
    @Override
    public boolean isWorkloadAnalyzerEnabled() {
@@ -89,8 +82,8 @@ public class AutonomicManagerImpl implements AutonomicManager {
             }
             lastForecastTimestamp = new Date();
             lastForecast = optimizer.optimizePlatform(statsManager.getLastSample(), true);
-            ControllerLogger.log.info("AM: new lastForecast "+lastForecast);
-            log.info("AM: new lastForecast "+lastForecast);
+            ControllerLogger.log.info("AM: new lastForecast " + lastForecast);
+            log.info("AM: new lastForecast " + lastForecast);
          } finally {
             forecastLock.unlock();
          }
@@ -105,7 +98,7 @@ public class AutonomicManagerImpl implements AutonomicManager {
       if (!reconfigurator.isReconfiguring()) {
          ControllerLogger.log.info("Starting new optimization...");
          Map<OptimizerType, Object> optimization = optimizer.optimizeAll(statsManager.getLastSample(), false);
-         reconfigureNow(optimization);
+         reconfigureNow(optimization, new ReconfigurationParamSelf());
 
       } else {
          ControllerLogger.log.info("Reconfigurator busy! Skipping...");
@@ -113,9 +106,10 @@ public class AutonomicManagerImpl implements AutonomicManager {
    }
 
    @Override
-   public void reconfigureNow(Map<OptimizerType, Object> configuration) {
+   public void reconfigureNow(Map<OptimizerType, Object> configuration, ReconfigurationParam param) {
       ControllerLogger.log.info("Starting reconfiguration...");
-      reconfigurator.reconfigure(configuration);
+      //though this reconfiguration is triggered manually, the configuration is chosen automatically
+      reconfigurator.reconfigure(configuration, param);
 
    }
 
@@ -231,7 +225,7 @@ public class AutonomicManagerImpl implements AutonomicManager {
          PlatformConfiguration platformReq = new PlatformConfiguration(size, platformConfiguration.replicationDegree(), platformConfiguration.replicationProtocol());
          Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
          optimization.put(OptimizerType.PLATFORM, platformReq);
-         reconfigureNow(optimization);
+         reconfigureNow(optimization, new ReconfigurationParamManual());
          // the curr platform state will be updated when reconfiguration ends
       }
    }
@@ -246,7 +240,7 @@ public class AutonomicManagerImpl implements AutonomicManager {
          PlatformConfiguration platformReq = new PlatformConfiguration(platformConfiguration.platformSize(), degree, platformConfiguration.replicationProtocol());
          Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
          optimization.put(OptimizerType.PLATFORM, platformReq);
-         reconfigureNow(optimization);
+         reconfigureNow(optimization, new ReconfigurationParamManual());
          // the curr platform state will be updated when reconfiguration ends
       }
    }
@@ -261,7 +255,7 @@ public class AutonomicManagerImpl implements AutonomicManager {
          PlatformConfiguration platformReq = new PlatformConfiguration(platformConfiguration.platformSize(), platformConfiguration.replicationDegree(), protocol);
          Map<OptimizerType, Object> optimization = new HashMap<OptimizerType, Object>();
          optimization.put(OptimizerType.PLATFORM, platformReq);
-         reconfigureNow(optimization);
+         reconfigureNow(optimization, new ReconfigurationParamManual());
          // the curr platform state will be updated when reconfiguration ends
       }
    }
