@@ -242,6 +242,7 @@ public class WhatIfResource extends AbstractResource {
       String stub = Config.getInstance().stub();
       CsvRgParams param = new CsvRgParams(stub);
       RadargunCsvInputOracle io = new RadargunCsvInputOracle(param);
+      log.trace(io);
       CustomSample customSample = new CustomSample(null, io.getpMap(), io.geteMap());
       log.trace(customSample);
       return customSample;
