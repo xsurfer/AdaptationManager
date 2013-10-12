@@ -6,6 +6,7 @@ import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -32,8 +33,13 @@ public class ReactiveChangeDetector extends AbstractChangeDetector {
       boolean reconfigure = evaluateParam() || evaluateEvaluatedParam();
       if (reconfigure) {
          log.trace("Going to trigger a reconfiguration");
-         fireEvent(WorkloadEvent.WorkloadEventType.WORKLOAD_CHANGED, sample);
-         postFire();
+         try {
+            fireEvent(WorkloadEvent.WorkloadEventType.WORKLOAD_CHANGED, sample);
+            postFire();
+         } catch (Exception e) {
+            log.trace(e);
+            log.trace(Arrays.toString(e.getStackTrace()));
+         }
       }
 
 

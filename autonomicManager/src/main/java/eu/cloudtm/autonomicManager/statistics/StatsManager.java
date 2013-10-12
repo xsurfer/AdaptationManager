@@ -2,6 +2,7 @@ package eu.cloudtm.autonomicManager.statistics;
 
 
 import eu.cloudtm.autonomicManager.commons.dto.StatisticDTO;
+import eu.cloudtm.autonomicManager.statistics.topKeys.TopKeySample;
 
 import java.util.List;
 
@@ -21,4 +22,8 @@ public interface StatsManager {
    public StatisticDTO getAllAvgStatistic(String param);
 
    public void notifyListeners(ProcessedSample sample);
+
+   public void pushTopKSample(TopKeySample sample);
+
+   public TopKeySample getLastTopKSample();
 }

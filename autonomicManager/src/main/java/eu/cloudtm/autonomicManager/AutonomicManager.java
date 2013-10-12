@@ -8,6 +8,7 @@ import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
 import eu.cloudtm.autonomicManager.commons.State;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.configs.ReconfigurationParam;
 import eu.cloudtm.autonomicManager.optimizers.OptimizerType;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
 
@@ -51,6 +52,6 @@ public interface AutonomicManager {
 
    StatsManager getStatsManager();
 
-   void reconfigureNow(Map<OptimizerType, Object> configuration);
+   void reconfigureNow(Map<OptimizerType, Object> configuration, ReconfigurationParam param);
 
 }

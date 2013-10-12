@@ -1,30 +1,25 @@
 package eu.cloudtm.autonomicManager.RESTServer.resources;
 
+import CsvOracles.RadargunCsvInputOracle;
+import CsvOracles.params.CsvRgParams;
 import com.google.gson.Gson;
 import eu.cloudtm.autonomicManager.AutonomicManager;
 import eu.cloudtm.autonomicManager.WhatIfService;
-import eu.cloudtm.autonomicManager.commons.EvaluatedParam;
-import eu.cloudtm.autonomicManager.commons.Forecaster;
-import eu.cloudtm.autonomicManager.commons.GsonFactory;
-import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
-import eu.cloudtm.autonomicManager.commons.ReplicationProtocol;
+import eu.cloudtm.autonomicManager.commons.*;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfCustomParamDTO;
 import eu.cloudtm.autonomicManager.commons.dto.WhatIfDTO;
+import eu.cloudtm.autonomicManager.configs.Config;
 import eu.cloudtm.autonomicManager.statistics.ProcessedSample;
 import eu.cloudtm.autonomicManager.statistics.StatsManager;
+import eu.cloudtm.autonomicManager.statistics.samples.CustomSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +27,34 @@ import java.util.List;
 public class WhatIfResource extends AbstractResource {
 
    private static Log log = LogFactory.getLog(WhatIfResource.class);
-
    @Inject
    private StatsManager statsManager;
-
    @Inject
    private AutonomicManager autonomicManager;
-
+   private ProcessedSample lastCustomSample = null;
 
    @GET
    @Path("/values")
    @Produces(MediaType.APPLICATION_JSON)
    public synchronized Response updateValuesFromSystem() {
 
-      ProcessedSample sample = statsManager.getLastSample();
+      ProcessedSample sample;
+      if (Config.getInstance().isUsingStub()) {
+         log.trace("Using help from stub");
+         try {
+            if (lastCustomSample == null)
+               sample = lastCustomSample = processedSampleFromStub();
+            else
+               sample = lastCustomSample;
+         } catch (IOException e) {
+            e.printStackTrace();
+            log.error(e);
+            return null;
+         }
+      } else {
+         log.trace("Taking values from last measured sample");
+         sample = statsManager.getLastSample();
+      }
 
       if (sample != null)
          log.info("Sample: " + sample.getId());
@@ -115,31 +124,31 @@ public class WhatIfResource extends AbstractResource {
    @Produces(MediaType.APPLICATION_JSON)
    public synchronized Response whatIf(
 
-         @DefaultValue("-1") @FormParam("acf") Double acf,
-         @DefaultValue("-1") @FormParam("percentageSuccessWriteTransactions") Double percentageSuccessWriteTransactions,
-         @DefaultValue("-1") @FormParam("avgNumPutsBySuccessfulLocalTx") Double avgNumPutsBySuccessfulLocalTx,
-         @DefaultValue("-1") @FormParam("avgGetsPerWrTransaction") Double avgGetsPerWrTransaction,
-         @DefaultValue("-1") @FormParam("avgGetsPerROTransaction") Double avgGetsPerROTransaction,
+           @DefaultValue("-1") @FormParam("acf") Double acf,
+           @DefaultValue("-1") @FormParam("percentageSuccessWriteTransactions") Double percentageSuccessWriteTransactions,
+           @DefaultValue("-1") @FormParam("avgNumPutsBySuccessfulLocalTx") Double avgNumPutsBySuccessfulLocalTx,
+           @DefaultValue("-1") @FormParam("avgGetsPerWrTransaction") Double avgGetsPerWrTransaction,
+           @DefaultValue("-1") @FormParam("avgGetsPerROTransaction") Double avgGetsPerROTransaction,
 
-         @DefaultValue("-1") @FormParam("localUpdateTxLocalServiceTime") Double localUpdateTxLocalServiceTime,
-         @DefaultValue("-1") @FormParam("localReadOnlyTxLocalServiceTime") Double localReadOnlyTxLocalServiceTime,
+           @DefaultValue("-1") @FormParam("localUpdateTxLocalServiceTime") Double localUpdateTxLocalServiceTime,
+           @DefaultValue("-1") @FormParam("localReadOnlyTxLocalServiceTime") Double localReadOnlyTxLocalServiceTime,
 
-         @DefaultValue("-1") @FormParam("avgPrepareCommandSize") Double avgPrepareCommandSize,
-         @DefaultValue("-1") @FormParam("avgPrepareAsync") Double avgPrepareAsync,
-         @DefaultValue("-1") @FormParam("avgCommitAsync") Double avgCommitAsync,
-         @DefaultValue("-1") @FormParam("avgRemoteGetRtt") Double avgRemoteGetRtt,
+           @DefaultValue("-1") @FormParam("avgPrepareCommandSize") Double avgPrepareCommandSize,
+           @DefaultValue("-1") @FormParam("avgPrepareAsync") Double avgPrepareAsync,
+           @DefaultValue("-1") @FormParam("avgCommitAsync") Double avgCommitAsync,
+           @DefaultValue("-1") @FormParam("avgRemoteGetRtt") Double avgRemoteGetRtt,
 
-         @DefaultValue("NODES") @FormParam("xaxis") WhatIfCustomParamDTO.Xaxis xaxis,
+           @DefaultValue("NODES") @FormParam("xaxis") WhatIfCustomParamDTO.Xaxis xaxis,
 
-         @DefaultValue("-1") @FormParam("fixed_nodes_min") int fixedNodesMin,
-         @DefaultValue("-1") @FormParam("fixed_nodes_max") int fixedNodesMax,
+           @DefaultValue("-1") @FormParam("fixed_nodes_min") int fixedNodesMin,
+           @DefaultValue("-1") @FormParam("fixed_nodes_max") int fixedNodesMax,
 
-         @DefaultValue("-1") @FormParam("fixed_degree_min") int fixedDegreeMin,
-         @DefaultValue("-1") @FormParam("fixed_degree_max") int fixedDegreeMax,
+           @DefaultValue("-1") @FormParam("fixed_degree_min") int fixedDegreeMin,
+           @DefaultValue("-1") @FormParam("fixed_degree_max") int fixedDegreeMax,
 
-         @DefaultValue("TWOPC") @FormParam("fixed_protocol") ReplicationProtocol fixedProtocol,
+           @DefaultValue("TWOPC") @FormParam("fixed_protocol") ReplicationProtocol fixedProtocol,
 
-         @FormParam("oracoles") List<String> fores
+           @FormParam("oracoles") List<String> fores
    ) {
       log.trace("acf: " + acf);
       log.trace("percentageSuccessWriteTransactions: " + percentageSuccessWriteTransactions);
@@ -226,6 +235,16 @@ public class WhatIfResource extends AbstractResource {
 
       Response.ResponseBuilder builder = Response.ok(json);
       return makeCORS(builder);
+   }
+
+   private ProcessedSample processedSampleFromStub() throws IOException {
+      log.trace("Processing Sample from Stub");
+      String stub = Config.getInstance().stub();
+      CsvRgParams param = new CsvRgParams(stub);
+      RadargunCsvInputOracle io = new RadargunCsvInputOracle(param);
+      CustomSample customSample = new CustomSample(null, io.getpMap(), io.geteMap());
+      log.trace(customSample);
+      return customSample;
    }
 
 

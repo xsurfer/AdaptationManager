@@ -2,19 +2,12 @@ package eu.cloudtm.autonomicManager.statistics;
 
 import eu.cloudtm.autonomicManager.commons.Param;
 import eu.cloudtm.autonomicManager.commons.dto.StatisticDTO;
+import eu.cloudtm.autonomicManager.statistics.topKeys.TopKeySample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.inject.Singleton;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 /**
  * It contains a stack of samples.
@@ -26,11 +19,9 @@ import java.util.Set;
 public class WPMStatsManager extends SampleProducer implements StatsManager {
 
    private final static Log log = LogFactory.getLog(WPMStatsManager.class);
-
    private final static int MAX_SIZE = 1000;
-
    private final Deque<ProcessedSample> stack = new ArrayDeque<ProcessedSample>(MAX_SIZE);
-
+   private final Deque<TopKeySample> topKStack = new ArrayDeque<TopKeySample>(MAX_SIZE);
    private final Set<SampleListener> listeners = new HashSet<SampleListener>();
 
    public WPMStatsManager() {
@@ -45,6 +36,21 @@ public class WPMStatsManager extends SampleProducer implements StatsManager {
       stack.push(wpmProcessedSample);
       notifyListeners(wpmProcessedSample);
       log.info("New stas added: " + wpmProcessedSample.getId());
+   }
+
+   @Override
+   public void pushTopKSample(TopKeySample sample) {
+      if (stack.size() >= MAX_SIZE) {
+         topKStack.removeLast();
+         //log.trace("Deleted stat: " + removed.getId());
+      }
+      topKStack.push(sample);
+      log.info("New topKstas added");
+   }
+
+   @Override
+   public TopKeySample getLastTopKSample() {
+      return topKStack.peek();
    }
 
    @Override
@@ -79,8 +85,8 @@ public class WPMStatsManager extends SampleProducer implements StatsManager {
       for (iter = stack.descendingIterator(); iter.hasNext(); ) {
          ProcessedSample processedSample = iter.next();
          ret.addPoint(
-               processedSample.getId(),
-               (Double) processedSample.getParam(Param.getByName(param))
+                 processedSample.getId(),
+                 (Double) processedSample.getParam(Param.getByName(param))
          );
       }
       return ret;
@@ -99,8 +105,8 @@ public class WPMStatsManager extends SampleProducer implements StatsManager {
       if (processedSample == null)
          return ret;
       ret.addPoint(
-            processedSample.getId(),
-            (Double) processedSample.getParam(Param.getByName(param))
+              processedSample.getId(),
+              (Double) processedSample.getParam(Param.getByName(param))
       );
 
       return ret;

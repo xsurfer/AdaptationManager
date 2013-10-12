@@ -1,6 +1,9 @@
 package eu.cloudtm.autonomicManager.statistics;
 
 import eu.cloudtm.autonomicManager.commons.PlatformConfiguration;
+import eu.cloudtm.autonomicManager.statistics.samples.PBProcessedSample;
+import eu.cloudtm.autonomicManager.statistics.samples.TOProcessedSample;
+import eu.cloudtm.autonomicManager.statistics.samples.TWOPCProcessedSample;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,11 +31,11 @@ public class StatsProcessor implements Processor {
             break;
          case TO:
             log.trace("Processing wpm sample in TOProcessedSample");
-            processedSample = new TWOPCProcessedSample(rawSample);
+            processedSample = new TOProcessedSample(rawSample);
             break;
          case PB:
             log.trace("Processing wpm sample in PBProcessedSample");
-            processedSample = new TWOPCProcessedSample(rawSample);
+            processedSample = new PBProcessedSample(rawSample);
             break;
          default:
             throw new RuntimeException("Invalid replication protocol!");

@@ -29,6 +29,7 @@ public enum KeyConfig {
 
    SLIDE_WINDOW_SIZE("changeDetector.slideWindowSize"),
    CHANGE_DETECTOR_DELTA("changeDetector.delta"),
+   CHANGE_DETECTOR_AVG_WINDOW("changeDetector.avgWindow"),
 
    WORKLOAD_FORECASTER_GRADE("workloadForecaster.grade"),
 
@@ -94,7 +95,11 @@ public enum KeyConfig {
 
    FILE_HOSTNAME("file.hostnames"),
 
-   ORACLE_SERVICE("oracleService.default");
+   ORACLE_SERVICE("oracleService.default"),
+
+   ENFORCE_STABILITY("reconfigurator.enforceStability"),
+   STUB("forecaster.stub")
+   ;
 
    private final String key;
 

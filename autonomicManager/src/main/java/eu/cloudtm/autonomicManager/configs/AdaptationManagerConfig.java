@@ -40,6 +40,10 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
       return getInt(KeyConfig.ALERT_MANAGER_EVALUATION_PERIOD.key());
    }
 
+   public int getAvgWindowSize() {
+      return getInt(KeyConfig.CHANGE_DETECTOR_AVG_WINDOW.key());
+   }
+
    /**
     * *********************** ALERT MANAGER ************************
     */
@@ -72,7 +76,6 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
       return (Forecaster.valueOf(getString(KeyConfig.FORECASTER_DEFAULT.key())));
    }
 
-
    /**
     * *********************** ORACLES ************************
     */
@@ -90,6 +93,23 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
 
    private boolean isOracleService(OracleServiceEnum ose) {
       return OracleServiceEnum.valueOf(getString(KeyConfig.ORACLE_SERVICE.key())).equals(ose);
+   }
+
+   /**
+    * *********************** ORACLES ************************
+    */
+
+   public boolean enforceStability() {
+      String key = getString(KeyConfig.ENFORCE_STABILITY.key());
+      return key != null && key.equals("true");
+   }
+
+   public boolean isUsingStub() {
+      return !(stub() == null || stub().isEmpty());
+   }
+
+   public String stub() {
+      return getString(KeyConfig.STUB.key());
    }
 
 }

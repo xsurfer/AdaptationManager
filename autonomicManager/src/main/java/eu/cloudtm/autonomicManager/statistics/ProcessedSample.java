@@ -30,6 +30,9 @@ public abstract class ProcessedSample implements Sample {
    private Map<EvaluatedParam, Object> evaluatedParams = new HashMap<EvaluatedParam, Object>();
 
    public Map<EvaluatedParam, Object> getEvaluatedParams() {
+      if (initialized.compareAndSet(false, true)) {
+         init();
+      }
       return this.evaluatedParams;
    }
 
