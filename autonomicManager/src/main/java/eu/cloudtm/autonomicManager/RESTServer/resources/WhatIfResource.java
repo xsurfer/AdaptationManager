@@ -241,11 +241,13 @@ public class WhatIfResource extends AbstractResource {
       try {
          log.trace("Processing Sample from Stub");
          String stub = Config.getInstance().stub();
+         log.trace("Going to use stub " + stub);
          CsvRgParams param = new CsvRgParams(stub);
+         log.trace("CsvParams created " + param);
          RadargunCsvInputOracle io = new RadargunCsvInputOracle(param);
-         log.trace(io);
+         log.trace("InputOracle from csv " + io);
          CustomSample customSample = new CustomSample(null, io.getpMap(), io.geteMap());
-         log.trace(customSample);
+         log.trace("Custom Sample " + customSample);
          return customSample;
       } catch (Exception e) {
          log.error(e);
