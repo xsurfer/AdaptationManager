@@ -46,12 +46,12 @@
   
   <context-param>
     <param-name>rest_host</param-name>
-    <param-value>cloudtm.ist.utl.pt</param-value>
+    <param-value>149.165.148.125</param-value>
   </context-param>
   
   <context-param>
     <param-name>rest_port</param-name>
-    <param-value>3030</param-value>
+    <param-value>1515</param-value>
   </context-param>
 
 </web-app>

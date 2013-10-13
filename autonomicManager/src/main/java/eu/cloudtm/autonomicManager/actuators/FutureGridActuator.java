@@ -43,7 +43,7 @@ public class FutureGridActuator implements Actuator {
 
    private JSch jsch = new JSch();
 
-   private final String user = "ubuntu";
+   private final String user = Config.getInstance().getFutureGridUsername();
 
    private final int sshPort = 22;
 

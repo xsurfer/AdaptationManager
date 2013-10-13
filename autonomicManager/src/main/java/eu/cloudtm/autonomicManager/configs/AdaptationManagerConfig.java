@@ -112,4 +112,12 @@ public class AdaptationManagerConfig extends PropertiesConfiguration {
       return getString(KeyConfig.STUB.key());
    }
 
+
+   /**
+    * *********************** ACTUATORS ************************
+    */
+   public String getFutureGridUsername(){
+      return getString( KeyConfig.FUTUREGRID_USERNAME.key() );
+   }
+
 }

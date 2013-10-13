@@ -66,7 +66,9 @@ public enum KeyConfig {
    RADARGUN_CLIENT("radargun.client"),
    RADARGUN_COMPONENT("radargun.component"),
 
-   FUTUREGRID_FILE_NODES("futurgrid.fileNodes"),
+
+   FUTUREGRID_USERNAME("futuregrid.username"),
+   FUTUREGRID_FILE_NODES("futuregrid.fileNodes"),
    FUTUREGRID_START_SCRIPT("futuregrid.startScript"),
    FUTUREGRID_STOP_SCRIPT("futuregrid.stopScript"),
 

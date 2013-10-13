@@ -34,6 +34,11 @@
     <action name="workloadAnalysis">
       <result>/pages/workloadAnalysis.jsp</result>
     </action>
+    
+    <action name="console">
+      <result>/noDecorated/console.jsp</result>
+    </action>
+    
      <!--
       <action name="monitor">
           <result>/pages/monitor.jsp</result>

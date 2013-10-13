@@ -47,8 +47,9 @@
 
         <ul>
         	<li>
-        		<a href="javascript:void(0)" onclick="window.open('http://www.cloudtm.eu', 'Console', 'resizable=0,top=10,left=10,width=600,height=200')">Console</a>
+        		<a href="javascript:void(0)" onclick="window.open('console', 'Console', 'directories=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,top=10,left=10,width=600,height=200')">Console</a>
         	</li>
+        	
 
             <li><a href="overview">Overview</a></li> <!-- Active page -->
             <!--<li><a href="monitor">Workload and Performance Monitor</a></li>     Uncomment to embed page-->
